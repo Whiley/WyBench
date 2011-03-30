@@ -45,7 +45,7 @@ define ZIP_COMPRESSION_METHODS as [
     "Deflate64",
     "Pkware",
     "", // reserved
-    "BAip2",
+    "BZip2",
     "", // reserved
     "LZMA"
 ]
