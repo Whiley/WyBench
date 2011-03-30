@@ -1,1 +1,13 @@
-Wybench is a suite of benchmark programs used for testing and demonstrating the Whiley language.
+Wybench
+=======
+Wybench is a suite of benchmark programs used for testing and
+demonstrating the Whiley language.  
+
+The suite currently contains the following benchmarks:
+
+chess - a tool for validating games written in long algebraic
+        notation.
+
+jasm  - a Java Bytecode assesmbler / disassembler.
+
+zip   - a tool for extracting zip files.
