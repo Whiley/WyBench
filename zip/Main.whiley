@@ -22,6 +22,7 @@ void System::main([string] args):
         out->println(rightAlign(rawSize,8) + "          " + rightAlign(size,6) + "          " + str(|zf.entries|) + " file(s)")
         // now, extract each file    
         for e in zf.entries:
+            out->println("extracting " + e.name)
             rawData = zipExtract(e)
             writer = this->openWriter(e.name)
             writer->write(rawData)
