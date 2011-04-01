@@ -1,7 +1,7 @@
 import whiley.io.*
 
 void System::main([string] args):
-    file = this->openFile(args[0])
+    file = this->openReader(args[0])
     contents = file->read()
     zf = zipFile(contents)
     if zf ~= ZipError:

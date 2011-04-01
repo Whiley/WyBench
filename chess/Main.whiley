@@ -4,7 +4,7 @@ void System::main([string] args):
     if |args| == 0:
         this->usage()
         return
-    file = this->openFile(args[0])
+    file = this->openReader(args[0])
     contents = file->read()
     game = parseChessGame(contents)
     if game ~= SyntaxError:
