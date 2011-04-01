@@ -20,6 +20,11 @@ void System::main([string] args):
             size = size + e.size
         out->println("--------          ------ -------- ----") 
         out->println(rightAlign(rawSize,8) + "          " + rightAlign(size,6) + "          " + str(|zf.entries|) + " file(s)")
+        // now, extract each file    
+        for e in zf.entries:
+            rawData = zipExtract(e)
+            writer = this->openWriter(e.name)
+            writer->write(rawData)
 
 string rightAlign(int val, int len):
     return rightAlign(str(val),len)

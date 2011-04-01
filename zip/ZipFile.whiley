@@ -106,4 +106,24 @@ ZipError|(ZipEntry,int) parseEntry([byte] data, int offset):
         name: data[nameStart..nameEnd],
         data: data[dataStart..dataEnd]
     },offset+30+namelen+extralen+datalen
-    
+
+// The decompress table is essentially a dispatch table for the 
+// decompress methods.  That is, it maps a zip compression method (which
+// is an integer) to the appropriate method for decompression.
+define decompressTable as [
+        &zipExtractStore
+    ]    
+
+// Extract an zip entry by decompressing the data using the
+// appropriate decompression method
+[byte] zipExtract(ZipEntry e):
+    if e.method < |decompressTable|:
+        f = decompressTable[e.method]
+        return f(e)
+    else:
+        return [] // hack, should report error
+
+// The store method does not use any compression at all, so we can
+// just return data as is.
+[byte] zipExtractStore(ZipEntry e):
+    return e.data
