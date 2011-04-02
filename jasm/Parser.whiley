@@ -18,10 +18,11 @@ ClassFile|SyntaxError parseClassFile(string input):
     // Finally, create the class file record
     return { 
         minor_version: 0, 
-        major_version: 0,
-        modifiers: mods,    
-        type: ["blah"],
-        superClass: [""] }
+        major_version: 0
+//        modifiers: mods,    
+//        type: ["blah"],
+//        superClass: [""] }
+    }
 
 
 (bool|SyntaxError,state) parseClassOrInterface(state st):

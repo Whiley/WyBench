@@ -1,9 +1,9 @@
 define ClassFile as {
     int minor_version,
-    int major_version,
-    {ClassModifier} modifiers,
-    class_t type, 
-    class_t superClass    
+    int major_version
+//    {ClassModifier} modifiers,
+//    class_t type, 
+//    class_t superClass    
 }
 
 define PUBLIC as 1

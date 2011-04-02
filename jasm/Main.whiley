@@ -7,7 +7,9 @@ void System::main([string] args):
     file = this->openReader(args[0])
     contents = file->read()
     // parseClassFile(contents)
-    readClassFile(contents)
+    cf = readClassFile(contents)
+    if cf ~= FormatError:
+        out->println("Format error: " + cf.msg)
 
 void System::usage():
     out->println("usage: jasm [options] file(s)")
