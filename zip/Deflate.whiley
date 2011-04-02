@@ -29,5 +29,27 @@
 // See:  rfc1950, rfc1951, rfc1952
 // Also: http://zlib.net/zlib_docs.html
 
-[byte] zlibInflate([byte] data):
-    return data
+// First, define the tree used for encoding the dictionary
+define Leaf as { byte symbol }
+define Tree as Leaf | { Tree zero, Tree one }
+
+// Inflate compressed data
+[byte] zlibInflate([byte] compressed):
+    compressed = lebytestobits
+    last = false // indicates last block
+    i = 0        // index into compressed data (in bits)
+    uncompressed = [] 
+    while !last:
+        block,last,i = inflateBlock(compressed,i)
+        uncompressed = uncompressed + block
+    // all done        
+    return uncompressed
+
+([byte],bool,int) inflateBlock([byte] data, int start):
+    BFINAL = bitAt(data,start)
+
+// can this be moved into library?
+bool bitAt([byte] data, int start):
+    byteOff = start / 8
+    bitOff = start - (byteOff * 8)
+    
