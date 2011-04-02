@@ -111,7 +111,15 @@ ZipError|(ZipEntry,int) parseEntry([byte] data, int offset):
 // decompress methods.  That is, it maps a zip compression method (which
 // is an integer) to the appropriate method for decompression.
 define decompressTable as [
-        &zipExtractStore
+        &zipExtractStore,  // store
+        null,              // shrunk
+        null,              // reduce 1
+        null,              // reduce 2
+        null,              // reduce 3
+        null,              // reduce 4
+        null,              // imploaded
+        null,              // unused
+        &zipExtractDeflate // deflate
     ]    
 
 // Extract an zip entry by decompressing the data using the
@@ -119,11 +127,15 @@ define decompressTable as [
 [byte] zipExtract(ZipEntry e):
     if e.method < |decompressTable|:
         f = decompressTable[e.method]
-        return f(e)
-    else:
-        return [] // hack, should report error
+        if !(f ~= null):
+            return f(e)
+    return [] // hack, should report error
 
 // The store method does not use any compression at all, so we can
 // just return data as is.
 [byte] zipExtractStore(ZipEntry e):
     return e.data
+    
+// see http://zlib.net/zlib_docs.html
+[byte] zipExtractDeflate(ZipEntry e):
+    return []
