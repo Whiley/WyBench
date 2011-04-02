@@ -28,6 +28,8 @@
 // information on the ZIP file format:
 //
 // http://www.pkware.com/documents/casestudies/APPNOTE.TXT
+//
+// See also: rfc1950, rfc1951
 
 define ZIP_LOCAL_HEADER as 0x04034b50
 
