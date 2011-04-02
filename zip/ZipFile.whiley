@@ -28,8 +28,6 @@
 // information on the ZIP file format:
 //
 // http://www.pkware.com/documents/casestudies/APPNOTE.TXT
-//
-// See also: rfc1950, rfc1951
 
 define ZIP_LOCAL_HEADER as 0x04034b50
 
@@ -140,4 +138,4 @@ define decompressTable as [
     
 // see http://zlib.net/zlib_docs.html
 [byte] zipExtractDeflate(ZipEntry e):
-    return []
+    return zlibInflate(e.data)
