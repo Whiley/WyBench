@@ -10,7 +10,7 @@ define T_INT as 10
 define T_LONG as 11
 
 define primitive_t as { T_BOOLEAN, T_CHAR, T_FLOAT, T_DOUBLE, T_BYTE, T_SHORT, T_INT, T_LONG }
-define class_t as [string]
+define class_t as { string pkg, [string] classes }
 define jvm_t as primitive_t | class_t
 
 int slotSize(primitive_t type) ensures $==1 || $==2:
