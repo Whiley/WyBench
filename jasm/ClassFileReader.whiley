@@ -10,13 +10,19 @@ ClassFile readClassFile([byte] data) throws FormatError:
     if be2uint(data[0..4]) != 0xCAFEBABE:
         throw {msg: "bad magic number"}
     pool,pos = readConstantPool(data)
+    // class and super type
     typeIndex = be2uint(data[pos+2..pos+4])
     superIndex = be2uint(data[pos+4..pos+6])
-    print str(classItem(typeIndex,pool))
+    // number of interfaces
+    interfaces,pos = readInterfaces(pos+6,data,pool)
+    // return data
     return { 
       minor_version: be2uint(data[4..6]),
       major_version: be2uint(data[6..8]),
-      type: classItem(typeIndex,pool)
+      modifiers:     readClassModifiers(data[pos..pos+2]),
+      type:          classItem(typeIndex,pool),
+      super:         classItem(superIndex,pool),
+      interfaces:    interfaces
     }
 
 ([ConstantItem],int) readConstantPool([byte] data):
@@ -111,5 +117,28 @@ ClassFile readClassFile([byte] data) throws FormatError:
             throw {msg: "invalid constant pool item"}
     // ok, finally return the item
     return (item,pos)
-    
 
+{ClassModifier} readClassModifiers([byte] bytes):
+    // This method is not the best way to do this.  When Whiley 
+    // gets proper support for bit vectors, we'll be able to do better.
+    mods = be2uint(bytes)    
+    r = {}
+    base = 32768
+    while mods > 0:
+        if mods >= base:
+            mods = mods - base
+            r = r + {base}
+        base = base / 2
+    return r        
+
+([class_t],int) readInterfaces(int pos, [byte] data, [ConstantItem] pool):
+    num = be2uint(data[pos..pos+2])    
+    i = 0
+    pos = pos + 2
+    r = []
+    while i < num:
+        idx = be2uint(data[pos..pos+2])
+        r = r + [classItem(idx,pool)]
+        pos = pos + 2
+        i = i + 1
+    return r,pos

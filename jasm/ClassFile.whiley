@@ -1,21 +1,26 @@
 define ClassFile as {
     int minor_version,
     int major_version,
-//    {ClassModifier} modifiers,
-    class_t type
-//    class_t superClass    
+    {ClassModifier} modifiers,
+    class_t type,
+    class_t super,
+    [class_t] interfaces
 }
 
-define PUBLIC as 1
-define FINAL as 2
-define SUPER as 3
-define INTERFACE as 4
-define ABSTRACT as 5
+define ACC_PUBLIC as 0x0001
+define ACC_FINAL as  0x0010
+define ACC_SUPER as  0x0020
+define ACC_INTERFACE as 0x0200
+define ACC_ABSTRACT as 0x0400
+define ACC_ANNOTATION as 0x2000
+define ACC_ENUM as 0x4000
 
 define ClassModifier as {
-    PUBLIC,
-    FINAL,
-    SUPER,
-    INTERFACE,
-    ABSTRACT
+    ACC_PUBLIC,
+    ACC_FINAL,
+    ACC_SUPER,
+    ACC_INTERFACE,
+    ACC_ABSTRACT,
+    ACC_ANNOTATION,
+    ACC_ENUM
 }

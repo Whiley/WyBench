@@ -10,6 +10,8 @@ void System::main([string] args):
     cf = readClassFile(contents)
     if cf ~= FormatError:
         out->println("Format error: " + cf.msg)
+    else:
+        out->println(str(cf.interfaces))
 
 void System::usage():
     out->println("usage: jasm [options] file(s)")
