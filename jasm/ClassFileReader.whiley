@@ -6,9 +6,9 @@ define ReaderState as {
     [Constant] pool
 }
 
-ClassFile|FormatError readClassFile([byte] data):
+ClassFile readClassFile([byte] data) throws FormatError:
     if be2uint(data[0..4]) != 0xCAFEBABE:
-        return {msg: "bad magic number"}
+        throw {msg: "bad magic number"}
     nitems = le2uint(data[8..10])
     print "NITEMS: " + str(nitems)
     pool = [null] // first item is dummy
@@ -23,15 +23,17 @@ ClassFile|FormatError readClassFile([byte] data):
       major_version: le2uint(data[6..8]) 
     }
 
-(CONSTANT_Item,int) constItem([byte] data, int pos):
+(CONSTANT_Item,int) constItem([byte] data, int pos) throws FormatError:
     // could do with a switch statement here
-    tag = data[pos]
-    if tag == CONSTANT_FieldRef:
-        
-    else if tag == CONSTANT_MethodRef:
-
-    else if tag == CONSTANT_InterfaceMethodRef:
-
-    else if tag == CONSTANT_String:
+    switch data[pos]:
+        case CONSTANT_FieldRef:
+            break
+        case CONSTANT_MethodRef:
+            break
+        case CONSTANT_InterfaceMethodRef:
+            break
+        case CONSTANT_String:
+        default:
+            throw {msg: "invalid constant pool item"}
     
 
