@@ -88,7 +88,14 @@ string utf8Item(int index, [ConstantItem] pool) throws FormatError:
         return item.value
     else:
         throw {msg: "invalid utf8 item"}
+
+jvm_t typeItem(int index, [ConstantItem] pool) throws FormatError:
+    desc = utf8Item(index,pool)
+    return parseDescriptor(desc)
         
+jvm_t parseDescriptor(string desc):
+    return parseDescriptor(0,desc)
+
 class_t parseClassDescriptor(string desc):    
     desc = replace('/','.',desc)
     idx = lastIndexOf('.',desc)
@@ -100,3 +107,31 @@ class_t parseClassDescriptor(string desc):
         name = desc[idx+1..|desc|]
     // FIXME: split out inner classes here.
     return {pkg: pkg, classes:[name]}
+
+jvm_t parseDescriptor(int pos, string desc) throws FormatError:
+    if pos >= |desc|:
+        throw {msg: "invalid descriptor"}
+    lookahead = desc[pos]
+    switch lookahead:
+        case 'B':
+            return T_BOOLEAN
+        case 'C':
+            return T_CHAR
+        case 'D':
+            return T_DOUBLE
+        case 'F':
+            return T_FLOAT
+        case 'I':
+            return T_INT
+        case 'J':
+            return T_LONG
+        case 'S':
+            return T_SHORT
+        case 'Z':
+            return T_BOOLEAN
+        case 'V':
+            return T_VOID
+        case '[':
+            return T_ARRAY(parseDescriptor(pos+1,desc))
+    // unknown cases
+    throw {msg: "invalid descriptor"}

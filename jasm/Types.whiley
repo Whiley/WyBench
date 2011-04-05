@@ -1,5 +1,6 @@
 // =========== JVM Types ==============
 
+define T_VOID as 3
 define T_BOOLEAN as 4
 define T_CHAR as 5
 define T_FLOAT as 6
@@ -10,8 +11,41 @@ define T_INT as 10
 define T_LONG as 11
 
 define primitive_t as { T_BOOLEAN, T_CHAR, T_FLOAT, T_DOUBLE, T_BYTE, T_SHORT, T_INT, T_LONG }
+define array_t as { jvm_t element }
 define class_t as { string pkg, [string] classes }
-define jvm_t as primitive_t | class_t
+define ref_t as array_t | class_t
+define jvm_t as primitive_t | ref_t
+
+array_t T_ARRAY(jvm_t element):
+    return { element: element }
+
+string type2str(jvm_t t):
+    if t ~= primitive_t:
+        switch t:
+            case T_VOID:
+                return "void"
+            case T_BOOLEAN:
+                return "boolean"
+            case T_CHAR:
+                return "char"
+            case T_FLOAT:
+                return "float"
+            case T_DOUBLE:
+                return "double"
+            case T_BYTE:
+                return "byte"
+            case T_SHORT:
+                return "short"
+            case T_INT:
+                return "int"
+            case T_LONG:
+                return "long"
+    else if t ~= class_t:
+        r = t.pkg
+        for class in t.classes:
+            r = r + "." + class
+        return r            
+    return "" // unreachable
 
 int slotSize(primitive_t type) ensures $==1 || $==2:
     if(type == T_DOUBLE || type == T_LONG):

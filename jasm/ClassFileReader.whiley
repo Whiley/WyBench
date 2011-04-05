@@ -9,20 +9,23 @@ define ReaderState as {
 ClassFile readClassFile([byte] data) throws FormatError:
     if be2uint(data[0..4]) != 0xCAFEBABE:
         throw {msg: "bad magic number"}
-    pool,pos = readConstantPool(data)
+    pool,pend = readConstantPool(data)
     // class and super type
-    typeIndex = be2uint(data[pos+2..pos+4])
-    superIndex = be2uint(data[pos+4..pos+6])
-    // number of interfaces
-    interfaces,pos = readInterfaces(pos+6,data,pool)
+    typeIndex = be2uint(data[pend+2..pend+4])
+    superIndex = be2uint(data[pend+4..pend+6])
+    // read interfaces
+    interfaces,pos = readInterfaces(pend+6,data,pool)
+    // read fields
+    fields,pos = readFields(pos,data,pool)
     // return data
     return { 
       minor_version: be2uint(data[4..6]),
       major_version: be2uint(data[6..8]),
-      modifiers:     readClassModifiers(data[pos..pos+2]),
+      modifiers:     readClassModifiers(data[pend..pend+2]),
       type:          classItem(typeIndex,pool),
       super:         classItem(superIndex,pool),
-      interfaces:    interfaces
+      interfaces:    interfaces,
+      fields: fields
     }
 
 ([ConstantItem],int) readConstantPool([byte] data):
@@ -142,3 +145,36 @@ ClassFile readClassFile([byte] data) throws FormatError:
         pos = pos + 2
         i = i + 1
     return r,pos
+
+([FieldInfo],int) readFields(int pos, [byte] data, [ConstantItem] pool):
+    nfields = be2uint(data[pos..pos+2])
+    pos = pos + 2
+    fields = []
+    while nfields > 0:
+        f,pos = readField(pos,data,pool)
+        fields = fields + [f]
+        print "READ FIELD: " + f.name + " " + type2str(f.type)
+        nfields = nfields - 1
+    return fields,pos
+
+(FieldInfo,int) readField(int pos, [byte] data, [ConstantItem] pool):    
+    nattrs = be2uint(data[pos+6..pos+8])
+    // need to parse attributes here
+    return {
+        modifiers: readFieldModifiers(data[pos..pos+2]),
+        name: utf8Item(be2uint(data[pos+2..pos+4]),pool),
+        type: typeItem(be2uint(data[pos+4..pos+6]),pool)
+    },pos
+
+{FieldModifier} readFieldModifiers([byte] bytes):
+    // This method is not the best way to do this.  When Whiley 
+    // gets proper support for bit vectors, we'll be able to do better.
+    mods = be2uint(bytes)    
+    r = {}
+    base = 32768
+    while mods > 0:
+        if mods >= base:
+            mods = mods - base
+            r = r + {base}
+        base = base / 2
+    return r   
