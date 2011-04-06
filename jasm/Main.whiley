@@ -40,6 +40,9 @@ void System::printMethod(MethodInfo method):
     out->print("    ")
     out->print(methodModifiers2str(method.modifiers))
     out->println(method.name + type2str(method.type) + ":")
+    for attr in method.attributes:
+        if attr ~= CodeAttr:
+            this->printCodeAttr(attr)
     
 string classModifiers2str({ClassModifier} modifiers):
     r = " "
@@ -139,3 +142,7 @@ string methodModifiers2str({MethodModifier} modifiers):
                 r = r + "synthetic "
                 break
     return r
+
+void System::printCodeAttr(CodeAttr code):
+    out->print("        ")
+    out->println("Stack=" + str(code.maxStack) + ", Locals=" + str(code.maxLocals))

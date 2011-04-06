@@ -242,7 +242,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
     end = pos + 6 + nbytes
     // TODO: replace this hard-coded dispatch with a dispatch table.
     if name == "Code":
-        return readCodeAttribute(data[pos+6..end], pool),end
+        return readCodeAttribute(data[pos..end], pool),end
     else:
         // unknown attribute
         return {
