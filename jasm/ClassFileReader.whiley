@@ -29,7 +29,6 @@ ClassFile readClassFile([byte] data) throws FormatError:
     }
 
 ([ConstantItem],int) readConstantPool([byte] data):
-    print "TAG: " + str(data[10])
     nitems = be2uint(data[8..10])
     pool = [
         // We initialise the first item of the constant pool with a 
@@ -43,9 +42,10 @@ ClassFile readClassFile([byte] data) throws FormatError:
     while i < nitems:        
         item,pos = constItem(data,pos)
         pool = pool + [item]
-        print "READ: #" + str(i) + " " + str(item.tag)
         if item.tag == CONSTANT_Long || item.tag == CONSTANT_Double:
-            // for some reason, longs and doubles take two slots.
+            // For some reason, longs and doubles take two slots.
+            // So, we put a "dummy" into the second slot.
+            pool = pool + [{tag: CONSTANT_Integer, value: 0}]
             i = i + 2
         else:
             i = i + 1
