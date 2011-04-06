@@ -96,7 +96,34 @@ jvm_t typeItem(int index, [ConstantItem] pool) throws FormatError:
 fun_t methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
     desc = utf8Item(index,pool)
     return parseMethodDescriptor(desc)
-        
+
+(string,string) nameAndTypeItem(int index, [ConstantItem] pool) throws FormatError:
+    item = pool[index]
+    if item ~= NameAndTypeInfo:
+        name = utf8Item(item.name_index,pool)
+        desc = utf8Item(item.descriptor_index,pool)
+        return name,desc
+    else:
+        throw {msg: "invalid name and type item"}                
+
+(class_t,string,fun_t) methodRefItem(int index, [ConstantItem] pool) throws FormatError:
+    item = pool[index]
+    if item ~= MethodRefInfo:
+        owner = classItem(item.class_index,pool)
+        name,desc = nameAndTypeItem(item.name_and_type_index,pool)
+        return owner,name,parseMethodDescriptor(desc)
+    else:
+        throw {msg: "invalid method ref item"}
+
+(class_t,string,jvm_t) fieldRefItem(int index, [ConstantItem] pool) throws FormatError:
+    item = pool[index]
+    if item ~= FieldRefInfo:
+        owner = classItem(item.class_index,pool)
+        name,desc = nameAndTypeItem(item.name_and_type_index,pool)
+        return owner,name,parseDescriptor(desc)
+    else:
+        throw {msg: "invalid field ref item"}
+
 jvm_t parseDescriptor(string desc):
     type,pos = parseDescriptor(0,desc)
     return type

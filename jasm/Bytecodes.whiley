@@ -2,11 +2,13 @@
 // Bytecode Structures
 // ===========================================
 
-define Unit as { int offset, int op, int kind }
-define LoadStore as { int offset, int op, int kind, byte index }
-define Branch as { int offset, int op, int kind, int16 offset }
+define Unit as { int offset, int op }
+define LoadStore as { int offset, int op, byte index }
+define Branch as { int offset, int op, int16 offset }
+define Invoke as { int offset, int op, class_t owner, string name, fun_t type }
+define Field as { int offset, int op, class_t owner, string name, jvm_t type }
 
-define Bytecode as Unit | LoadStore | Branch
+define Bytecode as Unit | LoadStore | Branch | Invoke | Field
 
 string code2str(Bytecode b):
     return bytecodeStrings[b.op]
@@ -120,7 +122,7 @@ define MOD_INTERFACE as 3
 // instructions.  Don't ask me where I got it from ... it was a lot of
 // hard work to build :)
 define decodeTable as [
-    (NOP),                         // NOP = 0    
+    (NOP,FMT_EMPTY,T_VOID),                   // NOP = 0    
     (LOADCONST, FMT_INTNULL, T_REF),          // ACONST_NULL = 1;
     (LOADCONST, FMT_INTM1, T_INT),            // ICONST_M1 = 2;
     (LOADCONST, FMT_INT0 , T_INT),            // ICONST_0 = 3;
@@ -138,9 +140,9 @@ define decodeTable as [
     (LOADCONST, FMT_INT1 , T_DOUBLE),         // DCONST_1 = 15;
     (LOADCONST, FMT_I8, T_INT),               // BIPUSH = 16;
     (LOADCONST, FMT_I16, T_INT),              // SIPUSH = 17;
-    (LOADCONST, FMT_CONSTINDEX8),             // LDC = 18
-    (LOADCONST, FMT_CONSTINDEX16),            // LDC_W = 19
-    (LOADCONST, FMT_CONSTINDEX16),            // LDC2_W = 20    
+    (LOADCONST, FMT_CONSTINDEX8, T_VOID),     // LDC = 18
+    (LOADCONST, FMT_CONSTINDEX16, T_VOID),    // LDC_W = 19
+    (LOADCONST, FMT_CONSTINDEX16, T_VOID),    // LDC2_W = 20    
     (LOADVAR, FMT_VARIDX, T_INT),             // ILOAD = 21
     (LOADVAR, FMT_VARIDX, T_LONG),            // LLOAD = 22
     (LOADVAR, FMT_VARIDX, T_FLOAT),           // FLOAD = 23
@@ -207,15 +209,15 @@ define decodeTable as [
     (ARRAYSTORE, FMT_EMPTY, T_BYTE),          // BASTORE = 84
     (ARRAYSTORE, FMT_EMPTY, T_CHAR),          // CASTORE = 85;
     (ARRAYSTORE, FMT_EMPTY, T_SHORT),         // SASTORE = 86;        
-    (POP),                                    // POP = 87;
-    (POP),                                    // POP2 = 88;    
-    (DUP),                                    // DUP = 89    
-    (DUPX1),                                  // DUP_X1 = 90
-    (DUPX2),                                  // DUP_X2 = 91    
-    (DUP),                                    // DUP2 = 92;
-    (DUPX1),                                  // DUP2_X1 = 93
-    (DUPX2),                                  // DUP2_X2 = 94
-    (SWAP),                                   // SWAP = 95;    
+    (POP, FMT_EMPTY, T_VOID),                 // POP = 87;
+    (POP, FMT_EMPTY, T_VOID),                 // POP2 = 88;    
+    (DUP, FMT_EMPTY, T_VOID),                 // DUP = 89    
+    (DUPX1, FMT_EMPTY, T_VOID),               // DUP_X1 = 90
+    (DUPX2, FMT_EMPTY, T_VOID),               // DUP_X2 = 91    
+    (DUP, FMT_EMPTY, T_VOID),                 // DUP2 = 92;
+    (DUPX1, FMT_EMPTY, T_VOID),               // DUP2_X1 = 93
+    (DUPX2, FMT_EMPTY, T_VOID),               // DUP2_X2 = 94
+    (SWAP, FMT_EMPTY, T_VOID),                // SWAP = 95;    
     (ADD, FMT_EMPTY, T_INT),                  // IADD = 96
     (ADD, FMT_EMPTY, T_LONG),                 // LADD = 97
     (ADD, FMT_EMPTY, T_FLOAT),                // FADD = 98
@@ -252,7 +254,7 @@ define decodeTable as [
     (OR, FMT_EMPTY, T_LONG),                  // LXOR = 129    
     (XOR, FMT_EMPTY, T_INT),                  // IXOR = 130
     (XOR, FMT_EMPTY, T_LONG),                 // LXOR = 131        
-    (IINC, FMT_VARIDX_I8),                    // IINC = 132    
+    (IINC, FMT_VARIDX_I8, T_VOID),            // IINC = 132    
     (CONVERT, FMT_EMPTY, S_INT, T_LONG),      // I2L = 133
     (CONVERT, FMT_EMPTY, S_INT, T_FLOAT),     // I2F = 134
     (CONVERT, FMT_EMPTY, S_INT, T_DOUBLE),    // I2D = 135    
@@ -287,41 +289,41 @@ define decodeTable as [
     (IFCMP, FMT_TARGET16, T_INT),             // IF_ICMPLE = 164;
     (IFCMP, FMT_TARGET16, T_REF),             // IF_ACMPEQ = 165;
     (IFCMP, FMT_TARGET16, T_REF),             // IF_ACMPNE = 166;    
-    (GOTO, FMT_TARGET16),                     // GOTO = 167;    
-    (JSR, FMT_TARGET16),                      // JSR = 168;    
-    (RET),                                    // RET = 169;    
-    (SWITCH, FMT_TABLESWITCH),                // TABLESWITCH = 170;
-    (SWITCH, FMT_LOOKUPSWITCH),               // LOOKUPSWITCH = 171;    
+    (GOTO, FMT_TARGET16, T_VOID),             // GOTO = 167;    
+    (JSR, FMT_TARGET16, T_VOID),              // JSR = 168;    
+    (RET, FMT_EMPTY, T_VOID),                 // RET = 169;    
+    (SWITCH, FMT_TABLESWITCH, T_VOID),        // TABLESWITCH = 170;
+    (SWITCH, FMT_LOOKUPSWITCH, T_VOID),       // LOOKUPSWITCH = 171;    
     (RETURN, FMT_EMPTY, T_INT),               // IRETURN = 172;
     (RETURN, FMT_EMPTY, T_LONG),              // LRETURN = 173;
     (RETURN, FMT_EMPTY, T_FLOAT),             // FRETURN = 174;
     (RETURN, FMT_EMPTY, T_DOUBLE),            // DRETURN = 175;
     (RETURN, FMT_EMPTY, T_REF),               // ARETURN = 176;
-    (RETURN),                                 // RETURN = 177;    	
-    (FIELDLOAD, MOD_STATIC, FMT_FIELDINDEX16),// GETSTATIC = 178;
-    (FIELDSTORE, MOD_STATIC, FMT_FIELDINDEX16),  // PUTSTATIC = 179;
-    (FIELDLOAD, FMT_FIELDINDEX16),            // GETFIELD = 180;
-    (FIELDSTORE, FMT_FIELDINDEX16),           // PUTFIELD = 181; 
-    (INVOKE, FMT_METHODINDEX16),              // INVOKEVIRTUAL = 182;    
-    (INVOKE, MOD_SPECIAL, FMT_METHODINDEX16), // INVOKESPECIAL = 183;
-    (INVOKE, MOD_STATIC, FMT_METHODINDEX16),  // INVOKESTATIC = 184;
-    (INVOKE, MOD_INTERFACE, FMT_METHODINDEX16_U8_0), // INVOKEINTERFACE = 185;    
+    (RETURN, FMT_EMPTY, T_VOID),              // RETURN = 177;    	
+    (FIELDLOAD, FMT_FIELDINDEX16, T_VOID),// GETSTATIC = 178;
+    (FIELDSTORE, FMT_FIELDINDEX16, T_VOID),  // PUTSTATIC = 179;
+    (FIELDLOAD, FMT_FIELDINDEX16, T_VOID),    // GETFIELD = 180;
+    (FIELDSTORE, FMT_FIELDINDEX16, T_VOID),   // PUTFIELD = 181; 
+    (INVOKE, FMT_METHODINDEX16, T_VOID),      // INVOKEVIRTUAL = 182;    
+    (INVOKE, FMT_METHODINDEX16, T_VOID),      // INVOKESPECIAL = 183;
+    (INVOKE, FMT_METHODINDEX16, T_VOID),      // INVOKESTATIC = 184;
+    (INVOKE, FMT_METHODINDEX16_U8_0, T_VOID), // INVOKEINTERFACE = 185;    
     null,                                     // UNUSED = 186;    
-    (NEW, FMT_TYPEINDEX16),                   // NEW = 187
-    (NEW, FMT_ATYPE),                         // NEWARRAY = 188
-    (NEW, FMT_TYPEAINDEX16),                  // ANEWARRAY = 189    	
-    (ARRAYLENGTH),                            // ARRAYLENGTH = 190;        
-    (THROW),                                  // ATHROW = 191    
-    (CHECKCAST, FMT_TYPEINDEX16),             // CHECKCAST = 192;    
-    (INSTANCEOF, FMT_TYPEINDEX16),            // INSTANCEOF = 193;    
-    (MONITORENTER),                           // MONITORENTER = 194;
-    (MONITOREXIT),                            // MONITOREXIT = 195;    
-    (WIDE_INSN),                              // WIDE = 196;    
-    (NEW, FMT_TYPEINDEX16_U8),                // MULTIANEWARRAY = 197;    
-    (IF, FMT_TARGET16, T_REF),                // IFNULL = 198;
-    (IF, FMT_TARGET16, T_REF),                // IFNONNULL = 199;
-    (GOTO, FMT_TARGET32),                     // GOTO_W = 200;
-    (JSR, FMT_TARGET32)                       // JSR_W = 201;
+    (NEW, FMT_TYPEINDEX16, T_VOID),           // NEW = 187
+    (NEW, FMT_ATYPE, T_VOID),                 // NEWARRAY = 188
+    (NEW, FMT_TYPEAINDEX16, T_VOID),          // ANEWARRAY = 189    	
+    (ARRAYLENGTH, FMT_EMPTY, T_VOID),         // ARRAYLENGTH = 190;        
+    (THROW, FMT_EMPTY, T_VOID),               // ATHROW = 191    
+    (CHECKCAST, FMT_TYPEINDEX16, T_VOID),     // CHECKCAST = 192;    
+    (INSTANCEOF, FMT_TYPEINDEX16, T_VOID),    // INSTANCEOF = 193;    
+    (MONITORENTER, FMT_EMPTY, T_VOID),        // MONITORENTER = 194;
+    (MONITOREXIT, FMT_EMPTY, T_VOID),         // MONITOREXIT = 195;    
+    (WIDE_INSN, FMT_EMPTY, T_VOID),           // WIDE = 196;    
+    (NEW, FMT_TYPEINDEX16_U8, FMT_EMPTY, T_VOID), // MULTIANEWARRAY = 197;    
+    (IF, FMT_TARGET16, T_REF, FMT_EMPTY, T_VOID), // IFNULL = 198;
+    (IF, FMT_TARGET16, T_REF, FMT_EMPTY, T_VOID), // IFNONNULL = 199;
+    (GOTO, FMT_TARGET32, T_VOID),             // GOTO_W = 200;
+    (JSR, FMT_TARGET32, T_VOID)               // JSR_W = 201;
 ]
 
 // ===========================================
