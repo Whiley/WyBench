@@ -146,3 +146,7 @@ string methodModifiers2str({MethodModifier} modifiers):
 void System::printCodeAttr(CodeAttr code):
     out->print("        ")
     out->println("Stack=" + str(code.maxStack) + ", Locals=" + str(code.maxLocals))
+    for bc in code.bytecodes:
+        out->print("        ")
+        out->print(str(bc.offset) + ":   ")
+        out->println(code2str(bc))
