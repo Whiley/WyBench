@@ -17,6 +17,10 @@ ClassFile readClassFile([byte] data) throws FormatError:
     interfaces,pos = readInterfaces(pend+6,data,pool)
     // read fields
     fields,pos = readFields(pos,data,pool)
+    // read methods
+    methods,pos = readMethods(pos,data,pool)
+    // read attributes
+    attrs,pos = readAttributes(pos,data,pool)
     // return data
     return { 
       minor_version: be2uint(data[4..6]),
@@ -165,17 +169,31 @@ ClassFile readClassFile([byte] data) throws FormatError:
         nfields = nfields - 1
     return fields,pos
 
+([MethodInfo],int) readMethods(int pos, [byte] data, [ConstantItem] pool):
+    nmethods = be2uint(data[pos..pos+2])
+    pos = pos + 2
+    methods = []
+    while nmethods > 0:
+        f,pos = readMethod(pos,data,pool)
+        methods = methods + [f]
+        nmethods = nmethods - 1
+    return methods,pos
+
 (FieldInfo,int) readField(int pos, [byte] data, [ConstantItem] pool):       
     // now, parse attributes
-    nattrs = be2uint(data[pos+6..pos+8])    
-    attrs = []
-    i = 0
-    while i < nattrs:
-        attr,pos = parseAttribute(pos,data,pool)
-        attrs = attrs + [attr]
-        i = i + 1
+    attrs,pos = readAttributes(pos+6,data,pool)    
     return {
         modifiers: readFieldModifiers(data[pos..pos+2]),
+        name: utf8Item(be2uint(data[pos+2..pos+4]),pool),
+        type: typeItem(be2uint(data[pos+4..pos+6]),pool),
+        attributes: attrs
+    },pos
+
+(MethodInfo,int) readMethod(int pos, [byte] data, [ConstantItem] pool):       
+    // now, parse attributes
+    attrs,pos = readAttributes(pos+6,data,pool)    
+    return {
+        modifiers: readMethodModifiers(data[pos..pos+2]),
         name: utf8Item(be2uint(data[pos+2..pos+4]),pool),
         type: typeItem(be2uint(data[pos+4..pos+6]),pool),
         attributes: attrs
@@ -194,7 +212,30 @@ ClassFile readClassFile([byte] data) throws FormatError:
         base = base / 2
     return r   
 
-(AttributeInfo,int) parseAttribute(int pos, [byte] data, [ConstantItem] pool):
+{MethodModifier} readMethodModifiers([byte] bytes):
+    // This method is not the best way to do this.  When Whiley 
+    // gets proper support for bit vectors, we'll be able to do better.
+    mods = be2uint(bytes)    
+    r = {}
+    base = 32768
+    while mods > 0:
+        if mods >= base:
+            mods = mods - base
+            r = r + {base}
+        base = base / 2
+    return r   
+
+([AttributeInfo],int) readAttributes(int pos, [byte] data, [ConstantItem] pool):
+    nattrs = be2uint(data[pos..pos+2])    
+    attrs = []
+    i = 0
+    while i < nattrs:
+        attr,pos = readAttribute(pos,data,pool)
+        attrs = attrs + [attr]
+        i = i + 1
+    return attrs,pos
+
+(AttributeInfo,int) readAttribute(int pos, [byte] data, [ConstantItem] pool):
     nbytes = be2uint(data[pos+2..pos+6])    
     end = pos + 6 + nbytes
     return {
