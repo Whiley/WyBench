@@ -92,9 +92,14 @@ string utf8Item(int index, [ConstantItem] pool) throws FormatError:
 jvm_t typeItem(int index, [ConstantItem] pool) throws FormatError:
     desc = utf8Item(index,pool)
     return parseDescriptor(desc)
+
+fun_t methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
+    desc = utf8Item(index,pool)
+    return parseMethodDescriptor(desc)
         
 jvm_t parseDescriptor(string desc):
-    return parseDescriptor(0,desc)
+    type,pos = parseDescriptor(0,desc)
+    return type
 
 class_t parseClassDescriptor(string desc):    
     desc = replace('/','.',desc)
@@ -108,30 +113,49 @@ class_t parseClassDescriptor(string desc):
     // FIXME: split out inner classes here.
     return {pkg: pkg, classes:[name]}
 
-jvm_t parseDescriptor(int pos, string desc) throws FormatError:
+(jvm_t,int) parseDescriptor(int pos, string desc) throws FormatError:
     if pos >= |desc|:
         throw {msg: "invalid descriptor"}
     lookahead = desc[pos]
     switch lookahead:
         case 'B':
-            return T_BOOLEAN
+            return T_BOOLEAN,pos+1
         case 'C':
-            return T_CHAR
+            return T_CHAR,pos+1
         case 'D':
-            return T_DOUBLE
+            return T_DOUBLE,pos+1
         case 'F':
-            return T_FLOAT
+            return T_FLOAT,pos+1
         case 'I':
-            return T_INT
+            return T_INT,pos+1
         case 'J':
-            return T_LONG
+            return T_LONG,pos+1
         case 'S':
-            return T_SHORT
+            return T_SHORT,pos+1
         case 'Z':
-            return T_BOOLEAN
+            return T_BOOLEAN,pos+1
         case 'V':
-            return T_VOID
+            return T_VOID,pos+1
+        case 'L':
+            end = indexOf(';',pos+1,desc)
+            if end ~= null:
+                throw {msg: "invalid descriptor"}
+            type = parseClassDescriptor(desc[pos+1..end])
+            return type,end+1
         case '[':
-            return T_ARRAY(parseDescriptor(pos+1,desc))
+            elem,pos = parseDescriptor(pos+1,desc)
+            return T_ARRAY(elem),pos
     // unknown cases
     throw {msg: "invalid descriptor"}
+
+fun_t parseMethodDescriptor(string desc) throws FormatError:
+    print "GOT: " + desc
+    if desc[0] != '(':
+        throw { msg: "invalid method descriptor" }
+    pos = 1
+    params = []
+    while desc[pos] != ')':
+        param,pos = parseDescriptor(pos,desc)
+        params = params + [param]
+    ret,pos = parseDescriptor(pos+1,desc)
+    return { ret: ret, params: params }

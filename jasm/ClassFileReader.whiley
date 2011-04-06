@@ -181,23 +181,23 @@ ClassFile readClassFile([byte] data) throws FormatError:
 
 (FieldInfo,int) readField(int pos, [byte] data, [ConstantItem] pool):       
     // now, parse attributes
-    attrs,pos = readAttributes(pos+6,data,pool)    
+    attrs,end = readAttributes(pos+6,data,pool)    
     return {
         modifiers: readFieldModifiers(data[pos..pos+2]),
         name: utf8Item(be2uint(data[pos+2..pos+4]),pool),
         type: typeItem(be2uint(data[pos+4..pos+6]),pool),
         attributes: attrs
-    },pos
+    },end
 
 (MethodInfo,int) readMethod(int pos, [byte] data, [ConstantItem] pool):       
     // now, parse attributes
-    attrs,pos = readAttributes(pos+6,data,pool)    
+    attrs,end = readAttributes(pos+6,data,pool)    
     return {
         modifiers: readMethodModifiers(data[pos..pos+2]),
         name: utf8Item(be2uint(data[pos+2..pos+4]),pool),
-        type: typeItem(be2uint(data[pos+4..pos+6]),pool),
+        type: methodTypeItem(be2uint(data[pos+4..pos+6]),pool),
         attributes: attrs
-    },pos
+    },end
 
 {FieldModifier} readFieldModifiers([byte] bytes):
     // This method is not the best way to do this.  When Whiley 
@@ -229,6 +229,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
     nattrs = be2uint(data[pos..pos+2])    
     attrs = []
     i = 0
+    pos = pos + 2
     while i < nattrs:
         attr,pos = readAttribute(pos,data,pool)
         attrs = attrs + [attr]

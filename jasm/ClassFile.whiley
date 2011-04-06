@@ -18,7 +18,7 @@ define FieldInfo as {
 define MethodInfo as {
     {MethodModifier} modifiers,
     string name,
-    jvm_t type,
+    fun_t type,
     [AttributeInfo] attributes   
 }
 

@@ -14,6 +14,7 @@ define primitive_t as { T_BOOLEAN, T_CHAR, T_FLOAT, T_DOUBLE, T_BYTE, T_SHORT, T
 define array_t as { jvm_t element }
 define class_t as { string pkg, [string] classes }
 define ref_t as array_t | class_t
+define fun_t as { jvm_t ret, [jvm_t] params }
 define jvm_t as primitive_t | ref_t
 
 array_t T_ARRAY(jvm_t element):
