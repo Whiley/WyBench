@@ -45,6 +45,8 @@ string type2str(jvm_t t):
         for class in t.classes:
             r = r + "." + class
         return r            
+    else if t ~= array_t:
+        return type2str(t.element) + "[]"
     return "" // unreachable
 
 int slotSize(primitive_t type) ensures $==1 || $==2:

@@ -11,7 +11,13 @@ define ClassFile as {
 define FieldInfo as {
     {FieldModifier} modifiers,
     string name,
-    jvm_t type    
+    jvm_t type,
+    [AttributeInfo] attributes   
+}
+
+define AttributeInfo as {
+    string name,
+    [byte] data
 }
 
 define ACC_PUBLIC as 0x0001

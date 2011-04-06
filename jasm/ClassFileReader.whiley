@@ -29,6 +29,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
     }
 
 ([ConstantItem],int) readConstantPool([byte] data):
+    print "TAG: " + str(data[10])
     nitems = be2uint(data[8..10])
     pool = [
         // We initialise the first item of the constant pool with a 
@@ -39,10 +40,15 @@ ClassFile readClassFile([byte] data) throws FormatError:
     ]
     i=1
     pos = 10
-    while i < nitems:
+    while i < nitems:        
         item,pos = constItem(data,pos)
         pool = pool + [item]
-        i = i + 1
+        print "READ: #" + str(i) + " " + str(item.tag)
+        if item.tag == CONSTANT_Long || item.tag == CONSTANT_Double:
+            // for some reason, longs and doubles take two slots.
+            i = i + 2
+        else:
+            i = i + 1
     return pool,pos            
 
 (ConstantItem,int) constItem([byte] data, int pos) throws FormatError:
@@ -61,6 +67,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
             }
             pos = pos + 3
             break
+        case CONSTANT_Float:
         case CONSTANT_Integer:
             item = {
                 tag: tag,
@@ -69,6 +76,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
             }
             pos = pos + 5
             break
+        case CONSTANT_Double:
         case CONSTANT_Long:
             item = {
                 tag: tag,
@@ -117,6 +125,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
             pos = pos_3+len
             break
         default:
+            print "TAG: " + str(tag)
             throw {msg: "invalid constant pool item"}
     // ok, finally return the item
     return (item,pos)
@@ -153,17 +162,23 @@ ClassFile readClassFile([byte] data) throws FormatError:
     while nfields > 0:
         f,pos = readField(pos,data,pool)
         fields = fields + [f]
-        print "READ FIELD: " + f.name + " " + type2str(f.type)
         nfields = nfields - 1
     return fields,pos
 
-(FieldInfo,int) readField(int pos, [byte] data, [ConstantItem] pool):    
-    nattrs = be2uint(data[pos+6..pos+8])
-    // need to parse attributes here
+(FieldInfo,int) readField(int pos, [byte] data, [ConstantItem] pool):       
+    // now, parse attributes
+    nattrs = be2uint(data[pos+6..pos+8])    
+    attrs = []
+    i = 0
+    while i < nattrs:
+        attr,pos = parseAttribute(pos,data,pool)
+        attrs = attrs + [attr]
+        i = i + 1
     return {
         modifiers: readFieldModifiers(data[pos..pos+2]),
         name: utf8Item(be2uint(data[pos+2..pos+4]),pool),
-        type: typeItem(be2uint(data[pos+4..pos+6]),pool)
+        type: typeItem(be2uint(data[pos+4..pos+6]),pool),
+        attributes: attrs
     },pos
 
 {FieldModifier} readFieldModifiers([byte] bytes):
@@ -178,3 +193,11 @@ ClassFile readClassFile([byte] data) throws FormatError:
             r = r + {base}
         base = base / 2
     return r   
+
+(AttributeInfo,int) parseAttribute(int pos, [byte] data, [ConstantItem] pool):
+    nbytes = be2uint(data[pos+2..pos+6])    
+    end = pos + 6 + nbytes
+    return {
+        name: utf8Item(be2uint(data[pos..pos+2]),pool),
+        data: data[pos+6..end]
+    },end
