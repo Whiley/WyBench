@@ -33,7 +33,7 @@ define BRANCH as {
     int16 offset }
 
 // =========== All Bytecodes ==============
-define bytecode as UNIT | STORE | LOAD | BRANCH
+define Bytecode as UNIT | STORE | LOAD | BRANCH
 
 // =========== Translate Bytecodes ==============
 [byte] translate1(UNIT unit):

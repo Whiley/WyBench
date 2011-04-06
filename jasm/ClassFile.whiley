@@ -23,10 +23,18 @@ define MethodInfo as {
     [AttributeInfo] attributes   
 }
 
-define AttributeInfo as {
+define UnknownAttr as {
     string name,
     [byte] data
 }
+
+define CodeAttr as {
+    int maxStack,
+    int maxLocals,
+    [Bytecode] bytecodes
+}
+
+define AttributeInfo as UnknownAttr | CodeAttr
 
 define ACC_PUBLIC as 0x0001
 define ACC_PRIVATE as 0x0002

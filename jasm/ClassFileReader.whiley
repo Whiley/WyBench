@@ -237,9 +237,15 @@ ClassFile readClassFile([byte] data) throws FormatError:
     return attrs,pos
 
 (AttributeInfo,int) readAttribute(int pos, [byte] data, [ConstantItem] pool):
+    name = utf8Item(be2uint(data[pos..pos+2]),pool)
     nbytes = be2uint(data[pos+2..pos+6])    
     end = pos + 6 + nbytes
-    return {
-        name: utf8Item(be2uint(data[pos..pos+2]),pool),
-        data: data[pos+6..end]
-    },end
+    // TODO: replace this hard-coded dispatch with a dispatch table.
+    if name == "Code":
+        return readCodeAttribute(data[pos+6..end], pool),end
+    else:
+        // unknown attribute
+        return {
+            name: name,
+            data: data[pos+6..end]
+        },end
