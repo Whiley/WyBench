@@ -129,7 +129,6 @@ ClassFile readClassFile([byte] data) throws FormatError:
             pos = pos_3+len
             break
         default:
-            print "TAG: " + str(tag)
             throw {msg: "invalid constant pool item"}
     // ok, finally return the item
     return (item,pos)

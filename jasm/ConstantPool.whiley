@@ -149,7 +149,6 @@ class_t parseClassDescriptor(string desc):
     throw {msg: "invalid descriptor"}
 
 fun_t parseMethodDescriptor(string desc) throws FormatError:
-    print "GOT: " + desc
     if desc[0] != '(':
         throw { msg: "invalid method descriptor" }
     pos = 1
