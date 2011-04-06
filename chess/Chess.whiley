@@ -105,8 +105,8 @@ bool validMove(Move move, Board board):
     // Now, identify what colour I am
     if move ~= CastleMove:
         isWhite = move.isWhite
-    else if move ~= CastleMove:
-        isWhite = move.piece.isWhite
+    else if move ~= SingleMove:
+        isWhite = move.piece.colour
     else:
         isWhite = false // deadcode
     // finally, check everything is OK

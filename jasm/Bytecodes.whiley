@@ -36,21 +36,21 @@ define BRANCH as {
 define bytecode as UNIT | STORE | LOAD | BRANCH
 
 // =========== Translate Bytecodes ==============
-[byte] translate(UNIT unit):
+[byte] translate1(UNIT unit):
     return [unit.op] // easy!
 
-[byte] translate(BINOP binop):
+[byte] translate2(BINOP binop):
     return [binop.op] // easy!
 
 // Translate store bytecodes
-[byte] translate(STORE store):
+[byte] translate3(STORE store):
     if(store.op in immStoreCode):
         return [store.op]
     else:
         return [store.op,store.index]
 
 // Translate load bytecodes
-[byte] translate(LOAD load):
+[byte] translate4(LOAD load):
     if(load.op in immLoadCode):
         return [load.op]
     else:
