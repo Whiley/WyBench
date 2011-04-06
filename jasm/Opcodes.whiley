@@ -15,6 +15,7 @@ define MONITORENTER as 13
 define MONITOREXIT as 14
 define SWITCH as 15
 define CONVERT as 16	
+define WIDE_INSN as 18
 define POP as 19
 define DUP as 20
 define DUPX1 as 21
@@ -83,6 +84,16 @@ define FMT_INT3 as 23
 define FMT_INT4 as 24
 define FMT_INT5 as 25
 define FMT_INTNULL as 26
+
+define S_INT as 0
+define S_LONG as 1
+define S_FLOAT as 2
+define S_DOUBLE as 3
+
+define MOD_VIRTUAL as 0
+define MOD_STATIC as 1
+define MOD_SPECIAL as 2
+define MOD_INTERFACE as 3
 
 // The following table is used to simplify decoding of bytecode
 // instructions.  Don't ask me where I got it from ... it was a lot of

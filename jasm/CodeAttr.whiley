@@ -13,3 +13,4 @@ CodeAttr readCodeAttribute([byte] data, [ConstantItem] pool):
 
 (Bytecode,int) readBytecode(int pos, [byte] data, [ConstantItem] pool):
     info = decodeTable[data[pos]]
+    return ({kind: NOP},pos+1)
