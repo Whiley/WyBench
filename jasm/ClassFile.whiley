@@ -5,7 +5,8 @@ define ClassFile as {
     class_t type,
     class_t super,
     [class_t] interfaces,
-    [FieldInfo] fields
+    [FieldInfo] fields,
+    [MethodInfo] methods
 }
 
 define FieldInfo as {

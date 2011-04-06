@@ -43,12 +43,26 @@ string type2str(jvm_t t):
                 return "long"
     else if t ~= class_t:
         r = t.pkg
+        c = ""
         for class in t.classes:
-            r = r + "." + class
-        return r            
+            c = c + "." + class
+        if |r| == 0:
+            return c[1..]
+        else:
+            return r + c            
     else if t ~= array_t:
         return type2str(t.element) + "[]"
     return "" // unreachable
+
+string type2str(fun_t ft):
+    r = "("
+    firstTime=true
+    for p in ft.params:
+        if !firstTime:
+            r = r + ", "
+        firstTime=false
+        r = r + type2str(p)
+    return r + ")" + type2str(ft.ret)
 
 int slotSize(primitive_t type) ensures $==1 || $==2:
     if(type == T_DOUBLE || type == T_LONG):

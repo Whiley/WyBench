@@ -29,7 +29,8 @@ ClassFile readClassFile([byte] data) throws FormatError:
       type:          classItem(typeIndex,pool),
       super:         classItem(superIndex,pool),
       interfaces:    interfaces,
-      fields: fields
+      fields: fields,
+      methods: methods
     }
 
 ([ConstantItem],int) readConstantPool([byte] data):

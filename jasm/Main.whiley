@@ -26,11 +26,20 @@ void System::printClassFile(ClassFile cf):
     // Now, print out fields
     for field in cf.fields:
         this->printField(field)
+    // and, methods
+    for method in cf.methods:
+        out->println("") // separator
+        this->printMethod(method)
 
 void System::printField(FieldInfo field):
     out->print("    ")
     out->print(fieldModifiers2str(field.modifiers))
     out->println(type2str(field.type) + " " + field.name)
+
+void System::printMethod(MethodInfo method):
+    out->print("    ")
+    out->print(methodModifiers2str(method.modifiers))
+    out->println(method.name + type2str(method.type) + ":")
     
 string classModifiers2str({ClassModifier} modifiers):
     r = " "
@@ -89,5 +98,44 @@ string fieldModifiers2str({FieldModifier} modifiers):
                 break
             case ACC_ENUM:
                 r = r + "enum "
+                break
+    return r
+
+string methodModifiers2str({MethodModifier} modifiers):
+    r = " "
+    for cm in modifiers:
+        switch cm:
+            case ACC_PUBLIC:
+                r = r + "public "
+                break
+            case ACC_PRIVATE:
+                r = r + "private "
+                break
+            case ACC_PROTECTED:
+                r = r + "protected "
+                break
+            case ACC_STATIC:
+                r = r + "static "
+                break
+            case ACC_SYNCHRONIZED:
+                r = r + "synchronized "
+                break
+            case ACC_BRIDGE:
+                r = r + "bridge "
+                break
+            case ACC_VARARGS:
+                r = r + "varargs "
+                break
+            case ACC_NATIVE:
+                r = r + "natic "
+                break
+            case ACC_ABSTRACT:
+                r = r + "abstract "
+                break
+            case ACC_STRICT:
+                r = r + "strict "
+                break
+            case ACC_SYNTHETIC:
+                r = r + "synthetic "
                 break
     return r
