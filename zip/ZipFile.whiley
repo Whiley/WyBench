@@ -119,7 +119,7 @@ define decompressTable as [
         null,              // reduce 4
         null,              // imploaded
         null,              // unused
-        &zipExtractDeflate // deflate
+        null               // deflate
     ]    
 
 // Extract an zip entry by decompressing the data using the
@@ -135,7 +135,3 @@ define decompressTable as [
 // just return data as is.
 [byte] zipExtractStore(ZipEntry e):
     return e.data
-    
-// see http://zlib.net/zlib_docs.html
-[byte] zipExtractDeflate(ZipEntry e):
-    return zlibInflate(e.data)
