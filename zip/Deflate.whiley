@@ -28,6 +28,7 @@
 //
 // See:  rfc1950, rfc1951, rfc1952
 // Also: http://zlib.net/zlib_docs.html
+// Also: http://www.infinitepartitions.com/cgi-bin/showarticle.cgi?article=art001
 
 // First, define the tree used for encoding the dictionary
 define Leaf as { byte symbol }
