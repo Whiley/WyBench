@@ -2,15 +2,15 @@ import whiley.io.*
 
 void System::main([string] args):
     if |args| == 0:
-        this<->usage()
+        this.usage()
         return
-    file = this<->openReader(args[0])
-    contents = file<->read()
+    file = this.openReader(args[0])
+    contents = file.read()
     game = parseChessGame(contents)
     if game ~= SyntaxError:
-        out<->println("syntax error: " + game.msg)
+        out.println("syntax error: " + game.msg)
     else:     
-        out<->println("Moves taken:\n")
+        out.println("Moves taken:\n")
         board = startingChessBoard  
         r = ""       
         i = 0
@@ -24,26 +24,26 @@ void System::main([string] args):
                 if !sign:
                     r = move2str(move)
                 else:
-                    out<->println(str((i/2)+1) + " " + r + " " + move2str(move))
+                    out.println(str((i/2)+1) + " " + r + " " + move2str(move))
                 sign = !sign
                 i = i + 1
             else:
                 invalid = true
         if sign:
-            out<->println(str((i/2)+1) + " " + r)
+            out.println(str((i/2)+1) + " " + r)
         // print out board
-        out<->println("\nCurrent board:\n")
-        out<->println(board2str(board))
+        out.println("\nCurrent board:\n")
+        out.println(board2str(board))
         // now check whether last move was invalid
         if invalid:
-            out<->println("Invalid move:\n")
+            out.println("Invalid move:\n")
             if sign:
-                out<->println(str((i/2)+1) + " ... " + move2str(game[i]))
+                out.println(str((i/2)+1) + " ... " + move2str(game[i]))
             else:
-                out<->println(move2str(game[i]))
+                out.println(move2str(game[i]))
 
 void System::usage():
-    out<->println("usage: chess file")
+    out.println("usage: chess file")
 
 define BLACK_PIECE_CHARS as [ 'p', 'n', 'b', 'r', 'q', 'k' ]
 

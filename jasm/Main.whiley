@@ -2,47 +2,47 @@ import whiley.io.*
 
 void System::main([string] args):
     if |args| == 0:
-        this<->usage()
+        this.usage()
         return
-    file = this<->openReader(args[0])
-    contents = file<->read()
+    file = this.openReader(args[0])
+    contents = file.read()
     cf = readClassFile(contents)
-    this<->printClassFile(cf)
+    this.printClassFile(cf)
 
 void System::usage():
-    out<->println("usage: jasm [options] file(s)")
+    out.println("usage: jasm [options] file(s)")
 
 void System::printClassFile(ClassFile cf):
     // First, print out the class and its modifiers
-    out<->print(classModifiers2str(cf.modifiers))
-    out<->print("class " + type2str(cf.type))
-    out<->print(" extends " + type2str(cf.super))
+    out.print(classModifiers2str(cf.modifiers))
+    out.print("class " + type2str(cf.type))
+    out.print(" extends " + type2str(cf.super))
     if |cf.interfaces| > 0:
-        out<->print(" implements")
+        out.print(" implements")
         for i in cf.interfaces:
-            out<->print(" ")
-            out<->print(type2str(i))
-    out<->println(":")
+            out.print(" ")
+            out.print(type2str(i))
+    out.println(":")
     // Now, print out fields
     for field in cf.fields:
-        this<->printField(field)
+        this.printField(field)
     // and, methods
     for method in cf.methods:
-        out<->println("") // separator
-        this<->printMethod(method)
+        out.println("") // separator
+        this.printMethod(method)
 
 void System::printField(FieldInfo field):
-    out<->print("    ")
-    out<->print(fieldModifiers2str(field.modifiers))
-    out<->println(type2str(field.type) + " " + field.name)
+    out.print("    ")
+    out.print(fieldModifiers2str(field.modifiers))
+    out.println(type2str(field.type) + " " + field.name)
 
 void System::printMethod(MethodInfo method):
-    out<->print("    ")
-    out<->print(methodModifiers2str(method.modifiers))
-    out<->println(method.name + type2str(method.type) + ":")
+    out.print("    ")
+    out.print(methodModifiers2str(method.modifiers))
+    out.println(method.name + type2str(method.type) + ":")
     for attr in method.attributes:
         if attr ~= CodeAttr:
-            this<->printCodeAttr(attr)
+            this.printCodeAttr(attr)
     
 string classModifiers2str({ClassModifier} modifiers):
     r = " "
@@ -144,9 +144,9 @@ string methodModifiers2str({MethodModifier} modifiers):
     return r
 
 void System::printCodeAttr(CodeAttr code):
-    out<->print("        ")
-    out<->println("Stack=" + str(code.maxStack) + ", Locals=" + str(code.maxLocals))
+    out.print("        ")
+    out.println("Stack=" + str(code.maxStack) + ", Locals=" + str(code.maxLocals))
     for bc in code.bytecodes:
-        out<->print("        ")
-        out<->print(str(bc.offset) + ":   ")
-        out<->println(code2str(bc))
+        out.print("        ")
+        out.print(str(bc.offset) + ":   ")
+        out.println(code2str(bc))
