@@ -96,16 +96,16 @@ bool validMove(Move move, Board board):
     nboard = applyMove(move,board)
     // first, test the check status of this side, and the opposition
     // side.
-    if move ~= CheckMove:
+    if move is CheckMove:
         move = move.check
         oppCheck = true
     else:
         // normal expectation of opposition
         oppCheck = false
     // Now, identify what colour I am
-    if move ~= CastleMove:
+    if move is CastleMove:
         isWhite = move.isWhite
-    else if move ~= SingleMove:
+    else if move is SingleMove:
         isWhite = move.piece.colour
     else:
         isWhite = false // deadcode
@@ -115,13 +115,13 @@ bool validMove(Move move, Board board):
         internalValidMove(move, board) // move otherwise ok?
 
 bool internalValidMove(Move move, Board board):
-    if move ~= SingleTake:
+    if move is SingleTake:
         return validPieceMove(move.piece,move.from,move.to,true,board) &&
             validPiece(move.taken,move.to,board)
-    else if move ~= SingleMove:
+    else if move is SingleMove:
         return validPieceMove(move.piece,move.from,move.to,false,board) &&
-            squareAt(move.to,board) ~= null
-    else if move ~= CastleMove:
+            squareAt(move.to,board) is null
+    else if move is CastleMove:
         return validCastle(move, board)
     // the following should be dead-code, but to remove it requires
     // more structuring of CheckMoves
@@ -147,7 +147,7 @@ bool validPieceMove(Piece piece, Pos from, Pos to, bool isTake, Board board):
 // board.
 bool validPiece(Piece piece, Pos pos, Board board):
     sq = squareAt(pos,board)
-    if sq ~= null:
+    if sq is null:
         return false
     else:
         return sq == piece
@@ -159,13 +159,13 @@ bool inCheck(bool isWhite, Board board):
         kpos = findPiece(WHITE_KING,board)
     else:
         kpos = findPiece(BLACK_KING,board)    
-    if kpos ~= null:   
+    if kpos is null:   
         return false // dead-code!
     // check every possible piece cannot take king
     for r in range(0,8):
         for c in range(0,8):
             tmp = board.rows[r][c]
-            if !(tmp ~= null) && tmp.colour == !isWhite && 
+            if !(tmp is null) && tmp.colour == !isWhite && 
                 validPieceMove(tmp,{row: r, col: c},kpos,true,board):
                 return true
     // no checks found
@@ -239,12 +239,12 @@ bool validKingMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
 // =============================================================
 
 Board applyMove(Move move, Board board):
-    if move ~= SingleMove:
+    if move is SingleMove:
         // SingleTake is processed in the same way
         return applySingleMove(move,board)
-    else if move ~= CheckMove:
+    else if move is CheckMove:
         return applyMove(move.check,board)
-    else if move ~= CastleMove:
+    else if move is CastleMove:
         return applyCastleMove(move,board)
     return board
 
@@ -292,7 +292,7 @@ bool clearRowExcept(Pos from, Pos to, Board board):
     row = from.row
     col = from.col + inc
     while col != to.col:
-        if board.rows[row][col] ~= null:
+        if board.rows[row][col] is null:
             col = col + inc
         else:
             return false        
@@ -309,7 +309,7 @@ bool clearColumnExcept(Pos from, Pos to, Board board):
     row = from.row + inc
     col = from.col
     while row != to.row:
-        if board.rows[row][col] ~= null:
+        if board.rows[row][col] is null:
             row = row + inc
         else:
             return false            
@@ -332,7 +332,7 @@ bool clearDiaganolExcept(Pos from, Pos to, Board board):
     row = from.row + rowinc
     col = from.col + colinc
     while row != to.row && col != to.col:
-        if board.rows[row][col] ~= null:
+        if board.rows[row][col] is null:
             col = col + colinc
             row = row + rowinc
         else:

@@ -2,15 +2,15 @@ import whiley.io.*
 
 void System::main([string] args):
     if |args| == 0:
-        this<->usage()
+        this.usage()
         return
-    file = this<->openReader(args[0])
-    contents = file<->read()
+    file = this.openReader(args[0])
+    contents = file.read()
     game = parseChessGame(contents)
-    if game ~= SyntaxError:
-        out<->println("syntax error: " + game.msg)
+    if game is SyntaxError:
+        out.println("syntax error: " + game.msg)
     else:     
-        out<->println("Moves taken:\n")
+        out.println("Moves taken:\n")
         board = startingChessBoard  
         r = ""       
         i = 0
@@ -24,26 +24,26 @@ void System::main([string] args):
                 if !sign:
                     r = move2str(move)
                 else:
-                    out<->println(str((i/2)+1) + " " + r + " " + move2str(move))
+                    out.println(str((i/2)+1) + " " + r + " " + move2str(move))
                 sign = !sign
                 i = i + 1
             else:
                 invalid = true
         if sign:
-            out<->println(str((i/2)+1) + " " + r)
+            out.println(str((i/2)+1) + " " + r)
         // print out board
-        out<->println("\nCurrent board:\n")
-        out<->println(board2str(board))
+        out.println("\nCurrent board:\n")
+        out.println(board2str(board))
         // now check whether last move was invalid
         if invalid:
-            out<->println("Invalid move:\n")
+            out.println("Invalid move:\n")
             if sign:
-                out<->println(str((i/2)+1) + " ... " + move2str(game[i]))
+                out.println(str((i/2)+1) + " ... " + move2str(game[i]))
             else:
-                out<->println(move2str(game[i]))
+                out.println(move2str(game[i]))
 
 void System::usage():
-    out<->println("usage: chess file")
+    out.println("usage: chess file")
 
 define BLACK_PIECE_CHARS as [ 'p', 'n', 'b', 'r', 'q', 'k' ]
 
@@ -62,33 +62,32 @@ string row2str(Row row):
     return r + "|\n"
 
 string square2str(Square p):
-    if p ~= null:
+    if p is null:
         return "_"
     else if p.colour:
-        return [PIECE_CHARS[p.kind]]
+        return "" + PIECE_CHARS[p.kind]
     else:
-        return [BLACK_PIECE_CHARS[p.kind]]
+        return "" + BLACK_PIECE_CHARS[p.kind]
 
 string move2str(Move m):
-    if m ~= SingleTake: 
+    if m is SingleTake: 
         return piece2str(m.piece) + pos2str(m.from) + "x" + piece2str(m.taken) + pos2str(m.to)
-    else if m ~= SingleMove:
+    else if m is SingleMove:
         return piece2str(m.piece) + pos2str(m.from) + "-" + pos2str(m.to)   
-    else if m ~= CastleMove:
+    else if m is CastleMove:
         if m.kingSide:
             return "O-O"
         else:
             return "O-O-O"
-    else if m ~= CheckMove:
+    else:
         // check move
         return move2str(m.check) + "+"  
-    return "???"
 
 string piece2str(Piece p):
     if p.kind == PAWN:
         return ""
     else:
-        return [PIECE_CHARS[p.kind]]
+        return "" + PIECE_CHARS[p.kind]
 
 string pos2str(Pos p):
-    return ['a' + p.col,'1' + p.row]
+    return "" + ('a' + p.col) + ('1' + p.row)
