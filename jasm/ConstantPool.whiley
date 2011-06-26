@@ -85,7 +85,7 @@ class_t classItem(int index, [ConstantItem] pool) throws FormatError:
 string utf8Item(int index, [ConstantItem] pool) throws FormatError:
     item = pool[index]
     if item is Utf8Info:
-        return item.value
+        return ascii2str(item.value)
     else:
         throw {msg: "invalid utf8 item"}
 

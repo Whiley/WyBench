@@ -5,7 +5,7 @@ void System::main([string] args):
         this.usage()
         return
     file = this.openReader(args[0])
-    contents = file.read()
+    contents = ascii2str(file.read())
     game = parseChessGame(contents)
     if game is SyntaxError:
         out.println("syntax error: " + game.msg)
