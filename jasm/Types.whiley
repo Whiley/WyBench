@@ -41,6 +41,8 @@ string type2str(jvm_t t):
                 return "int"
             case T_LONG:
                 return "long"
+            default:
+                return "unknown"
     else if t is class_t:
         r = t.pkg
         c = ""
@@ -50,9 +52,8 @@ string type2str(jvm_t t):
             return c[1..]
         else:
             return r + c            
-    else if t is array_t:
+    else:
         return type2str(t.element) + "[]"
-    return "" // unreachable
 
 string type2str(fun_t ft):
     r = "("
