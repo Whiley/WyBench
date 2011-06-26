@@ -75,7 +75,7 @@ define ConstantItem as FieldRefInfo |
 // extract a class type item
 class_t classItem(int index, [ConstantItem] pool) throws FormatError:
     item = pool[index]
-    if item ~= ClassInfo:
+    if item is ClassInfo:
         utf8 = utf8Item(item.name_index,pool)
         return parseClassDescriptor(utf8)
     else:
@@ -84,7 +84,7 @@ class_t classItem(int index, [ConstantItem] pool) throws FormatError:
 // extract a utf8 string item
 string utf8Item(int index, [ConstantItem] pool) throws FormatError:
     item = pool[index]
-    if item ~= Utf8Info:
+    if item is Utf8Info:
         return item.value
     else:
         throw {msg: "invalid utf8 item"}
@@ -99,7 +99,7 @@ fun_t methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
 
 (string,string) nameAndTypeItem(int index, [ConstantItem] pool) throws FormatError:
     item = pool[index]
-    if item ~= NameAndTypeInfo:
+    if item is NameAndTypeInfo:
         name = utf8Item(item.name_index,pool)
         desc = utf8Item(item.descriptor_index,pool)
         return name,desc
@@ -108,7 +108,7 @@ fun_t methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
 
 (class_t,string,fun_t) methodRefItem(int index, [ConstantItem] pool) throws FormatError:
     item = pool[index]
-    if item ~= MethodRefInfo:
+    if item is MethodRefInfo:
         owner = classItem(item.class_index,pool)
         name,desc = nameAndTypeItem(item.name_and_type_index,pool)
         return owner,name,parseMethodDescriptor(desc)
@@ -117,7 +117,7 @@ fun_t methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
 
 (class_t,string,jvm_t) fieldRefItem(int index, [ConstantItem] pool) throws FormatError:
     item = pool[index]
-    if item ~= FieldRefInfo:
+    if item is FieldRefInfo:
         owner = classItem(item.class_index,pool)
         name,desc = nameAndTypeItem(item.name_and_type_index,pool)
         return owner,name,parseDescriptor(desc)
@@ -131,7 +131,7 @@ jvm_t parseDescriptor(string desc):
 class_t parseClassDescriptor(string desc):    
     desc = replace('/','.',desc)
     idx = lastIndexOf('.',desc)
-    if idx ~= null:
+    if idx is null:
         pkg = ""
         name = desc
     else:
@@ -165,7 +165,7 @@ class_t parseClassDescriptor(string desc):
             return T_VOID,pos+1
         case 'L':
             end = indexOf(';',pos+1,desc)
-            if end ~= null:
+            if end is null:
                 throw {msg: "invalid descriptor"}
             type = parseClassDescriptor(desc[pos+1..end])
             return type,end+1

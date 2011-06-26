@@ -21,7 +21,7 @@ array_t T_ARRAY(jvm_t element):
     return { element: element }
 
 string type2str(jvm_t t):
-    if t ~= primitive_t:
+    if t is primitive_t:
         switch t:
             case T_VOID:
                 return "void"
@@ -41,7 +41,7 @@ string type2str(jvm_t t):
                 return "int"
             case T_LONG:
                 return "long"
-    else if t ~= class_t:
+    else if t is class_t:
         r = t.pkg
         c = ""
         for class in t.classes:
@@ -50,7 +50,7 @@ string type2str(jvm_t t):
             return c[1..]
         else:
             return r + c            
-    else if t ~= array_t:
+    else if t is array_t:
         return type2str(t.element) + "[]"
     return "" // unreachable
 

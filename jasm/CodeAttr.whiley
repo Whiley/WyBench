@@ -16,9 +16,9 @@ CodeAttr readCodeAttribute([byte] data, [ConstantItem] pool):
 (Bytecode,int) readBytecode(int pos, [byte] data, [ConstantItem] pool) throws FormatError:
     opcode = data[pos]
     info = decodeTable[opcode]
-    if info ~= null:
+    if info is null:
         throw {msg: "invalid bytecode"}
-    else if info ~= (int,int,int):
+    else if info is (int,int,int):
         kind,fmt,type = info
         switch fmt:
             case FMT_EMPTY:
