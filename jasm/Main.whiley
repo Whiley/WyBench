@@ -41,7 +41,7 @@ void System::printMethod(MethodInfo method):
     out.print(methodModifiers2str(method.modifiers))
     out.println(method.name + type2str(method.type) + ":")
     for attr in method.attributes:
-        if attr ~= CodeAttr:
+        if attr is CodeAttr:
             this.printCodeAttr(attr)
     
 string classModifiers2str({ClassModifier} modifiers):

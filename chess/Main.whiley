@@ -5,9 +5,9 @@ void System::main([string] args):
         this.usage()
         return
     file = this.openReader(args[0])
-    contents = file.read()
+    contents = ascii2str(file.read())
     game = parseChessGame(contents)
-    if game ~= SyntaxError:
+    if game is SyntaxError:
         out.println("syntax error: " + game.msg)
     else:     
         out.println("Moves taken:\n")
@@ -62,33 +62,32 @@ string row2str(Row row):
     return r + "|\n"
 
 string square2str(Square p):
-    if p ~= null:
+    if p is null:
         return "_"
     else if p.colour:
-        return [PIECE_CHARS[p.kind]]
+        return "" + PIECE_CHARS[p.kind]
     else:
-        return [BLACK_PIECE_CHARS[p.kind]]
+        return "" + BLACK_PIECE_CHARS[p.kind]
 
 string move2str(Move m):
-    if m ~= SingleTake: 
+    if m is SingleTake: 
         return piece2str(m.piece) + pos2str(m.from) + "x" + piece2str(m.taken) + pos2str(m.to)
-    else if m ~= SingleMove:
+    else if m is SingleMove:
         return piece2str(m.piece) + pos2str(m.from) + "-" + pos2str(m.to)   
-    else if m ~= CastleMove:
+    else if m is CastleMove:
         if m.kingSide:
             return "O-O"
         else:
             return "O-O-O"
-    else if m ~= CheckMove:
+    else:
         // check move
         return move2str(m.check) + "+"  
-    return "???"
 
 string piece2str(Piece p):
     if p.kind == PAWN:
         return ""
     else:
-        return [PIECE_CHARS[p.kind]]
+        return "" + PIECE_CHARS[p.kind]
 
 string pos2str(Pos p):
-    return ['a' + p.col,'1' + p.row]
+    return "" + ('a' + p.col) + ('1' + p.row)
