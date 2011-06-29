@@ -15,11 +15,14 @@ void System::main([string] args):
     sign = false
     // process each move in turn, updating the board
     while i < |game| && !invalid:
-        out.println(str(i) + ". ")
+        out.print(str(i+1) + ". ")
         white,black = game[i]
-        out.println(move2str(white))
+        out.print(move2str(white))
         if black != null:
+            out.print(" ")
             out.println(move2str(black))
+        else:
+            out.println("")
         i = i + 1
 /*
             if validMove(move,board):

@@ -26,12 +26,12 @@ define SyntaxError as {string msg}
         line = parseLine(input,pos)
         split = splitLine(line)
         whiteMove = parseMove(split[0], true)
-        moves = moves + [whiteMove]
         if |split| == 2:
             blackMove = parseMove(split[1], false) 
-            moves = moves + [blackMove]
         else:   
+            blackMove = null
             finished = true
+        moves = moves + [(whiteMove,blackMove)]
         pos = nextLine(input,pos+|line|)
     return moves
 
