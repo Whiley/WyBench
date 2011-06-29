@@ -1,3 +1,19 @@
+// This file implements a parse for chess games in Portable Game
+// Notation (PGN) format.  This is based around short-algebraic notation.
+// Such moves are, by themselves, incomplete.  We must have access to the 
+// current board state in order to decode them.
+//
+// See http://en.wikipedia.org/wiki/Algebraic_chess_notation for more.
+
+define RankPos as { int rank }
+define FilePos as { int file }
+define ShortPos as Pos | RankPos | FilePos
+
+define ShortSingleMove as { Piece piece, ShortPos from, Pos to, bool take }
+define ShortCheckMove as { ShortSingleMove move }
+
+define ShortMove as ShortSingleMove | ShortCheckMove | CastleMove
+
 define state as {string input, int pos}
 define SyntaxError as {string msg}
 
@@ -101,7 +117,6 @@ int parseWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     return index
-
 
 bool isWhiteSpace(char c):
     return c == ' ' || c == '\t'
