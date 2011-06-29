@@ -5,19 +5,20 @@
 //
 // See http://en.wikipedia.org/wiki/Algebraic_chess_notation for more.
 
-define RankPos as { int rank }
-define FilePos as { int file }
-define ShortPos as Pos | RankPos | FilePos
+define RankPos as { int row }
+define FilePos as { int col }
+define ShortPos as Pos | RankPos | FilePos | null
 
-define ShortSingleMove as { Piece piece, ShortPos from, Pos to, bool take }
+define ShortSingleMove as { Piece piece, ShortPos from, Pos to, bool isTake }
 define ShortCheckMove as { ShortSingleMove move }
 
 define ShortMove as ShortSingleMove | ShortCheckMove | CastleMove
+define ShortRound as (ShortMove,ShortMove|null)
 
 define state as {string input, int pos}
 define SyntaxError as {string msg}
 
-[Move]|SyntaxError parseChessGame(string input):
+[ShortRound] parseChessGame(string input) throws SyntaxError:
     pos = 0
     finished = false
     moves = []
@@ -58,7 +59,7 @@ int nextLine(string input, int pos):
         splits = splits + [input[start..pos]]    
     return splits        
 
-Move parseMove(string input, bool isWhite):
+ShortMove parseMove(string input, bool isWhite):
     // first, we check for castling moves
     if |input| >= 5 && input[0..5] == "O-O-O":
         move = { isWhite: isWhite, kingSide: false }
@@ -69,49 +70,64 @@ Move parseMove(string input, bool isWhite):
     else:
         // not a castling move
         index = parseWhiteSpace(0,input)
-        piece = parsePiece(input[index],isWhite)
-        if piece.kind != PAWN:
-            index = index + 1
-        from = parsePos(input[index..index+2])
-        index = index + 2
+        p,index = parsePiece(index,input,isWhite)
+        f,index = parseShortPos(index,input)
         if input[index] == 'x':
             index = index + 1
-            taken = parsePiece(input[index],!isWhite)
-            if taken.kind != PAWN:
-                index = index + 1
-            to = parsePos(input[index..index+2])
-            index = index + 2
-            move = { piece: piece, from: from, to: to, taken: taken }
+            flag = true
         else:
-            to = parsePos(input[index+1..index+3])
-            move = { piece: piece, from: from, to: to }
-            index = index + 3
+            flag = false
+        t = parsePos(input[index..index+2])
+        move = { piece: p, from: f, to: t, isTake: flag }
     // finally, test for a check move
-    if index < |input| && input[index] == '+':
-        move = {check: move} 
+    //if index < |input| && input[index] == '+':
+    //    move = {check: move} 
     return move
 
-Piece parsePiece(char lookahead, bool isWhite):
-    if lookahead == 'N':
-        piece = KNIGHT
-    else if lookahead == 'B':
-        piece = BISHOP
-    else if lookahead == 'R':
-        piece = ROOK
-    else if lookahead == 'K':
-        piece = KING
-        index = 1
-    else if lookahead == 'Q':
-        piece = QUEEN
-    else:    
-        // ignoring castling for now
-        piece = PAWN
-    return {kind: piece, colour: isWhite}
+(Piece,int) parsePiece(int index, string input, bool isWhite):
+    lookehead = input[index]
+    switch index:
+        case 'N':
+            piece = KNIGHT
+            break
+        case 'B':
+            piece = BISHOP
+            break
+        case 'R':
+            piece = ROOK
+            break
+        case 'K':
+            piece = KING
+            break
+        case 'Q':
+            piece = QUEEN
+            break
+        default:
+            index = index - 1
+            piece = PAWN
+    return {kind: PAWN, colour: isWhite}, index+1
     
 Pos parsePos(string input):
     c = input[0] - 'a'
     r = input[1] - '1'
     return { col: c, row: r }
+
+(ShortPos,int) parseShortPos(int index, string input):
+    c = input[index]
+    if isDigit(c):
+        // signals rank only
+        return { row: (c - '1') },index+1
+    else if c != 'x' && isLetter(c):
+        // so, could be file only, file and rank, or empty
+        d = input[index+1]
+        if isLetter(d):
+            // signals file only
+            return { col: (c - 'a') },index+1         
+        else if (index+2) < |input| && isLetter(input[index+2]):
+            // signals file and rank
+            return { col: (c - 'a'), row: (d - '1') },index+2
+    // no short move given
+    return null,index
 
 int parseWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):
