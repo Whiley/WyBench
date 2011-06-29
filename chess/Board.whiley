@@ -34,6 +34,33 @@ define BLACK_KING as { kind: KING, colour: false }
 define RowCol as int // where 0 <= $ && $ <= 8
 define Pos as { RowCol col, RowCol row } 
 
+define A1 as { col: 0, row: 0 }
+define A2 as { col: 0, row: 1 }
+define A3 as { col: 0, row: 2 }
+define A4 as { col: 0, row: 3 }
+define A5 as { col: 0, row: 4 }
+define A6 as { col: 0, row: 5 }
+define A7 as { col: 0, row: 6 }
+define A8 as { col: 0, row: 7 }
+
+define B1 as { col: 1, row: 0 }
+define B2 as { col: 1, row: 1 }
+define B3 as { col: 1, row: 2 }
+define B4 as { col: 1, row: 3 }
+define B5 as { col: 1, row: 4 }
+define B6 as { col: 1, row: 5 }
+define B7 as { col: 1, row: 6 }
+define B8 as { col: 1, row: 7 }
+
+define C1 as { col: 2, row: 0 }
+define C2 as { col: 2, row: 1 }
+define C3 as { col: 2, row: 2 }
+define C4 as { col: 2, row: 3 }
+define C5 as { col: 2, row: 4 }
+define C6 as { col: 2, row: 5 }
+define C7 as { col: 2, row: 6 }
+define C8 as { col: 2, row: 7 }
+
 // =============================================================
 // board
 // =============================================================

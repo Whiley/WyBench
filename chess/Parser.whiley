@@ -5,16 +5,6 @@
 //
 // See http://en.wikipedia.org/wiki/Algebraic_chess_notation for more.
 
-define RankPos as { int row }
-define FilePos as { int col }
-define ShortPos as Pos | RankPos | FilePos | null
-
-define ShortSingleMove as { Piece piece, ShortPos from, Pos to, bool isTake }
-define ShortCheckMove as { ShortSingleMove move }
-
-define ShortMove as ShortSingleMove | ShortCheckMove | CastleMove
-define ShortRound as (ShortMove,ShortMove|null)
-
 define state as {string input, int pos}
 define SyntaxError as {string msg}
 

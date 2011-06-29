@@ -14,40 +14,23 @@ void System::main([string] args):
     invalid = false
     sign = false
     // process each move in turn, updating the board
-    while i < |game| && !invalid:
+    while i < |game|:
         out.print(str(i+1) + ". ")
         white,black = game[i]
+        // test white
+        board = applyShortMove(white,board)        
         out.print(move2str(white))
+        // test black
         if black != null:
+            board = applyShortMove(black,board)        
             out.print(" ")
             out.println(move2str(black))
         else:
             out.println("")
         i = i + 1
-/*
-            if validMove(move,board):
-                board = applyMove(move,board)
-                if !sign:
-                    r = move2str(move)
-                else:
-                    out.println(str((i/2)+1) + " " + r + " " + move2str(move))
-                sign = !sign
-                i = i + 1
-            else:
-                invalid = true
-        if sign:
-            out.println(str((i/2)+1) + " " + r)
         // print out board
         out.println("\nCurrent board:\n")
         out.println(board2str(board))
-        // now check whether last move was invalid
-        if invalid:
-            out.println("Invalid move:\n")
-            if sign:
-                out.println(str((i/2)+1) + " ... " + move2str(game[i]))
-            else:
-                out.println(move2str(game[i]))
-*/
 
 void System::usage():
     out.println("usage: chess file")
