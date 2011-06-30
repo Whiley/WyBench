@@ -75,8 +75,8 @@ ShortMove parseMove(string input, bool isWhite):
     return move
 
 (Piece,int) parsePiece(int index, string input, bool isWhite):
-    lookehead = input[index]
-    switch index:
+    lookahead = input[index]
+    switch lookahead:
         case 'N':
             piece = KNIGHT
             break
@@ -95,7 +95,7 @@ ShortMove parseMove(string input, bool isWhite):
         default:
             index = index - 1
             piece = PAWN
-    return {kind: PAWN, colour: isWhite}, index+1
+    return {kind: piece, colour: isWhite}, index+1
     
 Pos parsePos(string input):
     c = input[0] - 'a'

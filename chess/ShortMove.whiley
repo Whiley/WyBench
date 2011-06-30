@@ -19,13 +19,11 @@ Move inferMove(ShortMove m, Board b) throws InvalidMove:
         m = inferMove(m.move, b)
         return { check: m }
     else if m is ShortSingleMove:
-        debug "STAGE 1\n"
         matches = findPiece(m.piece,b)
         matches = narrowTarget(m,matches,b)
         matches = narrowShortPos(m.from,matches)
-        debug "MATCHES: " + str(matches) + "\n"
         if |matches| == 1:
-            return { piece: WHITE_PAWN, from: matches[0], to: m.to }
+            return { piece: m.piece, from: matches[0], to: m.to }
         else:
             throw { board: b, move: m }
     // following line should cause an error
