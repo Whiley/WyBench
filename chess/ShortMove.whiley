@@ -64,12 +64,22 @@ Move inferMove(ShortMove m, Board b) throws InvalidMove:
                 r = r + [p]
         return r
 
+string shortPos2str(ShortPos p):
+    if p is null:
+        return ""
+    else if p is RankPos:
+        return "" + ('1' + p.row)
+    else if p is FilePos:
+        return "" + ('a' + p.col)
+    else: 
+        return pos2str(p)
+
 string shortMove2str(ShortMove m):
     if m is ShortSingleMove: 
         if m.isTake:
-            return piece2str(m.piece) + pos2str(m.from) + "x" + pos2str(m.to)
+            return piece2str(m.piece) + shortPos2str(m.from) + "x" + pos2str(m.to)
         else:
-            return piece2str(m.piece) + pos2str(m.from) + pos2str(m.to)
+            return piece2str(m.piece) + shortPos2str(m.from) + pos2str(m.to)
     else if m is CastleMove:
         if m.kingSide:
             return "O-O"

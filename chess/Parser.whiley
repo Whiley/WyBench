@@ -18,6 +18,7 @@ define SyntaxError as {string msg}
 
 (ShortRound,int) parseRound(int pos, string input):
     pos = parseNumber(pos,input)
+    pos = parseWhiteSpace(pos,input)
     white,pos = parseMove(pos,input,true)
     pos = parseWhiteSpace(pos,input)
     if pos < |input|:
@@ -27,8 +28,12 @@ define SyntaxError as {string msg}
         black = null
     return (white,black),pos
 
-int parseNumber(int pos, string input):
-    return pos
+int parseNumber(int pos, string input) throws SyntaxError:
+    while pos < |input| && input[pos] != '.':
+        pos = pos + 1
+    if pos == |input|:
+        throw { msg: "unexpected end of file" }
+    return pos+1
 
 (ShortMove,int) parseMove(int pos, string input, bool isWhite):
     // first, we check for castling moves    
