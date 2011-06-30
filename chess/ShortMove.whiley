@@ -63,3 +63,19 @@ Move inferMove(ShortMove m, Board b) throws InvalidMove:
             else if p == pos:
                 r = r + [p]
         return r
+
+string shortMove2str(ShortMove m):
+    if m is ShortSingleMove: 
+        if m.isTake:
+            return piece2str(m.piece) + pos2str(m.from) + "x" + pos2str(m.to)
+        else:
+            return piece2str(m.piece) + pos2str(m.from) + pos2str(m.to)
+    else if m is CastleMove:
+        if m.kingSide:
+            return "O-O"
+        else:
+            return "O-O-O"
+    else if m is ShortCheckMove:
+        // check move
+        return shortMove2str(m.move) + "+"  
+    return ""

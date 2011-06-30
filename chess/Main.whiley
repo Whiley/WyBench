@@ -19,12 +19,12 @@ void System::main([string] args):
         white,black = game[i]
         // test white
         board = applyShortMove(white,board)        
-        out.print(move2str(white))
+        out.print(shortMove2str(white))
         // test black
         if black != null:
             board = applyShortMove(black,board)        
             out.print(" ")
-            out.println(move2str(black))
+            out.println(shortMove2str(black))
         else:
             out.println("")
         i = i + 1
@@ -35,52 +35,6 @@ void System::main([string] args):
 void System::usage():
     out.println("usage: chess file")
 
-define BLACK_PIECE_CHARS as [ 'p', 'n', 'b', 'r', 'q', 'k' ]
-
-string board2str(Board b):
-    r = ""
-    i=8
-    while i >= 1:
-        r = r + str(i) + row2str(b.rows[i-1])
-        i = i - 1
-    return r + "  a b c d e f g h\n"
-
-string row2str(Row row):
-    r = ""
-    for square in row:
-        r = r + "|" + square2str(square)
-    return r + "|\n"
-
-string square2str(Square p):
-    if p is null:
-        return "_"
-    else if p.colour:
-        return "" + PIECE_CHARS[p.kind]
-    else:
-        return "" + BLACK_PIECE_CHARS[p.kind]
-
-string move2str(ShortMove m):
-    if m is ShortSingleMove: 
-        if m.isTake:
-            return piece2str(m.piece) + pos2str(m.from) + "x" + pos2str(m.to)
-        else:
-            return piece2str(m.piece) + pos2str(m.from) + pos2str(m.to)
-    else if m is CastleMove:
-        if m.kingSide:
-            return "O-O"
-        else:
-            return "O-O-O"
-    else if m is ShortCheckMove:
-        // check move
-        return move2str(m.move) + "+"  
-    return ""
-
-string piece2str(Piece p):
-    if p.kind == PAWN:
-        return ""
-    else:
-        return "" + PIECE_CHARS[p.kind]
-
 string pos2str(ShortPos p):
     if p is null:
         return ""
@@ -90,6 +44,3 @@ string pos2str(ShortPos p):
         return "" + ('a' + p.col)
     else: 
         return pos2str(p)
-
-string pos2str(Pos p):
-    return "" + ('a' + p.col) + ('1' + p.row)

@@ -201,3 +201,40 @@ int min(int a, int b):
     else:
         return a
 
+// =============================================================
+// I/O Functions
+// =============================================================
+
+define BLACK_PIECE_CHARS as [ 'p', 'n', 'b', 'r', 'q', 'k' ]
+
+string board2str(Board b):
+    r = ""
+    i=8
+    while i >= 1:
+        r = r + str(i) + row2str(b.rows[i-1])
+        i = i - 1
+    return r + "  a b c d e f g h\n"
+
+string row2str(Row row):
+    r = ""
+    for square in row:
+        r = r + "|" + square2str(square)
+    return r + "|\n"
+
+string square2str(Square p):
+    if p is null:
+        return "_"
+    else if p.colour:
+        return "" + PIECE_CHARS[p.kind]
+    else:
+        return "" + BLACK_PIECE_CHARS[p.kind]
+
+string piece2str(Piece p):
+    if p.kind == PAWN:
+        return ""
+    else:
+        return "" + PIECE_CHARS[p.kind]
+
+string pos2str(Pos p):
+    return "" + ('a' + p.col) + ('1' + p.row)
+

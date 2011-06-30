@@ -10,69 +10,49 @@ define SyntaxError as {string msg}
 
 [ShortRound] parseChessGame(string input) throws SyntaxError:
     pos = 0
-    finished = false
     moves = []
-    while pos < |input| && !finished:        
-        line = parseLine(input,pos)
-        split = splitLine(line)
-        whiteMove = parseMove(split[0], true)
-        if |split| == 2:
-            blackMove = parseMove(split[1], false) 
-        else:   
-            blackMove = null
-            finished = true
-        moves = moves + [(whiteMove,blackMove)]
-        pos = nextLine(input,pos+|line|)
+    while pos < |input|:        
+        round,pos = parseRound(pos,input)
+        moves = moves + [round]
     return moves
 
-string parseLine(string input, int pos):
-    start = pos
-    while pos < |input| && input[pos] != '\n':
-        pos = pos + 1
-    return input[start..pos]
+(ShortRound,int) parseRound(int pos, string input):
+    pos = parseNumber(pos,input)
+    white,pos = parseMove(pos,input,true)
+    pos = parseWhiteSpace(pos,input)
+    if pos < |input|:
+        black,pos = parseMove(pos,input,false)
+        pos = parseWhiteSpace(pos,input)
+    else:
+        black = null
+    return (white,black),pos
 
-int nextLine(string input, int pos):
-    while pos < |input| && (input[pos] == '\n' || input[pos] == '\r'):
-        pos = pos + 1
+int parseNumber(int pos, string input):
     return pos
 
-[string] splitLine(string input):
-    pos = 0
-    while pos < |input| && input[pos] != ' ':
-        pos = pos + 1
-    splits = [input[0..pos]]
-    pos = pos + 1
-    if pos < |input|:
-        start = pos
-        while pos < |input| && input[pos] != ' ':
-            pos = pos + 1
-        splits = splits + [input[start..pos]]    
-    return splits        
-
-ShortMove parseMove(string input, bool isWhite):
-    // first, we check for castling moves
-    if |input| >= 5 && input[0..5] == "O-O-O":
+(ShortMove,int) parseMove(int pos, string input, bool isWhite):
+    // first, we check for castling moves    
+    if |input| >= (pos+5) && input[pos..(pos+5)] == "O-O-O":
         move = { isWhite: isWhite, kingSide: false }
-        index = 5
-    else if |input| >= 3 && input[0..3] == "O-O":
+        pos = pos + 5
+    else if |input| >= (pos+3) && input[pos..(pos+3)] == "O-O":
         move = { isWhite: isWhite, kingSide: true }
-        index = 3
+        pos = pos + 3
     else:
         // not a castling move
-        index = parseWhiteSpace(0,input)
-        p,index = parsePiece(index,input,isWhite)
-        f,index = parseShortPos(index,input)
-        if input[index] == 'x':
-            index = index + 1
+        p,pos = parsePiece(pos,input,isWhite)
+        f,pos = parseShortPos(pos,input)
+        if input[pos] == 'x':
+            pos = pos + 1
             flag = true
         else:
             flag = false
-        t = parsePos(input[index..index+2])
+        t,pos = parsePos(pos,input)
         move = { piece: p, from: f, to: t, isTake: flag }
     // finally, test for a check move
     //if index < |input| && input[index] == '+':
-    //    move = {check: move} 
-    return move
+    //    move = {check: move}     
+    return move,pos
 
 (Piece,int) parsePiece(int index, string input, bool isWhite):
     lookahead = input[index]
@@ -97,10 +77,10 @@ ShortMove parseMove(string input, bool isWhite):
             piece = PAWN
     return {kind: piece, colour: isWhite}, index+1
     
-Pos parsePos(string input):
-    c = input[0] - 'a'
-    r = input[1] - '1'
-    return { col: c, row: r }
+(Pos,int) parsePos(int pos, string input):
+    c = input[pos] - 'a'
+    r = input[pos+1] - '1'
+    return { col: c, row: r },pos+2
 
 (ShortPos,int) parseShortPos(int index, string input):
     c = input[index]
@@ -125,6 +105,5 @@ int parseWhiteSpace(int index, string input):
     return index
 
 bool isWhiteSpace(char c):
-    return c == ' ' || c == '\t'
-
+    return c == ' ' || c == '\t' || c == '\n'
 
