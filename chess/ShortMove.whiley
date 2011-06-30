@@ -21,7 +21,7 @@ Move inferMove(ShortMove m, Board b) throws InvalidMove:
     else if m is ShortSingleMove:
         debug "STAGE 1\n"
         matches = findPiece(m.piece,b)
-        matches = narrowTarget(m.piece,m.to,matches)
+        matches = narrowTarget(m,matches,b)
         matches = narrowShortPos(m.from,matches)
         debug "MATCHES: " + str(matches) + "\n"
         if |matches| == 1:
@@ -43,11 +43,13 @@ Move inferMove(ShortMove m, Board b) throws InvalidMove:
             if validMove(move,b):
                 r = r + [pos]
     else:
+        r = []
         for pos in matches:
             move = { piece: sm.piece, from: pos, to: sm.to }
             if validMove(move,b):
-                r = r + [pos]        
+                r = r + [pos]
     return r
+
 
 // narrow matches based on short position
 [Pos] narrowShortPos(ShortPos pos, [Pos] matches):
