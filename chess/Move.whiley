@@ -14,6 +14,8 @@ define CastleMove as { bool isWhite, bool kingSide }
 define CheckMove as { Move check }
 define Move as CheckMove | CastleMove | SimpleMove
 
+define InvalidMove as { Move move, Board board }
+
 // castling
 // en passant
 
@@ -24,7 +26,10 @@ define Move as CheckMove | CastleMove | SimpleMove
 // The purpose of the validMove method is to check whether or not a
 // move is valid on a given board.
 bool validMove(Move move, Board board):
-    nboard = applyMove(move,board)
+    nboard = applyMoveDispatch(move,board)
+    return validMove(move,board,nboard)
+
+bool validMove(Move move, Board board, Board nboard):
     // first, test the check status of this side, and the opposition
     // side.
     if move is CheckMove:
@@ -87,11 +92,9 @@ bool validPiece(Piece piece, Pos pos, Board board):
 // respect to the opposite colour of the move.
 bool inCheck(bool isWhite, Board board):
     if isWhite:
-        kpos = findPiece(WHITE_KING,board)
+        kpos = findPiece(WHITE_KING,board)[0]
     else:
-        kpos = findPiece(BLACK_KING,board)    
-    if kpos is null:   
-        return false // dead-code!
+        kpos = findPiece(BLACK_KING,board)[0]     
     // check every possible piece cannot take king
     for r in range(0,8):
         for c in range(0,8):
@@ -169,7 +172,14 @@ bool validKingMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
 // Apply Move
 // =============================================================
 
-Board applyMove(Move move, Board board):
+Board applyMove(Move move, Board board) throws InvalidMove:
+    nboard = applyMoveDispatch(move,board)
+    if !validMove(move,board,nboard):
+        throw { move: move, board: board }
+    else:
+        return nboard
+
+Board applyMoveDispatch(Move move, Board board):
     if move is SingleMove:
         // SingleTake is processed in the same way
         return applySingleMove(move,board)

@@ -169,14 +169,15 @@ int sign(int x, int y):
     
 // This method finds a given piece.  It's used primarily to locate
 // kings on the board to check if they are in check.
-Pos|null findPiece(Piece p, Board b):
+[Pos] findPiece(Piece p, Board b):
+    matches = []
     for r in range(0,8):
         for c in range(0,8):
             if b.rows[r][c] == p:
                 // ok, we've located the piece
-                return { row: r, col: c }            
-    // could find the piece
-    return null
+                matches = matches + [{ row: r, col: c }]
+    // couldn't find the piece
+    return matches
 
 // range should be built in!
 [int] range(int start, int end):
