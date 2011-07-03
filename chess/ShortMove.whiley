@@ -3,7 +3,7 @@ define FilePos as { int col }
 define ShortPos as Pos | RankPos | FilePos | null
 
 define ShortSingleMove as { Piece piece, ShortPos from, Pos to, bool isTake }
-define ShortCheckMove as { ShortSingleMove move }
+define ShortCheckMove as { ShortMove check }
 
 define ShortMove as ShortSingleMove | ShortCheckMove | CastleMove
 define ShortRound as (ShortMove,ShortMove|null)
@@ -16,7 +16,7 @@ Move inferMove(ShortMove m, Board b) throws InvalidMove:
     if m is CastleMove:
         return m
     else if m is ShortCheckMove:
-        m = inferMove(m.move, b)
+        m = inferMove(m.check, b)
         return { check: m }
     else if m is ShortSingleMove:
         matches = findPiece(m.piece,b)
@@ -41,7 +41,6 @@ Move inferMove(ShortMove m, Board b) throws InvalidMove:
         taken = squareAt(sm.to,b)
         if taken is null:
             return []
-        debug "STAGE 1"
         r = []
         for pos in matches:
             move = { piece: sm.piece, from: pos, to: sm.to, taken: taken }
@@ -94,5 +93,5 @@ string shortMove2str(ShortMove m):
             return "O-O-O"
     else if m is ShortCheckMove:
         // check move
-        return shortMove2str(m.move) + "+"  
+        return shortMove2str(m.check) + "+"  
     return ""
