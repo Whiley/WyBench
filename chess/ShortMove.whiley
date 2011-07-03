@@ -23,7 +23,13 @@ Move inferMove(ShortMove m, Board b) throws InvalidMove:
         matches = narrowTarget(m,matches,b)
         matches = narrowShortPos(m.from,matches)
         if |matches| == 1:
-            return { piece: m.piece, from: matches[0], to: m.to }
+            if m.isTake:
+                piece = squareAt(m.to,b)
+                // null check needed for type system, but we know it must succeed
+                if piece != null:
+                    return { piece: m.piece, from: matches[0], to: m.to, taken: piece }
+            else:
+                return { piece: m.piece, from: matches[0], to: m.to }
         else:
             throw { board: b, move: m }
     // following line should cause an error
@@ -35,6 +41,7 @@ Move inferMove(ShortMove m, Board b) throws InvalidMove:
         taken = squareAt(sm.to,b)
         if taken is null:
             return []
+        debug "STAGE 1"
         r = []
         for pos in matches:
             move = { piece: sm.piece, from: pos, to: sm.to, taken: taken }

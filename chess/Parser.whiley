@@ -57,6 +57,7 @@ int parseNumber(int pos, string input) throws SyntaxError:
     // finally, test for a check move
     //if index < |input| && input[index] == '+':
     //    move = {check: move}     
+    debug "PARSED: " + str(move) + "\n"
     return move,pos
 
 (Piece,int) parsePiece(int index, string input, bool isWhite):
