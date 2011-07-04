@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class JavaMain {
 	public final static class Job {
 		public final int button;
 		public final boolean orange;

@@ -16,10 +16,10 @@ define Test as [Job]
     jobs = []
     while nitems > 0:
         pos = skipWhiteSpace(pos,input)
-        orange = input[pos] == 'O'
+        flag = input[pos] == 'O'
         pos = skipWhiteSpace(pos+1,input)
         target,pos = parseInt(pos,input)
-        jobs = jobs + target
+        jobs = jobs + { button: target, orange: flag }
         nitems = nitems - 1
     return jobs,pos
 
@@ -45,7 +45,7 @@ void System::main([string] args):
     pos = 0
     c = 1
     while pos < |input|:
-        test,job = parseTest(pos,input)
+        test,pos = parseTest(pos,input)
         pos = skipWhiteSpace(pos,input)
         out.println("Case #" + str(c) + ": ???")
         c = c + 1
