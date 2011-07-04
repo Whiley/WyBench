@@ -39,6 +39,10 @@ int skipWhiteSpace(int index, string input):
 bool isWhiteSpace(char c):
     return c == ' ' || c == '\t' || c == '\n'
 
+// ===============================================
+// Main Computation
+// ===============================================
+
 int processJobs([Job] jobs):
     Opos = 1    // current oranage position
     Bpos = 1    // current blue position 
