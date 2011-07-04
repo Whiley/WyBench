@@ -1,3 +1,5 @@
+import whiley.io.*
+
 // ===============================================
 // Definitions
 // ===============================================
@@ -48,8 +50,9 @@ define Test as {
     nseqs,pos = parseInt(pos,input)
     pos = skipWhiteSpace(pos,input)
     while nseqs > 0:
-        sequence = sequence + input[pos]
+        sequence = sequence + [input[pos]]
         pos = pos + 1
+        nseqs = nseqs - 1
     pos = skipWhiteSpace(pos,input)
     test = { combines: combines,
             opposes: opposes,
@@ -79,5 +82,7 @@ bool isWhiteSpace(char c):
 // ===============================================
 
 void System::main([string] args):
-    tests = parseFile(args[0])
+    file = this.openReader(args[0])
+    input = ascii2str(file.read())
+    tests = parseFile(input)
     out.println("PARSED: " + str(|tests|) + " tests")
