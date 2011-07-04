@@ -187,20 +187,6 @@ int sign(int x, int y):
         start = start + 1
     return r
 
-// max should be in standard library!
-int max(int a, int b):
-    if a < b:
-        return b
-    else:
-        return a
-
-// min should be in standard library!
-int min(int a, int b):
-    if a > b:
-        return b
-    else:
-        return a
-
 // =============================================================
 // I/O Functions
 // =============================================================
