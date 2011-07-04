@@ -1,0 +1,202 @@
+
+a
+a
+b
+b
+a
+1
+d
+abc xyz
+abc xyx
+
+.
+aa
+.
+abc
+....
+abc
+..
+abc xyz
+acb..yz
+a
+b*
+abc
+ab*
+abc
+a*c
+abc xyz
+a.*yx
+abc xyz
+.*ab xyz
+abc xyz
+abc z*
+ba
+^a
+ab
+a$
+ba
+^a$
+ab
+^a$
+aabc xyz
+^abc xyz
+abc xyzz
+abc xyz$
+aabc xyz
+^abc xyz$
+abc xyzz
+^abc xyz$
+aabc xyz
+^abc
+abc xyzz
+xyz$
+
+^.
+
+.$
+
+^.$
+b
+^a*$
+ba
+^aa*
+ab
+aa*$
+ab
+^aa*$
+aabc xyz
+^ab.*
+abc xyz
+ab.*c$
+aabc xyz
+^ab.*$
+abc xyzz
+^ab.*$
+abc xyz
+.*xy$
+abc xyz
+^.*xy$
+
+a
+
+a
+abc
+abc
+abc xyz
+abc xyz
+a
+.
+z
+.
+abc
+...
+abc xyz
+.......
+
+.*
+a
+.*
+abc
+.*
+abc xyz
+.*
+
+.*.*
+a
+.*.*
+abc
+.*.*
+abc xyz
+.*.*
+
+.*.*.*.*.*.*.*.*
+a
+.*.*.*.*.*.*.*.*
+abc
+.*.*.*.*.*.*.*.*
+abc xyz
+.*.*.*.*.*.*.*.*
+abc
+.*..
+abc xyz
+.*.
+abc
+.*.
+abc xyz
+.*..
+abc
+.*...
+abc xyz
+.*...
+abc xyz
+.*..*..
+abc xyz
+.*..*..*
+
+^
+
+$
+
+^$
+a
+^a
+a
+a$
+a
+^a$
+abc xyz
+^abc xyz
+abc xyz
+abc xyz$
+abc xyz
+^abc xyz$
+abc xyz
+^abc
+abc xyz
+xyz$
+a
+^.
+a
+.$
+a
+^.$
+
+^.*
+
+.*$
+
+^.*$
+
+^a*$
+a
+^.*
+a
+.*$
+a
+^.*$
+a
+^a*$
+a
+^aa*
+a
+aa*$
+a
+^aa*$
+a
+^a*a
+a
+a*a$
+a
+^a*a$
+abc xyz
+^ab.*
+abc xyz
+ab.*$
+abc xyz
+^ab.*$
+abc xyz
+^.*xy
+abc xyz
+.*xyz$
+abc xyz
+^.*xyz$
