@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class JavaMain {
 	public final static class Combination {
 		public final char first;
 		public final char second;
