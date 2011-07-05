@@ -54,7 +54,6 @@ bool matchStar(char c, string regex, string text):
 void System::main([string] args):
     file = this.openReader(args[0])
     input = ascii2str(file.read())
-    out.println(input)
     pos = 0
     nmatches = 0
     total = 0
@@ -63,7 +62,5 @@ void System::main([string] args):
         regex,pos = readLine(pos,input)
         if match(regex,text):
             nmatches = nmatches + 1
-        else:
-            out.println(regex + " did not match " + text)
         total = total + 1
     out.println("Matched " + str(nmatches) + " / " + str(total) + " inputs.")
