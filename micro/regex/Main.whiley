@@ -1,3 +1,5 @@
+import whiley.io.*
+
 // match: search for regexp anywhere in text
 bool match(string regex,string text):
     if |regex| > 0 && regex[0] == '^':
@@ -38,12 +40,27 @@ bool matchStar(char c, string regex, string text):
     if matchHere(regex,text):
         return true
     return false
-        
+
+(string,int) readLine(int pos, string input):
+    start = pos
+    while pos < |input| && input[pos] != '\n':
+        pos = pos + 1
+    return input[start..pos],pos+1
+
 void System::main([string] args):
-    regex = args[0]
-    text = args[1]
-    r = match(regex,text)
-    if r:
-        out.println(str(regex) + " matches " + str(text))
-    else:
-        out.println(str(regex) + " does not match " + str(text))
+    file = this.openReader(args[0])
+    input = ascii2str(file.read())
+    pos = 0
+    nmatches = 0
+    while pos < |input|:
+        regex,pos = readLine(pos,input)
+        text,pos = readLine(pos,input)        
+        debug "REGEX: " + str(regex) + "\n"
+        debug "TEXT: " + str(regex) + "\n"
+        r = match(regex,text)
+        if r:
+            out.println(str(regex) + " matches " + str(text))
+            nmatches = nmatches + 1
+        else:
+            out.println(str(regex) + " does not match " + str(text))
+    out.println("Exactly " + str(nmatches) + " matches.")
