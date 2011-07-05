@@ -43,24 +43,27 @@ bool matchStar(char c, string regex, string text):
 
 (string,int) readLine(int pos, string input):
     start = pos
-    while pos < |input| && input[pos] != '\n':
+    while pos < |input| && input[pos] != '\n' && input[pos] != '\r':
         pos = pos + 1
-    return input[start..pos],pos+1
+    line = input[start..pos]
+    pos = pos + 1
+    if pos < |input| && input[pos] == '\n':
+        pos = pos + 1
+    return line,pos
 
 void System::main([string] args):
     file = this.openReader(args[0])
     input = ascii2str(file.read())
+    out.println(input)
     pos = 0
     nmatches = 0
+    total = 0
     while pos < |input|:
-        regex,pos = readLine(pos,input)
         text,pos = readLine(pos,input)        
-        debug "REGEX: " + str(regex) + "\n"
-        debug "TEXT: " + str(regex) + "\n"
-        r = match(regex,text)
-        if r:
-            out.println(str(regex) + " matches " + str(text))
+        regex,pos = readLine(pos,input)
+        if match(regex,text):
             nmatches = nmatches + 1
         else:
-            out.println(str(regex) + " does not match " + str(text))
-    out.println("Exactly " + str(nmatches) + " matches.")
+            out.println(regex + " did not match " + text)
+        total = total + 1
+    out.println("Matched " + str(nmatches) + " / " + str(total) + " inputs.")
