@@ -5,16 +5,20 @@ public class JavaMain {
 
     public static boolean match(String regex, String text) {
 	if (regex.length() != 0 && regex.charAt(0) == '^') {
-	    return matchHere(text, regex.substring(1));
+	    return matchHere(regex.substring(1),text);
 	}
-	//loop through the text attempting to match,
-	// quit at the first success or the end of the text
-	do {
+
+	if (matchHere(regex, text)) {
+	    return true;
+	} 
+
+	 while (text.length() != 0) {
 	    if (matchHere(regex, text)) {
 		return true;
 	    }
 	    text = text.substring(1);
-	} while (text.length() != 0);
+	}
+
 	return false;
     }
 	
@@ -22,14 +26,12 @@ public class JavaMain {
 	if (regex.length() == 0) {
 	    return true;
 	}
-	// check for a starred pattern in the regex
 	if (regex.length() > 1 && regex.charAt(1) == '*') {
 	    return matchStar(regex.charAt(0), regex.substring(2), text);
 	}
 	if (regex.length() == 1 && regex.charAt(0) == '$') {
 	    return text.length() == 0;
 	}
-	//recursively match the whole text with the regex, one char at a time
 	if (text.length() > 0 && (regex.charAt(0) == '.' || regex.charAt(0) == text.charAt(0))) { 
 	    return matchHere(regex.substring(1), text.substring(1));
 	}
@@ -40,19 +42,23 @@ public class JavaMain {
 
 	if (matchHere(regex, text)) {
 	    return true;
-	}
+	} 
 
-	while (text.length() != 0 && (text.charAt(0) == c || c == '.')) {			
+	while(text.length() != 0  && (text.charAt(0) == c || c == '.')) {
 	    if (matchHere(regex, text)) {
 		return true;
 	    }
 	    text = text.substring(1);
 	} 
 
+	if (matchHere(regex, text)) {
+	    return true;
+	}	
+
 	return false;
     }
 
-    private static boolean matchWithLib(String text, String regex) {
+    private static boolean matchWithLib(String regex, String text) {
 	Pattern p = Pattern.compile(regex);
 	java.util.regex.Matcher m = p.matcher(text);
 	return m.find();
@@ -77,8 +83,8 @@ public class JavaMain {
 		regex = reader.readLine();
 		total = total + 1;
 		
-		boolean theiranswer = match(input, regex);
-		boolean rightanswer = matchWithLib(input,regex);
+		boolean theiranswer = match(regex, input);
+		boolean rightanswer = matchWithLib(regex, input);
 		
 		if(theiranswer == rightanswer) {					
 		    System.out.println("Test " + total + ": PASSED");					

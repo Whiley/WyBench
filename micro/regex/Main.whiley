@@ -1,50 +1,49 @@
-
-// top-level call
-bool match(string regexp, string text):
-    return match(0,regexp,0,text)
-
 // match: search for regexp anywhere in text
-bool match(int rpos, string regexp, int tpos, string text):
-    if regexp[0] == '^':
-        return matchhere(rpos+1,regexp,tpos,text)
-    while rpos < |regexp|:
-        if matchhere(rpos,regexp,tpos,text):
+bool match(string regex,string text):
+    if |regex| > 0 && regex[0] == '^':
+        return matchHere(regex[1..],text)
+    if matchHere(regex,text):
+        return true
+    while |text| > 0:
+        if matchHere(regex,text):
             return true
         else:
-            rpos = rpos + 1
+            text = text[1..]
     return false
 
-// matchhere: search for regexp at beginning of text
-bool matchhere(int rpos, string regexp, int tpos, string text):
-    if rpos == |regexp|:
+// matchHere: search for regex at beginning of text
+bool matchHere(string regex, string text):
+    if |regex| == 0:
         return true
-    else if (rpos+1) < |regexp| && regexp[rpos+1] == '*':
-        return matchstart(regexp[rpos],rpos+2,regexp,tpos,text)
-    else if regexp[rpos] == '$' && (rpos+1) == |regexp|:
-        return tpos == |text|
-    else if tpos < |text| && (regexp[rpos]=='.' || regexp[rpos] == text[rpos]):
-        return matchhere(rpos+1,regexp,tpos+1,text)
+    else if |regex| > 1 && regex[1] == '*':
+        return matchStar(regex[0],regex[2..],text)
+    else if |regex| == 1 && regex[0] == '$':
+        return |text| == 0
+    else if |text| > 0 && (regex[0]=='.' || regex[0] == text[0]):
+        return matchHere(regex[1..],text[1..])
     else:
         return false
 
-// matchstar: search for c*regexp at beginning of text
-bool matchstart(char c, int rpos, string regexp, int tpos, string text):
+// matchstar: search for c*regex at beginning of text
+bool matchStar(char c, string regex, string text):
     // first, check for zero matches
-    if matchhere(rpos,regexp,tpos,text):
+    if matchHere(regex,text):
         return true
     // second, check for one or more matches
-    while tpos < |text| && (text[tpos] == c || c == '.'):
-        if matchhere(rpos,regexp,tpos,text):    
+    while |text| != 0 && (text[0] == c || c == '.'):
+        if matchHere(regex,text):    
             return true
         else:
-            tpos = tpos + 1
+            text = text[1..]
+    if matchHere(regex,text):
+        return true
     return false
         
 void System::main([string] args):
-    regexp = args[0]
+    regex = args[0]
     text = args[1]
-    r = match(regexp,text)
+    r = match(regex,text)
     if r:
-        out.println(str(regexp) + " matches " + str(text))
+        out.println(str(regex) + " matches " + str(text))
     else:
-        out.println(str(regexp) + " does not match " + str(text))
+        out.println(str(regex) + " does not match " + str(text))
