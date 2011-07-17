@@ -1,0 +1,21 @@
+===================================================================
+Sorter Benchmark, by David J. Pearce, July 2011
+===================================================================
+
+This benchmark is a very straightforward implementation of a merge
+sort.  The Java version uses a fairly straightforward implementation
+of an in-place merge sort, using a temporary array and an int[] for
+storing the data.
+
+===================================================================
+Inputs
+===================================================================
+
+small.in  : 1000 randomly shuffled items in range 0-999
+
+medium.in : 10000 randomly shuffled items in range 0-9999
+
+large.in  : 100000 randomly shuffled items in range 0-99999
+
+See Gen.java for code which generated the input files.
+
