@@ -3,7 +3,7 @@ import java.util.*;
 public class Gen {
     public static void main(String[] args) {
 	ArrayList<Integer> list = new ArrayList();
-	for(int i=0;i!=100000;++i) {
+	for(int i=0;i!=10000;++i) {
 	    list.add(i);
 	}
 	Collections.shuffle(list);
