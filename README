@@ -1,13 +1,19 @@
+===================================================================
 Wybench
-=======
+===================================================================
+
 Wybench is a suite of benchmark programs used for testing and
-demonstrating the Whiley language.  
+qdemonstrating the Whiley language.  The benchmarks are split into
+four categories:
 
-The suite currently contains the following benchmarks:
+seq/micro/ --- these are a collection of small sequential benchmarks,
+               primarily used for performance testing.
 
-chess - a tool for validating games written in long algebraic
-        notation.
+seq/macro/ --- these are a collection of larger sequential benchmarks.
 
-jasm  - a Java Bytecode assesmbler / disassembler.
+par/micro/ --- these are a collection of small parallel benchmarks,
+               primarily used for performance testing.
 
-zip   - a tool for extracting zip files.
+par/macro/ --- these are a collection of larger parallel benchmarks.
+
+(currently, none of the parallel benchmarks are implemented yet)

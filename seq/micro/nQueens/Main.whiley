@@ -20,23 +20,22 @@ bool conflict(Pos p, int row, int col):
         return [queens]
     else:
         solutions = []
-        for row in n..dim:
-            for col in 0..dim:
-                solution = true
-                for i in 0..n:
-                    p = queens[i]
-                    if conflict(p,row,col):
-                        solution = false
-                        break
-                if solution:
-                    queens[n] = (row,col)
-                    solutions = solutions + run(queens,n+1,dim)                    
+        for col in 0..dim:
+            solution = true
+            for i in 0..n:
+                p = queens[i]
+                if conflict(p,n,col):
+                    solution = false
+                    break
+            if solution:
+                queens[n] = (n,col)
+                solutions = solutions + run(queens,n+1,dim)                    
         return solutions
 
 void System::main([string] args):
     dim = 8
     init = []
     for i in 0..dim:
-        init[i] = (0,0)
+        init = init + (0,0)
     solutions = run(init,0,dim)
     out.println("Found " + str(|solutions|) + " solutions.")
