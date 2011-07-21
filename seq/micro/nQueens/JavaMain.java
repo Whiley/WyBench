@@ -91,7 +91,7 @@ public class JavaMain {
     }    
 
     public static void main(String[] args) {
-	int dim = 8;
+	int dim = 10;
 	ArrayList<Pos[]> solutions = new ArrayList<Pos[]>();
 	run(new Pos[dim],0,dim,solutions);
 	System.out.println("Found " + solutions.size() + " solutions.");

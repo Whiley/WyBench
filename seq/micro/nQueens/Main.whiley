@@ -33,7 +33,7 @@ bool conflict(Pos p, int row, int col):
         return solutions
 
 void System::main([string] args):
-    dim = 8
+    dim = 10
     init = []
     for i in 0..dim:
         init = init + (0,0)
