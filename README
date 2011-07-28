@@ -6,14 +6,14 @@ Wybench is a suite of benchmark programs used for testing and
 qdemonstrating the Whiley language.  The benchmarks are split into
 four categories:
 
-seq/micro/ --- these are a collection of small sequential benchmarks,
+sequential/micro/ --- these are a collection of small sequential benchmarks,
                primarily used for performance testing.
 
-seq/macro/ --- these are a collection of larger sequential benchmarks.
+sequential/macro/ --- these are a collection of larger sequential benchmarks.
 
-par/micro/ --- these are a collection of small parallel benchmarks,
+concurrent/micro/ --- these are a collection of small parallel benchmarks,
                primarily used for performance testing.
 
-par/macro/ --- these are a collection of larger parallel benchmarks.
+concurrent/macro/ --- these are a collection of larger parallel benchmarks.
 
 (currently, none of the parallel benchmarks are implemented yet)
