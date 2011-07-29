@@ -14,10 +14,11 @@ int Link::get():
     return item
 	 
 void Link::push(int item):
-    if this.next == null || |items| > MAX_BUFFER_SIZE:
+    tmp = this.next
+    if tmp == null || |items| < MAX_BUFFER_SIZE:
         this.items = items + [item]
     else:
-        this.next!push(item)
+        tmp!push(item)
 
 bool Link::isEmpty():
     return |items| == 0
@@ -55,11 +56,12 @@ bool isWhiteSpace(char c):
 // ========================================================
 
 (Link,Link) System::create(int n):
-    end = spawn { items: [], next: null }
-    start = end
-    for i in 0..n:
-        start = spawn { items: [], next: start }
-    return start,end
+    if n <= 1:
+        end = spawn {items: [], next: null}
+        return end,end
+    else:
+        start,end = this.create(n-1)
+        return spawn {items: [], next: start}, end
 
 void System::main([string] args):
     file = this.openReader(args[0])
@@ -72,11 +74,14 @@ void System::main([string] args):
         i,pos = parseInt(pos,input)
         data = data + i
         pos = skipWhiteSpace(pos,input)
-    // second, run the benchmark
+    // second, create the chain
     (start,end) = this.create(10)
+    // third, push all the data into the chain
     for d in data:
-        start.push(d)
+        start!push(d)
+    // fourth, flush the chain
     start.flush()
+    // fifth get all the data out of the chain
     while !end.isEmpty():
         out.println(str(end.get()))
     
