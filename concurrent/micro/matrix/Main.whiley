@@ -66,22 +66,22 @@ bool isWhiteSpace(char c):
 // Main
 // ========================================================
 
-Multiplier System::createMultiplier(int i, int j, Matrix A, Matrix B):
+Multiplier ::createMultiplier(int i, int j, Matrix A, Matrix B):
     return spawn { i: i, j: j, r: 0, A: A, B: B }
 
-[[Multiplier]] System::createMultipliers(int n, Matrix A, Matrix B):
+[[Multiplier]] ::createMultipliers(int n, Matrix A, Matrix B):
     rows = []
     for i in 0..n:
         row = []
         for j in 0..n:
-            m = this.createMultiplier(j,i,A,B)
+            m = createMultiplier(j,i,A,B)
             row = row + m
         rows = rows + [row]
     return rows
 
-Matrix System::run(Matrix A, Matrix B):
+Matrix ::run(Matrix A, Matrix B):
     // first, create the matrix of multipliers
-    muls = this.createMultipliers(|A|,A,B)
+    muls = createMultipliers(|A|,A,B)
     // second, start each multiplier running
     for i in 0 .. |muls|:
         mulRow = muls[i]
@@ -112,6 +112,6 @@ void System::main([string] args):
     // second, build the matrices
     A,B = parseFile(input)
     // third, run the benchmark
-    C = this.run(A,B)    
+    C = run(A,B)    
     // finally, print the result!
     this.printMat(C)
