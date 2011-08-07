@@ -7,7 +7,7 @@ define ReaderState as {
 }
 
 ClassFile readClassFile([byte] data) throws FormatError:
-    if be2uint(data[0..4]) != 0xCAFEBABE:
+    if uint(data[4..0]) != 0xCAFEBABE:
         throw {msg: "bad magic number"}
     pool,pend = readConstantPool(data)
     // class and super type
@@ -62,7 +62,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
     pos_3 = pos+3
     pos_5 = pos+5
     // now, deal with what we've got    
-    tag = data[pos]
+    tag = uint(data[pos])
     switch tag:        
         case CONSTANT_String:            
             si = be2uint(data[pos_1..pos_3])
