@@ -1,5 +1,5 @@
 CodeAttr readCodeAttribute([byte] data, [ConstantItem] pool):
-    length = be2uint(data[10..14])
+    length = uint(data[14..10])
     pos = 14
     codes = []
     length = length + 14
@@ -8,8 +8,8 @@ CodeAttr readCodeAttribute([byte] data, [ConstantItem] pool):
         debug "READ: " + code2str(code) + "\n"
         codes = codes + [code]
     return {
-        maxStack: be2uint(data[6..8]),
-        maxLocals: be2uint(data[8..10]),
+        maxStack: uint(data[8..6]),
+        maxLocals: uint(data[10..8]),
         bytecodes: codes
     }
 
@@ -29,42 +29,42 @@ CodeAttr readCodeAttribute([byte] data, [ConstantItem] pool):
             case FMT_INT3:
                 return {offset: pos-14, op: opcode},pos+1
             case FMT_I8:
-                idx = be2uint(data[pos+1..pos+2])
+                idx = uint(data[pos+2..pos+1])
                 // need to immediate
                 return {offset: pos-14, op: opcode},pos+2
             case FMT_I16:
-                idx = be2uint(data[pos+1..pos+3])
+                idx = uint(data[pos+3..pos+1])
                 // need to immediate
                 return {offset: pos-14, op: opcode},pos+3
             case FMT_VARIDX:
-                idx = be2uint(data[pos+1..pos+2])
+                idx = uint(data[pos+2..pos+1])
                 // need to immediate
                 return {offset: pos-14, op: opcode},pos+2                
             case FMT_METHODINDEX16:
-                idx = be2uint(data[pos+1..pos+3])
+                idx = uint(data[pos+3..pos+1])
                 o,n,t = methodRefItem(idx,pool)
                 return {offset: pos-14, op: opcode, owner: o, name: n, type: t},pos+3
             case FMT_FIELDINDEX16:
-                idx = be2uint(data[pos+1..pos+3])
+                idx = uint(data[pos+3..pos+1])
                 o,n,t = fieldRefItem(idx,pool)
                 return {offset: pos-14, op: opcode, owner: o, name: n, type: t},pos+3
             case FMT_CONSTINDEX8:
-                idx = be2uint(data[pos+1..pos+2])
+                idx = uint(data[pos+2..pos+1])
                 // need to read constant
                 return {offset: pos-14, op: opcode},pos+2
             case FMT_CONSTINDEX16:
-                idx = be2uint(data[pos+1..pos+3])
+                idx = uint(data[pos+3..pos+1])
                 // need to read constant
                 return {offset: pos-14, op: opcode},pos+3
             case FMT_TYPEINDEX16:
-                idx = be2uint(data[pos+1..pos+3])
+                idx = uint(data[pos+3..pos+1])
                 // need to read type
                 return {offset: pos-14, op: opcode},pos+3
             case FMT_TARGET16:
-                offset = be2uint(data[pos+1..pos+3])
+                offset = uint(data[pos+3..pos+1])
                 return {offset: pos-14, op: opcode},pos+3
             case FMT_TARGET32:
-                offset = be2uint(data[pos+1..pos+5])
+                offset = uint(data[pos+5..pos+1])
                 return {offset: pos-14, op: opcode},pos+5
             case FMT_LOOKUPSWITCH:
                 offset = (pos - 14)
@@ -75,7 +75,7 @@ CodeAttr readCodeAttribute([byte] data, [ConstantItem] pool):
                 else:
                     padding = 0
                 pos = pos + padding
-                npairs = be2uint(data[pos+4..pos+8])
+                npairs = uint(data[pos+8..pos+4])
                 pos = pos + (8 * npairs)
                 return {offset: offset + 14, op: opcode},pos                
     debug "FAILED ON: " + bytecodeStrings[opcode] + "\n"
