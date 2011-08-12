@@ -10,6 +10,18 @@ define Field as { int offset, int op, class_t owner, string name, jvm_t type }
 
 define Bytecode as Unit | LoadStore | Branch | Invoke | Field
 
+
+// ===========================================
+// Bytecode Constructors
+// ===========================================
+
+Unit Unit(int offset, int op):
+    return {offset: offset, op: op}
+
+// ===========================================
+// Bytecode to String Conversion
+// ===========================================
+
 string code2str(Bytecode b):
     return bytecodeStrings[b.op]
 

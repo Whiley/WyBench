@@ -27,7 +27,7 @@ CodeAttr readCodeAttribute([byte] data, [ConstantItem] pool):
             case FMT_INT1:
             case FMT_INT2:
             case FMT_INT3:
-                return {offset: pos-14, op: opcode},pos+1
+                return Unit(pos-14, opcode),pos+1
             case FMT_I8:
                 idx = uint(data[pos+2..pos+1])
                 // need to immediate
