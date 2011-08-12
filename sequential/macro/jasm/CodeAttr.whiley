@@ -37,25 +37,25 @@ CodeAttr readCodeAttribute([byte] data, [ConstantItem] pool):
                 // need to immediate
                 return {offset: pos-14, op: opcode},pos+3
             case FMT_VARIDX:
-                idx = uint(data[pos+2..pos+1])
+                index = uint(data[pos+2..pos+1])
                 // need to immediate
-                return {offset: pos-14, op: opcode},pos+2                
+                return VarIndex(pos-14, opcode, index),pos+2                
             case FMT_METHODINDEX16:
                 idx = uint(data[pos+3..pos+1])
-                o,n,t = methodRefItem(idx,pool)
-                return {offset: pos-14, op: opcode, owner: o, name: n, type: t},pos+3
+                owner,name,type = methodRefItem(idx,pool)
+                return MethodIndex(pos-14, opcode, owner, name, type),pos+3
             case FMT_FIELDINDEX16:
                 idx = uint(data[pos+3..pos+1])
-                o,n,t = fieldRefItem(idx,pool)
-                return {offset: pos-14, op: opcode, owner: o, name: n, type: t},pos+3
+                owner,name,type = fieldRefItem(idx,pool)
+                return FieldIndex(pos-14, opcode, owner, name, type),pos+3
             case FMT_CONSTINDEX8:
-                idx = uint(data[pos+2..pos+1])
+                index = uint(data[pos+2..pos+1])
                 // need to read constant
-                return {offset: pos-14, op: opcode},pos+2
+                return ConstIndex(pos-14, opcode, index),pos+2
             case FMT_CONSTINDEX16:
-                idx = uint(data[pos+3..pos+1])
+                index = uint(data[pos+3..pos+1])
                 // need to read constant
-                return {offset: pos-14, op: opcode},pos+3
+                return ConstIndex(pos-14, opcode, index),pos+3
             case FMT_TYPEINDEX16:
                 idx = uint(data[pos+3..pos+1])
                 // need to read type

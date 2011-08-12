@@ -3,12 +3,14 @@
 // ===========================================
 
 define Unit as { int offset, int op }
-define LoadStore as { int offset, int op, byte index }
 define Branch as { int offset, int op, int16 offset }
-define Invoke as { int offset, int op, class_t owner, string name, fun_t type }
-define Field as { int offset, int op, class_t owner, string name, jvm_t type }
 
-define Bytecode as Unit | LoadStore | Branch | Invoke | Field
+define VarIndex as { int offset, int op, int index }
+define MethodIndex as { int offset, int op, class_t owner, string name, fun_t type }
+define FieldIndex as { int offset, int op, class_t owner, string name, jvm_t type }
+define ConstIndex as { int offset, int op, int index }
+
+define Bytecode as Unit | VarIndex | Branch | MethodIndex | FieldIndex | ConstIndex
 
 
 // ===========================================
@@ -17,6 +19,18 @@ define Bytecode as Unit | LoadStore | Branch | Invoke | Field
 
 Unit Unit(int offset, int op):
     return {offset: offset, op: op}
+
+VarIndex VarIndex(int offset, int op, int index):
+    return {offset: offset, op: op, index: index}
+
+MethodIndex MethodIndex(int offset, int op, class_t owner, string name, fun_t type):
+    return {offset: offset, op: op, owner: owner, name: name, type: type}
+
+FieldIndex FieldIndex(int offset, int op, class_t owner, string name, jvm_t type):
+    return {offset: offset, op: op, owner: owner, name: name, type: type}
+
+ConstIndex ConstIndex(int offset, int op, int index):
+    return {offset: offset, op: op, index: index}
 
 // ===========================================
 // Bytecode to String Conversion
