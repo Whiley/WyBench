@@ -14,7 +14,7 @@ CodeAttr readCodeAttribute([byte] data, [ConstantItem] pool):
     }
 
 (Bytecode,int) readBytecode(int pos, [byte] data, [ConstantItem] pool) throws FormatError:
-    opcode = data[pos]
+    opcode = uint(data[pos])
     info = decodeTable[opcode]
     if info is null:
         throw {msg: "invalid bytecode"}
