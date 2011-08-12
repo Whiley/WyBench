@@ -12,7 +12,6 @@ define ConstIndex as { int offset, int op, int index }
 
 define Bytecode as Unit | VarIndex | Branch | MethodIndex | FieldIndex | ConstIndex
 
-
 // ===========================================
 // Bytecode Constructors
 // ===========================================
@@ -37,7 +36,10 @@ ConstIndex ConstIndex(int offset, int op, int index):
 // ===========================================
 
 string code2str(Bytecode b):
-    return bytecodeStrings[b.op]
+    if b is MethodIndex:
+        return bytecodeStrings[b.op]        
+    else:
+        return bytecodeStrings[b.op]
 
 // ===========================================
 // Bytecode Kinds
