@@ -79,9 +79,6 @@ CodeAttr readCodeAttribute([byte] data, [ConstantItem] pool):
                 pos = pos + (8 * npairs)
                 return {offset: offset + 14, op: opcode},pos
     else if info is (int,int,int,int):
-        // these are all convert bytecodes
-        kind,fmt,fromType,toType = info   
-        if kind == CONVERT && fmt == FMT_EMPTY:
-            return Unit(pos-14, opcode)                      
+        return Unit(pos-14, opcode)                      
     debug "FAILED ON: " + bytecodeStrings[opcode] + "\n"
     throw {msg: "invalid bytecode"}
