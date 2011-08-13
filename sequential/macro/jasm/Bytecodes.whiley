@@ -8,7 +8,7 @@ define Branch as { int offset, int op, int16 offset }
 define VarIndex as { int offset, int op, int index }
 define MethodIndex as { int offset, int op, class_t owner, string name, fun_t type }
 define FieldIndex as { int offset, int op, class_t owner, string name, jvm_t type }
-define ConstIndex as { int offset, int op, int index }
+define ConstIndex as { int offset, int op, Constant constant }
 
 define Bytecode as Unit | VarIndex | Branch | MethodIndex | FieldIndex | ConstIndex
 
@@ -28,16 +28,18 @@ MethodIndex MethodIndex(int offset, int op, class_t owner, string name, fun_t ty
 FieldIndex FieldIndex(int offset, int op, class_t owner, string name, jvm_t type):
     return {offset: offset, op: op, owner: owner, name: name, type: type}
 
-ConstIndex ConstIndex(int offset, int op, int index):
-    return {offset: offset, op: op, index: index}
+ConstIndex ConstIndex(int offset, int op, Constant constant):
+    return {offset: offset, op: op, constant: constant}
 
 // ===========================================
 // Bytecode to String Conversion
 // ===========================================
 
 string code2str(Bytecode b):
-    if b is MethodIndex:
-        return bytecodeStrings[b.op]        
+    if b is ConstIndex:
+        return bytecodeStrings[b.op] + " " + str(b.constant)
+    else if b is MethodIndex:
+        return bytecodeStrings[b.op] + " " + type2str(b.owner) + "." + b.name + ":" + type2str(b.type)
     else:
         return bytecodeStrings[b.op]
 

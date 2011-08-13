@@ -5,14 +5,13 @@ define ReaderState as {
     [int] items,
     [Constant] pool
 }
-
 ClassFile readClassFile([byte] data) throws FormatError:
-    if uint(data[4..0]) != 0xCAFEBABE:
+    if toUnsignedInt(data[4..0]) != 0xCAFEBABE:
         throw {msg: "bad magic number"}
     pool,pend = readConstantPool(data)
     // class and super type
-    typeIndex = uint(data[pend+4..pend+2])
-    superIndex = uint(data[pend+6..pend+4])
+    typeIndex = toUnsignedInt(data[pend+4..pend+2])
+    superIndex = toUnsignedInt(data[pend+6..pend+4])
     // read interfaces
     interfaces,pos = readInterfaces(pend+6,data,pool)
     // read fields
@@ -23,8 +22,8 @@ ClassFile readClassFile([byte] data) throws FormatError:
     attrs,pos = readAttributes(pos,data,pool)
     // return data
     return { 
-      minor_version: uint(data[6..4]),
-      major_version: uint(data[8..6]),
+      minor_version: toUnsignedInt(data[6..4]),
+      major_version: toUnsignedInt(data[8..6]),
       modifiers:     readClassModifiers(data[pend+2..pend]),
       type:          classItem(typeIndex,pool),
       super:         classItem(superIndex,pool),
@@ -34,7 +33,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
     }
 
 ([ConstantItem],int) readConstantPool([byte] data):
-    nitems = uint(data[10..8])
+    nitems = toUnsignedInt(data[10..8])
     pool = [
         // We initialise the first item of the constant pool with a 
         // dummy.  This is because pool indices start from 1, not 0.  
@@ -62,10 +61,10 @@ ClassFile readClassFile([byte] data) throws FormatError:
     pos_3 = pos+3
     pos_5 = pos+5
     // now, deal with what we've got    
-    tag = uint(data[pos])
+    tag = toUnsignedInt(data[pos])
     switch tag:        
         case CONSTANT_String:            
-            si = uint(data[pos_3..pos_1])
+            si = toUnsignedInt(data[pos_3..pos_1])
             item = {
                 tag: tag,
                 string_index: si
@@ -76,7 +75,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
         case CONSTANT_Integer:
             item = {
                 tag: tag,
-                value: uint(data[pos_5..pos_1])
+                value: toInt(data[pos_5..pos_1])
             }
             pos = pos + 5
             break
@@ -84,12 +83,12 @@ ClassFile readClassFile([byte] data) throws FormatError:
         case CONSTANT_Long:
             item = {
                 tag: tag,
-                value: uint(data[pos+9..pos_1])
+                value: toInt(data[pos+9..pos_1])
             }
             pos = pos + 9
             break
         case CONSTANT_Class:
-            ni = uint(data[pos_3..pos_1])
+            ni = toUnsignedInt(data[pos_3..pos_1])
             item = {
                 tag: tag,
                 name_index: ni
@@ -99,8 +98,8 @@ ClassFile readClassFile([byte] data) throws FormatError:
         case CONSTANT_FieldRef:
         case CONSTANT_MethodRef:
         case CONSTANT_InterfaceMethodRef:
-            ci = uint(data[pos_3..pos_1])
-            nti = uint(data[pos_5..pos_3])
+            ci = toUnsignedInt(data[pos_3..pos_1])
+            nti = toUnsignedInt(data[pos_5..pos_3])
             item = {
                 tag: tag,
                 class_index: ci,
@@ -109,8 +108,8 @@ ClassFile readClassFile([byte] data) throws FormatError:
             pos = pos + 5
             break
         case CONSTANT_NameAndType:
-            ni = uint(data[pos_3..pos_1])
-            di = uint(data[pos_5..pos_3])
+            ni = toUnsignedInt(data[pos_3..pos_1])
+            di = toUnsignedInt(data[pos_5..pos_3])
             item = {
                 tag: tag,
                 name_index: ni,
@@ -119,7 +118,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
             pos = pos + 5
             break
         case CONSTANT_Utf8:
-            len = uint(data[pos_3..pos_1])
+            len = toUnsignedInt(data[pos_3..pos_1])
             item = {
                 tag: tag,
                 // FIXME: should really decode here
@@ -135,7 +134,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
 {ClassModifier} readClassModifiers([byte] bytes):
     // This method is not the best way to do this.  When Whiley 
     // gets proper support for bit vectors, we'll be able to do better.
-    mods = uint(bytes[|bytes|..0])    
+    mods = toUnsignedInt(bytes[|bytes|..0])    
     r = {}
     base = 32768
     while mods > 0:
@@ -146,19 +145,19 @@ ClassFile readClassFile([byte] data) throws FormatError:
     return r        
 
 ([class_t],int) readInterfaces(int pos, [byte] data, [ConstantItem] pool):
-    num = uint(data[pos+2..pos])    
+    num = toUnsignedInt(data[pos+2..pos])    
     i = 0
     pos = pos + 2
     r = []
     while i < num:
-        idx = uint(data[pos+2..pos])
+        idx = toUnsignedInt(data[pos+2..pos])
         r = r + [classItem(idx,pool)]
         pos = pos + 2
         i = i + 1
     return r,pos
 
 ([FieldInfo],int) readFields(int pos, [byte] data, [ConstantItem] pool):
-    nfields = uint(data[pos+2..pos])
+    nfields = toUnsignedInt(data[pos+2..pos])
     pos = pos + 2
     fields = []
     while nfields > 0:
@@ -168,7 +167,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
     return fields,pos
 
 ([MethodInfo],int) readMethods(int pos, [byte] data, [ConstantItem] pool):
-    nmethods = uint(data[pos+2..pos])
+    nmethods = toUnsignedInt(data[pos+2..pos])
     pos = pos + 2
     methods = []
     while nmethods > 0:
@@ -182,8 +181,8 @@ ClassFile readClassFile([byte] data) throws FormatError:
     attrs,end = readAttributes(pos+6,data,pool)    
     return {
         modifiers: readFieldModifiers(data[pos..pos+2]),
-        name: utf8Item(uint(data[pos+4..pos+2]),pool),
-        type: typeItem(uint(data[pos+6..pos+4]),pool),
+        name: utf8Item(toUnsignedInt(data[pos+4..pos+2]),pool),
+        type: typeItem(toUnsignedInt(data[pos+6..pos+4]),pool),
         attributes: attrs
     },end
 
@@ -192,15 +191,15 @@ ClassFile readClassFile([byte] data) throws FormatError:
     attrs,end = readAttributes(pos+6,data,pool)    
     return {
         modifiers: readMethodModifiers(data[pos..pos+2]),
-        name: utf8Item(uint(data[pos+4..pos+2]),pool),
-        type: methodTypeItem(uint(data[pos+6..pos+4]),pool),
+        name: utf8Item(toUnsignedInt(data[pos+4..pos+2]),pool),
+        type: methodTypeItem(toUnsignedInt(data[pos+6..pos+4]),pool),
         attributes: attrs
     },end
 
 {FieldModifier} readFieldModifiers([byte] bytes):
     // This method is not the best way to do this.  When Whiley 
     // gets proper support for bit vectors, we'll be able to do better.
-    mods = uint(bytes[|bytes|..0])    
+    mods = toUnsignedInt(bytes[|bytes|..0])    
     r = {}
     base = 32768
     while mods > 0:
@@ -213,7 +212,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
 {MethodModifier} readMethodModifiers([byte] bytes):
     // This method is not the best way to do this.  When Whiley 
     // gets proper support for bit vectors, we'll be able to do better.
-    mods = uint(bytes[|bytes|..0])    
+    mods = toUnsignedInt(bytes[|bytes|..0])    
     r = {}
     base = 32768
     while mods > 0:
@@ -224,7 +223,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
     return r   
 
 ([AttributeInfo],int) readAttributes(int pos, [byte] data, [ConstantItem] pool):
-    nattrs = uint(data[pos+2..pos])    
+    nattrs = toUnsignedInt(data[pos+2..pos])    
     attrs = []
     i = 0
     pos = pos + 2
@@ -235,8 +234,8 @@ ClassFile readClassFile([byte] data) throws FormatError:
     return attrs,pos
 
 (AttributeInfo,int) readAttribute(int pos, [byte] data, [ConstantItem] pool):
-    name = utf8Item(uint(data[pos+2..pos]),pool)
-    nbytes = uint(data[pos+6..pos+2])    
+    name = utf8Item(toUnsignedInt(data[pos+2..pos]),pool)
+    nbytes = toUnsignedInt(data[pos+6..pos+2])    
     end = pos + 6 + nbytes
     // TODO: replace this hard-coded dispatch with a dispatch table.
     if name == "Code":

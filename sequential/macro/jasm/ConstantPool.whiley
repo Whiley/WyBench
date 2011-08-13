@@ -12,7 +12,6 @@ define CONSTANT_MethodRef as 10
 define CONSTANT_InterfaceMethodRef as 11
 define CONSTANT_NameAndType as 12
 
-
 define StringInfo as {
     uint8 tag,
     uint16 string_index
@@ -72,14 +71,19 @@ define ConstantItem as FieldRefInfo |
         LongInfo | 
         NameAndTypeInfo
 
-// extract a class type item
-class_t classItem(int index, [ConstantItem] pool) throws FormatError:
+int integerItem(int index, [ConstantItem] pool) throws FormatError:
     item = pool[index]
-    if item is ClassInfo:
-        utf8 = utf8Item(item.name_index,pool)
-        return parseClassDescriptor(utf8)
+    if item is IntegerInfo:
+        return item.value
     else:
-        throw {msg: "invalid class item"}
+        throw {msg: "invalid integer item"}
+
+int longItem(int index, [ConstantItem] pool) throws FormatError:
+    item = pool[index]
+    if item is LongInfo:
+        return item.value
+    else:
+        throw {msg: "invalid integer item"}
 
 // extract a utf8 string item
 string utf8Item(int index, [ConstantItem] pool) throws FormatError:
@@ -88,6 +92,22 @@ string utf8Item(int index, [ConstantItem] pool) throws FormatError:
         return ascii2str(item.value)
     else:
         throw {msg: "invalid utf8 item"}
+
+string stringItem(int index, [ConstantItem] pool) throws FormatError:
+    item = pool[index]
+    if item is StringInfo:
+        return utf8Item(item.string_index,pool)
+    else:
+        throw {msg: "invalid string item"}
+
+// extract a class type item
+class_t classItem(int index, [ConstantItem] pool) throws FormatError:
+    item = pool[index]
+    if item is ClassInfo:
+        utf8 = utf8Item(item.name_index,pool)
+        return parseClassDescriptor(utf8)
+    else:
+        throw {msg: "invalid class item"}
 
 jvm_t typeItem(int index, [ConstantItem] pool) throws FormatError:
     desc = utf8Item(index,pool)
@@ -123,6 +143,17 @@ fun_t methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
         return owner,name,parseDescriptor(desc)
     else:
         throw {msg: "invalid field ref item"}
+
+Constant numberOrStringItem(int index, [ConstantItem] pool) throws FormatError:
+    item = pool[index]
+    if item is StringInfo:
+        return stringItem(index,pool)
+    else if item is IntegerInfo:
+        return integerItem(index,pool)
+    //    else if item is LongInfo:
+    //        return longItem(index,pool)
+    else:
+        return -1 // quick hack
 
 jvm_t parseDescriptor(string desc):
     type,pos = parseDescriptor(0,desc)
