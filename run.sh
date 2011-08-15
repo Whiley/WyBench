@@ -3,6 +3,8 @@
 NRUNS=10
 NRAMPUPS=5
 
+LIBDIR=$WHILEY_HOME/lib
+
 # check for running under cywin
 cygwin=false
 case "`uname`" in
@@ -16,11 +18,11 @@ esac
 if $cygwin; then
     # under cygwin the classpath separator must be ";"
     LIBDIR=`cygpath -pw "$LIBDIR"`
-    WHILEY_CLASSPATH="$WHILEY_HOME/lib/wyrt.jar;$CLASSPATH"
+    WHILEY_CLASSPATH=".;$LIBDIR/wyrt.jar"
     SEP=";"
 else
     # under UNIX the classpath separator must be ":"
-    WHILEY_CLASSPATH="$WHILEY_HOME/lib/wyrt.jar:$CLASSPATH"
+    WHILEY_CLASSPATH=".:$LIBDIR/wyrt.jar"
     SEP=":"
 fi
 
@@ -34,8 +36,8 @@ do
     echo $benchmark
     echo "================================================"
     echo -n "Java:   "
-    java -server -cp "$WHILEY_CLASSPATH${SEP}sequential/micro/$benchmark" Runner -r$NRAMPUPS -n$NRUNS JavaMain sequential/micro/$benchmark/small.in
+    java -server -cp "${WHILEY_CLASSPATH}${SEP}sequential/micro/$benchmark" Runner -r$NRAMPUPS -n$NRUNS JavaMain sequential/micro/$benchmark/small.in
     echo -n "Whiley: "
-    java -server -cp "$WHILEY_CLASSPATH${SEP}sequential/micro/$benchmark" Runner -r$NRAMPUPS -n$NRUNS Main sequential/micro/$benchmark/small.in
+    java -server -cp "${WHILEY_CLASSPATH}${SEP}sequential/micro/$benchmark" Runner -r$NRAMPUPS -n$NRUNS Main sequential/micro/$benchmark/small.in
     echo ""
 done
