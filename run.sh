@@ -5,7 +5,7 @@ NRAMPUPS=5
 
 #sequential_micro="gcd fib matrix queens regex sorter codejam_0511A codejam_0511B"
 
-sequential_micro="gcd queens regex sorter"
+sequential_micro="gcd queens regex sorter codejam_0511A codejam_0511B"
 
 for benchmark in $sequential_micro
 do
