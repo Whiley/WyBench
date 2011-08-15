@@ -175,13 +175,13 @@ public class JavaMain {
 	
 	public static void main(String[] args) {
 		try {
-			List<Test> tests = readFile(System.in);
-			int c = 1;
-			for(Test t : tests) {
-				//System.out.println(t);
-				System.out.println("Case #" + c + ": " + process(t));
-				c++;
-			}
+		    List<Test> tests = readFile(new FileInputStream(args[0]));
+		    int c = 1;
+		    for(Test t : tests) {
+			//System.out.println(t);
+			System.out.println("Case #" + c + ": " + process(t));
+			c++;
+		    }
 		} catch(IOException e) {
 			System.err.println("I/O error: " + e.getMessage());
 		}
