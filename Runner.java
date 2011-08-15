@@ -12,8 +12,7 @@ public class Runner {
 		int index = 0;
 		int nRampUpRuns = 5;
 		int nRuns = 10;					
-		String fileout = null;		
-		
+				
 		// parse command line parameters
 		while (args[index].charAt(0) == '-') {
 			String cmd = args[index].substring(0, 2);
@@ -22,8 +21,6 @@ public class Runner {
 				nRuns = Integer.parseInt(optarg);
 			} else if (cmd.equals("-r")) {
 				nRampUpRuns = Integer.parseInt(optarg);
-			} else if (cmd.equals("-o")) {
-				fileout = optarg;
 			} else {
 				throw new RuntimeException(
 						"unrecognised command-line argument \"" + cmd + "\"");
@@ -32,14 +29,8 @@ public class Runner {
 			}
 		
 		try {
-			// set I/O
-			if(fileout != null) {
-				try {
-					FileOutputStream out = new FileOutputStream(fileout);
-					System.setOut(new PrintStream(out));
-					System.setErr(new PrintStream(out));
-				} catch(FileNotFoundException e) {}				
-			}
+			// redirect I/O
+			System.setOut(new PrintStream(new ByteArrayOutputStream()));			
 			
 			// Run Experiment
 			ArrayList<Long> data = runExperiment(index,args,nRampUpRuns,nRuns);
@@ -62,8 +53,7 @@ public class Runner {
 	public static void writeStats(ArrayList<Long> data) {
 		double average = average(data);
 		double standardDeviation = standardDeviation(average,data);
-		double coefficientOfError = standardDeviation / average;
-		
+		double coefficientOfError = standardDeviation / average;		
 		output.printf("%f\t%f\t%f\n", average,standardDeviation,coefficientOfError);
 	}
 	
