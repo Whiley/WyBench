@@ -16,11 +16,11 @@ esac
 if $cygwin; then
     # under cygwin the classpath separator must be ";"
     LIBDIR=`cygpath -pw "$LIBDIR"`
-    WHILEY_CLASSPATH="$WHILEY_HOME/wyrt.jar;$CLASSPATH"
+    WHILEY_CLASSPATH="$WHILEY_HOME/lib/wyrt.jar;$CLASSPATH"
     SEP=";"
 else
     # under UNIX the classpath separator must be ":"
-    WHILEY_CLASSPATH="$WHILEY_HOME/wyrt.jar:$CLASSPATH"
+    WHILEY_CLASSPATH="$WHILEY_HOME/lib/wyrt.jar:$CLASSPATH"
     SEP=":"
 fi
 
