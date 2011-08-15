@@ -1,0 +1,3 @@
+set boxwidth 1
+set xtics ("GCD" 1, "Fib" 4, "Queens" 8, "Regex" 12, "Sorted" 16)
+plot [0:][] "./raw.dat" using (($0*4)+1.5):1 with boxes fill pattern 2, "./raw.dat" using (($0*4)+0.5):2 with boxes fill pattern 2
