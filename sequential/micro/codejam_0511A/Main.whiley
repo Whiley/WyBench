@@ -73,7 +73,7 @@ int processJobs([Job] jobs):
 void System::main([string] args):
     // first, read the input file
     file = File.Reader(args[0])
-    input = String.ascii2str(file.read())
+    input = String.fromASCII(file.read())
     ntests,pos = parseInt(0,input)
     c = 1
     while c <= ntests:
