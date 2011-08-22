@@ -1,4 +1,6 @@
-import whiley.io.*
+import whiley.lang.*
+import whiley.lang.System:*
+import whiley.io.File:*
 
 // ===============================================
 // Definitions
@@ -25,11 +27,11 @@ define Job as { int button, bool orange }
 (int,int) parseInt(int pos, string input):
     pos = skipWhiteSpace(pos,input)
     start = pos
-    while pos < |input| && isDigit(input[pos]):
+    while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
         throw "Missing number"
-    return str2int(input[start..pos]),pos
+    return String.toInt(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):
@@ -52,15 +54,15 @@ int processJobs([Job] jobs):
     // now, do the work!
     for j in jobs:
         if j.orange:
-            diff = abs(j.button - Opos)
-            timediff = max(0, diff - Osaved) + 1
+            diff = Math.abs(j.button - Opos)
+            timediff = Math.max(0, diff - Osaved) + 1
             time = time + timediff
             Bsaved = Bsaved + timediff
             Osaved = 0
             Opos = j.button
         else:
-            diff = abs(j.button - Bpos)
-            timediff = max(0, diff - Bsaved) + 1
+            diff = Math.abs(j.button - Bpos)
+            timediff = Math.max(0, diff - Bsaved) + 1
             time = time + timediff
             Osaved = Osaved + timediff
             Bsaved = 0
@@ -70,13 +72,13 @@ int processJobs([Job] jobs):
             
 void System::main([string] args):
     // first, read the input file
-    file = this.openReader(args[0])
-    input = ascii2str(file.read())
+    file = File.Reader(args[0])
+    input = String.ascii2str(file.read())
     ntests,pos = parseInt(0,input)
     c = 1
     while c <= ntests:
         jobs,pos = parseJobs(pos,input)
         pos = skipWhiteSpace(pos,input)
         time = processJobs(jobs)
-        out.println("Case #" + str(c) + ": " + str(time))
+        this.out.println("Case #" + String.str(c) + ": " + String.str(time))
         c = c + 1
