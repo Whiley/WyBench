@@ -1,4 +1,6 @@
-import whiley.io.*
+import whiley.lang.*
+import whiley.lang.System:*
+import whiley.io.File:*
 
 // match: search for regexp anywhere in text
 bool match(string regex,string text):
@@ -51,9 +53,9 @@ bool matchStar(char c, string regex, string text):
         pos = pos + 1
     return line,pos
 
-void System::main([string] args):
-    file = this.openReader(args[0])
-    input = ascii2str(file.read())
+void ::main(System sys, [string] args):
+    file = File.Reader(args[0])
+    input = String.fromASCII(file.read())
     pos = 0
     nmatches = 0
     total = 0
@@ -63,4 +65,4 @@ void System::main([string] args):
         if match(regex,text):
             nmatches = nmatches + 1
         total = total + 1
-    out.println("Matched " + str(nmatches) + " / " + str(total) + " inputs.")
+    sys.out.println("Matched " + String.str(nmatches) + " / " + String.str(total) + " inputs.")
