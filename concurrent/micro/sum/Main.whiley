@@ -1,4 +1,6 @@
-import whiley.io.*
+import whiley.lang.*
+import whiley.lang.System:*
+import whiley.io.File:*
 
 // ========================================================
 // Benchmark
@@ -18,20 +20,20 @@ define Sum as process {
 
 void Sum::start():
     sum = 0
-    for i in start..end:
-        sum = sum + items[i]
+    for i in this.start .. this.end:
+        sum = sum + this.items[i]
     this.result = sum    
 
 int Sum::get():
-    return result
+    return this.result
 
 Sum ::create([int] items, int start, int end):
     return spawn { items: items, start: start, end: end, result: 0 }
 
-int System::run([int] items):
+int ::run([int] items):
     while |items| != 1:
         // first calculate how many actors required
-        nworkers = max(1,|items| / N)
+        nworkers = Math.max(1,|items| / N)
         // second, count block size actors
         size = |items| / nworkers
         // third, start actors
@@ -59,11 +61,11 @@ int System::run([int] items):
 
 (int,int) parseInt(int pos, string input):
     start = pos
-    while pos < |input| && isDigit(input[pos]):
+    while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
         throw "Missing number"
-    return str2int(input[start..pos]),pos
+    return String.toInt(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):
@@ -77,9 +79,9 @@ bool isWhiteSpace(char c):
 // Main
 // ========================================================
 
-void System::main([string] args):
-    file = this.openReader(args[0])
-    input = ascii2str(file.read())
+void ::main(System sys, [string] args):
+    file = File.Reader(args[0])
+    input = String.fromASCII(file.read())
     pos = 0
     data = []
     pos = skipWhiteSpace(pos,input)
@@ -89,5 +91,5 @@ void System::main([string] args):
         data = data + i
         pos = skipWhiteSpace(pos,input)
     // second, run the benchmark
-    sum = this.run(data)
-    out.println(str(sum))    
+    sum = run(data)
+    sys.out.println(String.str(sum))    
