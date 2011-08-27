@@ -1,12 +1,14 @@
-import whiley.io.*
+import whiley.lang.*
+import whiley.lang.System:*
+import whiley.io.File:*
 
 (int,int) parseInt(int pos, string input):
     start = pos
-    while pos < |input| && isDigit(input[pos]):
+    while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
         throw "Missing number"
-    return str2int(input[start..pos]),pos
+    return String.toInt(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):
@@ -26,9 +28,9 @@ int gcd(int a, int b):
             b = b - a
     return a
 
-void System::main([string] args):
-    file = this.openReader(args[0])
-    input = ascii2str(file.read())
+void ::main(System sys, [string] args):
+    file = File.Reader(args[0])
+    input = String.fromASCII(file.read())
     pos = 0
     data = []
     pos = skipWhiteSpace(pos,input)
@@ -40,5 +42,5 @@ void System::main([string] args):
     // second, compute gcds
     for i in 0..|data|:
         for j in i+1..|data|:
-            out.println(str(gcd(i,j)))
+            sys.out.println(String.str(gcd(i,j)))
 
