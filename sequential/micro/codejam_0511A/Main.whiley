@@ -70,7 +70,7 @@ int processJobs([Job] jobs):
     // finally, return total time accumulated
     return time
             
-void System::main([string] args):
+void ::main(System sys, [string] args):
     // first, read the input file
     file = File.Reader(args[0])
     input = String.fromASCII(file.read())
@@ -80,5 +80,5 @@ void System::main([string] args):
         jobs,pos = parseJobs(pos,input)
         pos = skipWhiteSpace(pos,input)
         time = processJobs(jobs)
-        this.out.println("Case #" + String.str(c) + ": " + String.str(time))
+        sys.out.println("Case #" + String.str(c) + ": " + String.str(time))
         c = c + 1
