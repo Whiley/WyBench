@@ -1,4 +1,6 @@
-import whiley.io.*
+import whiley.lang.*
+import whiley.lang.System:*
+import whiley.io.File:*
 
 // ===============================================
 // Definitions
@@ -62,11 +64,11 @@ define Test as {
 (int,int) parseInt(int pos, string input):
     pos = skipWhiteSpace(pos,input)
     start = pos
-    while pos < |input| && isDigit(input[pos]):
+    while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
         throw "Missing number"
-    return str2int(input[start..pos]),pos
+    return String.toInt(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):
@@ -81,8 +83,8 @@ bool isWhiteSpace(char c):
 // Main Computation
 // ===============================================
 
-void System::main([string] args):
-    file = this.openReader(args[0])
-    input = ascii2str(file.read())
+void ::main(System sys, [string] args):
+    file = File.Reader(args[0])
+    input = String.fromASCII(file.read())
     tests = parseFile(input)
-    out.println("PARSED: " + str(|tests|) + " tests")
+    sys.out.println("PARSED: " + String.str(|tests|) + " tests")
