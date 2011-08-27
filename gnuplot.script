@@ -1,3 +1,7 @@
+set terminal "jpeg"
+set output "raw.jpg"
+set log y
 set boxwidth 1
-set xtics ("GCD" 1, "Fib" 4, "Queens" 8, "Regex" 12, "Sorted" 16)
-plot [0:][] "./raw.dat" using (($0*4)+1.5):1 with boxes fill pattern 2, "./raw.dat" using (($0*4)+0.5):2 with boxes fill pattern 2
+set ylabel "Execution Time (ms)"
+set xtics ("GCD" 1, "Fib" 5, "Queens" 9, "Regex" 13, "Sorted" 17, "CodeJam A" 21, "CodeJam B" 25)
+plot [0:][] "./raw.dat" using (($0*4)+0.5):1 title "Java" with boxes fill pattern 2, "./raw.dat" using (($0*4)+1.5):2 title "Whiley" with boxes fill pattern 2
