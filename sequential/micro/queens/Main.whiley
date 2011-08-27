@@ -1,3 +1,6 @@
+import whiley.lang.*
+import whiley.lang.System:*
+
 define Pos as (int,int)
 
 int abs(int x):
@@ -32,10 +35,10 @@ bool conflict(Pos p, int row, int col):
                 solutions = solutions + run(queens,n+1,dim)                    
         return solutions
 
-void System::main([string] args):
+void ::main(System sys, [string] args):
     dim = 10
     init = []
     for i in 0..dim:
         init = init + (0,0)
     solutions = run(init,0,dim)
-    out.println("Found " + str(|solutions|) + " solutions.")
+    sys.out.println("Found " + String.str(|solutions|) + " solutions.")
