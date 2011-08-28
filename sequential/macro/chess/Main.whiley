@@ -1,36 +1,38 @@
-import whiley.io.*
+import whiley.lang.*
+import whiley.lang.System:*
+import whiley.io.File:*
 
-void System::main([string] args):
+void ::main(System sys, [string] args):
     if |args| == 0:
-        this.usage()
+        usage(sys)
         return
-    file = this.openReader(args[0])
-    contents = ascii2str(file.read())
-    game = parseChessGame(contents)
-    out.println("Moves taken:\n")
-    board = startingChessBoard  
+    file = File.Reader(args[0])
+    contents = String.fromASCII(file.read())
+    game = Parser.parseChessGame(contents)
+    sys.out.println("Moves taken:\n")
+    board = Board.startingChessBoard  
     r = ""       
     i = 0
     invalid = false
     sign = false
     // process each move in turn, updating the board
     while i < |game|:
-        out.print(str(i+1) + ". ")
+        sys.out.print(String.str(i+1) + ". ")
         white,black = game[i]
         // test white
-        board = applyShortMove(white,board)        
-        out.print(shortMove2str(white))
+        board = ShortMove.apply(white,board)        
+        sys.out.print(ShortMove.toString(white))
         // test black
         if black != null:
-            board = applyShortMove(black,board)        
-            out.print(" ")
-            out.println(shortMove2str(black))
+            board = ShortMove.apply(black,board)        
+            sys.out.print(" ")
+            sys.out.println(ShortMove.toString(black))
         else:
-            out.println("")
+            sys.out.println("")
         i = i + 1
         // print out board
-        out.println("\nCurrent board:\n")
-        out.println(board2str(board))
+        sys.out.println("\nCurrent board:\n")
+        sys.out.println(Board.toString(board))
 
-void System::usage():
-    out.println("usage: chess file")
+void ::usage(System sys):
+    sys.out.println("usage: chess file")

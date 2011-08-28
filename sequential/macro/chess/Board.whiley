@@ -1,3 +1,5 @@
+import whiley.lang.*
+
 // =============================================================
 // Pieces
 // =============================================================
@@ -142,8 +144,8 @@ bool clearColumnExcept(Pos from, Pos to, Board board):
 // ensure anything about the relative positions of the given pieces.
 bool clearDiaganolExcept(Pos from, Pos to, Board board):
     // check this is really a diaganol
-    diffcol = max(from.col,to.col) - min(from.col,to.col)
-    diffrow = max(from.row,to.row) - min(from.row,to.row)
+    diffcol = Math.max(from.col,to.col) - Math.min(from.col,to.col)
+    diffrow = Math.max(from.row,to.row) - Math.min(from.row,to.row)
     if diffcol != diffrow:
         return false
     // determine the col and row signs
@@ -193,11 +195,11 @@ int sign(int x, int y):
 
 define BLACK_PIECE_CHARS as [ 'p', 'n', 'b', 'r', 'q', 'k' ]
 
-string board2str(Board b):
+string toString(Board b):
     r = ""
     i=8
     while i >= 1:
-        r = r + str(i) + row2str(b.rows[i-1])
+        r = r + String.str(i) + row2str(b.rows[i-1])
         i = i - 1
     return r + "  a b c d e f g h\n"
 

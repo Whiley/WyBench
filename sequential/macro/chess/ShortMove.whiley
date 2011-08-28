@@ -8,7 +8,7 @@ define ShortCheckMove as { ShortMove check }
 define ShortMove as ShortSingleMove | ShortCheckMove | CastleMove
 define ShortRound as (ShortMove,ShortMove|null)
 
-Board applyShortMove(ShortMove move, Board board) throws InvalidMove:
+Board apply(ShortMove move, Board board) throws InvalidMove:
     move = inferMove(move,board)
     return applyMove(move,board)
 
@@ -80,7 +80,7 @@ string shortPos2str(ShortPos p):
     else: 
         return pos2str(p)
 
-string shortMove2str(ShortMove m):
+string toString(ShortMove m):
     if m is ShortSingleMove: 
         if m.isTake:
             return piece2str(m.piece) + shortPos2str(m.from) + "x" + pos2str(m.to)
