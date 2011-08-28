@@ -10,7 +10,7 @@ define Queue as process { [int] items }
 	 
 int Queue::get():
     item = this.items[0]
-    this.items = items[1..]
+    this.items = this.items[1..]
     return item
 	 
 void Queue::put(int item):
@@ -25,11 +25,11 @@ bool Queue::isEmpty():
 
 (int,int) parseInt(int pos, string input):
     start = pos
-    while pos < |input| && isDigit(input[pos]):
+    while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
         throw "Missing number"
-    return str2int(input[start..pos]),pos
+    return String.toInt(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):
