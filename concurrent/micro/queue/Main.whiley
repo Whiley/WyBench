@@ -1,4 +1,6 @@
-import whiley.io.*
+import whiley.lang.*
+import whiley.lang.System:*
+import whiley.io.File:*
 
 // ========================================================
 // Benchmark
@@ -7,15 +9,15 @@ import whiley.io.*
 define Queue as process { [int] items }
 	 
 int Queue::get():
-    item = items[0]
+    item = this.items[0]
     this.items = items[1..]
     return item
 	 
 void Queue::put(int item):
-    this.items = items + [item]
+    this.items = this.items + [item]
 
 bool Queue::isEmpty():
-    return |items| == 0
+    return |this.items| == 0
 
 // ========================================================
 // Parser
@@ -41,9 +43,9 @@ bool isWhiteSpace(char c):
 // Main
 // ========================================================
 
-void System::main([string] args):
-    file = this.openReader(args[0])
-    input = ascii2str(file.read())
+void ::main(System sys, [string] args):
+    file = File.Reader(args[0])
+    input = String.fromASCII(file.read())
     pos = 0
     data = []
     pos = skipWhiteSpace(pos,input)
@@ -57,5 +59,5 @@ void System::main([string] args):
     for d in data:
         queue.put(d)
     while !queue.isEmpty():
-        out.println(str(queue.get()))
+        sys.out.println(String.str(queue.get()))
     
