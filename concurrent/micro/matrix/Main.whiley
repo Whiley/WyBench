@@ -1,4 +1,6 @@
-import whiley.io.*
+import whiley.lang.*
+import whiley.lang.System:*
+import whiley.io.File:*
 
 // ========================================================
 // Benchmark
@@ -9,12 +11,12 @@ define Multiplier as process { int i, int j, int r, Matrix A, Matrix B }
 
 void Multiplier::start():
     r = 0
-    for k in 0 .. |A|:
-        r = r + (A[j][k] * B[k][i])
+    for k in 0 .. |this.A|:
+        r = r + (this.A[this.j][k] * this.B[k][this.i])
     this.r = r
 
 int Multiplier::get():
-    return r
+    return this.r
 
 // ========================================================
 // Parser
@@ -48,11 +50,11 @@ int Multiplier::get():
 
 (int,int) parseInt(int pos, string input):
     start = pos
-    while pos < |input| && isDigit(input[pos]):
+    while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
         throw "Missing number"
-    return str2int(input[start..pos]),pos
+    return String.toInt(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):
@@ -97,21 +99,21 @@ Matrix ::run(Matrix A, Matrix B):
         rows = rows + [row]
     return rows
 
-void System::printMat(Matrix A):
+void ::printMat(System sys, Matrix A):
     for i in 0 .. |A|:
         row = A[i]
         for j in 0 .. |row|:
-            out.print(str(row[j]))
-            out.print(" ")
-        out.println("")
+            sys.out.print(String.str(row[j]))
+            sys.out.print(" ")
+        sys.out.println("")
 
-void System::main([string] args):
-    file = this.openReader(args[0])
+void ::main(System sys, [string] args):
+    file = File.Reader(args[0])
     // first, read data
-    input = ascii2str(file.read())
+    input = String.fromASCII(file.read())
     // second, build the matrices
     A,B = parseFile(input)
     // third, run the benchmark
     C = run(A,B)    
     // finally, print the result!
-    this.printMat(C)
+    printMat(sys,C)
