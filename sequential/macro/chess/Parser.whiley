@@ -5,6 +5,10 @@
 //
 // See http://en.wikipedia.org/wiki/Algebraic_chess_notation for more.
 
+import whiley.lang.*
+import ShortMove:*
+import Board:*
+
 define state as {string input, int pos}
 define SyntaxError as {string msg}
 
@@ -90,16 +94,16 @@ int parseNumber(int pos, string input) throws SyntaxError:
 
 (ShortPos,int) parseShortPos(int index, string input):
     c = input[index]
-    if isDigit(c):
+    if Char.isDigit(c):
         // signals rank only
         return { row: (c - '1') },index+1
-    else if c != 'x' && isLetter(c):
+    else if c != 'x' && Char.isLetter(c):
         // so, could be file only, file and rank, or empty
         d = input[index+1]
-        if isLetter(d):
+        if Char.isLetter(d):
             // signals file only
             return { col: (c - 'a') },index+1         
-        else if (index+2) < |input| && isLetter(input[index+2]):
+        else if (index+2) < |input| && Char.isLetter(input[index+2]):
             // signals file and rank
             return { col: (c - 'a'), row: (d - '1') },index+2
     // no short move given

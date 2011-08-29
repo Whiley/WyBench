@@ -1,3 +1,6 @@
+import whiley.lang.*
+import Board:*
+
 // A simple chess model
 //
 // David J. Pearce, 2010
@@ -149,8 +152,8 @@ bool validPawnMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
     return true    
 
 bool validKnightMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
-    diffcol = max(from.col,to.col) - min(from.col,to.col)
-    diffrow = max(from.row,to.row) - min(from.row,to.row)
+    diffcol = Math.max(from.col,to.col) - Math.min(from.col,to.col)
+    diffrow = Math.max(from.row,to.row) - Math.min(from.row,to.row)
     return (diffcol == 2 && diffrow == 1) || (diffcol == 1 && diffrow == 2)
 
 bool validBishopMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
@@ -164,8 +167,8 @@ bool validQueenMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
         clearDiaganolExcept(from,to,board)
 
 bool validKingMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
-    diffcol = max(from.col,to.col) - min(from.col,to.col)
-    diffrow = max(from.row,to.row) - min(from.row,to.row)
+    diffcol = Math.max(from.col,to.col) - Math.min(from.col,to.col)
+    diffrow = Math.max(from.row,to.row) - Math.min(from.row,to.row)
     return diffcol == 1 || diffrow == 1
 
 // =============================================================

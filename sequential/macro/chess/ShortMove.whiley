@@ -1,3 +1,7 @@
+import whiley.lang.*
+import Board:*
+import Move:*
+
 define RankPos as { int row }
 define FilePos as { int col }
 define ShortPos as Pos | RankPos | FilePos | null
@@ -93,5 +97,5 @@ string toString(ShortMove m):
             return "O-O-O"
     else if m is ShortCheckMove:
         // check move
-        return shortMove2str(m.check) + "+"  
+        return toString(m.check) + "+"  
     return ""
