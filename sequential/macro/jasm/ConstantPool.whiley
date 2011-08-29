@@ -1,3 +1,11 @@
+import whiley.lang.*
+
+import ClassFile:*
+import ConstantPool:*
+import Bytecodes:*
+
+define FormatError as {string msg}
+
 define Constant as string | int | real 
 
 define CONSTANT_Utf8 as 1
@@ -13,52 +21,52 @@ define CONSTANT_InterfaceMethodRef as 11
 define CONSTANT_NameAndType as 12
 
 define StringInfo as {
-    uint8 tag,
-    uint16 string_index
+    Type.uint8 tag,
+    Type.uint16 string_index
 }
 
 define ClassInfo as {
-    uint8 tag,
-    uint16 name_index
+    Type.uint8 tag,
+    Type.uint16 name_index
 }
 
 define Utf8Info as {
-    uint8 tag,
+    Type.uint8 tag,
     [byte] value        
 }
 
 define IntegerInfo as {
-    uint8 tag,
-    int32 value        
+    Type.uint8 tag,
+    Type.int32 value        
 }
 
 define LongInfo as {
-    uint8 tag,
-    int64 value        
+    Type.uint8 tag,
+    Type.int64 value        
 }
 
 define FieldRefInfo as { 
-    uint8 tag,
-    uint16 class_index,
-    uint16 name_and_type_index
+    Type.uint8 tag,
+    Type.uint16 class_index,
+    Type.uint16 name_and_type_index
 }
 
 define MethodRefInfo as { 
-    uint8 tag,
-    uint16 class_index,
-    uint16 name_and_type_index
+    Type.uint8 tag,
+    Type.uint16 class_index,
+    Type.uint16 name_and_type_index
 }
 
 define InterfaceMethodRefInfo as { 
-    uint8 tag,
-    uint16 class_index,
-    uint16 name_and_type_index
+    Type.uint8 tag,
+    Type.uint16 class_index,
+    Type.uint16 name_and_type_index
 }
 
 define NameAndTypeInfo as {
-    uint8 tag,
-    uint16 name_index,
-    uint16 descriptor_index    
+    Type.uint8 tag,
+    Type.uint16 name_index,
+    Type.uint16 descriptor_index    
 }
 
 define ConstantItem as FieldRefInfo | 
@@ -89,7 +97,7 @@ int longItem(int index, [ConstantItem] pool) throws FormatError:
 string utf8Item(int index, [ConstantItem] pool) throws FormatError:
     item = pool[index]
     if item is Utf8Info:
-        return ascii2str(item.value)
+        return String.fromASCII(item.value)
     else:
         throw {msg: "invalid utf8 item"}
 
@@ -101,7 +109,7 @@ string stringItem(int index, [ConstantItem] pool) throws FormatError:
         throw {msg: "invalid string item"}
 
 // extract a class type item
-class_t classItem(int index, [ConstantItem] pool) throws FormatError:
+JvmType.Class classItem(int index, [ConstantItem] pool) throws FormatError:
     item = pool[index]
     if item is ClassInfo:
         utf8 = utf8Item(item.name_index,pool)
@@ -109,11 +117,11 @@ class_t classItem(int index, [ConstantItem] pool) throws FormatError:
     else:
         throw {msg: "invalid class item"}
 
-jvm_t typeItem(int index, [ConstantItem] pool) throws FormatError:
+JvmType.Any typeItem(int index, [ConstantItem] pool) throws FormatError:
     desc = utf8Item(index,pool)
     return parseDescriptor(desc)
 
-fun_t methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
+JvmType.Fun methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
     desc = utf8Item(index,pool)
     return parseMethodDescriptor(desc)
 
@@ -126,7 +134,7 @@ fun_t methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
     else:
         throw {msg: "invalid name and type item"}                
 
-(class_t,string,fun_t) methodRefItem(int index, [ConstantItem] pool) throws FormatError:
+(JvmType.Class,string,JvmType.Fun) methodRefItem(int index, [ConstantItem] pool) throws FormatError:
     item = pool[index]
     if item is MethodRefInfo:
         owner = classItem(item.class_index,pool)
@@ -135,7 +143,7 @@ fun_t methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
     else:
         throw {msg: "invalid method ref item"}
 
-(class_t,string,jvm_t) fieldRefItem(int index, [ConstantItem] pool) throws FormatError:
+(JvmType.Class,string,JvmType.Any) fieldRefItem(int index, [ConstantItem] pool) throws FormatError:
     item = pool[index]
     if item is FieldRefInfo:
         owner = classItem(item.class_index,pool)
@@ -155,13 +163,13 @@ Constant numberOrStringItem(int index, [ConstantItem] pool) throws FormatError:
     else:
         return -1 // quick hack
 
-jvm_t parseDescriptor(string desc):
+JvmType.Any parseDescriptor(string desc):
     type,pos = parseDescriptor(0,desc)
     return type
 
-class_t parseClassDescriptor(string desc):    
-    desc = replace('/','.',desc)
-    idx = lastIndexOf('.',desc)
+JvmType.Class parseClassDescriptor(string desc):    
+    desc = String.replace('/','.',desc)
+    idx = String.lastIndexOf('.',desc)
     if idx is null:
         pkg = ""
         name = desc
@@ -171,31 +179,31 @@ class_t parseClassDescriptor(string desc):
     // FIXME: split out inner classes here.
     return {pkg: pkg, classes:[name]}
 
-(jvm_t,int) parseDescriptor(int pos, string desc) throws FormatError:
+(JvmType.Any,int) parseDescriptor(int pos, string desc) throws FormatError:
     if pos >= |desc|:
         throw {msg: "invalid descriptor"}
     lookahead = desc[pos]
     switch lookahead:
         case 'B':
-            return T_BOOLEAN,pos+1
+            return JvmType.Boolean,pos+1
         case 'C':
-            return T_CHAR,pos+1
+            return JvmType.Char,pos+1
         case 'D':
-            return T_DOUBLE,pos+1
+            return JvmType.Double,pos+1
         case 'F':
-            return T_FLOAT,pos+1
+            return JvmType.Float,pos+1
         case 'I':
-            return T_INT,pos+1
+            return JvmType.Int,pos+1
         case 'J':
-            return T_LONG,pos+1
+            return JvmType.Long,pos+1
         case 'S':
-            return T_SHORT,pos+1
+            return JvmType.Short,pos+1
         case 'Z':
-            return T_BOOLEAN,pos+1
+            return JvmType.Boolean,pos+1
         case 'V':
-            return T_VOID,pos+1
+            return JvmType.Void,pos+1
         case 'L':
-            end = indexOf(';',pos+1,desc)
+            end = String.indexOf(';',pos+1,desc)
             if end is null:
                 throw {msg: "invalid descriptor"}
             type = parseClassDescriptor(desc[pos+1..end])
@@ -206,7 +214,7 @@ class_t parseClassDescriptor(string desc):
     // unknown cases
     throw {msg: "invalid descriptor"}
 
-fun_t parseMethodDescriptor(string desc) throws FormatError:
+JvmType.Fun parseMethodDescriptor(string desc) throws FormatError:
     if desc[0] != '(':
         throw { msg: "invalid method descriptor" }
     pos = 1

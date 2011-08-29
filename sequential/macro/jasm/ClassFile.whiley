@@ -1,10 +1,13 @@
+import ConstantPool:*
+import Bytecodes:*
+
 define ClassFile as {
     int minor_version,
     int major_version,
     {ClassModifier} modifiers,
-    class_t type,
-    class_t super,
-    [class_t] interfaces,
+    JvmType.Class type,
+    JvmType.Class super,
+    [JvmType.Class] interfaces,
     [FieldInfo] fields,
     [MethodInfo] methods
 }
@@ -12,14 +15,14 @@ define ClassFile as {
 define FieldInfo as {
     {FieldModifier} modifiers,
     string name,
-    jvm_t type,
+    JvmType.Any type,
     [AttributeInfo] attributes   
 }
 
 define MethodInfo as {
     {MethodModifier} modifiers,
     string name,
-    fun_t type,
+    JvmType.Fun type,
     [AttributeInfo] attributes   
 }
 

@@ -1,48 +1,48 @@
 import whiley.io.*
+import whiley.lang.System:*
+import whiley.lang.*
+import ClassFile:*
 
-void System::main([string] args):
+void ::main(System sys, [string] args):
     if |args| == 0:
-        this.usage()
+        sys.out.println("usage: jasm [options] file(s)")
         return
-    file = this.openReader(args[0])
+    file = File.Reader(args[0])
     contents = file.read()
-    cf = readClassFile(contents)
-    this.printClassFile(cf)
+    cf = ClassFileReader.readClassFile(contents)
+    printClassFile(sys,cf)
 
-void System::usage():
-    out.println("usage: jasm [options] file(s)")
-
-void System::printClassFile(ClassFile cf):
+void ::printClassFile(System sys, ClassFile cf):
     // First, print out the class and its modifiers
-    out.print(classModifiers2str(cf.modifiers))
-    out.print("class " + type2str(cf.type))
-    out.print(" extends " + type2str(cf.super))
+    sys.out.print(classModifiers2str(cf.modifiers))
+    sys.out.print("class " + Type.toString(cf.type))
+    sys.out.print(" extends " + Type.toString(cf.super))
     if |cf.interfaces| > 0:
-        out.print(" implements")
+        sys.out.print(" implements")
         for i in cf.interfaces:
-            out.print(" ")
-            out.print(type2str(i))
-    out.println(":")
+            sys.out.print(" ")
+            sys.out.print(Type.toString(i))
+    sys.out.println(":")
     // Now, print out fields
     for field in cf.fields:
-        this.printField(field)
+        printField(sys,field)
     // and, methods
     for method in cf.methods:
-        out.println("") // separator
-        this.printMethod(method)
+        sys.out.println("") // separator
+        printMethod(sys,method)
 
-void System::printField(FieldInfo field):
-    out.print("    ")
-    out.print(fieldModifiers2str(field.modifiers))
-    out.println(type2str(field.type) + " " + field.name)
+void ::printField(System sys, FieldInfo field):
+    sys.out.print("    ")
+    sys.out.print(fieldModifiers2str(field.modifiers))
+    sys.out.println(Type.toString(field.type) + " " + field.name)
 
-void System::printMethod(MethodInfo method):
-    out.print("    ")
-    out.print(methodModifiers2str(method.modifiers))
-    out.println(method.name + type2str(method.type) + ":")
+void ::printMethod(System sys, MethodInfo method):
+    sys.out.print("    ")
+    sys.out.print(methodModifiers2str(method.modifiers))
+    sys.out.println(method.name + Type.toString(method.type) + ":")
     for attr in method.attributes:
         if attr is CodeAttr:
-            this.printCodeAttr(attr)
+            printCodeAttr(sys,attr)
     
 string classModifiers2str({ClassModifier} modifiers):
     r = " "
@@ -143,10 +143,10 @@ string methodModifiers2str({MethodModifier} modifiers):
                 break
     return r
 
-void System::printCodeAttr(CodeAttr code):
-    out.print("        ")
-    out.println("Stack=" + str(code.maxStack) + ", Locals=" + str(code.maxLocals))
+void ::printCodeAttr(System sys, CodeAttr code):
+    sys.out.print("        ")
+    sys.out.println("Stack=" + String.str(code.maxStack) + ", Locals=" + String.str(code.maxLocals))
     for bc in code.bytecodes:
-        out.print("        ")
-        out.print(str(bc.offset) + ":   ")
-        out.println(code2str(bc))
+        sys.out.print("        ")
+        sys.out.print(String.str(bc.offset) + ":   ")
+        sys.out.println(Bytecodes.code2str(bc))
