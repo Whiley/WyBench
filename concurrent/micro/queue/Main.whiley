@@ -19,6 +19,9 @@ void Queue::put(int item):
 bool Queue::isEmpty():
     return |this.items| == 0
 
+Queue ::Queue():
+    return spawn { items: [] }
+
 // ========================================================
 // Parser
 // ========================================================
@@ -55,7 +58,7 @@ void ::main(System sys, [string] args):
         data = data + i
         pos = skipWhiteSpace(pos,input)
     // second, run the benchmark
-    queue = spawn { items: [] }
+    queue = Queue()
     for d in data:
         queue.put(d)
     while !queue.isEmpty():

@@ -210,7 +210,7 @@ JvmType.Class parseClassDescriptor(string desc):
             return type,end+1
         case '[':
             elem,pos = parseDescriptor(pos+1,desc)
-            return T_ARRAY(elem),pos
+            return JvmType.Array(elem),pos
     // unknown cases
     throw {msg: "invalid descriptor"}
 
