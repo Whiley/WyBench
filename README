@@ -3,7 +3,7 @@ Wybench
 ===================================================================
 
 Wybench is a suite of benchmark programs used for testing and
-qdemonstrating the Whiley language.  The benchmarks are split into
+demonstrating the Whiley language.  The benchmarks are split into
 four categories:
 
 sequential/micro/ --- these are a collection of small sequential benchmarks,
