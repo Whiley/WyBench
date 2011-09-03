@@ -15,5 +15,3 @@ concurrent/micro/ --- these are a collection of small parallel benchmarks,
                primarily used for performance testing.
 
 concurrent/macro/ --- these are a collection of larger parallel benchmarks.
-
-(currently, none of the parallel benchmarks are implemented yet)
