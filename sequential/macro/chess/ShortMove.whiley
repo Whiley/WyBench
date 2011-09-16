@@ -95,7 +95,7 @@ string toString(ShortMove m):
             return "O-O"
         else:
             return "O-O-O"
-    else if m is ShortCheckMove:
+    else:
         // check move
         return toString(m.check) + "+"  
-    return ""
+
