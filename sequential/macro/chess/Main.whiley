@@ -21,12 +21,12 @@ void ::main(System sys, [string] args):
         white,black = game[i]
         // test white
         board = ShortMove.apply(white,board)        
-        sys.out.print(ShortMove.toString(white))
+        sys.out.print(ShortMove.toShortMoveString(white))
         // test black
         if black != null:
             board = ShortMove.apply(black,board)        
             sys.out.print(" ")
-            sys.out.println(ShortMove.toString(black))
+            sys.out.println(ShortMove.toShortMoveString(black))
         else:
             sys.out.println("")
         i = i + 1

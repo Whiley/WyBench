@@ -22,7 +22,7 @@ Move inferMove(ShortMove m, Board b) throws InvalidMove:
     else if m is ShortCheckMove:
         m = inferMove(m.check, b)
         return { check: m }
-    else if m is ShortSingleMove:
+    else:
         matches = findPiece(m.piece,b)
         matches = narrowTarget(m,matches,b)
         matches = narrowShortPos(m.from,matches)
@@ -36,7 +36,7 @@ Move inferMove(ShortMove m, Board b) throws InvalidMove:
                 return { piece: m.piece, from: matches[0], to: m.to }
         else:
             throw { board: b, move: m }
-    // following line should cause an error
+    // BUG: what does the following line do??
     return { piece: WHITE_PAWN, from: A2, to: A3 }
 
 // nawwor based on move destination
@@ -84,7 +84,8 @@ string shortPos2str(ShortPos p):
     else: 
         return pos2str(p)
 
-string toString(ShortMove m):
+// FIXME: this name is wrong.
+string toShortMoveString(ShortMove m):
     if m is ShortSingleMove: 
         if m.isTake:
             return piece2str(m.piece) + shortPos2str(m.from) + "x" + pos2str(m.to)
@@ -95,7 +96,7 @@ string toString(ShortMove m):
             return "O-O"
         else:
             return "O-O-O"
-    else:
-        // check move
-        return toString(m.check) + "+"  
+    else: 
+        // ShortCheckMove
+        return toShortMoveString(m.check) + "+"  
 
