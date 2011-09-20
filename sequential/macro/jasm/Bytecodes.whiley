@@ -352,9 +352,9 @@ define decodeTable as [
     (MONITORENTER, FMT_EMPTY, T_VOID),        // MONITORENTER = 194;
     (MONITOREXIT, FMT_EMPTY, T_VOID),         // MONITOREXIT = 195;    
     (WIDE_INSN, FMT_EMPTY, T_VOID),           // WIDE = 196;    
-    (NEW, FMT_TYPEINDEX16_U8, FMT_EMPTY, T_VOID), // MULTIANEWARRAY = 197;    
-    (IF, FMT_TARGET16, T_REF, FMT_EMPTY, T_VOID), // IFNULL = 198;
-    (IF, FMT_TARGET16, T_REF, FMT_EMPTY, T_VOID), // IFNONNULL = 199;
+    (NEW, FMT_TYPEINDEX16_U8, T_VOID),        // MULTIANEWARRAY = 197;    
+    (IF, FMT_TARGET16, T_REF),                // IFNULL = 198;
+    (IF, FMT_TARGET16, T_REF),                // IFNONNULL = 199;
     (GOTO, FMT_TARGET32, T_VOID),             // GOTO_W = 200;
     (JSR, FMT_TARGET32, T_VOID)               // JSR_W = 201;
 ]

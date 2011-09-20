@@ -90,7 +90,9 @@ CodeAttr read([byte] data, [ConstantItem] pool):
                 npairs = Byte.toUnsignedInt(data[pos+8..pos+4])
                 pos = pos + (8 * npairs)
                 return {offset: offset + 14, op: opcode},pos
-    else if info is (int,int,int,int):
-        return Unit(pos-14, opcode)                      
+    else:
+        // this format is only for CONVERT bytecodes
+        kind,fmt,from,to = info
+        return Unit(pos-14,opcode),pos+1
     debug "FAILED ON: " + bytecodeStrings[opcode] + "\n"
     throw {msg: "invalid bytecode"}
