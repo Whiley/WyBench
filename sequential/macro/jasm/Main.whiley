@@ -1,8 +1,8 @@
-import whiley.io.*
 import * from whiley.lang.System
 import * from whiley.lang.*
 import * from ClassFile
 import * from CodeAttr
+import * from whiley.io.File
 
 void ::main(System sys, [string] args):
     if |args| == 0:
@@ -16,13 +16,13 @@ void ::main(System sys, [string] args):
 void ::printClassFile(System sys, ClassFile cf):
     // First, print out the class and its modifiers
     sys.out.print(classModifiers2str(cf.modifiers))
-    sys.out.print("class " + Type.toString(cf.type))
-    sys.out.print(" extends " + Type.toString(cf.super))
+    sys.out.print("class " + JvmType.toString(cf.type))
+    sys.out.print(" extends " + JvmType.toString(cf.super))
     if |cf.interfaces| > 0:
         sys.out.print(" implements")
         for i in cf.interfaces:
             sys.out.print(" ")
-            sys.out.print(Type.toString(i))
+            sys.out.print(JvmType.toString(i))
     sys.out.println(":")
     // Now, print out fields
     for field in cf.fields:
@@ -35,12 +35,12 @@ void ::printClassFile(System sys, ClassFile cf):
 void ::printField(System sys, FieldInfo field):
     sys.out.print("    ")
     sys.out.print(fieldModifiers2str(field.modifiers))
-    sys.out.println(Type.toString(field.type) + " " + field.name)
+    sys.out.println(JvmType.toString(field.type) + " " + field.name)
 
 void ::printMethod(System sys, MethodInfo method):
     sys.out.print("    ")
     sys.out.print(methodModifiers2str(method.modifiers))
-    sys.out.println(method.name + Type.toString(method.type) + ":")
+    sys.out.println(method.name + JvmType.toString(method.type) + ":")
     for attr in method.attributes:
         if attr is CodeAttr:
             printCodeAttr(sys,attr)

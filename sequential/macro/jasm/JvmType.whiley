@@ -52,8 +52,9 @@ string toString(Any t):
             return c[1..]
         else:
             return r + c            
-    else:
+    else if t is Array:
         return toString(t.element) + "[]"
+    return "" // dead-code?
 
 string toString(Fun ft):
     r = "("
