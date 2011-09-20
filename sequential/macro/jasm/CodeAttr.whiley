@@ -10,14 +10,13 @@ define CodeAttr as {
     [Bytecode] bytecodes
 }
 
-CodeAttr read([byte] data, [ConstantItem] pool):
+CodeAttr read([byte] data, [ConstantPool.Item] pool):
     length = Byte.toUnsignedInt(data[14..10])
     pos = 14
     codes = []
     length = length + 14
     while pos < length:
         code,pos = readBytecode(pos,data,pool)
-        debug "READ: " + code2str(code) + "\n"
         codes = codes + [code]
     return {
         maxStack: Byte.toUnsignedInt(data[8..6]),
@@ -25,7 +24,7 @@ CodeAttr read([byte] data, [ConstantItem] pool):
         bytecodes: codes
     }
 
-(Bytecode,int) readBytecode(int pos, [byte] data, [ConstantItem] pool) throws FormatError:
+(Bytecode,int) readBytecode(int pos, [byte] data, [ConstantPool.Item] pool) throws FormatError:
     opcode = Byte.toUnsignedInt(data[pos])
     info = decodeTable[opcode]
     if info is null:

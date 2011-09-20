@@ -38,7 +38,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
       methods: methods
     }
 
-([ConstantItem],int) readConstantPool([byte] data):
+([ConstantPool.Item],int) readConstantPool([byte] data):
     nitems = Byte.toUnsignedInt(data[10..8])
     pool = [
         // We initialise the first item of the constant pool with a 
@@ -61,7 +61,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
             i = i + 1
     return pool,pos            
 
-(ConstantItem,int) constItem([byte] data, int pos) throws FormatError:
+(ConstantPool.Item,int) constItem([byte] data, int pos) throws FormatError:
     // first, setup some useful offsets
     pos_1 = pos+1 
     pos_3 = pos+3
@@ -150,7 +150,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
         base = base / 2
     return r        
 
-([JvmType.Class],int) readInterfaces(int pos, [byte] data, [ConstantItem] pool):
+([JvmType.Class],int) readInterfaces(int pos, [byte] data, [ConstantPool.Item] pool):
     num = Byte.toUnsignedInt(data[pos+2..pos])    
     i = 0
     pos = pos + 2
@@ -162,7 +162,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
         i = i + 1
     return r,pos
 
-([FieldInfo],int) readFields(int pos, [byte] data, [ConstantItem] pool):
+([FieldInfo],int) readFields(int pos, [byte] data, [ConstantPool.Item] pool):
     nfields = Byte.toUnsignedInt(data[pos+2..pos])
     pos = pos + 2
     fields = []
@@ -172,7 +172,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
         nfields = nfields - 1
     return fields,pos
 
-([MethodInfo],int) readMethods(int pos, [byte] data, [ConstantItem] pool):
+([MethodInfo],int) readMethods(int pos, [byte] data, [ConstantPool.Item] pool):
     nmethods = Byte.toUnsignedInt(data[pos+2..pos])
     pos = pos + 2
     methods = []
@@ -182,7 +182,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
         nmethods = nmethods - 1
     return methods,pos
 
-(FieldInfo,int) readField(int pos, [byte] data, [ConstantItem] pool):       
+(FieldInfo,int) readField(int pos, [byte] data, [ConstantPool.Item] pool):       
     // now, parse attributes
     attrs,end = readAttributes(pos+6,data,pool)    
     return {
@@ -192,7 +192,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
         attributes: attrs
     },end
 
-(MethodInfo,int) readMethod(int pos, [byte] data, [ConstantItem] pool):       
+(MethodInfo,int) readMethod(int pos, [byte] data, [ConstantPool.Item] pool):       
     // now, parse attributes
     attrs,end = readAttributes(pos+6,data,pool)    
     return {
@@ -228,7 +228,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
         base = base / 2
     return r   
 
-([AttributeInfo],int) readAttributes(int pos, [byte] data, [ConstantItem] pool):
+([AttributeInfo],int) readAttributes(int pos, [byte] data, [ConstantPool.Item] pool):
     nattrs = Byte.toUnsignedInt(data[pos+2..pos])    
     attrs = []
     i = 0
@@ -239,7 +239,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
         i = i + 1
     return attrs,pos
 
-(AttributeInfo,int) readAttribute(int pos, [byte] data, [ConstantItem] pool):
+(AttributeInfo,int) readAttribute(int pos, [byte] data, [ConstantPool.Item] pool):
     name = utf8Item(Byte.toUnsignedInt(data[pos+2..pos]),pool)
     nbytes = Byte.toUnsignedInt(data[pos+6..pos+2])    
     end = pos + 6 + nbytes

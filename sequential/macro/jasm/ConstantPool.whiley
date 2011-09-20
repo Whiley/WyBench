@@ -69,7 +69,7 @@ define NameAndTypeInfo as {
     Type.uint16 descriptor_index    
 }
 
-define ConstantItem as FieldRefInfo | 
+define Item as FieldRefInfo | 
         MethodRefInfo | 
         InterfaceMethodRefInfo | 
         StringInfo | 
@@ -79,14 +79,14 @@ define ConstantItem as FieldRefInfo |
         LongInfo | 
         NameAndTypeInfo
 
-int integerItem(int index, [ConstantItem] pool) throws FormatError:
+int integerItem(int index, [Item] pool) throws FormatError:
     item = pool[index]
     if item is IntegerInfo:
         return item.value
     else:
         throw {msg: "invalid integer item"}
 
-int longItem(int index, [ConstantItem] pool) throws FormatError:
+int longItem(int index, [Item] pool) throws FormatError:
     item = pool[index]
     if item is LongInfo:
         return item.value
@@ -94,14 +94,14 @@ int longItem(int index, [ConstantItem] pool) throws FormatError:
         throw {msg: "invalid integer item"}
 
 // extract a utf8 string item
-string utf8Item(int index, [ConstantItem] pool) throws FormatError:
+string utf8Item(int index, [Item] pool) throws FormatError:
     item = pool[index]
     if item is Utf8Info:
         return String.fromASCII(item.value)
     else:
         throw {msg: "invalid utf8 item"}
 
-string stringItem(int index, [ConstantItem] pool) throws FormatError:
+string stringItem(int index, [Item] pool) throws FormatError:
     item = pool[index]
     if item is StringInfo:
         return utf8Item(item.string_index,pool)
@@ -109,7 +109,7 @@ string stringItem(int index, [ConstantItem] pool) throws FormatError:
         throw {msg: "invalid string item"}
 
 // extract a class type item
-JvmType.Class classItem(int index, [ConstantItem] pool) throws FormatError:
+JvmType.Class classItem(int index, [Item] pool) throws FormatError:
     item = pool[index]
     if item is ClassInfo:
         utf8 = utf8Item(item.name_index,pool)
@@ -117,15 +117,15 @@ JvmType.Class classItem(int index, [ConstantItem] pool) throws FormatError:
     else:
         throw {msg: "invalid class item"}
 
-JvmType.Any typeItem(int index, [ConstantItem] pool) throws FormatError:
+JvmType.Any typeItem(int index, [Item] pool) throws FormatError:
     desc = utf8Item(index,pool)
     return parseDescriptor(desc)
 
-JvmType.Fun methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
+JvmType.Fun methodTypeItem(int index, [Item] pool) throws FormatError:
     desc = utf8Item(index,pool)
     return parseMethodDescriptor(desc)
 
-(string,string) nameAndTypeItem(int index, [ConstantItem] pool) throws FormatError:
+(string,string) nameAndTypeItem(int index, [Item] pool) throws FormatError:
     item = pool[index]
     if item is NameAndTypeInfo:
         name = utf8Item(item.name_index,pool)
@@ -134,7 +134,7 @@ JvmType.Fun methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
     else:
         throw {msg: "invalid name and type item"}                
 
-(JvmType.Class,string,JvmType.Fun) methodRefItem(int index, [ConstantItem] pool) throws FormatError:
+(JvmType.Class,string,JvmType.Fun) methodRefItem(int index, [Item] pool) throws FormatError:
     item = pool[index]
     if item is MethodRefInfo:
         owner = classItem(item.class_index,pool)
@@ -143,7 +143,7 @@ JvmType.Fun methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
     else:
         throw {msg: "invalid method ref item"}
 
-(JvmType.Class,string,JvmType.Any) fieldRefItem(int index, [ConstantItem] pool) throws FormatError:
+(JvmType.Class,string,JvmType.Any) fieldRefItem(int index, [Item] pool) throws FormatError:
     item = pool[index]
     if item is FieldRefInfo:
         owner = classItem(item.class_index,pool)
@@ -152,7 +152,7 @@ JvmType.Fun methodTypeItem(int index, [ConstantItem] pool) throws FormatError:
     else:
         throw {msg: "invalid field ref item"}
 
-Constant numberOrStringItem(int index, [ConstantItem] pool) throws FormatError:
+Constant numberOrStringItem(int index, [Item] pool) throws FormatError:
     item = pool[index]
     if item is StringInfo:
         return stringItem(index,pool)
