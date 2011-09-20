@@ -1,7 +1,7 @@
 import whiley.io.*
-import whiley.io.File:*
+import * from whiley.io.File
 import whiley.lang.*
-import whiley.lang.System:*
+import * from whiley.lang.System
 
 [int] sort([int] items):
     if |items| > 1:

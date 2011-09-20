@@ -1,5 +1,5 @@
 import whiley.lang.*
-import ConstantPool:*
+import * from ConstantPool
 
 // ===========================================
 // Bytecode Structures
@@ -42,7 +42,7 @@ string code2str(Bytecode b):
     if b is ConstIndex:
         return bytecodeStrings[b.op] + " " + String.str(b.constant)
     else if b is MethodIndex:
-        return bytecodeStrings[b.op] + " " + Type.toString(b.owner) + "." + b.name + ":" + Type.toString(b.type)
+        return bytecodeStrings[b.op] + " " + JvmType.toString(b.owner) + "." + b.name + ":" + JvmType.toString(b.type)
     else:
         return bytecodeStrings[b.op]
 

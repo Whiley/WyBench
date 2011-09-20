@@ -1,5 +1,5 @@
 import whiley.lang.*
-import Board:*
+import * from Board
 
 // A simple chess model
 //

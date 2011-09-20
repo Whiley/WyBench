@@ -1,5 +1,5 @@
-import ConstantPool:*
-import Bytecodes:*
+import * from ConstantPool
+import * from Bytecodes
 
 define ClassFile as {
     int minor_version,
@@ -31,13 +31,13 @@ define UnknownAttr as {
     [byte] data
 }
 
-define CodeAttr as {
+define TmpCodeAttr as {
     int maxStack,
     int maxLocals,
     [Bytecode] bytecodes
 }
 
-define AttributeInfo as UnknownAttr | CodeAttr
+define AttributeInfo as UnknownAttr | TmpCodeAttr
 
 define ACC_PUBLIC as 0x0001
 define ACC_PRIVATE as 0x0002

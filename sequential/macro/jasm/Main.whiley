@@ -1,7 +1,8 @@
 import whiley.io.*
-import whiley.lang.System:*
-import whiley.lang.*
-import ClassFile:*
+import * from whiley.lang.System
+import * from whiley.lang.*
+import * from ClassFile
+import * from CodeAttr
 
 void ::main(System sys, [string] args):
     if |args| == 0:

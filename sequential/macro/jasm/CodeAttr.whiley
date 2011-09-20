@@ -1,9 +1,14 @@
 import whiley.lang.*
-import ClassFile:*
-import ConstantPool:*
-import Bytecodes:*
+import * from ConstantPool
+import * from Bytecodes
 
 define FormatError as {string msg}
+
+define CodeAttr as {
+    int maxStack,
+    int maxLocals,
+    [Bytecode] bytecodes
+}
 
 CodeAttr read([byte] data, [ConstantItem] pool):
     length = Byte.toUnsignedInt(data[14..10])

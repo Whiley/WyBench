@@ -1,5 +1,5 @@
 import whiley.lang.*
-import whiley.lang.System:*
+import * from whiley.lang.System
 
 define Pos as (int,int)
 

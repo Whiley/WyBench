@@ -1,6 +1,6 @@
 import whiley.lang.*
-import Board:*
-import Move:*
+import * from Board
+import * from Move
 
 define RankPos as { int row }
 define FilePos as { int col }

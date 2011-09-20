@@ -1,7 +1,7 @@
 import whiley.lang.*
-import ClassFile:*
-import ConstantPool:*
-import Bytecodes:*
+import * from ClassFile
+import * from ConstantPool
+import * from Bytecodes
 
 define FormatError as {string msg}
 

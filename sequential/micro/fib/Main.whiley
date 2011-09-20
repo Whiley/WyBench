@@ -1,5 +1,5 @@
 import whiley.lang.*
-import whiley.lang.System:*
+import * from whiley.lang.System
 
 int fib(int x):
     if x <= 1:

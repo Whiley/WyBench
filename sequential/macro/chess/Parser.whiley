@@ -6,8 +6,8 @@
 // See http://en.wikipedia.org/wiki/Algebraic_chess_notation for more.
 
 import whiley.lang.*
-import ShortMove:*
-import Board:*
+import * from ShortMove
+import * from Board
 
 define state as {string input, int pos}
 define SyntaxError as {string msg}
