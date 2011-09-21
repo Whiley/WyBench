@@ -84,8 +84,7 @@ string shortPos2str(ShortPos p):
     else: 
         return pos2str(p)
 
-// FIXME: this name is wrong.
-string toShortMoveString(ShortMove m):
+string toString(ShortMove m):
     if m is ShortSingleMove: 
         if m.isTake:
             return piece2str(m.piece) + shortPos2str(m.from) + "x" + pos2str(m.to)
@@ -98,5 +97,5 @@ string toShortMoveString(ShortMove m):
             return "O-O-O"
     else: 
         // ShortCheckMove
-        return toShortMoveString(m.check) + "+"  
+        return toString(m.check) + "+"  
 
