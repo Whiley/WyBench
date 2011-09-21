@@ -1,5 +1,4 @@
-import * from ConstantPool
-import * from Bytecodes
+import Bytecode from Bytecodes
 
 define ClassFile as {
     int minor_version,

@@ -1,5 +1,4 @@
 import whiley.lang.*
-import * from ConstantPool
 
 // ===========================================
 // Bytecode Structures
@@ -11,7 +10,7 @@ define Branch as { int offset, int op, Type.int16 offset }
 define VarIndex as { int offset, int op, int index }
 define MethodIndex as { int offset, int op, JvmType.Class owner, string name, JvmType.Fun type }
 define FieldIndex as { int offset, int op, JvmType.Class owner, string name, JvmType.Any type }
-define ConstIndex as { int offset, int op, Constant constant }
+define ConstIndex as { int offset, int op, ConstantPool.Constant constant }
 
 define Bytecode as Unit | VarIndex | Branch | MethodIndex | FieldIndex | ConstIndex
 
@@ -31,7 +30,7 @@ MethodIndex MethodIndex(int offset, int op, JvmType.Class owner, string name, Jv
 FieldIndex FieldIndex(int offset, int op, JvmType.Class owner, string name, JvmType.Any type):
     return {offset: offset, op: op, owner: owner, name: name, type: type}
 
-ConstIndex ConstIndex(int offset, int op, Constant constant):
+ConstIndex ConstIndex(int offset, int op, ConstantPool.Constant constant):
     return {offset: offset, op: op, constant: constant}
 
 // ===========================================
