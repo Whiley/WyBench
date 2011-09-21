@@ -150,4 +150,4 @@ void ::printCodeAttr(System sys, CodeAttr code):
     for bc in code.bytecodes:
         sys.out.print("        ")
         sys.out.print(String.str(bc.offset) + ":   ")
-        sys.out.println(Bytecodes.code2str(bc))
+        sys.out.println(Bytecode.toString(bc))

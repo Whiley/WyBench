@@ -1,14 +1,13 @@
 import whiley.lang.*
 import * from ClassFile
 import * from ConstantPool
-import * from Bytecodes
 
 define FormatError as {string msg}
 
 define ReaderState as {
     [byte] bytes,
     [int] items,
-    [Constant] pool
+    [ConstantPool.Constant] pool
 }
 
 ClassFile readClassFile([byte] data) throws FormatError:

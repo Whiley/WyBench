@@ -1,6 +1,6 @@
 import whiley.lang.*
 import * from ConstantPool
-import * from Bytecodes
+import * from Bytecode
 
 define FormatError as {string msg}
 

@@ -1,4 +1,4 @@
-import Bytecode from Bytecodes
+import Bytecode from Bytecode
 
 define ClassFile as {
     int minor_version,
@@ -36,6 +36,8 @@ define TmpCodeAttr as {
     [Bytecode] bytecodes
 }
 
+// The following is a hack, because we cannot properly define an
+// unknown attribute.
 define AttributeInfo as UnknownAttr | TmpCodeAttr
 
 define ACC_PUBLIC as 0x0001

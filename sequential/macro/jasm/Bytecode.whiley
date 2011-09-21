@@ -37,7 +37,7 @@ ConstIndex ConstIndex(int offset, int op, ConstantPool.Constant constant):
 // Bytecode to String Conversion
 // ===========================================
 
-string code2str(Bytecode b):
+string toString(Bytecode b):
     if b is ConstIndex:
         return bytecodeStrings[b.op] + " " + String.str(b.constant)
     else if b is MethodIndex:
