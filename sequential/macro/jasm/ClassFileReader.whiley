@@ -29,7 +29,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
     return { 
       minor_version: Byte.toUnsignedInt(data[6..4]),
       major_version: Byte.toUnsignedInt(data[8..6]),
-      modifiers:     readClassModifiers(data[pend+2..pend]),
+      modifiers:     readClassModifiers(data[pend..pend+2]),
       type:          classItem(typeIndex,pool),
       super:         classItem(superIndex,pool),
       interfaces:    interfaces,
