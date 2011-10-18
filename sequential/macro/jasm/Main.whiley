@@ -11,5 +11,5 @@ void ::main(System sys, [string] args):
     file = File.Reader(args[0])
     contents = file.read()
     cf = ClassFileReader.readClassFile(contents)
-    JavapFile.print(sys,cf)
+    JasmFile.print(sys,cf)
 

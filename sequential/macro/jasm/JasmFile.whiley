@@ -7,14 +7,14 @@ public void ::print(System sys, ClassFile cf):
     // First, print out the class and its modifiers
     sys.out.print(classModifiers2str(cf.modifiers))
     sys.out.print("class " + JvmType.toString(cf.type))
-    sys.out.print(" extends " + JvmType.toString(cf.super))
+    if cf.super != JvmType.JAVA_LANG_OBJECT:
+        sys.out.print(" extends " + JvmType.toString(cf.super))
     if |cf.interfaces| > 0:
         sys.out.print(" implements")
         for i in cf.interfaces:
             sys.out.print(" ")
             sys.out.print(JvmType.toString(i))
-    sys.out.println("")
-    sys.out.println("{")
+    sys.out.println(" {")
     // Now, print out fields
     for field in cf.fields:
         printField(sys,field)
@@ -25,11 +25,11 @@ public void ::print(System sys, ClassFile cf):
     sys.out.println("}")
 
 void ::printField(System sys, FieldInfo field):
-    sys.out.print(fieldModifiers2str(field.modifiers))
-    sys.out.println(JvmType.toString(field.type) + " " + field.name)
+    sys.out.print("    " + fieldModifiers2str(field.modifiers))
+    sys.out.println(JvmType.toString(field.type) + " " + field.name + ";")
 
 void ::printMethod(System sys, MethodInfo method):
-    sys.out.print(methodModifiers2str(method.modifiers))
+    sys.out.print("    " + methodModifiers2str(method.modifiers))
     sys.out.print(JvmType.toString(method.type.ret) + " " + method.name + "(")
     firstTime=true
     for p in method.type.params:
@@ -37,10 +37,11 @@ void ::printMethod(System sys, MethodInfo method):
             sys.out.print(", ")
         firstTime=false
         sys.out.print(JvmType.toString(p))
-    sys.out.println("):")
+    sys.out.println(") {")
     for attr in method.attributes:
         if attr is CodeAttr:
             printCodeAttr(sys,attr)
+    sys.out.println("    }")
     
 string classModifiers2str({ClassModifier} modifiers):
     r = ""
@@ -51,9 +52,6 @@ string classModifiers2str({ClassModifier} modifiers):
                 break
             case ACC_FINAL:
                 r = r + "final "
-                break
-            case ACC_SUPER:
-                r = r + "super "
                 break
             case ACC_INTERFACE:
                 r = r + "interface "
@@ -142,10 +140,8 @@ string methodModifiers2str({MethodModifier} modifiers):
     return r
 
 void ::printCodeAttr(System sys, CodeAttr code):
-    sys.out.println(" Code:")
-    sys.out.print("  ")
-    sys.out.println("Stack=" + String.str(code.maxStack) + ", Locals=" + String.str(code.maxLocals))
+    sys.out.print("      ")
+    sys.out.println("// stack=" + String.str(code.maxStack) + ", locals=" + String.str(code.maxLocals))
     for bc in code.bytecodes:
-        sys.out.print("   ")
-        sys.out.print(String.str(bc.offset) + ":   ")
-        sys.out.println(Bytecode.toString(bc))
+        sys.out.print("      ")
+        sys.out.println(Bytecode.toString(bc) + ";")

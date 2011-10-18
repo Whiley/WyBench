@@ -20,6 +20,10 @@ define Any as Primitive | Ref
 Array Array(Any element):
     return { element: element }
 
+// useful constants
+define JAVA_LANG_OBJECT as {pkg: "java.lang", classes: ["Object"]}
+define JAVA_LANG_STRING as {pkg: "java.lang", classes: ["String"]}
+
 string toString(Any t):
     if t is Primitive:
         switch t:
