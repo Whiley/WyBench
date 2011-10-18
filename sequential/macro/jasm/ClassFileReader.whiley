@@ -147,6 +147,7 @@ ClassFile readClassFile([byte] data) throws FormatError:
             mods = mods - base
             r = r + {base}
         base = base / 2
+    debug "PRINT GOT: " + String.str(r)
     return r        
 
 ([JvmType.Class],int) readInterfaces(int pos, [byte] data, [ConstantPool.Item] pool):

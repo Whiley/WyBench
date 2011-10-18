@@ -65,6 +65,7 @@ define ClassModifier as {
     ACC_SUPER,
     ACC_INTERFACE,
     ACC_ABSTRACT,
+    ACC_SYNTHETIC,
     ACC_ANNOTATION,
     ACC_ENUM
 }
