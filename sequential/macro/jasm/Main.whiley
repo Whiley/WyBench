@@ -10,6 +10,8 @@ void ::main(System sys, [string] args):
         return
     file = File.Reader(args[0])
     contents = file.read()
-    cf = ClassFileReader.readClassFile(contents)
-    JasmFileReader.print(sys,cf)
+    //cf = ClassFileReader.readClassFile(contents)
+    JasmFileReader.read(String.fromASCII(contents))
+    //JasmFileWriter.print(sys,cf)
+    
 
