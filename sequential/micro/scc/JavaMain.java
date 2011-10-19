@@ -185,14 +185,14 @@ public class JavaMain {
 		System.out.println("=== Graph #" + count++ + " ===");
 		PeaFindScc1 pscc = new PeaFindScc1(graph);
 		for(HashSet<Integer> component : pscc.visit()) {
-		    ArrayList<Integer> tmp = new ArrayList<Integer>(component);
-		    Collections.sort(tmp);
 		    System.out.print("{");
-		    for(int i=0;i!=tmp.size();++i) {
-			if(i != 0) {
+		    boolean firstTime=true;
+		    for(Integer i : component) {
+			if(!firstTime) {
 			    System.out.print(",");
 			}
-			System.out.print(tmp.get(i));
+			firstTime=false;
+			System.out.print(i);
 		    }
 		    System.out.print("}");		    
 		}
