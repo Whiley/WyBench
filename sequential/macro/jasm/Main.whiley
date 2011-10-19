@@ -13,5 +13,8 @@ void ::main(System sys, [string] args):
     //cf = ClassFileReader.readClassFile(contents)
     cf = JasmFileReader.read(String.fromASCII(contents))
     JasmFileWriter.print(sys,cf)
-    
+    bytes = ClassFileWriter.write(cf)
+    file = File.Writer("jasm.out")
+    file.write(bytes)
+    debug "GOT HERE"        
 
