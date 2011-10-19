@@ -51,7 +51,6 @@ public class JavaMain {
 
 	public Digraph parse() {
 	    Digraph g = new Digraph();
-	    skipWhiteSpace();
 	    boolean firstTime=true;
 	    while(pos < input.length()) {
 		if(!firstTime) {
@@ -59,16 +58,14 @@ public class JavaMain {
 		}
 		firstTime=false;
 		int from = parseInt();
-		match("->");
+		match(">");
 		int to = parseInt();
 		g.add(from,to);
-		skipWhiteSpace();
 	    }
 	    return g;
 	}
 
 	public void match(String r) {
-	    skipWhiteSpace();
 	    if((pos + r.length()) < input.length()) {
 		String tmp = input.substring(pos,pos+r.length());
 		if(tmp.equals(r)) {
@@ -81,20 +78,12 @@ public class JavaMain {
 	}
 
 	public int parseInt() {
-	    skipWhiteSpace();
 	    int start = pos;
 	    while (pos < input.length() && Character.isDigit(input.charAt(pos))) {
 		pos = pos + 1;
 	    }
 	    return Integer.parseInt(input.substring(start, pos));
-	}
-	
-	public void skipWhiteSpace() {
-	    while (pos < input.length()
-		   && (input.charAt(pos) == ' ' || input.charAt(pos) == '\t')) {
-		pos = pos + 1;
-	    }
-	}
+	}	
     }
 
     /**
@@ -175,27 +164,36 @@ public class JavaMain {
 	}
     }
 
-    public static Digraph readFile(String filename) throws IOException {
+    public static List<Digraph> readFile(String filename) throws IOException {
 	BufferedReader reader = new BufferedReader(new FileReader(filename));
-	return new Parser(reader.readLine()).parse();
+	ArrayList<Digraph> graphs = new ArrayList();
+	while(reader.ready()) {
+	    String input = reader.readLine();
+	    if(!input.equals("")) {
+		graphs.add(new Parser(input).parse());
+	    }
+	}
+	return graphs;
     }
 
     public static void main(String[] args) {
 	try {
-	    Digraph graph = readFile(args[0]);
-	    System.out.println(graph);
-	    PeaFindScc1 pscc = new PeaFindScc1(graph);
-	    for(HashSet<Integer> component : pscc.visit()) {
-		ArrayList<Integer> tmp = new ArrayList<Integer>(component);
-		Collections.sort(tmp);
-		System.out.print("{");
-		for(int i=0;i!=tmp.size();++i) {
-		    if(i != 0) {
-			System.out.print(", ");
+	    int count = 0;
+	    for(Digraph graph : readFile(args[0])) {
+		System.out.println("=== Graph #" + count++ + " ===");
+		PeaFindScc1 pscc = new PeaFindScc1(graph);
+		for(HashSet<Integer> component : pscc.visit()) {
+		    ArrayList<Integer> tmp = new ArrayList<Integer>(component);
+		    Collections.sort(tmp);
+		    System.out.print("{");
+		    for(int i=0;i!=tmp.size();++i) {
+			if(i != 0) {
+			    System.out.print(", ");
+			}
+			System.out.print(tmp.get(i));
 		    }
-		    System.out.print(tmp.get(i));
+		    System.out.println("}");		    
 		}
-		System.out.println("}");		    
 	    }
 	} catch(IOException e) {
 	    e.printStackTrace();
