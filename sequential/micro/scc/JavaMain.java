@@ -50,9 +50,10 @@ public class JavaMain {
 	}
 
 	public Digraph parse() {
+	    match("{");
 	    Digraph g = new Digraph();
 	    boolean firstTime=true;
-	    while(pos < input.length()) {
+	    while(pos < input.length() && input.charAt(pos) != '}') {
 		if(!firstTime) {
 		    match(",");
 		}
@@ -62,11 +63,12 @@ public class JavaMain {
 		int to = parseInt();
 		g.add(from,to);
 	    }
+	    match("}");
 	    return g;
 	}
 
 	public void match(String r) {
-	    if((pos + r.length()) < input.length()) {
+	    if((pos + r.length()) <= input.length()) {
 		String tmp = input.substring(pos,pos+r.length());
 		if(tmp.equals(r)) {
 		    pos += r.length();
@@ -188,12 +190,13 @@ public class JavaMain {
 		    System.out.print("{");
 		    for(int i=0;i!=tmp.size();++i) {
 			if(i != 0) {
-			    System.out.print(", ");
+			    System.out.print(",");
 			}
 			System.out.print(tmp.get(i));
 		    }
-		    System.out.println("}");		    
+		    System.out.print("}");		    
 		}
+		System.out.println();
 	    }
 	} catch(IOException e) {
 	    e.printStackTrace();
