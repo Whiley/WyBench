@@ -20,6 +20,15 @@ define Any as Primitive | Ref
 Array Array(Any element):
     return { element: element }
 
+Class Class(string pkg, string class):
+    return {pkg: pkg, classes: [class]}
+
+Class Class(string pkg, [string] classes):
+    return {pkg: pkg, classes: classes}
+
+Fun Fun(Any ret, [Any] params):
+    return {ret: ret, params: params}
+
 // useful constants
 define JAVA_LANG_OBJECT as {pkg: "java.lang", classes: ["Object"]}
 define JAVA_LANG_STRING as {pkg: "java.lang", classes: ["String"]}

@@ -11,7 +11,7 @@ void ::main(System sys, [string] args):
     file = File.Reader(args[0])
     contents = file.read()
     //cf = ClassFileReader.readClassFile(contents)
-    JasmFileReader.read(String.fromASCII(contents))
-    //JasmFileWriter.print(sys,cf)
+    cf = JasmFileReader.read(String.fromASCII(contents))
+    JasmFileWriter.print(sys,cf)
     
 
