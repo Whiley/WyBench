@@ -16,7 +16,7 @@ define Invalid as { ShortMove move, Board board }
 public Invalid Invalid(Board b, ShortMove m):
     return { board: b, move: m }
 
-Board apply(ShortMove move, Board board) throws InvalidMove|Invalid:
+Board apply(ShortMove move, Board board) throws Move.Invalid|Invalid:
     move = inferMove(move,board)
     return applyMove(move,board)
 

@@ -17,8 +17,8 @@ define CastleMove as { bool isWhite, bool kingSide }
 define CheckMove as { Move check }
 define Move as CheckMove | CastleMove | SimpleMove
 
-define InvalidMove as { Move move, Board board }
-public InvalidMove InvalidMove(Board b, Move m):
+define Invalid as { Move move, Board board }
+public Invalid Invalid(Board b, Move m):
     return { board: b, move: m }
 
 // castling
@@ -34,7 +34,7 @@ bool validMove(Move move, Board board):
     try:
         nboard = applyMoveDispatch(move,board)
         return validMove(move,board,nboard)
-    catch(InvalidMove e):
+    catch(Invalid e):
         return false
 
 bool validMove(Move move, Board board, Board nboard):
@@ -180,14 +180,14 @@ bool validKingMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
 // Apply Move
 // =============================================================
 
-Board applyMove(Move move, Board board) throws InvalidMove:
+Board applyMove(Move move, Board board) throws Invalid:
     nboard = applyMoveDispatch(move,board)
     if !validMove(move,board,nboard):
-        throw { move: move, board: board }
+        throw Invalid(board,move)
     else:
         return nboard
 
-Board applyMoveDispatch(Move move, Board board) throws InvalidMove:
+Board applyMoveDispatch(Move move, Board board) throws Invalid:
     if move is SingleMove:
         // SingleTake is processed in the same way
         return applySingleMove(move,board)

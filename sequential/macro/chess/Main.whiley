@@ -37,7 +37,7 @@ void ::main(System sys, [string] args):
             sys.out.println(Board.toString(board))
     catch(Error e):
         sys.out.println("syntax error: " + e.msg)
-    catch(Move.InvalidMove im):
+    catch(Move.Invalid im):
         sys.out.println("invalid move: " + Move.toString(im.move))
     catch(ShortMove.Invalid ism):
         sys.out.println("invalid move: " + ShortMove.toString(ism.move))
