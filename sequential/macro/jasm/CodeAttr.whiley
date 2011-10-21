@@ -1,8 +1,7 @@
 import whiley.lang.*
+import Error from whiley.lang.Errors
 import * from ConstantPool
 import * from Bytecode
-
-define FormatError as {string msg}
 
 define CodeAttr as {
     int maxStack,
@@ -10,7 +9,7 @@ define CodeAttr as {
     [Bytecode] bytecodes
 }
 
-CodeAttr read([byte] data, [ConstantPool.Item] pool):
+CodeAttr read([byte] data, [ConstantPool.Item] pool) throws Error:
     length = Byte.toUnsignedInt(data[14..10])
     pos = 14
     codes = []
@@ -24,7 +23,7 @@ CodeAttr read([byte] data, [ConstantPool.Item] pool):
         bytecodes: codes
     }
 
-(Bytecode,int) readBytecode(int pos, [byte] data, [ConstantPool.Item] pool) throws FormatError:
+(Bytecode,int) readBytecode(int pos, [byte] data, [ConstantPool.Item] pool) throws Error:
     opcode = Byte.toUnsignedInt(data[pos])
     info = decodeTable[opcode]
     if info is null:

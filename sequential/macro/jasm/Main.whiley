@@ -11,10 +11,12 @@ void ::main(System sys, [string] args):
     file = File.Reader(args[0])
     contents = file.read()
     //cf = ClassFileReader.readClassFile(contents)
-    cf = JasmFileReader.read(String.fromASCII(contents))
-    JasmFileWriter.print(sys,cf)
-    bytes = ClassFileWriter.write(cf)
-    file = File.Writer("jasm.out")
-    file.write(bytes)
-    debug "GOT HERE"        
+    try:    
+        cf = JasmFileReader.read(String.fromASCII(contents))
+        JasmFileWriter.print(sys,cf)
+        bytes = ClassFileWriter.write(cf)
+        file = File.Writer("jasm.out")
+        file.write(bytes)
+    catch(SyntaxError e):
+        sys.out.println("syntax error: " + e.msg)
 

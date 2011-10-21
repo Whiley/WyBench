@@ -1,5 +1,5 @@
 import whiley.lang.*
-
+import * from whiley.lang.Errors
 import * from ClassFile
 
 public ClassFile read(string input) throws SyntaxError:
@@ -18,7 +18,7 @@ define JavaString as { string str, int start, int end }
 define Operator as { operator op, int start, int end }
 define Token as Number | Identifier | JavaString | Operator
 
-[Token] tokenify(string input):
+[Token] tokenify(string input) throws SyntaxError:
     index = 0
     tokens = []
     while index < |input|:
@@ -45,7 +45,7 @@ define Token as Number | Identifier | JavaString | Operator
         index = index + 1
     return Identifier(txt,start,index),index
 
-(Number, int) parseNumber(string input, int index):    
+(Number, int) parseNumber(string input, int index) throws SyntaxError:    
     start = index
     txt = ""
     // inch forward until end of identifier reached
@@ -80,7 +80,7 @@ ClassFile parse([Token] tokens) throws SyntaxError:
         index = match("interface",tokens,index)
         modifiers = modifiers + {ACC_INTERFACE}
     else:
-        throw SyntaxError("expected class or interface",tokens[index])
+        throw nSyntaxError("expected class or interface",tokens[index])
     name,index = matchIdentifier(tokens,index)
     return {
         minor_version: 0,
@@ -141,16 +141,16 @@ ClassFile parse([Token] tokens) throws SyntaxError:
         if token is Identifier:
             return token.id,index+1
         else:
-            throw SyntaxError("identifier expected",token)
+            throw nSyntaxError("identifier expected",token)
     throw SyntaxError("unexpected end-of-file",index,index+1)
 
-int match(string id, [Token] tokens, int index):
+int match(string id, [Token] tokens, int index) throws SyntaxError:
     if index < |tokens|:
         token = tokens[index]
         if token is Identifier && token.id == id:
             return index+1
         else:
-            throw SyntaxError("identifier expected",token)
+            throw nSyntaxError("identifier expected",tokens[index])
     throw SyntaxError("unexpected end-of-file",index,index+1)
 
 bool matches(string id, [Token] tokens, int index):
@@ -161,13 +161,8 @@ bool matches(string id, [Token] tokens, int index):
     return false
 
 // =======================================================
-// Misc
+// Parser
 // =======================================================
 
-define SyntaxError as {string msg, int start, int end}
-
-SyntaxError SyntaxError(string msg, int start, int end):
-    throw { msg: msg, start: start, end: end }
-
-SyntaxError SyntaxError(string msg, Token token):
-    throw { msg: msg, start: token.start, end: token.end }
+SyntaxError nSyntaxError(string msg, Token token):
+    return SyntaxError(msg,token.start,token.end)

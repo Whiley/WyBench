@@ -1,10 +1,9 @@
 import whiley.lang.*
+import Error from whiley.lang.Errors
 
 import * from ClassFile
 import * from ConstantPool
 import * from Bytecodes
-
-define FormatError as {string msg}
 
 define Constant as string | int | real 
 
@@ -79,14 +78,14 @@ define Item as FieldRefInfo |
         LongInfo | 
         NameAndTypeInfo
 
-int integerItem(int index, [Item] pool) throws FormatError:
+int integerItem(int index, [Item] pool) throws Error:
     item = pool[index]
     if item is IntegerInfo:
         return item.value
     else:
         throw {msg: "invalid integer item"}
 
-int longItem(int index, [Item] pool) throws FormatError:
+int longItem(int index, [Item] pool) throws Error:
     item = pool[index]
     if item is LongInfo:
         return item.value
@@ -94,14 +93,14 @@ int longItem(int index, [Item] pool) throws FormatError:
         throw {msg: "invalid integer item"}
 
 // extract a utf8 string item
-string utf8Item(int index, [Item] pool) throws FormatError:
+string utf8Item(int index, [Item] pool) throws Error:
     item = pool[index]
     if item is Utf8Info:
         return String.fromASCII(item.value)
     else:
         throw {msg: "invalid utf8 item"}
 
-string stringItem(int index, [Item] pool) throws FormatError:
+string stringItem(int index, [Item] pool) throws Error:
     item = pool[index]
     if item is StringInfo:
         return utf8Item(item.string_index,pool)
@@ -109,7 +108,7 @@ string stringItem(int index, [Item] pool) throws FormatError:
         throw {msg: "invalid string item"}
 
 // extract a class type item
-JvmType.Class classItem(int index, [Item] pool) throws FormatError:
+JvmType.Class classItem(int index, [Item] pool) throws Error:
     item = pool[index]
     if item is ClassInfo:
         utf8 = utf8Item(item.name_index,pool)
@@ -117,15 +116,15 @@ JvmType.Class classItem(int index, [Item] pool) throws FormatError:
     else:
         throw {msg: "invalid class item"}
 
-JvmType.Any typeItem(int index, [Item] pool) throws FormatError:
+JvmType.Any typeItem(int index, [Item] pool) throws Error:
     desc = utf8Item(index,pool)
     return parseDescriptor(desc)
 
-JvmType.Fun methodTypeItem(int index, [Item] pool) throws FormatError:
+JvmType.Fun methodTypeItem(int index, [Item] pool) throws Error:
     desc = utf8Item(index,pool)
     return parseMethodDescriptor(desc)
 
-(string,string) nameAndTypeItem(int index, [Item] pool) throws FormatError:
+(string,string) nameAndTypeItem(int index, [Item] pool) throws Error:
     item = pool[index]
     if item is NameAndTypeInfo:
         name = utf8Item(item.name_index,pool)
@@ -134,7 +133,7 @@ JvmType.Fun methodTypeItem(int index, [Item] pool) throws FormatError:
     else:
         throw {msg: "invalid name and type item"}                
 
-(JvmType.Class,string,JvmType.Fun) methodRefItem(int index, [Item] pool) throws FormatError:
+(JvmType.Class,string,JvmType.Fun) methodRefItem(int index, [Item] pool) throws Error:
     item = pool[index]
     if item is MethodRefInfo:
         owner = classItem(item.class_index,pool)
@@ -143,7 +142,7 @@ JvmType.Fun methodTypeItem(int index, [Item] pool) throws FormatError:
     else:
         throw {msg: "invalid method ref item"}
 
-(JvmType.Class,string,JvmType.Any) fieldRefItem(int index, [Item] pool) throws FormatError:
+(JvmType.Class,string,JvmType.Any) fieldRefItem(int index, [Item] pool) throws Error:
     item = pool[index]
     if item is FieldRefInfo:
         owner = classItem(item.class_index,pool)
@@ -152,7 +151,7 @@ JvmType.Fun methodTypeItem(int index, [Item] pool) throws FormatError:
     else:
         throw {msg: "invalid field ref item"}
 
-Constant numberOrStringItem(int index, [Item] pool) throws FormatError:
+Constant numberOrStringItem(int index, [Item] pool) throws Error:
     item = pool[index]
     if item is StringInfo:
         return stringItem(index,pool)
@@ -163,7 +162,7 @@ Constant numberOrStringItem(int index, [Item] pool) throws FormatError:
     else:
         return -1 // quick hack
 
-JvmType.Any parseDescriptor(string desc):
+JvmType.Any parseDescriptor(string desc) throws Error:
     type,pos = parseDescriptor(0,desc)
     return type
 
@@ -179,7 +178,7 @@ JvmType.Class parseClassDescriptor(string desc):
     // FIXME: split out inner classes here.
     return {pkg: pkg, classes:[name]}
 
-(JvmType.Any,int) parseDescriptor(int pos, string desc) throws FormatError:
+(JvmType.Any,int) parseDescriptor(int pos, string desc) throws Error:
     if pos >= |desc|:
         throw {msg: "invalid descriptor"}
     lookahead = desc[pos]
@@ -214,7 +213,7 @@ JvmType.Class parseClassDescriptor(string desc):
     // unknown cases
     throw {msg: "invalid descriptor"}
 
-JvmType.Fun parseMethodDescriptor(string desc) throws FormatError:
+JvmType.Fun parseMethodDescriptor(string desc) throws Error:
     if desc[0] != '(':
         throw { msg: "invalid method descriptor" }
     pos = 1
