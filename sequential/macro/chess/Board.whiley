@@ -222,7 +222,3 @@ string piece2str(Piece p):
         return ""
     else:
         return "" + PIECE_CHARS[p.kind]
-
-string pos2str(Pos p):
-    return "" + ('a' + p.col) + ('1' + p.row)
-

@@ -12,11 +12,15 @@ define ShortCheckMove as { ShortMove check }
 define ShortMove as ShortSingleMove | ShortCheckMove | CastleMove
 define ShortRound as (ShortMove,ShortMove|null)
 
-Board apply(ShortMove move, Board board) throws InvalidMove:
+define Invalid as { ShortMove move, Board board }
+public Invalid Invalid(Board b, ShortMove m):
+    return { board: b, move: m }
+
+Board apply(ShortMove move, Board board) throws InvalidMove|Invalid:
     move = inferMove(move,board)
     return applyMove(move,board)
 
-Move inferMove(ShortMove m, Board b) throws InvalidMove:
+Move inferMove(ShortMove m, Board b) throws Invalid:
     if m is CastleMove:
         return m
     else if m is ShortCheckMove:
@@ -35,7 +39,7 @@ Move inferMove(ShortMove m, Board b) throws InvalidMove:
             else:
                 return { piece: m.piece, from: matches[0], to: m.to }
         else:
-            throw { board: b, move: m }
+            throw Invalid(b,m)
     // BUG: what does the following line do??
     return { piece: WHITE_PAWN, from: A2, to: A3 }
 
@@ -97,5 +101,5 @@ string toString(ShortMove m):
             return "O-O-O"
     else: 
         // ShortCheckMove
-        return toString(m.check) + "+"  
+        return "???+"  
 

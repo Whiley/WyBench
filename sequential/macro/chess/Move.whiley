@@ -18,6 +18,8 @@ define CheckMove as { Move check }
 define Move as CheckMove | CastleMove | SimpleMove
 
 define InvalidMove as { Move move, Board board }
+public InvalidMove InvalidMove(Board b, Move m):
+    return { board: b, move: m }
 
 // castling
 // en passant
@@ -29,8 +31,11 @@ define InvalidMove as { Move move, Board board }
 // The purpose of the validMove method is to check whether or not a
 // move is valid on a given board.
 bool validMove(Move move, Board board):
-    nboard = applyMoveDispatch(move,board)
-    return validMove(move,board,nboard)
+    try:
+        nboard = applyMoveDispatch(move,board)
+        return validMove(move,board,nboard)
+    catch(InvalidMove e):
+        return false
 
 bool validMove(Move move, Board board, Board nboard):
     // first, test the check status of this side, and the opposition
@@ -182,7 +187,7 @@ Board applyMove(Move move, Board board) throws InvalidMove:
     else:
         return nboard
 
-Board applyMoveDispatch(Move move, Board board):
+Board applyMoveDispatch(Move move, Board board) throws InvalidMove:
     if move is SingleMove:
         // SingleTake is processed in the same way
         return applySingleMove(move,board)
@@ -217,3 +222,20 @@ Board applyCastleMove(CastleMove move, Board board):
         board.rows[row][3] = rook
     return board
 
+string pos2str(Pos p):
+    return "" + ('a' + p.col) + ('1' + p.row)
+
+string toString(Move m):
+    if m is SingleMove:
+        return piece2str(m.piece) + pos2str(m.from) + "x" + pos2str(m.to)
+    else if m is SingleTake:
+        return piece2str(m.piece) + pos2str(m.from) + pos2str(m.to)
+    else if m is CastleMove:
+        if m.kingSide:
+            return "O-O"
+        else:
+            return "O-O-O"
+    else: 
+        // CheckMove
+        // return toString(m.check) + "+"  FIXME
+        return "???+"

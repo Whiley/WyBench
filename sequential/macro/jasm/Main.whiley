@@ -17,6 +17,5 @@ void ::main(System sys, [string] args):
         bytes = ClassFileWriter.write(cf)
         file = File.Writer("jasm.out")
         file.write(bytes)
-    catch(SyntaxError e):
-        sys.out.println("syntax error: " + e.msg)
-
+    catch(SyntaxError se):
+        sys.out.println("syntax error: " + se.msg)

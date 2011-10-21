@@ -6,13 +6,13 @@
 // See http://en.wikipedia.org/wiki/Algebraic_chess_notation for more.
 
 import whiley.lang.*
+import * from whiley.lang.Errors
 import * from ShortMove
 import * from Board
 
 define state as {string input, int pos}
-define SyntaxError as {string msg}
 
-[ShortRound] parseChessGame(string input) throws SyntaxError:
+[ShortRound] parseChessGame(string input) throws Error:
     pos = 0
     moves = []
     while pos < |input|:        
@@ -20,7 +20,7 @@ define SyntaxError as {string msg}
         moves = moves + [round]
     return moves
 
-(ShortRound,int) parseRound(int pos, string input):
+(ShortRound,int) parseRound(int pos, string input) throws Error:
     pos = parseNumber(pos,input)
     pos = parseWhiteSpace(pos,input)
     white,pos = parseMove(pos,input,true)
@@ -32,7 +32,7 @@ define SyntaxError as {string msg}
         black = null
     return (white,black),pos
 
-int parseNumber(int pos, string input) throws SyntaxError:
+int parseNumber(int pos, string input) throws Error:
     while pos < |input| && input[pos] != '.':
         pos = pos + 1
     if pos == |input|:
