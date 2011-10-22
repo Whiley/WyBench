@@ -211,6 +211,11 @@ public ([Item],Index,int) addHelper([Item] pool, Index index, [Item] items):
         index[items] = |pool|
         item.string_index = i
         pool = pool + [item]
+    else if item is ConstantPool.ClassInfo:        
+        pool,index,i = addHelper(pool,index,items[0..1])
+        index[items] = |pool|
+        item.name_index = i
+        pool = pool + [item]
     // finally, done!
     return pool,index,|pool|-1
 
