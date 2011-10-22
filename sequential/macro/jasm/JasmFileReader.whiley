@@ -10,7 +10,19 @@ public ClassFile read(string input) throws SyntaxError:
 // Lexer
 // =======================================================
 
-define operator as { '{','}','(',')' }
+define LEFT_CURLY as 0
+define RIGHT_CURLY as 1
+define LEFT_BRACE as 2
+define RIGHT_BRACE as 3
+define COMMA as 4
+
+define operator as { 
+    LEFT_CURLY, 
+    RIGHT_CURLY,
+    LEFT_BRACE, 
+    RIGHT_BRACE,
+    COMMA
+}
 
 define Number as { int value, int start, int end }
 define Identifier as { string id, int start, int end }
@@ -82,15 +94,34 @@ ClassFile parse([Token] tokens) throws SyntaxError:
     else:
         throw nSyntaxError("expected class or interface",tokens[index])
     name,index = matchIdentifier(tokens,index)
+    // parse extends clause (if present)
+    super = JvmType.JAVA_LANG_OBJECT
+    if matches("extends",tokens,index):
+        index = match("extends",tokens,index)
+        super,index = parseJvmClassType(tokens,index)
+    // parse implements clause (if present)
+    interfaces = []
+    if matches("implements",tokens,index):
+        index = match("implements",tokens,index)
+        // could do with a do-while construct
+        type,index = parseJvmClassType(tokens,index)
+        interfaces = interfaces + [type]
+        while matches(COMMA,tokens,index):
+            index = match(COMMA,tokens,index)            
+            type,index = parseJvmClassType(tokens,index)
+            interfaces = interfaces + [type]
+    // now parse field and method declarations
+    fields = []
+    methods = []
     return {
         minor_version: 0,
         major_version: 49,
         modifiers: modifiers,
         type: JvmType.Class("",name),
-        super: JvmType.JAVA_LANG_OBJECT,
-        interfaces: [],
-        fields: [],
-        methods: []
+        super: super,
+        interfaces: interfaces,
+        fields: fields,
+        methods: methods
     }
     
 ({ClassModifier},int) parseClassModifiers([Token] tokens, int index):
@@ -135,6 +166,9 @@ ClassFile parse([Token] tokens) throws SyntaxError:
     // finished!
     return modifiers,index
 
+(JvmType.Class,int) parseJvmClassType([Token] tokens, int index) throws SyntaxError:
+    return JvmType.JAVA_LANG_OBJECT,index
+
 (string,int) matchIdentifier([Token] tokens, int index) throws SyntaxError:
     if index < |tokens|:
         token = tokens[index]
@@ -153,6 +187,15 @@ int match(string id, [Token] tokens, int index) throws SyntaxError:
             throw nSyntaxError("identifier expected",tokens[index])
     throw SyntaxError("unexpected end-of-file",index,index+1)
 
+int match(operator op, [Token] tokens, int index) throws SyntaxError:
+    if index < |tokens|:
+        token = tokens[index]
+        if token is Operator && token.op == op:
+            return index+1
+        else:
+            throw nSyntaxError("operator expected",tokens[index])
+    throw SyntaxError("unexpected end-of-file",index,index+1)
+
 bool matches(string id, [Token] tokens, int index):
     if index < |tokens|:
         token = tokens[index]
@@ -160,8 +203,15 @@ bool matches(string id, [Token] tokens, int index):
             return token.id == id
     return false
 
+bool matches(operator op, [Token] tokens, int index):
+    if index < |tokens|:
+        token = tokens[index]
+        if token is Operator:
+            return token.op == op
+    return false
+
 // =======================================================
-// Parser
+// Misc
 // =======================================================
 
 SyntaxError nSyntaxError(string msg, Token token):
