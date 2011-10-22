@@ -174,21 +174,52 @@ Constant numberOrStringItem(int index, [Item] pool) throws Error:
 // Encoding Functions
 // ============================================================
 
-[Item] addUtf8Item([Item] pool, string utf8):
+public define Index as {[Item]->int}
+
+public [Item] Utf8Info(string utf8):
     bytes = String.toUTF8(utf8)
     item = {
         tag: CONSTANT_Utf8,
         value: bytes
     }
-    return pool + [item]
+    return [item]
 
-[Item] addClassItem([Item] pool, JvmType.Class c):
-    pool = addUtf8Item(pool,descriptor(c))
+public [Item] ClassInfo(JvmType.Class c):
+    pool = Utf8Info(descriptor(c))
     item = {
         tag: CONSTANT_Class,
-        name_index: |pool|-1
+        name_index: 0
     }
     return pool + [item]
+
+public ([Item],Index) add([Item] pool, Index index, [Item] items):
+    pool,index,i = addHelper(pool,index,items)
+    return pool,index
+
+public ([Item],Index,int) addHelper([Item] pool, Index index, [Item] items):
+    // first, check if already allocated in pool
+    i = lookup(index,items)
+    if i != null:
+        return pool,index,i
+    // second, recursively allocate item
+    item = items[|items|-1]
+    if item is ConstantPool.Utf8Info:
+        index[items] = |pool|
+        pool = pool + [item]
+    else if item is ConstantPool.StringInfo:        
+        pool,index,i = addHelper(pool,index,items[0..1])
+        index[items] = |pool|
+        item.string_index = i
+        pool = pool + [item]
+    // finally, done!
+    return pool,index,|pool|-1
+
+// the following method is a temporary hack
+int|null lookup(Index index, [Item] items):
+    for k,v in index:
+        if k == items:
+            return v
+    return null
 
 // ============================================================
 // Parse Descriptors

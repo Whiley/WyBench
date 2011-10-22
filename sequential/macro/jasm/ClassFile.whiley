@@ -100,5 +100,5 @@ define MethodModifier as {
 // compute the constant pool for the given class
 public [ConstantPool.Item] constantPool(ClassFile cf):
     pool = []
-    pool = ConstantPool.addClassItem(pool,cf.type)
+    //    pool = ConstantPool.add(pool,cf.type)
     return pool
