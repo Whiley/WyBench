@@ -41,18 +41,18 @@ import * from Bytecodes
         bytes = write_u1(bytes,item.tag)        
         bytes = write_u2(bytes,|item.value|)
         bytes = bytes + item.value
-    else if item is ConstantPool.IntegerInfo || 
-            item is ConstantPool.LongInfo:
+    else if item is ConstantPool.IntegerInfo|ConstantPool.LongInfo:
         bytes = write_u1(bytes,item.tag)        
         debug "Need to implement writePoolItem(ConstantPool.IntegerInfo)\n"
-    else if item is ConstantPool.FieldRefInfo || 
-            item is ConstantPool.MethodRefInfo ||
-            item is ConstantPool.InterfaceMethodRefInfo:
+    else if item is ConstantPool.FieldRefInfo|ConstantPool.MethodRefInfo|ConstantPool.InterfaceMethodRefInfo:
         bytes = write_u1(bytes,item.tag)        
-
-    else: // item is ConstantPool.NameAndTypeInfo
+        bytes = write_u2(bytes,item.class_index)
+        bytes = write_u2(bytes,item.name_and_type_index)
+    else if item is ConstantPool.NameAndTypeInfo:
         bytes = write_u1(bytes,item.tag)
-                
+        bytes = write_u2(bytes,item.name_index)
+        bytes = write_u2(bytes,item.descriptor_index)
+    // done!
     return bytes
 
 [byte] writeModifiers([byte] bytes, {ClassModifier} modifiers):
