@@ -3,7 +3,7 @@ import * from CodeAttr
 import * from ClassFile
 import * from whiley.lang.System
 
-public void ::print(System sys, ClassFile cf):
+public void ::write(System sys, ClassFile cf):
     // First, print out the class and its modifiers
     sys.out.print(classModifiers2str(cf.modifiers))
     sys.out.print("class " + JvmType.toString(cf.type))
@@ -17,18 +17,18 @@ public void ::print(System sys, ClassFile cf):
     sys.out.println("{")
     // Now, print out fields
     for field in cf.fields:
-        printField(sys,field)
+        writeField(sys,field)
     // and, methods
     for method in cf.methods:
         sys.out.println("") // separator
-        printMethod(sys,method)
+        writeMethod(sys,method)
     sys.out.println("}")
 
-void ::printField(System sys, FieldInfo field):
+void ::writeField(System sys, FieldInfo field):
     sys.out.print(fieldModifiers2str(field.modifiers))
     sys.out.println(JvmType.toString(field.type) + " " + field.name)
 
-void ::printMethod(System sys, MethodInfo method):
+void ::writeMethod(System sys, MethodInfo method):
     sys.out.print(methodModifiers2str(method.modifiers))
     sys.out.print(JvmType.toString(method.type.ret) + " " + method.name + "(")
     firstTime=true
