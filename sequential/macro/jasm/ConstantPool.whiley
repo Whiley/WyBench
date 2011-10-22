@@ -245,7 +245,7 @@ public Utf8Tree Utf8Tree(string utf8):
 public ClassTree ClassTree(JvmType.Class c):
     return {
         tag: CONSTANT_Class,
-        name_index: Utf8Tree(descriptor(c))
+        name_index: Utf8Tree(classDescriptor(c))
     }
 
 public ([Item],Index) add([Item] pool, Index index, Tree item):
@@ -290,8 +290,8 @@ JvmType.Any parseDescriptor(string desc) throws Error:
     return type
 
 JvmType.Class parseClassDescriptor(string desc):    
-    desc = String.replace('/','.',desc)
-    idx = String.lastIndexOf('.',desc)
+    desc = String.replace(desc,'/','.')
+    idx = String.lastIndexOf(desc,'.')
     if idx is null:
         pkg = ""
         name = desc
@@ -325,7 +325,7 @@ JvmType.Class parseClassDescriptor(string desc):
         case 'V':
             return JvmType.Void,pos+1
         case 'L':
-            end = String.indexOf(';',pos+1,desc)
+            end = String.indexOf(desc,';',pos+1)
             if end is null:
                 throw {msg: "invalid descriptor"}
             type = parseClassDescriptor(desc[pos+1..end])
@@ -352,4 +352,20 @@ JvmType.Fun parseMethodDescriptor(string desc) throws Error:
 // ============================================================
 
 string descriptor(JvmType.Class ct):
-    return "Ljava/lang/Object;"
+    return "L" + classDescriptor(ct) + ";"
+
+string classDescriptor(JvmType.Class ct):
+    pkg = String.replace(ct.pkg,'.','/')
+    if pkg == "":
+        firstTime=true
+    else:
+        firstTime=false
+    classes = ""
+    // now add class components
+    for class in ct.classes:
+        if !firstTime:
+            classes = classes + "/"
+        firstTime=false
+        classes = classes + class
+    // done
+    return pkg + classes
