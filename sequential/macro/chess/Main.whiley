@@ -39,8 +39,8 @@ void ::main(System sys, [string] args):
         sys.out.println("syntax error: " + e.msg)
     catch(Move.Invalid im):
         sys.out.println("invalid move: " + Move.toString(im.move))
-    catch(ShortMove.Invalid ism):
-        sys.out.println("invalid move: " + ShortMove.toString(ism.move))
+    catch(any x):
+        sys.out.println("dead-code reached!")
 
 void ::usage(System sys):
     sys.out.println("usage: chess file")
