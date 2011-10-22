@@ -19,11 +19,15 @@ import * from Bytecodes
         bytes = writePoolItem(bytes,pool[i])
     // write class info
     bytes = writeModifiers(bytes,cf.modifiers)
-    bytes = write_u2(bytes,index[ConstantPool.ClassTree(cf.type)]) // class pool index
-    bytes = write_u2(bytes,0) // super class pool index
-    bytes = write_u2(bytes,0) // interface count
-    // write fields
-    bytes = write_u2(bytes,0) // field count
+    bytes = write_u2(bytes,index[ClassTree(cf.type)])
+    bytes = write_u2(bytes,index[ClassTree(cf.super)])
+    bytes = write_u2(bytes,|cf.interfaces|)
+    for interface in cf.interfaces:
+        bytes = write_u2(bytes,index[ClassTree(interface)])
+    // write fields    
+    bytes = write_u2(bytes,|cf.fields|) // field count
+    for field in cf.fields:
+        bytes = writeField(bytes,index,field)
     // write methods
     bytes = write_u2(bytes,0) // method count
     // write class attributes
@@ -60,6 +64,25 @@ import * from Bytecodes
     for cm in modifiers:
         sum = sum + cm
     return write_u2(bytes,sum)
+
+// ============================================================
+// Fields
+// ============================================================
+
+[byte] writeField([byte] bytes, Index index, FieldInfo field):
+    bytes = writeModifiers(bytes, field.modifiers)
+    bytes = write_u2(bytes, index[Utf8Tree(field.name)])
+    bytes = write_u2(bytes, index[Utf8Tree(descriptor(field.type))])
+    bytes = write_u2(bytes, 0) // attribute count
+    return bytes
+
+// ============================================================
+// Methods
+// ============================================================
+
+// ============================================================
+// Misc
+// ============================================================
 
 [byte] write_u1([byte] bytes, int u1) requires 0 <= u1 && u1 <= 255:
     return bytes + [Int.toUnsignedByte(u1)]

@@ -351,8 +351,32 @@ JvmType.Fun parseMethodDescriptor(string desc) throws Error:
 // Write Descriptors
 // ============================================================
 
-string descriptor(JvmType.Class ct):
-    return "L" + classDescriptor(ct) + ";"
+string descriptor(JvmType.Any t):
+    if t is JvmType.Primitive:
+        switch t:
+            case JvmType.Void:
+                return "D"
+            case JvmType.Boolean:
+                return "Z"
+            case JvmType.Byte:
+                return "B"
+            case JvmType.Char:
+                return "C"
+            case JvmType.Short:
+                return "S"
+            case JvmType.Int:
+                return "I"
+            case JvmType.Long:
+                return "J"
+            case JvmType.Float:
+                return "F"
+            default:
+                return "D"
+    else if t is JvmType.Array:
+        return "[" + descriptor(t.element)
+    else if t is JvmType.Class:
+        return "L" + classDescriptor(t) + ";"
+    return "DEAD CODE"
 
 string classDescriptor(JvmType.Class ct):
     pkg = String.replace(ct.pkg,'.','/')
