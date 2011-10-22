@@ -252,7 +252,7 @@ public ([Item],Index) add([Item] pool, Index index, Tree item):
     pool,index,i = addHelper(pool,index,item)
     return pool,index
 
-public ([Item],Index,int) addHelper([Item] pool, Index index, Tree item):
+([Item],Index,int) addHelper([Item] pool, Index index, Tree item):
     // first, check if already allocated in pool
     i = lookup(index,item)
     if i != null:

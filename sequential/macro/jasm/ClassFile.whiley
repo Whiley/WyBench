@@ -1,4 +1,5 @@
 import Bytecode from Bytecode
+import * from ConstantPool
 
 define ClassFile as {
     int minor_version,
@@ -98,7 +99,14 @@ define MethodModifier as {
 }
 
 // compute the constant pool for the given class
-public [ConstantPool.Item] constantPool(ClassFile cf):
-    pool = []
-    //    pool = ConstantPool.add(pool,cf.type)
-    return pool
+public ([Item],Index) constantPool(ClassFile cf):
+    pool = [
+        // We initialise the first item of the constant pool with a 
+        // dummy.  This is because pool indices start from 1, not 0.  
+        // Therefore, to avoid subtracting 1 from every index we just set
+        // the first as a dummy.
+        {tag: CONSTANT_Integer, value: 0}
+    ]
+    index = {->}
+    pool,index = add(pool,index,ClassTree(cf.type))
+    return pool,index

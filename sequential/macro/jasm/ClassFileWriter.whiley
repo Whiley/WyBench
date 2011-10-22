@@ -4,7 +4,7 @@ import * from ConstantPool
 import * from Bytecodes
 
 [byte] write(ClassFile cf):
-    pool = constantPool(cf)
+    pool,index = constantPool(cf)
     // write standard classfile header
     bytes = [Int.toUnsignedByte(0xCA),
              Int.toUnsignedByte(0xFE),
@@ -15,11 +15,11 @@ import * from Bytecodes
     bytes = write_u2(bytes,cf.major_version)
     // write constant pool
     bytes = write_u2(bytes,|pool|)
-    for i in pool:
-        bytes = writePoolItem(bytes,i)
+    for i in 1..|pool|:
+        bytes = writePoolItem(bytes,pool[i])
     // write class info
     bytes = writeModifiers(bytes,cf.modifiers)
-    bytes = write_u2(bytes,0) // class pool index
+    bytes = write_u2(bytes,index[ConstantPool.ClassTree(cf.type)]) // class pool index
     bytes = write_u2(bytes,0) // super class pool index
     bytes = write_u2(bytes,0) // interface count
     // write fields
@@ -65,4 +65,6 @@ import * from Bytecodes
     return bytes + [Int.toUnsignedByte(u1)]
 
 [byte] write_u2([byte] bytes, int u2) requires 0 <= u2 && u2 <= 65535:
-    return bytes + Int.toUnsignedBytes(u2)
+    low = u2 % 256
+    high = u2 / 256
+    return bytes + [Int.toUnsignedByte(high),Int.toUnsignedByte(low)]
