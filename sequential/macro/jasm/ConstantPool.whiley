@@ -183,7 +183,7 @@ Constant numberOrStringItem(int index, [Item] pool) throws Error:
     return pool + [item]
 
 [Item] addClassItem([Item] pool, JvmType.Class c):
-    pool = addUtf8Item(pool,descriptor)
+    pool = addUtf8Item(pool,descriptor(c))
     item = {
         tag: CONSTANT_Class,
         name_index: |pool|-1
@@ -191,7 +191,7 @@ Constant numberOrStringItem(int index, [Item] pool) throws Error:
     return pool + [item]
 
 // ============================================================
-// Descriptors
+// Parse Descriptors
 // ============================================================
 
 JvmType.Any parseDescriptor(string desc) throws Error:
@@ -255,3 +255,10 @@ JvmType.Fun parseMethodDescriptor(string desc) throws Error:
         params = params + [param]
     ret,pos = parseDescriptor(pos+1,desc)
     return { ret: ret, params: params }
+
+// ============================================================
+// Write Descriptors
+// ============================================================
+
+string descriptor(JvmType.Class ct):
+    return "Ljava/lang/Object;"

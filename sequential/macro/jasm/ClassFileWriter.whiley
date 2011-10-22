@@ -4,7 +4,7 @@ import * from ConstantPool
 import * from Bytecodes
 
 [byte] write(ClassFile cf):
-    constantPool = []
+    pool = constantPool(cf)
     // write standard classfile header
     bytes = [Int.toUnsignedByte(0xCA),
              Int.toUnsignedByte(0xFE),
@@ -14,9 +14,9 @@ import * from Bytecodes
     bytes = write_u2(bytes,cf.minor_version)
     bytes = write_u2(bytes,cf.major_version)
     // write constant pool
-    bytes = write_u2(bytes,|constantPool|)
-    //    for poolItem : constantPool:
-    //      ???
+    bytes = write_u2(bytes,|pool|)
+    for i in pool:
+        bytes = writePoolItem(bytes,i)
     // write class info
     bytes = writeModifiers(bytes,cf.modifiers)
     bytes = write_u2(bytes,0) // class pool index
@@ -30,11 +30,39 @@ import * from Bytecodes
     bytes = write_u2(bytes,0) // attribute count
     return bytes
 
+[byte] writePoolItem([byte] bytes, ConstantPool.Item item):
+    if item is ConstantPool.StringInfo:
+        bytes = write_u1(bytes,item.tag)
+        bytes = write_u2(bytes,item.string_index)
+    else if item is ConstantPool.ClassInfo:
+        bytes = write_u1(bytes,item.tag)
+        bytes = write_u2(bytes,item.name_index)
+    else if item is ConstantPool.Utf8Info:
+        bytes = write_u1(bytes,item.tag)        
+        bytes = write_u2(bytes,|item.value|)
+        bytes = bytes + item.value
+    else if item is ConstantPool.IntegerInfo || 
+            item is ConstantPool.LongInfo:
+        bytes = write_u1(bytes,item.tag)        
+        debug "Need to implement writePoolItem(ConstantPool.IntegerInfo)\n"
+    else if item is ConstantPool.FieldRefInfo || 
+            item is ConstantPool.MethodRefInfo ||
+            item is ConstantPool.InterfaceMethodRefInfo:
+        bytes = write_u1(bytes,item.tag)        
+
+    else: // item is ConstantPool.NameAndTypeInfo
+        bytes = write_u1(bytes,item.tag)
+                
+    return bytes
+
 [byte] writeModifiers([byte] bytes, {ClassModifier} modifiers):
     sum = 0
     for cm in modifiers:
         sum = sum + cm
     return write_u2(bytes,sum)
+
+[byte] write_u1([byte] bytes, int u1) requires 0 <= u1 && u1 <= 255:
+    return bytes + [Int.toUnsignedByte(u1)]
 
 [byte] write_u2([byte] bytes, int u2) requires 0 <= u2 && u2 <= 65535:
     return bytes + Int.toUnsignedBytes(u2)
