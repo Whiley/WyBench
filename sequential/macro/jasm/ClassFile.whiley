@@ -96,3 +96,12 @@ define MethodModifier as {
     ACC_STRICT,
     ACC_SYNTHETIC
 }
+
+// compute the constant pool for the given class
+public [ConstantPool.Item] constantPool(ClassFile cf):
+    return []
+    // pool = {}
+    // flatPool = []
+    // for item in pool:
+    //     flatPool = flatPool + [item]
+    // return flatPool

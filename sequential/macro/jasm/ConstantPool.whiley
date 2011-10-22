@@ -5,6 +5,10 @@ import * from ClassFile
 import * from ConstantPool
 import * from Bytecodes
 
+// ============================================================
+// Definitions
+// ============================================================
+
 define Constant as string | int | real 
 
 define CONSTANT_Utf8 as 1
@@ -77,6 +81,10 @@ define Item as FieldRefInfo |
         IntegerInfo | 
         LongInfo | 
         NameAndTypeInfo
+
+// ============================================================
+// Decoding Functions
+// ============================================================
 
 int integerItem(int index, [Item] pool) throws Error:
     item = pool[index]
@@ -161,6 +169,30 @@ Constant numberOrStringItem(int index, [Item] pool) throws Error:
     //        return longItem(index,pool)
     else:
         return -1 // quick hack
+
+// ============================================================
+// Encoding Functions
+// ============================================================
+
+[Item] addUtf8Item([Item] pool, string utf8):
+    bytes = String.toUTF8(utf8)
+    item = {
+        tag: CONSTANT_Utf8,
+        value: bytes
+    }
+    return pool + [item]
+
+[Item] addClassItem([Item] pool, JvmType.Class c):
+    pool = addUtf8Item(pool,descriptor)
+    item = {
+        tag: CONSTANT_Class,
+        name_index: |pool|-1
+    }
+    return pool + [item]
+
+// ============================================================
+// Descriptors
+// ============================================================
 
 JvmType.Any parseDescriptor(string desc) throws Error:
     type,pos = parseDescriptor(0,desc)
