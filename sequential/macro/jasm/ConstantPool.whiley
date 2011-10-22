@@ -174,55 +174,110 @@ Constant numberOrStringItem(int index, [Item] pool) throws Error:
 // Encoding Functions
 // ============================================================
 
-public define Index as {[Item]->int}
+define Utf8Tree as {
+    Type.uint8 tag,
+    [byte] value        
+}
 
-public [Item] Utf8Info(string utf8):
+define IntegerTree as {
+    Type.uint8 tag,
+    Type.int32 value        
+}
+
+define LongTree as {
+    Type.uint8 tag,
+    Type.int64 value        
+}
+
+define StringTree as {
+    Type.uint8 tag,
+    Utf8Tree string_index
+}
+
+define ClassTree as {
+    Type.uint8 tag,
+    Utf8Tree name_index
+}
+
+define NameAndTypeTree as {
+    Type.uint8 tag,
+    Utf8Tree name_index,
+    Utf8Tree descriptor_index    
+}
+
+define FieldRefTree as { 
+    Type.uint8 tag,
+    ClassTree class_index,
+    NameAndTypeTree name_and_type_index
+}
+
+define MethodRefTree as { 
+    Type.uint8 tag,
+    ClassTree class_index,
+    NameAndTypeTree name_and_type_index
+}
+
+define InterfaceMethodRefTree as { 
+    Type.uint8 tag,
+    ClassTree class_index,
+    NameAndTypeTree name_and_type_index
+}
+
+define Tree as FieldRefTree | 
+        MethodRefTree | 
+        InterfaceMethodRefTree | 
+        StringTree | 
+        ClassTree |
+        Utf8Tree |
+        IntegerTree | 
+        LongTree | 
+        NameAndTypeTree
+
+public define Index as {Tree->int}
+
+public Utf8Tree Utf8Tree(string utf8):
     bytes = String.toUTF8(utf8)
-    item = {
+    return {
         tag: CONSTANT_Utf8,
         value: bytes
     }
-    return [item]
 
-public [Item] ClassInfo(JvmType.Class c):
-    pool = Utf8Info(descriptor(c))
-    item = {
+public ClassTree ClassTree(JvmType.Class c):
+    return {
         tag: CONSTANT_Class,
-        name_index: 0
+        name_index: Utf8Tree(descriptor(c))
     }
-    return pool + [item]
 
-public ([Item],Index) add([Item] pool, Index index, [Item] items):
-    pool,index,i = addHelper(pool,index,items)
+public ([Item],Index) add([Item] pool, Index index, Tree item):
+    pool,index,i = addHelper(pool,index,item)
     return pool,index
 
-public ([Item],Index,int) addHelper([Item] pool, Index index, [Item] items):
+public ([Item],Index,int) addHelper([Item] pool, Index index, Tree item):
     // first, check if already allocated in pool
-    i = lookup(index,items)
+    i = lookup(index,item)
     if i != null:
         return pool,index,i
     // second, recursively allocate item
-    item = items[|items|-1]
-    if item is ConstantPool.Utf8Info:
-        index[items] = |pool|
+    if item is Utf8Tree:
+        index[item] = |pool|
         pool = pool + [item]
-    else if item is ConstantPool.StringInfo:        
-        pool,index,i = addHelper(pool,index,items[0..1])
-        index[items] = |pool|
+    else if item is StringTree:        
+        pool,index,i = addHelper(pool,index,item.string_index)
+        index[item] = |pool|
         item.string_index = i
         pool = pool + [item]
-    else if item is ConstantPool.ClassInfo:        
-        pool,index,i = addHelper(pool,index,items[0..1])
-        index[items] = |pool|
+    else if item is ClassTree:
+        pool,index,i = addHelper(pool,index,item.name_index)
+        index[item] = |pool|
         item.name_index = i
         pool = pool + [item]
     // finally, done!
     return pool,index,|pool|-1
 
 // the following method is a temporary hack
-int|null lookup(Index index, [Item] items):
+int|null lookup(Index index, Tree item):
     for k,v in index:
-        if k == items:
+        if k == item:
             return v
     return null
 
