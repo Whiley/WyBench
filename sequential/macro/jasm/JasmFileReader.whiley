@@ -1,6 +1,7 @@
 import whiley.lang.*
 import * from whiley.lang.Errors
 import * from ClassFile
+import Bytecode from Bytecode
 
 public ClassFile read(string input) throws SyntaxError:
     tokens = tokenify(input)
@@ -131,6 +132,9 @@ ClassFile parse([Token] tokens) throws SyntaxError:
         name,index = matchIdentifier(tokens,index)
         if matches('(',tokens,index):
             // start of method
+            modifiers = checkModifiers(MethodModifier,modifiers)
+            parameters = parseParameters(tokens,index) 
+            body,index = parseBody(tokens,index)
         else:
             // start of field
             modifiers = checkModifiers(FieldModifier,modifiers)
@@ -139,6 +143,27 @@ ClassFile parse([Token] tokens) throws SyntaxError:
             fields = fields + [field]
     index = match('}',tokens,index)
     return fields,methods
+
+([Bytecode],int) parseBody([Token] tokens, int index) throws SyntaxError:
+    index = match('{',tokens,index)
+    body = []
+    while index < |tokens| && !matches('}',tokens,index):
+        // actually do something here
+        index = index + 1
+    index = match('}',tokens,index)    
+    return body,index
+
+([JvmType.Any],int) parseParameters([Token] tokens, int index) throws SyntaxError:
+    index = match('(',tokens,index)
+    type,index = parseJvmType(tokens,index)
+    types = [type]
+    while matches(',',tokens,index):
+        index = match(',',tokens,index)
+        type,index = parseJvmType(tokens,index)
+        types = types + [type]
+    // done
+    index = match(')',tokens,index)                
+    return types,index  
 
 // I split parsing of modifiers into two methods to avoid repetition
 ({Identifier},int) parseModifiers([Token] tokens, int index):
