@@ -133,7 +133,7 @@ ClassFile parse([Token] tokens) throws SyntaxError:
         if matches('(',tokens,index):
             // start of method
             modifiers = checkModifiers(MethodModifier,modifiers)
-            parameters = parseParameters(tokens,index) 
+            parameters,index = parseParameters(tokens,index) 
             body,index = parseBody(tokens,index)
         else:
             // start of field
@@ -154,11 +154,13 @@ ClassFile parse([Token] tokens) throws SyntaxError:
     return body,index
 
 ([JvmType.Any],int) parseParameters([Token] tokens, int index) throws SyntaxError:
-    index = match('(',tokens,index)
-    type,index = parseJvmType(tokens,index)
-    types = [type]
-    while matches(',',tokens,index):
-        index = match(',',tokens,index)
+    index = match('(',tokens,index)    
+    types = []
+    firstTime=true
+    while !matches(')',tokens,index):
+        if !firstTime:
+            index = match(',',tokens,index)
+        firstTime=false
         type,index = parseJvmType(tokens,index)
         types = types + [type]
     // done
