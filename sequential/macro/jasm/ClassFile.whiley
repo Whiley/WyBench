@@ -128,6 +128,12 @@ public ([Item],Index) constantPool(ClassFile cf):
     index = {->}
     pool,index = add(pool,index,ClassTree(cf.type))
     pool,index = add(pool,index,ClassTree(cf.super))
+    // add interface types
     for interface in cf.interfaces:
         pool,index = add(pool,index,ClassTree(interface))
+    // add field information
+    for f in cf.fields:
+        pool,index = add(pool,index,Utf8Tree(f.name))
+        pool,index = add(pool,index,Utf8Tree(descriptor(f.type)))
+        // TODO: include attributes
     return pool,index
