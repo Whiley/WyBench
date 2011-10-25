@@ -29,7 +29,9 @@ import * from Bytecodes
     for field in cf.fields:
         bytes = writeField(bytes,index,field)
     // write methods
-    bytes = write_u2(bytes,0) // method count
+    bytes = write_u2(bytes,|cf.methods|) // method count
+    for method in cf.methods:
+        bytes = writeMethod(bytes,index,method)
     // write class attributes
     bytes = write_u2(bytes,0) // attribute count
     return bytes
@@ -79,6 +81,13 @@ import * from Bytecodes
 // ============================================================
 // Methods
 // ============================================================
+
+[byte] writeMethod([byte] bytes, Index index, MethodInfo method):
+    bytes = writeModifiers(bytes, method.modifiers)
+    bytes = write_u2(bytes, index[Utf8Tree(method.name)])
+    bytes = write_u2(bytes, index[Utf8Tree(descriptor(method.type))])
+    bytes = write_u2(bytes, 0) // attribute count
+    return bytes
 
 // ============================================================
 // Misc

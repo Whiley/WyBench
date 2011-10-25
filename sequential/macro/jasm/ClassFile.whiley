@@ -136,4 +136,9 @@ public ([Item],Index) constantPool(ClassFile cf):
         pool,index = add(pool,index,Utf8Tree(f.name))
         pool,index = add(pool,index,Utf8Tree(descriptor(f.type)))
         // TODO: include attributes
+    // add method information
+    for m in cf.methods:
+        pool,index = add(pool,index,Utf8Tree(m.name))
+        pool,index = add(pool,index,Utf8Tree(descriptor(m.type)))
+        // TODO: include attributes
     return pool,index

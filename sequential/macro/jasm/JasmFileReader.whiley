@@ -126,7 +126,6 @@ ClassFile parse([Token] tokens) throws SyntaxError:
     methods = []
     index = match('{',tokens,index)
     while index < |tokens| && !matches('}',tokens,index):
-        annotations = []
         modifiers,index = parseModifiers(tokens,index)
         type,index = parseJvmType(tokens,index)
         name,index = matchIdentifier(tokens,index)
@@ -134,12 +133,15 @@ ClassFile parse([Token] tokens) throws SyntaxError:
             // start of method
             modifiers = checkModifiers(MethodModifier,modifiers)
             parameters,index = parseParameters(tokens,index) 
+            type = JvmType.Fun(type,parameters)
             body,index = parseBody(tokens,index)
+            method = MethodInfo(modifiers,name,type,[])
+            methods = methods + [method]
         else:
             // start of field
             modifiers = checkModifiers(FieldModifier,modifiers)
             index = match(';',tokens,index)            
-            field = FieldInfo(modifiers,name,type,annotations)
+            field = FieldInfo(modifiers,name,type,[])
             fields = fields + [field]
     index = match('}',tokens,index)
     return fields,methods

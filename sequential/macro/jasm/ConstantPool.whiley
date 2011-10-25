@@ -378,6 +378,12 @@ string descriptor(JvmType.Any t):
         return "L" + classDescriptor(t) + ";"
     return "DEAD CODE"
 
+string descriptor(JvmType.Fun t):
+    desc = "("
+    for p in t.params:
+        desc = desc + descriptor(p)
+    return desc + ")" + descriptor(t.ret)
+
 string classDescriptor(JvmType.Class ct):
     pkg = String.replace(ct.pkg,'.','/')
     if pkg == "":
