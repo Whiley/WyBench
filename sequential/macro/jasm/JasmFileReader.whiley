@@ -266,7 +266,7 @@ ClassFile parse([Token] tokens) throws SyntaxError:
             type = JvmType.Double
             break
         default:
-            type,index = parseJvmClassType(tokens,index)
+            type,nindex = parseJvmClassType(tokens,index)
     // now check if this is an array    
     while matches('[',tokens,nindex):
         index = match('[',tokens,nindex)
@@ -281,12 +281,13 @@ ClassFile parse([Token] tokens) throws SyntaxError:
     firstTime = true
     // parse package
     while matches('.',tokens,index):
+        index = match('.',tokens,index)
         if !firstTime:
             pkg = pkg + "."
         firstTime=false
         pkg = pkg + name
         name,index = matchIdentifier(tokens,index)
-    // parse inner classes
+    // FIXME: parse inner classes
     return JvmType.Class(pkg,name),index
 
 (string,int) matchIdentifier([Token] tokens, int index) throws SyntaxError:
