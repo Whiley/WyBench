@@ -1,7 +1,7 @@
 import Bytecode from Bytecode
 import * from ConstantPool
 
-define ClassFile as {
+public define ClassFile as {
     int minor_version,
     int major_version,
     {ClassModifier} modifiers,
@@ -12,21 +12,37 @@ define ClassFile as {
     [MethodInfo] methods
 }
 
-define FieldInfo as {
+public define FieldInfo as {
     {FieldModifier} modifiers,
     string name,
     JvmType.Any type,
     [AttributeInfo] attributes   
 }
 
-define MethodInfo as {
+public FieldInfo FieldInfo({FieldModifier} modifiers, string name, JvmType.Any type, [AttributeInfo] attributes):
+    return {
+        modifiers: modifiers,
+        name: name,
+        type: type,
+        attributes: attributes
+    }
+
+public define MethodInfo as {
     {MethodModifier} modifiers,
     string name,
     JvmType.Fun type,
     [AttributeInfo] attributes   
 }
 
-define UnknownAttr as {
+public MethodInfo MethodInfo({MethodModifier} modifiers, string name, JvmType.Fun type, [AttributeInfo] attributes):
+    return {
+        modifiers: modifiers,
+        name: name,
+        type: type,
+        attributes: attributes
+    }
+
+public define UnknownAttr as {
     string name,
     [byte] data
 }

@@ -59,7 +59,7 @@ import * from Bytecodes
     // done!
     return bytes
 
-[byte] writeModifiers([byte] bytes, {ClassModifier} modifiers):
+[byte] writeModifiers([byte] bytes, {Modifier} modifiers):
     sum = 0
     for cm in modifiers:
         sum = sum + cm

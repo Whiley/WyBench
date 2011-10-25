@@ -123,10 +123,21 @@ ClassFile parse([Token] tokens) throws SyntaxError:
 ([FieldInfo],[MethodInfo]) parseClassBody([Token] tokens, int index) throws SyntaxError:
     fields = []
     methods = []
-    //index = match('{',tokens,index)
-    //    while index < |tokens| && !matches('}',tokens,index):
-    //modifiers,index = parseModifiers
-    //index = match('}',tokens,index)
+    index = match('{',tokens,index)
+    while index < |tokens| && !matches('}',tokens,index):
+        annotations = []
+        modifiers,index = parseModifiers(tokens,index)
+        type,index = parseJvmType(tokens,index)
+        name,index = matchIdentifier(tokens,index)
+        if matches('(',tokens,index):
+            // start of method
+        else:
+            // start of field
+            modifiers = checkModifiers(FieldModifier,modifiers)
+            index = match(';',tokens,index)            
+            field = FieldInfo(modifiers,name,type,annotations)
+            fields = fields + [field]
+    index = match('}',tokens,index)
     return fields,methods
 
 // I split parsing of modifiers into two methods to avoid repetition
@@ -223,6 +234,47 @@ ClassFile parse([Token] tokens) throws SyntaxError:
             throw nSyntaxError("modifier not permitted here",token)
     return r           
 
+(JvmType.Any,int) parseJvmType([Token] tokens, int index) throws SyntaxError:
+    // first, parse element type
+    name,nindex = matchIdentifier(tokens,index)
+    switch name:
+        case "void":
+            type = JvmType.Void
+            break
+        case "boolean":
+            type = JvmType.Boolean
+            break
+        case "byte":
+            type = JvmType.Byte
+            break
+        case "char":
+            type = JvmType.Char
+            break
+        case "short":
+            type = JvmType.Short
+            break
+        case "int":
+            type = JvmType.Int
+            break
+        case "long":
+            type = JvmType.Long
+            break
+        case "float":
+            type = JvmType.Float
+            break
+        case "double":
+            type = JvmType.Double
+            break
+        default:
+            type,index = parseJvmClassType(tokens,index)
+    // now check if this is an array    
+    while matches('[',tokens,nindex):
+        index = match('[',tokens,nindex)
+        index = match(']',tokens,nindex)
+        type = JvmType.Array(type)
+    // done
+    return type,nindex
+    
 (JvmType.Class,int) parseJvmClassType([Token] tokens, int index) throws SyntaxError:
     name,index = matchIdentifier(tokens,index)
     pkg = ""
