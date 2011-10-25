@@ -15,13 +15,15 @@ define RIGHT_CURLY as 1
 define LEFT_BRACE as 2
 define RIGHT_BRACE as 3
 define COMMA as 4
+define DOT as 5
 
 define operator as { 
     LEFT_CURLY, 
     RIGHT_CURLY,
     LEFT_BRACE, 
     RIGHT_BRACE,
-    COMMA
+    COMMA,
+    DOT
 }
 
 define Number as { int value, int start, int end }
@@ -52,10 +54,19 @@ define Token as Number | Identifier | JavaString | Operator
     start = index
     txt = ""
     // inch forward until end of identifier reached
-    while index < |input| && Char.isLetter(input[index]):
+    while index < |input| && isIdentifierStart(input[index]):
+        txt = txt + input[index]
+        index = index + 1
+    while index < |input| && isIdentifierBody(input[index]):
         txt = txt + input[index]
         index = index + 1
     return Identifier(txt,start,index),index
+
+bool isIdentifierStart(char c):
+    return Char.isLetter(c) || c == '_'
+
+bool isIdentifierBody(char c):
+    return Char.isDigit(c) || Char.isLetter(c) || c == '_'
 
 (Number, int) parseNumber(string input, int index) throws SyntaxError:    
     start = index
@@ -77,7 +88,7 @@ Identifier Identifier(string identifier, int start, int end):
 Number Number(int value, int start, int end):
     return {value: value, start: start, end: end}
 
-Operator Operator(char op, int start, int end):
+Operator Operator(int op, int start, int end):
     return {op: op, start: start, end: end}
 
 // =======================================================
@@ -167,7 +178,18 @@ ClassFile parse([Token] tokens) throws SyntaxError:
     return modifiers,index
 
 (JvmType.Class,int) parseJvmClassType([Token] tokens, int index) throws SyntaxError:
-    return JvmType.JAVA_LANG_OBJECT,index
+    name,index = matchIdentifier(tokens,index)
+    pkg = ""
+    firstTime = true
+    // parse package
+    while matches(DOT,tokens,index):
+        if !firstTime:
+            pkg = pkg + "."
+        firstTime=false
+        pkg = pkg + name
+        name,index = matchIdentifier(tokens,index)
+    // parse inner classes
+    return JvmType.Class(pkg,name),index
 
 (string,int) matchIdentifier([Token] tokens, int index) throws SyntaxError:
     if index < |tokens|:
