@@ -81,7 +81,8 @@ Operator Operator(char op, int start, int end):
 // =======================================================
 
 ClassFile parse([Token] tokens) throws SyntaxError:
-    modifiers,index = parseClassModifiers(tokens,0)
+    modifiers,index = parseModifiers(tokens,0)
+    modifiers = checkModifiers(ClassModifier,modifiers)
     if matches("class",tokens,index):
         index = match("class",tokens,index)
     else if matches("interface",tokens,index):
@@ -122,50 +123,105 @@ ClassFile parse([Token] tokens) throws SyntaxError:
 ([FieldInfo],[MethodInfo]) parseClassBody([Token] tokens, int index) throws SyntaxError:
     fields = []
     methods = []
-    index = match('{',tokens,index)
-    while index < |tokens| && !matches('}',tokens,index):
-        //modifiers,index = parseModifiers
-    index = match('}',tokens,index)
+    //index = match('{',tokens,index)
+    //    while index < |tokens| && !matches('}',tokens,index):
+    //modifiers,index = parseModifiers
+    //index = match('}',tokens,index)
     return fields,methods
 
-({Modifier},int) parseModifiers({Modifier} permitted, [Token] tokens, int index) throws SyntaxError:
-    modifiers = {ACC_SUPER}
+// I split parsing of modifiers into two methods to avoid repetition
+({Identifier},int) parseModifiers([Token] tokens, int index):
+    modifiers = {}
     oldIndex = -1
     while index < |tokens| && index != oldIndex:
         oldIndex = index
         token = tokens[index]
         if token is Identifier:
-            modifier = null
             switch(token.id):
-                case "public":
-                    modifier = ACC_PUBLIC
-                    break
+                // class modifiers
+                case "public":                   
                 case "final":
-                    modifier = ACC_FINAL
-                    break               
                 case "abstract":
-                    modifier = ACC_ABSTRACT
-                    break
-                case "strict":
-                    modifier = ACC_STRICT
-                    break
                 case "synthetic":
-                    modifier = ACC_SYNTHETIC
-                    break
                 case "annotation":
-                    modifier = ACC_ANNOTATION
-                    break
                 case "enum":
-                    modifier = ACC_ENUM
-                    break
-            if modifier != null:
-                if modifier in permitted:
-                    modifiers = modifiers + {modifier}
+                // field modifiers
+                case "private":
+                case "protected":
+                case "static":
+                case "volatile":
+                case "transient":
+                // method modifiers
+                case "synchronized":
+                case "bridge":
+                case "varargs":
+                case "native":
+                case "strict":
+                    modifiers = modifiers + {token}
                     index = index + 1
-                else:
-                    throw nSyntaxError("modifier not permitted here",token)
     // finished!
     return modifiers,index
+
+{Modifier} checkModifiers({Modifier} permitted, {Identifier} modifiers) throws SyntaxError:
+    r = {}
+    for token in modifiers:
+        modifier = null        
+        switch token.id:
+            case "public":                   
+                modifier = ACC_PUBLIC
+                break
+            case "final":
+                modifier = ACC_FINAL
+                break
+            case "abstract":
+                modifier = ACC_ABSTRACT
+                break           
+            case "synthetic":
+                modifier = ACC_SYNTHETIC
+                break
+            case "annotation":
+                modifier = ACC_ANNOTATION
+                break
+            case "enum":
+                modifier = ACC_ENUM
+                break
+            // field modifiers
+            case "private":
+                modifier = ACC_PRIVATE
+                break
+            case "protected":
+                modifier = ACC_PROTECTED
+                break
+            case "static":
+                modifier = ACC_STATIC
+                break
+            case "volatile":
+                modifier = ACC_VOLATILE
+                break
+            case "transient":
+                modifier = ACC_TRANSIENT
+                break
+            // method modifiers
+            case "synchronized":
+                modifier = ACC_SYNCHRONIZED
+                break
+            case "bridge":
+                modifier = ACC_BRIDGE
+                break
+            case "varargs":
+                modifier = ACC_VARARGS
+                break
+            case "native":
+                modifier = ACC_NATIVE
+                break
+            case "strict":
+                modifier = ACC_STRICT
+                break
+        if modifier != null && modifier in permitted:
+            r = r + {modifier}
+        else:
+            throw nSyntaxError("modifier not permitted here",token)
+    return r           
 
 (JvmType.Class,int) parseJvmClassType([Token] tokens, int index) throws SyntaxError:
     name,index = matchIdentifier(tokens,index)
