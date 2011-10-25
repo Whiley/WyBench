@@ -98,6 +98,8 @@ define MethodModifier as {
     ACC_SYNTHETIC
 }
 
+define Modifier as ClassModifier | FieldModifier | MethodModifier
+
 // compute the constant pool for the given class
 public ([Item],Index) constantPool(ClassFile cf):
     pool = [

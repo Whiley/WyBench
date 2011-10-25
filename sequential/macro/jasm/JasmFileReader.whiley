@@ -107,8 +107,7 @@ ClassFile parse([Token] tokens) throws SyntaxError:
             type,index = parseJvmClassType(tokens,index)
             interfaces = interfaces + [type]
     // now parse field and method declarations
-    fields = []
-    methods = []
+    fields,methods = parseClassBody(tokens,index)
     return {
         minor_version: 0,
         major_version: 49,
@@ -119,46 +118,52 @@ ClassFile parse([Token] tokens) throws SyntaxError:
         fields: fields,
         methods: methods
     }
-    
-({ClassModifier},int) parseClassModifiers([Token] tokens, int index):
+
+([FieldInfo],[MethodInfo]) parseClassBody([Token] tokens, int index) throws SyntaxError:
+    fields = []
+    methods = []
+    index = match('{',tokens,index)
+    while index < |tokens| && !matches('}',tokens,index):
+        //modifiers,index = parseModifiers
+    index = match('}',tokens,index)
+    return fields,methods
+
+({Modifier},int) parseModifiers({Modifier} permitted, [Token] tokens, int index) throws SyntaxError:
     modifiers = {ACC_SUPER}
     oldIndex = -1
     while index < |tokens| && index != oldIndex:
         oldIndex = index
         token = tokens[index]
         if token is Identifier:
+            modifier = null
             switch(token.id):
                 case "public":
-                    modifiers = modifiers + {ACC_PUBLIC}
-                    index = index + 1
+                    modifier = ACC_PUBLIC
                     break
                 case "final":
-                    modifiers = modifiers + {ACC_FINAL}
-                    index = index + 1
+                    modifier = ACC_FINAL
                     break               
                 case "abstract":
-                    modifiers = modifiers + {ACC_ABSTRACT}
-                    index = index + 1
+                    modifier = ACC_ABSTRACT
                     break
                 case "strict":
-                    modifiers = modifiers + {ACC_STRICT}
-                    index = index + 1
+                    modifier = ACC_STRICT
                     break
                 case "synthetic":
-                    modifiers = modifiers + {ACC_SYNTHETIC}
-                    index = index + 1
+                    modifier = ACC_SYNTHETIC
                     break
                 case "annotation":
-                    modifiers = modifiers + {ACC_ANNOTATION}
-                    index = index + 1
+                    modifier = ACC_ANNOTATION
                     break
                 case "enum":
-                    modifiers = modifiers + {ACC_ENUM}
-                    index = index + 1
+                    modifier = ACC_ENUM
                     break
-                case "nosuper":
-                    modifiers = modifiers - {ACC_SUPER}
+            if modifier != null:
+                if modifier in permitted:
+                    modifiers = modifiers + {modifier}
                     index = index + 1
+                else:
+                    throw nSyntaxError("modifier not permitted here",token)
     // finished!
     return modifiers,index
 
