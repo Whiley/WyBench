@@ -10,9 +10,12 @@ public void ::write(System sys, ClassFile cf):
     if cf.super != JvmType.JAVA_LANG_OBJECT:
         sys.out.print(" extends " + JvmType.toString(cf.super))
     if |cf.interfaces| > 0:
-        sys.out.print(" implements")
+        sys.out.print(" implements ")
+        firstTime=true
         for i in cf.interfaces:
-            sys.out.print(" ")
+            if !firstTime:
+                sys.out.print(", ")
+            firstTime=false
             sys.out.print(JvmType.toString(i))
     sys.out.println(" {")
     // Now, print out fields

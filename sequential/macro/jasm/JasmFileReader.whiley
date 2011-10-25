@@ -10,26 +10,10 @@ public ClassFile read(string input) throws SyntaxError:
 // Lexer
 // =======================================================
 
-define LEFT_CURLY as 0
-define RIGHT_CURLY as 1
-define LEFT_BRACE as 2
-define RIGHT_BRACE as 3
-define COMMA as 4
-define DOT as 5
-
-define operator as { 
-    LEFT_CURLY, 
-    RIGHT_CURLY,
-    LEFT_BRACE, 
-    RIGHT_BRACE,
-    COMMA,
-    DOT
-}
-
 define Number as { int value, int start, int end }
 define Identifier as { string id, int start, int end }
 define JavaString as { string str, int start, int end }
-define Operator as { operator op, int start, int end }
+define Operator as { char op, int start, int end }
 define Token as Number | Identifier | JavaString | Operator
 
 [Token] tokenify(string input) throws SyntaxError:
@@ -42,12 +26,13 @@ define Token as Number | Identifier | JavaString | Operator
         else if Char.isDigit(lookahead):
             token,index = parseNumber(input,index)
             tokens = tokens + [token]
-        else if Char.isLetter(lookahead):
+        else if isIdentifierStart(lookahead):
             token,index = parseIdentifier(input,index)
             tokens = tokens + [token]
         else:
             index = index + 1
             token = Operator(lookahead,index-1,index)
+            tokens = tokens + [token]
     return tokens
     
 (Identifier, int) parseIdentifier(string input, int index):    
@@ -88,7 +73,7 @@ Identifier Identifier(string identifier, int start, int end):
 Number Number(int value, int start, int end):
     return {value: value, start: start, end: end}
 
-Operator Operator(int op, int start, int end):
+Operator Operator(char op, int start, int end):
     return {op: op, start: start, end: end}
 
 // =======================================================
@@ -116,9 +101,9 @@ ClassFile parse([Token] tokens) throws SyntaxError:
         index = match("implements",tokens,index)
         // could do with a do-while construct
         type,index = parseJvmClassType(tokens,index)
-        interfaces = interfaces + [type]
-        while matches(COMMA,tokens,index):
-            index = match(COMMA,tokens,index)            
+        interfaces = [type]
+        while matches(',',tokens,index):
+            index = match(',',tokens,index)            
             type,index = parseJvmClassType(tokens,index)
             interfaces = interfaces + [type]
     // now parse field and method declarations
@@ -182,7 +167,7 @@ ClassFile parse([Token] tokens) throws SyntaxError:
     pkg = ""
     firstTime = true
     // parse package
-    while matches(DOT,tokens,index):
+    while matches('.',tokens,index):
         if !firstTime:
             pkg = pkg + "."
         firstTime=false
@@ -209,7 +194,7 @@ int match(string id, [Token] tokens, int index) throws SyntaxError:
             throw nSyntaxError("identifier expected",tokens[index])
     throw SyntaxError("unexpected end-of-file",index,index+1)
 
-int match(operator op, [Token] tokens, int index) throws SyntaxError:
+int match(char op, [Token] tokens, int index) throws SyntaxError:
     if index < |tokens|:
         token = tokens[index]
         if token is Operator && token.op == op:
@@ -225,7 +210,7 @@ bool matches(string id, [Token] tokens, int index):
             return token.id == id
     return false
 
-bool matches(operator op, [Token] tokens, int index):
+bool matches(char op, [Token] tokens, int index):
     if index < |tokens|:
         token = tokens[index]
         if token is Operator:
