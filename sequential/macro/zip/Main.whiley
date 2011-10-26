@@ -1,34 +1,39 @@
-import whiley.io.*
+import whiley.lang.*
+import * from whiley.lang.Errors
+import * from whiley.lang.System
+import * from whiley.io.File
 
-void System::main([string] args):
-    file = this.openReader(args[0])
+import * from ZipFile
+
+void System::main(System sys, [string] args):
+    file = File.Reader(args[0])
     contents = file.read()
-    zf = zipFile(contents)
-    if zf ~= ZipError:
-        out.println("error: " + zf.msg)
-    else:        
+    try:
+        zf = ZipFile(contents)
         // Ok, this is a valid zip file, so print out the information
         // in a format similar to "unzip -v".
-        out.println(" Length   Method  Size   CRC-32  Name")
-        out.println("-------- -------- ------ -------- ----")
+        sys.out.println(" Length   Method  Size   CRC-32  Name")
+        sys.out.println("-------- -------- ------ -------- ----")
         rawSize = 0
         size = 0
         for e in zf.entries:
-            out.println(rightAlign(e.rawSize,8) + " " + rightAlign(ZIP_COMPRESSION_METHODS[e.method],8) + " " +
-                rightAlign(e.size,6) + " " + hexStr(e.crc) + " " + e.name)
+            sys.out.println(rightAlign(e.rawSize,8) + " " + rightAlign(ZIP_COMPRESSION_METHODS[e.method],8) + " " +
+                rightAlign(e.size,6) + " " + Int.hex(e.crc) + " " + e.name)
             rawSize = rawSize + e.rawSize
             size = size + e.size
-        out.println("--------          ------ -------- ----") 
-        out.println(rightAlign(rawSize,8) + "          " + rightAlign(size,6) + "          " + str(|zf.entries|) + " file(s)")
+        sys.out.println("--------          ------ -------- ----") 
+        sys.out.println(rightAlign(rawSize,8) + "          " + rightAlign(size,6) + "          " + String.str(|zf.entries|) + " file(s)")
         // now, extract each file    
         for e in zf.entries:
-            out.println("extracting " + e.name)
+            sys.out.println("extracting " + e.name)
             rawData = zipExtract(e)
-            writer = this.openWriter(e.name)
+            writer = File.Writer(e.name)
             writer.write(rawData)
+    catch(ZipError err):
+        sys.out.println("error: " + err.msg)
 
 string rightAlign(int val, int len):
-    return rightAlign(str(val),len)
+    return rightAlign(String.str(val),len)
 
 // pad out the given string to ensure it has len characters
 string rightAlign(string s, int len):

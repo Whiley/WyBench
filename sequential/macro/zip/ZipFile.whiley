@@ -29,6 +29,8 @@
 //
 // http://www.pkware.com/documents/casestudies/APPNOTE.TXT
 
+import whiley.lang.*
+
 define ZIP_LOCAL_HEADER as 0x04034b50
 
 // Compression Methods
@@ -68,13 +70,11 @@ define ZipEntry as {
 
 // Create a ZipFile structure from an array of bytes which represent
 // the zip file.
-ZipError|ZipFile zipFile([byte] data):
+ZipFile ZipFile([byte] data) throws ZipError:
     pos = 0
     es = []
     while pos < |data| && isLocalEntry(data,pos):
         r = parseEntry(data,pos)
-        if r ~= ZipError:
-            return r
         entry,pos = r
         es = es + [entry]   
     return { entries: es }
@@ -82,13 +82,13 @@ ZipError|ZipFile zipFile([byte] data):
 bool isLocalEntry([byte] data, int start):
     end = start + 4
     return end < |data| && 
-        le2uint(data[start..end]) == ZIP_LOCAL_HEADER
+        Byte.toUnsignedInt(data[start..end]) == ZIP_LOCAL_HEADER
 
-ZipError|(ZipEntry,int) parseEntry([byte] data, int offset):
+(ZipEntry,int) parseEntry([byte] data, int offset) throws ZipError:
     header = data[offset..(offset+30)]
-    namelen = le2uint(header[26..28])
-    extralen = le2uint(header[28..30])
-    datalen = le2uint(header[18..22])
+    namelen = Byte.toUnsignedInt(header[26..28])
+    extralen = Byte.toUnsignedInt(header[28..30])
+    datalen = Byte.toUnsignedInt(header[18..22])
     // calculate a few helpful offsets
     nameStart = offset+30
     nameEnd = nameStart + namelen
@@ -96,14 +96,14 @@ ZipError|(ZipEntry,int) parseEntry([byte] data, int offset):
     dataEnd = dataStart + datalen
     // now create the entry
     return {
-        version: le2uint(header[4..6]),
-        method: le2uint(header[8..10]),
-        lastTime: le2uint(header[10..12]),
-        lastDate: le2uint(header[12..14]),
-        crc: le2uint(header[14..18]),
+        version: Byte.toUnsignedInt(header[4..6]),
+        method: Byte.toUnsignedInt(header[8..10]),
+        lastTime: Byte.toUnsignedInt(header[10..12]),
+        lastDate: Byte.toUnsignedInt(header[12..14]),
+        crc: Byte.toUnsignedInt(header[14..18]),
         size: datalen,
-        rawSize: le2uint(header[22..26]),
-        name: data[nameStart..nameEnd],
+        rawSize: Byte.toUnsignedInt(header[22..26]),
+        name: String.fromASCII(data[nameStart..nameEnd]),
         data: data[dataStart..dataEnd]
     },offset+30+namelen+extralen+datalen
 
@@ -127,7 +127,7 @@ define decompressTable as [
 [byte] zipExtract(ZipEntry e):
     if e.method < |decompressTable|:
         f = decompressTable[e.method]
-        if !(f ~= null):
+        if f != null:
             return f(e)
     return [] // hack, should report error
 
