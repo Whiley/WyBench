@@ -75,23 +75,18 @@ ClassFile readClassFile([byte] data) throws Error:
                 string_index: si
             }
             pos = pos + 3
-            break
-        case CONSTANT_Float:
-        case CONSTANT_Integer:
+        case CONSTANT_Integer,CONSTANT_Float:
             item = {
                 tag: tag,
                 value: Byte.toInt(data[pos_5..pos_1])
             }
             pos = pos + 5
-            break
-        case CONSTANT_Double:
-        case CONSTANT_Long:
+        case CONSTANT_Long,CONSTANT_Double:
             item = {
                 tag: tag,
                 value: Byte.toInt(data[pos+9..pos_1])
             }
             pos = pos + 9
-            break
         case CONSTANT_Class:
             ni = Byte.toUnsignedInt(data[pos_3..pos_1])
             item = {
@@ -99,10 +94,7 @@ ClassFile readClassFile([byte] data) throws Error:
                 name_index: ni
             }
             pos = pos + 3
-            break
-        case CONSTANT_FieldRef:
-        case CONSTANT_MethodRef:
-        case CONSTANT_InterfaceMethodRef:
+        case CONSTANT_InterfaceMethodRef,CONSTANT_MethodRef,CONSTANT_FieldRef:
             ci = Byte.toUnsignedInt(data[pos_3..pos_1])
             nti = Byte.toUnsignedInt(data[pos_5..pos_3])
             item = {
@@ -111,7 +103,6 @@ ClassFile readClassFile([byte] data) throws Error:
                 name_and_type_index: nti
             }
             pos = pos + 5
-            break
         case CONSTANT_NameAndType:
             ni = Byte.toUnsignedInt(data[pos_3..pos_1])
             di = Byte.toUnsignedInt(data[pos_5..pos_3])
@@ -121,7 +112,6 @@ ClassFile readClassFile([byte] data) throws Error:
                 descriptor_index: di
             }
             pos = pos + 5
-            break
         case CONSTANT_Utf8:
             len = Byte.toUnsignedInt(data[pos_3..pos_1])
             item = {
@@ -130,7 +120,6 @@ ClassFile readClassFile([byte] data) throws Error:
                 value: data[pos_3..pos_3+len]
             }
             pos = pos_3+len
-            break
         default:
             throw {msg: "invalid constant pool item"}
     // ok, finally return the item

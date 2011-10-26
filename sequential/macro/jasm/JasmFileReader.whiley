@@ -169,6 +169,28 @@ ClassFile parse([Token] tokens) throws SyntaxError:
     index = match(')',tokens,index)                
     return types,index  
 
+define modifierStrings as {
+    // class modifiers
+    "public",
+    "final",
+    "abstract",
+    "synthetic",
+    "annotation",
+    "enum",
+    // field modifiers
+    "private",
+    "protected",
+    "static",
+    "volatile",
+    "transient",
+    // method modifiers
+    "synchronized",
+    "bridge",
+    "varargs",
+    "native",
+    "strict"
+}
+
 // I split parsing of modifiers into two methods to avoid repetition
 ({Identifier},int) parseModifiers([Token] tokens, int index):
     modifiers = {}
@@ -176,29 +198,9 @@ ClassFile parse([Token] tokens) throws SyntaxError:
     while index < |tokens| && index != oldIndex:
         oldIndex = index
         token = tokens[index]
-        if token is Identifier:
-            switch(token.id):
-                // class modifiers
-                case "public":                   
-                case "final":
-                case "abstract":
-                case "synthetic":
-                case "annotation":
-                case "enum":
-                // field modifiers
-                case "private":
-                case "protected":
-                case "static":
-                case "volatile":
-                case "transient":
-                // method modifiers
-                case "synchronized":
-                case "bridge":
-                case "varargs":
-                case "native":
-                case "strict":
-                    modifiers = modifiers + {token}
-                    index = index + 1
+        if token is Identifier && token.id in modifierStrings:
+            modifiers = modifiers + {token}
+            index = index + 1
     // finished!
     return modifiers,index
 
@@ -208,55 +210,39 @@ ClassFile parse([Token] tokens) throws SyntaxError:
         modifier = null        
         switch token.id:
             case "public":                   
-                modifier = ACC_PUBLIC
-                break
+                modifier = ACC_PUBLIC                
             case "final":
-                modifier = ACC_FINAL
-                break
+                modifier = ACC_FINAL                
             case "abstract":
-                modifier = ACC_ABSTRACT
-                break           
+                modifier = ACC_ABSTRACT                           
             case "synthetic":
-                modifier = ACC_SYNTHETIC
-                break
+                modifier = ACC_SYNTHETIC                
             case "annotation":
-                modifier = ACC_ANNOTATION
-                break
+                modifier = ACC_ANNOTATION                
             case "enum":
-                modifier = ACC_ENUM
-                break
+                modifier = ACC_ENUM                
             // field modifiers
             case "private":
-                modifier = ACC_PRIVATE
-                break
+                modifier = ACC_PRIVATE                
             case "protected":
-                modifier = ACC_PROTECTED
-                break
+                modifier = ACC_PROTECTED                
             case "static":
-                modifier = ACC_STATIC
-                break
+                modifier = ACC_STATIC                
             case "volatile":
-                modifier = ACC_VOLATILE
-                break
+                modifier = ACC_VOLATILE                
             case "transient":
-                modifier = ACC_TRANSIENT
-                break
+                modifier = ACC_TRANSIENT                
             // method modifiers
             case "synchronized":
-                modifier = ACC_SYNCHRONIZED
-                break
+                modifier = ACC_SYNCHRONIZED                
             case "bridge":
-                modifier = ACC_BRIDGE
-                break
+                modifier = ACC_BRIDGE                
             case "varargs":
-                modifier = ACC_VARARGS
-                break
+                modifier = ACC_VARARGS                
             case "native":
-                modifier = ACC_NATIVE
-                break
+                modifier = ACC_NATIVE                
             case "strict":
-                modifier = ACC_STRICT
-                break
+                modifier = ACC_STRICT                
         if modifier != null && modifier in permitted:
             r = r + {modifier}
         else:
@@ -268,32 +254,23 @@ ClassFile parse([Token] tokens) throws SyntaxError:
     name,nindex = matchIdentifier(tokens,index)
     switch name:
         case "void":
-            type = JvmType.Void
-            break
+            type = JvmType.Void            
         case "boolean":
-            type = JvmType.Boolean
-            break
+            type = JvmType.Boolean            
         case "byte":
-            type = JvmType.Byte
-            break
+            type = JvmType.Byte            
         case "char":
-            type = JvmType.Char
-            break
+            type = JvmType.Char            
         case "short":
-            type = JvmType.Short
-            break
+            type = JvmType.Short            
         case "int":
-            type = JvmType.Int
-            break
+            type = JvmType.Int            
         case "long":
-            type = JvmType.Long
-            break
+            type = JvmType.Long            
         case "float":
-            type = JvmType.Float
-            break
+            type = JvmType.Float            
         case "double":
-            type = JvmType.Double
-            break
+            type = JvmType.Double            
         default:
             type,nindex = parseJvmClassType(tokens,index)
     // now check if this is an array    
