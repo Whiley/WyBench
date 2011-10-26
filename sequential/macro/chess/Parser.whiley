@@ -69,19 +69,14 @@ int parseNumber(int pos, string input) throws Error:
     switch lookahead:
         case 'N':
             piece = KNIGHT
-            break
         case 'B':
             piece = BISHOP
-            break
         case 'R':
             piece = ROOK
-            break
         case 'K':
             piece = KING
-            break
         case 'Q':
             piece = QUEEN
-            break
         default:
             index = index - 1
             piece = PAWN
