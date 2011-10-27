@@ -1,6 +1,7 @@
 import * from whiley.io.File
 import * from whiley.lang.System
 import whiley.lang.*
+import * from whiley.lang.Errors
 
 // ============================================
 // Adjacency List directed graph structure
@@ -21,7 +22,7 @@ Digraph addEdge(Digraph g, int from, int to):
 // Parser
 // ============================================
 
-[Digraph] parseDigraphs(string input) throws string:
+[Digraph] parseDigraphs(string input) throws SyntaxError:
     graphs = []
     pos = 0
     while pos < |input|:
@@ -29,7 +30,7 @@ Digraph addEdge(Digraph g, int from, int to):
         graphs = graphs + [graph]
     return graphs
 
-(Digraph,int) parseDigraph(int pos, string input) throws string:
+(Digraph,int) parseDigraph(int pos, string input) throws SyntaxError:
     graph = []
     pos = match("{",pos,input)
     firstTime = true
@@ -45,23 +46,23 @@ Digraph addEdge(Digraph g, int from, int to):
     pos = skipWhiteSpace(pos,input) // parse any newline junk
     return graph,pos
 
-int match(string match, int pos, string input) throws string:
+int match(string match, int pos, string input) throws SyntaxError:
     end = pos + |match|
     if end < |input|:
         tmp = input[pos..end]
         if tmp == match:
             return end
         else:
-            throw "expected " + match + ",found " + tmp
+            throw SyntaxError("expected " + match + ",found " + tmp,pos,end)
     else:
-        throw "unexpected end-of-file"
+        throw SyntaxError("unexpected end-of-file",pos,end)
 
-(int,int) parseInt(int pos, string input):
+(int,int) parseInt(int pos, string input) throws SyntaxError:
     start = pos
     while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
-        throw "Missing number"
+        throw SyntaxError("Missing number",pos,pos)
     return String.toInt(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
@@ -146,20 +147,23 @@ State visit(int v, State s):
 void ::main(System sys, [string] args):
     file = File.Reader(args[0])
     input = String.fromASCII(file.read())
-    graphs = parseDigraphs(input)
-    // third, print output
-    count = 0
-    for graph in graphs:
-        sys.out.println("=== Graph #" + count + " ===")
-        count = count + 1
-        sccs = find_components(graph)
-        for scc in sccs:
-            sys.out.print("{")
-            firstTime=true
-            for v in scc:
-                if !firstTime:
-                    sys.out.print(",")
-                firstTime=false
-                sys.out.print(v)
-            sys.out.print("}")
-        sys.out.println("")
+    try:
+        graphs = parseDigraphs(input)
+        // third, print output
+        count = 0
+        for graph in graphs:
+            sys.out.println("=== Graph #" + count + " ===")
+            count = count + 1
+            sccs = find_components(graph)
+            for scc in sccs:
+                sys.out.print("{")
+                firstTime=true
+                for v in scc:
+                    if !firstTime:
+                        sys.out.print(",")
+                    firstTime=false
+                    sys.out.print(v)
+                sys.out.print("}")
+            sys.out.println("")
+    catch(SyntaxError e):
+        sys.out.println("error: " + e.msg)

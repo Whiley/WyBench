@@ -2,6 +2,7 @@ import whiley.io.*
 import * from whiley.io.File
 import whiley.lang.*
 import * from whiley.lang.System
+import * from whiley.lang.Errors
 
 [int] sort([int] items):
     if |items| > 1:
@@ -27,12 +28,12 @@ import * from whiley.lang.System
             r=r+1
     return items
 
-(int,int) parseInt(int pos, string input):
+(int,int) parseInt(int pos, string input) throws SyntaxError:
     start = pos
     while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
-        throw "Missing number"
+        throw SyntaxError("Missing number",pos,pos)
     return String.toInt(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
@@ -46,15 +47,18 @@ bool isWhiteSpace(char c):
 void ::main(System sys, [string] args):
     file = File.Reader(args[0])
     input = String.fromASCII(file.read())
-    pos = 0
-    data = []
-    pos = skipWhiteSpace(pos,input)
-    // first, read data
-    while pos < |input|:
-        i,pos = parseInt(pos,input)
-        data = data + i
+    try:
+        pos = 0
+        data = []
         pos = skipWhiteSpace(pos,input)
-    // second, sort data    
-    data = sort(data)
-    // third, print output
-    sys.out.print(String.str(data))
+        // first, read data
+        while pos < |input|:
+            i,pos = parseInt(pos,input)
+            data = data + i
+            pos = skipWhiteSpace(pos,input)
+        // second, sort data    
+        data = sort(data)
+        // third, print output
+        sys.out.print(Any.toString(data))
+    catch(SyntaxError e):
+        sys.out.println("Syntax error: " + e.msg)
