@@ -10,4 +10,4 @@ int fib(int x):
 void ::main(System sys, [string] args):
     for i in 1 .. 41:
         r = fib(i)
-        sys.out.println(String.str(r))
+        sys.out.println(r)

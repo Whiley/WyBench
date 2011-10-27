@@ -1,5 +1,5 @@
 import whiley.lang.*
-import * from whiley.lang.System
+import * from whiley.lang.*
 import * from whiley.io.File
 
 // ===============================================
@@ -19,7 +19,7 @@ define Test as {
 // Parser
 // ===============================================
 
-[Test] parseFile(string input):
+[Test] parseFile(string input) throws SyntaxError:
     ntests,pos = parseInt(0,input)
     tests = []
     while ntests > 0:
@@ -28,7 +28,7 @@ define Test as {
         ntests = ntests - 1
     return tests
 
-(Test,int) parseTest(int pos, string input):
+(Test,int) parseTest(int pos, string input) throws SyntaxError:
     combines = {}
     opposes = {}
     sequence = []
@@ -61,13 +61,13 @@ define Test as {
             sequence: sequence }
     return test,pos        
 
-(int,int) parseInt(int pos, string input):
+(int,int) parseInt(int pos, string input) throws SyntaxError:
     pos = skipWhiteSpace(pos,input)
     start = pos
     while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
-        throw "Missing number"
+        throw SyntaxError("Missing number",pos,pos)
     return String.toInt(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
@@ -86,5 +86,8 @@ bool isWhiteSpace(char c):
 void ::main(System sys, [string] args):
     file = File.Reader(args[0])
     input = String.fromASCII(file.read())
-    tests = parseFile(input)
-    sys.out.println("PARSED: " + String.str(|tests|) + " tests")
+    try:
+        tests = parseFile(input)
+        sys.out.println("PARSED: " + |tests| + " tests")
+    catch(SyntaxError e):
+        sys.out.println("error - " + e.msg)

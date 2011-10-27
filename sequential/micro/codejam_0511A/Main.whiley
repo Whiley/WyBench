@@ -1,5 +1,5 @@
 import whiley.lang.*
-import * from whiley.lang.System
+import * from whiley.lang.*
 import * from whiley.io.File
 
 // ===============================================
@@ -12,7 +12,7 @@ define Job as { int button, bool orange }
 // Parser
 // ===============================================
 
-([Job],int) parseJobs(int pos, string input):
+([Job],int) parseJobs(int pos, string input) throws SyntaxError:
     nitems,pos = parseInt(pos,input)
     jobs = []
     while nitems > 0:
@@ -24,13 +24,13 @@ define Job as { int button, bool orange }
         nitems = nitems - 1
     return jobs,pos
 
-(int,int) parseInt(int pos, string input):
+(int,int) parseInt(int pos, string input) throws SyntaxError:
     pos = skipWhiteSpace(pos,input)
     start = pos
     while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
-        throw "Missing number"
+        throw SyntaxError("Missing number",pos,pos)
     return String.toInt(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
@@ -74,11 +74,14 @@ void ::main(System sys, [string] args):
     // first, read the input file
     file = File.Reader(args[0])
     input = String.fromASCII(file.read())
-    ntests,pos = parseInt(0,input)
-    c = 1
-    while c <= ntests:
-        jobs,pos = parseJobs(pos,input)
-        pos = skipWhiteSpace(pos,input)
-        time = processJobs(jobs)
-        sys.out.println("Case #" + String.str(c) + ": " + String.str(time))
-        c = c + 1
+    try:
+        ntests,pos = parseInt(0,input)
+        c = 1
+        while c <= ntests:
+            jobs,pos = parseJobs(pos,input)
+            pos = skipWhiteSpace(pos,input)
+            time = processJobs(jobs)
+            sys.out.println("Case #" + c + ": " + time)
+            c = c + 1
+    catch(SyntaxError e):
+        sys.out.println("error - " + e.msg)

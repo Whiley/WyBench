@@ -1,13 +1,13 @@
 import whiley.lang.*
-import * from whiley.lang.System
+import * from whiley.lang.*
 import * from whiley.io.File
 
-(int,int) parseInt(int pos, string input):
+(int,int) parseInt(int pos, string input) throws SyntaxError:
     start = pos
     while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
-        throw "Missing number"
+        throw SyntaxError("Missing number",start,pos)
     return String.toInt(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
@@ -31,16 +31,19 @@ int gcd(int a, int b):
 void ::main(System sys, [string] args):
     file = File.Reader(args[0])
     input = String.fromASCII(file.read())
-    pos = 0
-    data = []
-    pos = skipWhiteSpace(pos,input)
-    // first, read data
-    while pos < |input|:
-        i,pos = parseInt(pos,input)
-        data = data + i
+    try:
+        pos = 0
+        data = []
         pos = skipWhiteSpace(pos,input)
-    // second, compute gcds
-    for i in 0..|data|:
-        for j in i+1..|data|:
-            sys.out.println(String.str(gcd(i,j)))
+        // first, read data
+        while pos < |input|:
+            i,pos = parseInt(pos,input)
+            data = data + i
+            pos = skipWhiteSpace(pos,input)
+        // second, compute gcds
+        for i in 0..|data|:
+            for j in i+1..|data|:
+                sys.out.println(gcd(i,j))
+    catch(SyntaxError e):
+        sys.out.println("error - " + e.msg)
 
