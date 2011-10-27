@@ -41,4 +41,4 @@ void ::main(System sys, [string] args):
     for i in 0..dim:
         init = init + (0,0)
     solutions = run(init,0,dim)
-    sys.out.println("Found " + String.str(|solutions|) + " solutions.")
+    sys.out.println("Found " + |solutions| + " solutions.")
