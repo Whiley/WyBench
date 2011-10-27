@@ -65,4 +65,4 @@ void ::main(System sys, [string] args):
         if match(regex,text):
             nmatches = nmatches + 1
         total = total + 1
-    sys.out.println("Matched " + String.str(nmatches) + " / " + String.str(total) + " inputs.")
+    sys.out.println("Matched " + nmatches + " / " + total + " inputs.")
