@@ -17,9 +17,11 @@ public define Tree as Leaf | Node | null
 public Tree Empty():
     return null // empty tree
 
-public Tree add(Tree tree, [bool] bits, Leaf value) throws Error:
-    return add(tree, bits, value, |bits|)
+// Map a given code to a given value
+public Tree add(Tree tree, Code code, Leaf value) throws Error:
+    return add(tree, code, value, |code|)
 
+// helper
 Tree add(Tree tree, [bool] bits, Leaf value, int index) throws Error:
     if index == 0:
         return value
@@ -63,7 +65,6 @@ Tree get(Tree tree, bool bit) throws Error:
         while |bl_count| <= clen:
             bl_count = bl_count + [0]
         bl_count[clen] = bl_count[clen] + 1
-
     // 2) Find the numerical value of the smallest code for each 
     //    code length: 
     code = 0
@@ -73,8 +74,7 @@ Tree get(Tree tree, bool bit) throws Error:
     for bits in 0 .. |bl_count|:
         code = (code + bl_count[bits]) * 2        
         next_code = next_code + [code]
-        max_code = Math.max(max_code,code)
-    
+        max_code = Math.max(max_code,code)    
     // 3) Assign numerical values to all codes, using consecutive 
     //    values for all codes of the same length with the base
     //    values determined at step 2. Codes that are never used  
