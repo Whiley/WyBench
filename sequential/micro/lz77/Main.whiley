@@ -20,13 +20,30 @@ import whiley.lang.*
             pos = pos + 1
         else:
             output = write_u1(output,len)
-            pos = pos + len + 1
+            pos = pos + len
     // done!
     return output
 
 // pos is current position in input value
 (int,int) findLongestMatch([byte] data, int pos):
-    return 0,0
+    bestOffset = 0
+    bestLen = 0
+    start = Math.max(pos-255,0)
+    for offset in start .. pos:
+        len = match(data,offset,pos)
+        if len > bestLen:
+            bestOffset = pos-offset
+            bestLen = len
+    return bestOffset,bestLen
+
+int match([byte] data, int offset, int end):
+    pos = end
+    len = 0
+    while offset < pos && pos < |data| && data[offset] == data[pos]:
+        offset = offset + 1
+        pos = pos + 1
+        len = len + 1
+    return len
 
 [byte] decompress([byte] data):
     output = []
@@ -40,10 +57,10 @@ import whiley.lang.*
         else:
             offset = Byte.toUnsignedInt(offset)
             len = Byte.toUnsignedInt(item)
-            start = pos - offset
+            start = |output| - offset
             for i in start .. (start+len):
                 item = output[i]
-                output = output + [item]
+                output = output + [item]            
     // all done!
     return output
             
@@ -53,11 +70,11 @@ import whiley.lang.*
 void ::main(System sys, [string] args):
     file = File.Reader(args[0])
     data = file.read()
-    sys.out.println("READ:         " + |data| + " bytes.")
+    sys.out.println("READ:         " + |data| + " bytes")
     data = compress(data)
     sys.out.println("COMPRESSED:   " + |data| + " bytes.")
     data = decompress(data)
-    sys.out.println("UNCOMPRESSED: " + |data| + " bytes.")
+    sys.out.println("UNCOMPRESSED: " + |data| + " bytes")
     sys.out.println("==================================")
     sys.out.print(String.fromASCII(data))
 
