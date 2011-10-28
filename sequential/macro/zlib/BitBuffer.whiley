@@ -27,6 +27,15 @@ public (bool,Reader) read(Reader reader):
     // return the bit we've read
     return b == 00000001b,reader
 
+public (byte,Reader) read(Reader reader, int nbits):
+    mask = 00000001b
+    r = 0b
+    for i in 0..nbits:
+        bit,reader = read(reader)
+        if bit:
+            r = r | mask
+        mask = mask << 1
+    return r,reader
 
 define Writer as {
     int index,  // index of current byte in data
