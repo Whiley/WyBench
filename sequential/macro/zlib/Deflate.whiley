@@ -1,5 +1,4 @@
 import whiley.lang.*
-import * from whiley.lang.System
 
 public [byte] decompress(BitBuffer.Reader reader):
     output = []
@@ -47,7 +46,9 @@ BitBuffer.Reader readDynamicHuffmanCodes(BitBuffer.Reader reader):
     // now wtf?
     return reader
 
-// determine the Huffman codes using a given sequence of code lengths
+// Determine the Huffman codes using a given sequence of code lengths.
+// To understand what this method does, you really need to consult
+// rfc1951.
 [int] defineHuffmanCodes([int] codeLengths):
     // (1) Count the number of codes for each code length.
     bl_count = []
@@ -82,8 +83,3 @@ BitBuffer.Reader readDynamicHuffmanCodes(BitBuffer.Reader reader):
             codes = codes + [0]
     // done
     return codes
-    
-void ::main(System sys, [string] args):
-    codeLengths = [2,1,3,3]
-    codes = defineHuffmanCodes(codeLengths)
-    sys.out.println("CODES: " + codes)
