@@ -18,29 +18,30 @@ public Tree Empty():
     return null // empty tree
 
 public Tree add(Tree tree, [bool] bits, Leaf value) throws Error:
-    return add(tree, bits, value, 0)
+    return add(tree, bits, value, |bits|)
 
 Tree add(Tree tree, [bool] bits, Leaf value, int index) throws Error:
-    if index == |bits|:
+    if index == 0:
         return value
     else:
+        index = index - 1
         bit = bits[index]
         if tree is Leaf:
             throw Error("invalid tree")
         else if tree is Node:
             if bit:
-                tree.one = add(tree.one,bits,value,index+1)
+                tree.one = add(tree.one,bits,value,index)
             else:
-                tree.zero = add(tree.zero,bits,value,index+1)
+                tree.zero = add(tree.zero,bits,value,index)
             return tree
         else:
             // empty tree
             if bit:
-                one = add(null,bits,value,index+1)
+                one = add(null,bits,value,index)
                 zero = null
             else:
                 one = null
-                zero = add(null,bits,value,index+1)
+                zero = add(null,bits,value,index)
             return {one: one, zero: zero}
 
 Tree get(Tree tree, bool bit) throws Error:
@@ -55,7 +56,7 @@ Tree get(Tree tree, bool bit) throws Error:
 // Generate the Huffman codes using a given sequence of code lengths.
 // To understand what this method does, you really need to consult
 // rfc1951.
-[Code] generate([int] codeLengths):
+[Code|null] generate([int] codeLengths):
     // (1) Count the number of codes for each code length.
     bl_count = []
     for clen in codeLengths:
@@ -83,21 +84,49 @@ Tree get(Tree tree, bool bit) throws Error:
     for n in 0 .. |codeLengths|:
         len = codeLengths[n]
         if len != 0:
-            codes = codes + [next_code[len]]
+            code = construct(next_code[len],len)
+            codes = codes + [code]
             next_code[len] = next_code[len] + 1
         else:
-            codes = codes + [0]
+            codes = codes + [null]
     // done
     return codes
 
+// convert an integer into a code value of a given length.
+Code construct(int code, int len):
+    r = []
+    for i in 0 .. len:
+        if (code % 2) == 1:
+            r = r + [true]
+        else:
+            r = r + [false]
+        code = code / 2
+    return r
+
 public void ::main(System sys, [string] args):
-    tree = Empty()
+    //codes = generate([2,1,3,3])
+    codes = generate([3,3,3,3,3,2,4,4])
+    // first, print generated codes
+    for i in 0..|codes|:
+        sys.out.print(i + " : ")
+        code = codes[i]
+        if code == null:
+            sys.out.println("")
+        else:
+            for j in |code| .. 0:
+                if code[j-1]:
+                    sys.out.print("1")
+                else:
+                    sys.out.print("0")
+            sys.out.println("")
+    // second, construct corresponding binary tree
     try:
-        tree = add(tree,[false,true],20)
-        tree = add(tree,[true,false],10)
-        sys.out.println(tree)
-        tree = get(tree,true)
+        tree = Empty()
+        for i in 0..|codes|:
+            code = codes[i]
+            if code != null:
+                tree = add(tree,code,i)
         sys.out.println(tree)
     catch(Error e):
-        sys.out.println("error")
+         sys.out.println("error")
             
