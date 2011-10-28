@@ -137,4 +137,4 @@ define decompressTable as [
     return e.data
 
 [byte] zipExtractDeflate(ZipEntry e):
-    return Deflate.decompress(e.data)
+    return Deflate.decompress(BitBuffer.Reader(e.data,0))

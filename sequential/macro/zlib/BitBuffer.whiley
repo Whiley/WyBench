@@ -1,14 +1,12 @@
-import * from whiley.lang.System
-
 define Reader as {
     int index,  // index of current byte in data
     int boff,    // bit offset in current byte
     [byte] data 
 }
 
-public Reader Reader([byte] data):
+public Reader Reader([byte] data, int start):
     return {
-        index: 0,
+        index: start    ,
         boff: 0,
         data: data
     }
@@ -62,24 +60,3 @@ public Writer write(Writer writer, bool bit):
         writer.boff = boff
     // done!
     return writer
-    
-void ::main(System sys, [string] args):
-    writer = Writer()
-    writer = write(writer,true)
-    writer = write(writer,false)
-    writer = write(writer,true)
-    writer = write(writer,true)
-    reader = Reader(writer.data)
-    b,reader = read(reader)
-    sys.out.println(b)
-    b,reader = read(reader)
-    sys.out.println(b)
-    b,reader = read(reader)
-    sys.out.println(b)
-    b,reader = read(reader)
-    sys.out.println(b)
-    b,reader = read(reader)
-    sys.out.println(b)
-    b,reader = read(reader)
-    sys.out.println(b)
-    

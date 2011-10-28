@@ -1,4 +1,4 @@
 import whiley.lang.*
 
-public [byte] decompress([byte] data):
+public [byte] decompress(BitBuffer.Reader reader):
     return []

@@ -23,12 +23,9 @@ public GZipFile GZipFile([byte] data) throws string:
     FEXTRA    = (FLG & 00000100b) != 0b
     FNAME     = (FLG & 00001000b) != 0b
     FCOMMENT  = (FLG & 00010000b) != 0b
+    MTIME = Byte.toUnsignedInt(data[4..8])
 
     index = 10
-
-    debug "CM: " + CM + "\n"
-    debug "FLG: " + FLG + "\n"
-    
     if FNAME:
         // filename is provided so extract it
         start = index
@@ -38,13 +35,15 @@ public GZipFile GZipFile([byte] data) throws string:
         index = index + 1
     else:
         filename = null
-        
-    debug "FILENAME: " + filename + "\n"
-    
+
+    // now decompress the actual data
+    data = Deflate.decompress(BitBuffer.Reader(data,index))    
+
+    // finally, return a GZipFile record
     return {
         method: CM,
-        mtime: 0,
+        mtime: MTIME,
         filename: filename,
-        data: []
+        data: data
     }
     
