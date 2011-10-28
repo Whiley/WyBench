@@ -44,13 +44,21 @@ BitBuffer.Reader readDynamicHuffmanCodes(BitBuffer.Reader reader):
 ([int],BitBuffer.Reader) readCodeLengthCodes(BitBuffer.Reader reader, byte HCLEN):
     codeLengths = []
     len = Byte.toUnsignedInt(HCLEN)+4
+    // first, read raw code lengths
     for i in 0..len:
         b,reader = BitBuffer.read(reader,3)
         clen = Byte.toUnsignedInt(b)
         codeLengths = codeLengths + [clen]    
-    
+    // second, expand code lengths to form huffman codes
     codes = defineHuffmanCodes(codeLengths)
-    // need to sort out the order
+    // third, construct binary tree, whilst remembering that the codes
+    // are not stored in the obvious manner.
+    for i in 0..|codes|:
+        sybmol = codes[i]
+        code = codeLengthMap[i]
+        tree = put(tree,code,symbol)
+    // done
+    return tree
 
 // Determine the Huffman codes using a given sequence of code lengths.
 // To understand what this method does, you really need to consult
