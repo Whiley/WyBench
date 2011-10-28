@@ -37,14 +37,20 @@ BitBuffer.Reader readDynamicHuffmanCodes(BitBuffer.Reader reader):
     HDIST,reader = BitBuffer.read(reader,5)  // # of Distance codes - 1 
     HCLEN,reader = BitBuffer.read(reader,4)  // # of Code Length codes - 4    
     // second, read code lengths of code length alphabet
-    clens = []
+    lengthCodes,reader = readCodeLengthCodes(reader,HCLEN)
+    // now wtf?
+    return reader
+
+([int],BitBuffer.Reader) readCodeLengthCodes(BitBuffer.Reader reader, byte HCLEN):
+    codeLengths = []
     len = Byte.toUnsignedInt(HCLEN)+4
     for i in 0..len:
         b,reader = BitBuffer.read(reader,3)
         clen = Byte.toUnsignedInt(b)
-        clens = clens + [clen]
-    // now wtf?
-    return reader
+        codeLengths = codeLengths + [clen]    
+    
+    codes = defineHuffmanCodes(codeLengths)
+    // need to sort out the order
 
 // Determine the Huffman codes using a given sequence of code lengths.
 // To understand what this method does, you really need to consult
