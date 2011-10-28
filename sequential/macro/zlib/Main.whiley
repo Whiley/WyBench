@@ -3,10 +3,19 @@ import * from whiley.lang.Errors
 import * from whiley.lang.System
 import * from whiley.io.File
 
+import * from GZipFile
 import * from ZipFile
 
-void ::main(System sys, [string] args):
-    file = File.Reader(args[0])
+public void ::main(System sys, [string] args):
+    file = File.Reader(args[0] )
+    contents = file.read()
+    try:
+        gzf = GZipFile(contents)
+    catch(string err):
+        sys.out.println("error: " + err)
+
+void ::readZipFile(System sys, string filename):
+    file = File.Reader(filename)
     contents = file.read()
     try:
         zf = ZipFile(contents)
