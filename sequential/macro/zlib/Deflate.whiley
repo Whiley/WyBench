@@ -1,5 +1,4 @@
 import whiley.lang.*
-import * from BitTree
 
 public [byte] decompress(BitBuffer.Reader reader):
     output = []
@@ -38,14 +37,14 @@ BitBuffer.Reader readDynamicHuffmanCodes(BitBuffer.Reader reader):
     HDIST,reader = BitBuffer.read(reader,5)  // # of Distance codes - 1 
     HCLEN,reader = BitBuffer.read(reader,4)  // # of Code Length codes - 4    
     // second, read code lengths of code length alphabet
-    lengthCodes,reader = readCodeLengthTree(reader,HCLEN)
+    lengthCodes,reader = readLengthCodes(reader,HCLEN)
     // now wtf?
     return reader
 
 // See Section 3.2.7 from rfc1951 for more on this sequence!
-define codeLengthMap as [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]
+define lengthCodeMap as [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]
 
-(BitTree,BitBuffer.Reader) readCodeLengthTree(BitBuffer.Reader reader, byte HCLEN):
+(Huffman.Tree,BitBuffer.Reader) readLengthCodes(BitBuffer.Reader reader, byte HCLEN):
     codeLengths = []
     len = Byte.toUnsignedInt(HCLEN)+4
     // first, read raw code lengths
@@ -54,14 +53,15 @@ define codeLengthMap as [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]
         clen = Byte.toUnsignedInt(b)
         codeLengths = codeLengths + [clen]    
     // second, expand code lengths to form huffman codes
-    codes = defineHuffmanCodes(codeLengths)
+    codes = Huffman.generate(codeLengths)
     // third, construct bitinary tree, whilst remembering that the codes
     // are not stored in the obvious manner.
-    tree = Empty()
+    tree = Huffman.Empty()
     for i in 0..|codes|:
-        symbol = codes[i]
-        code = codeLengthMap[i]
-        tree = add(tree,code,symbol)
+        // FIXME: following is totally broken.
+        code = codes[i]
+        symbol = lengthCodeMap[i]
+        tree = Huffman.put(tree,code,symbol)
     // done
     return tree
 

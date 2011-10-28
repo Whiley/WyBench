@@ -18,11 +18,11 @@ public Tree Empty():
     return null // empty tree
 
 // Map a given code to a given value
-public Tree add(Tree tree, Code code, Leaf value) throws Error:
-    return add(tree, code, value, |code|)
+public Tree put(Tree tree, Code code, Leaf value) throws Error:
+    return put(tree, code, value, |code|)
 
 // helper
-Tree add(Tree tree, [bool] bits, Leaf value, int index) throws Error:
+Tree put(Tree tree, [bool] bits, Leaf value, int index) throws Error:
     if index == 0:
         return value
     else:
@@ -32,18 +32,18 @@ Tree add(Tree tree, [bool] bits, Leaf value, int index) throws Error:
             throw Error("invalid tree")
         else if tree is Node:
             if bit:
-                tree.one = add(tree.one,bits,value,index)
+                tree.one = put(tree.one,bits,value,index)
             else:
-                tree.zero = add(tree.zero,bits,value,index)
+                tree.zero = put(tree.zero,bits,value,index)
             return tree
         else:
             // empty tree
             if bit:
-                one = add(null,bits,value,index)
+                one = put(null,bits,value,index)
                 zero = null
             else:
                 one = null
-                zero = add(null,bits,value,index)
+                zero = put(null,bits,value,index)
             return {one: one, zero: zero}
 
 Tree get(Tree tree, bool bit) throws Error:
@@ -125,7 +125,7 @@ public void ::main(System sys, [string] args):
         for i in 0..|codes|:
             code = codes[i]
             if code != null:
-                tree = add(tree,code,i)
+                tree = put(tree,code,i)
         sys.out.println(tree)
     catch(Error e):
          sys.out.println("error")
