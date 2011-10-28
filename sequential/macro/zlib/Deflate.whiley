@@ -3,7 +3,7 @@ import whiley.lang.*
 public [byte] decompress(BitBuffer.Reader reader):
     output = []
     BFINAL = false // slightly annoying
-    do:
+    while !BFINAL:
         // read block header
         BFINAL,reader = BitBuffer.read(reader)
         BTYPE,reader = BitBuffer.read(reader,2)        
@@ -26,8 +26,7 @@ public [byte] decompress(BitBuffer.Reader reader):
                     // end of block
                     endOfBlock = true
                 else:
-                    // figure out distance
-                                    
+                    // figure out distance                                    
             // done reading block
-    while !BFINAL
-    return []
+    // finally, return uncompressed data
+    return output
