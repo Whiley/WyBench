@@ -2,10 +2,10 @@ import * from whiley.lang.System
 import whiley.lang.*
 import Error from whiley.lang.Errors
 
-define BitPair as {int distance, int length}
-define BitLeaf as BitPair | int
-define BitNode as {BitTree one, BitTree zero}
-define BitTree as BitLeaf | BitNode | null
+public define BitPair as {int distance, int length}
+public define BitLeaf as BitPair | int
+public define BitNode as {BitTree one, BitTree zero}
+public define BitTree as BitLeaf | BitNode | null
 
 public BitTree Empty():
     return null // empty tree

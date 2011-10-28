@@ -57,11 +57,11 @@ define codeLengthMap as [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]
     codes = defineHuffmanCodes(codeLengths)
     // third, construct bitinary tree, whilst remembering that the codes
     // are not stored in the obvious manner.
-    tree = BitTree.Empty()
+    tree = Empty()
     for i in 0..|codes|:
-        sybmol = codes[i]
+        symbol = codes[i]
         code = codeLengthMap[i]
-        tree = BitTree.add(tree,code,symbol)
+        tree = add(tree,code,symbol)
     // done
     return tree
 
