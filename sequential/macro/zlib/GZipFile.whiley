@@ -1,10 +1,9 @@
 import whiley.lang.*
 
 define GZipFile as {
-    int method, // Compression Method
-    int info,   // Compression info
-    int level,  // Compression Level
-    int mtime,  // modification time
+    int method,           // compression method (8 == Deflate)
+    int mtime,            // modification time
+    string|null filename, // filename (optional)
     [byte] data
 }
 
@@ -15,20 +14,37 @@ public GZipFile GZipFile([byte] data) throws string:
     ID2 = Byte.toUnsignedInt(data[1])
     if ID1 != 31 || ID2 != 139:
         throw "invalid gzip file"
-    CMF = data[2]
+
+    CM = Byte.toUnsignedInt(data[2])
     FLG = data[3]
     
-    method = Byte.toUnsignedInt(CMF & 1111b)
-    info = Byte.toUnsignedInt(CMF >> 4)
-    check = FLG & 1111b
-    dict = (FLG & 10000b) != 0b
-    level = Byte.toUnsignedInt(FLG >> 6)
-    debug "COMPRESSION METHOD " + method + "\n"
+    FTEXT     = (FLG & 00000001b) != 0b
+    FHCRC     = (FLG & 00000010b) != 0b
+    FEXTRA    = (FLG & 00000100b) != 0b
+    FNAME     = (FLG & 00001000b) != 0b
+    FCOMMENT  = (FLG & 00010000b) != 0b
+
+    index = 10
+
+    debug "CM: " + CM + "\n"
+    debug "FLG: " + FLG + "\n"
+    
+    if FNAME:
+        // filename is provided so extract it
+        start = index
+        while data[index] != 0b:
+            index = index + 1
+        filename = String.fromASCII(data[start..index])
+        index = index + 1
+    else:
+        filename = null
+        
+    debug "FILENAME: " + filename + "\n"
+    
     return {
-        method: method,
-        info: info,
-        level: level,
+        method: CM,
         mtime: 0,
+        filename: filename,
         data: []
     }
     
