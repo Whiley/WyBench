@@ -33,7 +33,7 @@ void ::main(System sys, [string] args):
         sys.out.println("error: " + err.msg)
 
 string rightAlign(int val, int len):
-    return rightAlign(val,len)
+    return rightAlign(Any.toString(val),len)
 
 // pad out the given string to ensure it has len characters
 string rightAlign(string s, int len):

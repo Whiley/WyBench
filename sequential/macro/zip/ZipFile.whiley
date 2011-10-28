@@ -43,7 +43,7 @@ define ZIP_COMPRESSION_METHODS as [
     "Reduced 4",    
     "Imploded",
     "", // reserved
-    "Deflated",
+    "Deflate",
     "Deflate64",
     "Pkware",
     "", // reserved
