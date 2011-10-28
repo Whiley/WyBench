@@ -13,5 +13,5 @@ public (ZLib.Header,int) parseHeader([byte] data):
     check = FLG & 1111b
     dict = (FLG & 10000b) != 0b
     level = Byte.toUnsignedInt(FLG >> 6)
-    
+    debug "METHOD: " + method + "\n"
     return ZLib.Header(method,info,level),2

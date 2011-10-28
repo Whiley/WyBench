@@ -18,11 +18,11 @@ void ::main(System sys, [string] args):
         size = 0
         for e in zf.entries:
             sys.out.println(rightAlign(e.rawSize,8) + " " + rightAlign(ZIP_COMPRESSION_METHODS[e.method],8) + " " +
-                rightAlign(e.size,6) + " " + Int.hex(e.crc) + " " + e.name)
+                rightAlign(e.size,6) + " " + Int.toHexString(e.crc) + " " + e.name)
             rawSize = rawSize + e.rawSize
             size = size + e.size
         sys.out.println("--------          ------ -------- ----") 
-        sys.out.println(rightAlign(rawSize,8) + "          " + rightAlign(size,6) + "          " + String.str(|zf.entries|) + " file(s)")
+        sys.out.println(rightAlign(rawSize,8) + "          " + rightAlign(size,6) + "          " + |zf.entries| + " file(s)")
         // now, extract each file    
         for e in zf.entries:
             sys.out.println("extracting " + e.name)
@@ -33,7 +33,7 @@ void ::main(System sys, [string] args):
         sys.out.println("error: " + err.msg)
 
 string rightAlign(int val, int len):
-    return rightAlign(String.str(val),len)
+    return rightAlign(val,len)
 
 // pad out the given string to ensure it has len characters
 string rightAlign(string s, int len):

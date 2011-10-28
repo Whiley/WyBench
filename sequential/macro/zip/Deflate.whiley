@@ -1,56 +1,17 @@
-// Copyright (c) 2011, David J. Pearce
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//    * Redistributions of source code must retain the above copyright
-//      notice, this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above copyright
-//      notice, this list of conditions and the following disclaimer in the
-//      documentation and/or other materials provided with the distribution.
-//    * Neither the name of the <organization> nor the
-//      names of its contributors may be used to endorse or promote products
-//      derived from this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// -----------------------------------------------------------------------------
-// 
-// A simplistic implementation of the DEFLATE algorithm used in zlib.
-//
-// See:  rfc1950, rfc1951, rfc1952
-// Also: http://zlib.net/zlib_docs.html
-// Also: http://www.infinitepartitions.com/cgi-bin/showarticle.cgi?article=art001
+import whiley.lang.*
 
-// First, define the tree used for encoding the dictionary
-define Leaf as { byte symbol }
-define Tree as Leaf | { Tree zero, Tree one }
+public [byte] decompress([byte] data):
+    header,index = parseHeader(data)
+    return []
 
-// Inflate compressed data
-[byte] zlibInflate([byte] compressed):
-    compressed = lebytestobits
-    last = false // indicates last block
-    i = 0        // index into compressed data (in bits)
-    uncompressed = [] 
-    while !last:
-        block,last,i = inflateBlock(compressed,i)
-        uncompressed = uncompressed + block
-    // all done        
-    return uncompressed
-
-([byte],bool,int) inflateBlock([byte] data, int start):
-    BFINAL = bitAt(data,start)
-
-// can this be moved into library?
-bool bitAt([byte] data, int start):
-    byteOff = start / 8
-    bitOff = start - (byteOff * 8)
+public (ZLib.Header,int) parseHeader([byte] data):
+    CMF = data[0]
+    FLG = data[1]
     
+    method = Byte.toUnsignedInt(CMF & 1111b)
+    info = Byte.toUnsignedInt(CMF >> 4)
+    check = FLG & 1111b
+    dict = (FLG & 10000b) != 0b
+    level = Byte.toUnsignedInt(FLG >> 6)
+    debug "METHOD: " + method + "\n"
+    return ZLib.Header(method,info,level),2

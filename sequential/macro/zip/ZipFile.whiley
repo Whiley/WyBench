@@ -119,7 +119,7 @@ define decompressTable as [
         null,              // reduce 4
         null,              // imploaded
         null,              // unused
-        null               // deflate
+        &zipExtractDeflate // deflate
     ]    
 
 // Extract an zip entry by decompressing the data using the
@@ -135,3 +135,6 @@ define decompressTable as [
 // just return data as is.
 [byte] zipExtractStore(ZipEntry e):
     return e.data
+
+[byte] zipExtractDeflate(ZipEntry e):
+    return Deflate.decompress(e.data)
