@@ -10,7 +10,9 @@ import Error from whiley.lang.Errors
 define Code as [bool]
 
 // Define the binary to hold Huffman codes
-public define Leaf as {int distance, int length} | int
+public define Literal as int
+public define Pair as {int distance, int length}
+public define Leaf as Pair | Literal
 public define Node as {Tree one, Tree zero}
 public define Tree as Leaf | Node | null
 
