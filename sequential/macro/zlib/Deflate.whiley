@@ -88,18 +88,21 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
                     // Copy the previous code length 3 - 6 times     
                     // (2 bits data)
                     l,reader = BitBuffer.read(reader,2)
+                    l = List.reverse(l) // extra data stored in big endian!
                     l = Byte.toUnsignedInt(l)+3
                     c = lengths[|lengths|-1]
                 case 17:
                     // Repeat a code length of 0 for 3 - 10 times
                     // (3 bits data)
                     l,reader = BitBuffer.read(reader,3)
+                    l = List.reverse(l) // extra data stored in big endian!
                     l = Byte.toUnsignedInt(l)+3
                     c = 0
                 case 18:
                     // Repeat a code length of 0 for 11 - 138 times
                     // (7 bits data)
                     l,reader = BitBuffer.read(reader,3)
+                    l = List.reverse(l) // extra data stored in big endian!
                     l = Byte.toUnsignedInt(l)+11
                     c = 0
                 default:
