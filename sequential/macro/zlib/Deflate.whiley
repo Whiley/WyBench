@@ -49,6 +49,7 @@ BitBuffer.Reader readDynamicHuffmanCodes(BitBuffer.Reader reader) throws Error:
     // second, read code lengths of code length alphabet
     lengthCodes,reader = readLengthCodes(reader,HCLEN)
     debug "READ: " + Huffman.size(lengthCodes) + " SYMBOLS\n"
+    debug "READING: " + (HLIT+HDIST) + " lengths\n"
     lengths,reader = readLengths_HLIT_HDIST(reader,lengthCodes,HLIT + HDIST)
     debug "READ: " + |lengths| + " LENGTHS\n"
     // now wtf?
@@ -61,7 +62,7 @@ BitBuffer.Reader readDynamicHuffmanCodes(BitBuffer.Reader reader) throws Error:
     current = lengthCodes
     while |lengths| < count:
         bit,reader = BitBuffer.read(reader)
-        current = Huffman.get(lengthCodes,bit)
+        current = Huffman.get(current,bit)
         if current == null:
             throw Error("decode error")
         else if current is int:
