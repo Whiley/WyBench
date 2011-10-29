@@ -1,4 +1,5 @@
 import whiley.lang.*
+import Error from whiley.lang.Errors
 
 define GZipFile as {
     int method,           // compression method (8 == Deflate)
@@ -8,7 +9,7 @@ define GZipFile as {
 }
 
 
-public GZipFile GZipFile([byte] data) throws string:
+public GZipFile GZipFile([byte] data) throws string|Error:
     // first, check magic number
     ID1 = Byte.toUnsignedInt(data[0])
     ID2 = Byte.toUnsignedInt(data[1])

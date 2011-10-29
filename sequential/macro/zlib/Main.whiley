@@ -13,6 +13,8 @@ public void ::main(System sys, [string] args):
         gzf = GZipFile(contents)
     catch(string err):
         sys.out.println("error: " + err)
+    catch(Error err):
+        sys.out.println("error: " + err.msg)
 
 void ::readZipFile(System sys, string filename):
     file = File.Reader(filename)

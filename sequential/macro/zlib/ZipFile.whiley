@@ -30,6 +30,7 @@
 // http://www.pkware.com/documents/casestudies/APPNOTE.TXT
 
 import whiley.lang.*
+import Error from whiley.lang.Errors
 
 define ZIP_LOCAL_HEADER as 0x04034b50
 
@@ -67,6 +68,9 @@ define ZipEntry as {
     string name,  // filename
     [byte] data   // raw data
 }
+
+public ZipError ZipError(string msg, int offset):
+    return {msg: msg, offset: offset}
 
 // Create a ZipFile structure from an array of bytes which represent
 // the zip file.
@@ -124,7 +128,7 @@ define decompressTable as [
 
 // Extract an zip entry by decompressing the data using the
 // appropriate decompression method
-[byte] zipExtract(ZipEntry e):
+[byte] zipExtract(ZipEntry e) throws ZipError:
     if e.method < |decompressTable|:
         f = decompressTable[e.method]
         if f != null:
@@ -136,5 +140,9 @@ define decompressTable as [
 [byte] zipExtractStore(ZipEntry e):
     return e.data
 
-[byte] zipExtractDeflate(ZipEntry e):
-    return Deflate.decompress(BitBuffer.Reader(e.data,0))
+[byte] zipExtractDeflate(ZipEntry e) throws ZipError:
+    try:
+        return Deflate.decompress(BitBuffer.Reader(e.data,0))
+    catch(Error err):
+        // yup, this UGLY
+        throw ZipError(err.msg,0)

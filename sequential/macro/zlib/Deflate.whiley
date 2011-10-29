@@ -1,6 +1,7 @@
 import whiley.lang.*
+import Error from whiley.lang.Errors
 
-public [byte] decompress(BitBuffer.Reader reader):
+public [byte] decompress(BitBuffer.Reader reader) throws Error:
     output = []
     BFINAL = false // slightly annoying
     while !BFINAL:
@@ -31,20 +32,21 @@ public [byte] decompress(BitBuffer.Reader reader):
     // finally, return uncompressed data
     return output
 
-BitBuffer.Reader readDynamicHuffmanCodes(BitBuffer.Reader reader):
+BitBuffer.Reader readDynamicHuffmanCodes(BitBuffer.Reader reader) throws Error:
     // first, read header information
     HLIT,reader = BitBuffer.read(reader,5)   // # of Literal/Length codes - 257 
     HDIST,reader = BitBuffer.read(reader,5)  // # of Distance codes - 1 
     HCLEN,reader = BitBuffer.read(reader,4)  // # of Code Length codes - 4    
     // second, read code lengths of code length alphabet
     lengthCodes,reader = readLengthCodes(reader,HCLEN)
+    debug "READ: " + Huffman.size(lengthCodes) + " SYMBOLS\n"
     // now wtf?
     return reader
 
 // See Section 3.2.7 from rfc1951 for more on this sequence!
 define lengthCodeMap as [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]
 
-(Huffman.Tree,BitBuffer.Reader) readLengthCodes(BitBuffer.Reader reader, byte HCLEN):
+(Huffman.Tree,BitBuffer.Reader) readLengthCodes(BitBuffer.Reader reader, byte HCLEN) throws Error:
     codeLengths = []
     len = Byte.toUnsignedInt(HCLEN)+4
     // first, read raw code lengths
@@ -60,8 +62,9 @@ define lengthCodeMap as [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]
     for i in 0..|codes|:
         // FIXME: following is totally broken.
         code = codes[i]
-        symbol = lengthCodeMap[i]
-        tree = Huffman.put(tree,code,symbol)
+        if code != null:
+            symbol = lengthCodeMap[i]        
+            tree = Huffman.put(tree,code,symbol)
     // done
-    return tree
+    return tree,reader
 

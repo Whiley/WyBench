@@ -55,6 +55,16 @@ Tree get(Tree tree, bool bit) throws Error:
     else:
         throw Error("error")
 
+// return the number of code,symbol mappings
+public int size(Tree tree):
+    if tree == null:
+        return 0
+    else if tree is Leaf:
+        return 1
+    else:
+        // tree is Node
+        return size(tree.one) + size(tree.zero)
+    
 // Generate the Huffman codes using a given sequence of code lengths.
 // To understand what this method does, you really need to consult
 // rfc1951.
