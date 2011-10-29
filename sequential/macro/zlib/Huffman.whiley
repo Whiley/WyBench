@@ -26,12 +26,15 @@ public Tree put(Tree tree, Code code, Leaf value) throws Error:
 // helper
 Tree put(Tree tree, [bool] bits, Leaf value, int index) throws Error:
     if index == 0:
-        return value
+        if tree == null:
+            return value
+        else:
+            throw Error("invalid tree (1)")
     else:
         index = index - 1
         bit = bits[index]
         if tree is Leaf:
-            throw Error("invalid tree")
+            throw Error("invalid tree (2)")
         else if tree is Node:
             if bit:
                 tree.one = put(tree.one,bits,value,index)
@@ -82,11 +85,9 @@ public int size(Tree tree):
     code = 0
     bl_count[0] = 0
     next_code = [0]
-    max_code = 0
     for bits in 0 .. |bl_count|:
         code = (code + bl_count[bits]) * 2        
         next_code = next_code + [code]
-        max_code = Math.max(max_code,code)    
     // 3) Assign numerical values to all codes, using consecutive 
     //    values for all codes of the same length with the base
     //    values determined at step 2. Codes that are never used  
