@@ -1,11 +1,6 @@
 import whiley.lang.*
 import Error from whiley.lang.Errors
 
-define State as {
-    Huffman.Tree literalLengths,
-    Huffman.Tree distances
-}
-
 public [byte] decompress(BitBuffer.Reader reader) throws Error:
     output = []
     BFINAL = false // slightly annoying
@@ -20,7 +15,7 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
         else:
             if BTYPE == 10b:
                 // using dynamic Huffman codes
-                reader = readDynamicHuffmanCodes(reader)
+                literals,distances,reader = readDynamicHuffmanCodes(reader)
             // now read the block
             // endOfBlock = false
             // while !endOfBlock:
@@ -37,7 +32,7 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
     // finally, return uncompressed data
     return output
 
-BitBuffer.Reader readDynamicHuffmanCodes(BitBuffer.Reader reader) throws Error:
+(Huffman.Tree,Huffman.Tree,BitBuffer.Reader) readDynamicHuffmanCodes(BitBuffer.Reader reader) throws Error:
     // first, read header information
     HLIT,reader = BitBuffer.read(reader,5)   // # of Literal/Length codes - 257 
     HDIST,reader = BitBuffer.read(reader,5)  // # of Distance codes - 1 
@@ -48,12 +43,30 @@ BitBuffer.Reader readDynamicHuffmanCodes(BitBuffer.Reader reader) throws Error:
     HDIST = Byte.toUnsignedInt(HDIST)+1
     // second, read code lengths of code length alphabet
     lengthCodes,reader = readLengthCodes(reader,HCLEN)
-    debug "READ: " + Huffman.size(lengthCodes) + " SYMBOLS\n"
-    debug "READING: " + (HLIT+HDIST) + " lengths\n"
+    // third, read the combined code lengths for literal and distance alphabets
     lengths,reader = readLengths_HLIT_HDIST(reader,lengthCodes,HLIT + HDIST)
-    debug "READ: " + |lengths| + " LENGTHS\n"
-    // now wtf?
-    return reader
+    litLengths = lengths[0..HLIT]
+    distLengths = lengths[HLIT..]
+    // fourth, genereate huffman codes for literal and distances
+    litCodes = Huffman.generate(litLengths)
+    distCodes = Huffman.generate(distLengths)
+    // fifth, construct corresponding huffman trees
+    debug "STAGE 1\n"
+    litTree = Huffman.Empty()
+    for i in 0..|litCodes|:
+        code = litCodes[i]
+        debug "READING " + i + " : " + code + "\n"
+        if code != null:
+            litTree = Huffman.put(litTree,code,i)
+    debug "STAGE 2\n"
+    // now distances
+    distTree = Huffman.Empty()
+    for i in 0..|distCodes|:
+        code = distCodes[i]
+        if code != null:
+            distTree = Huffman.put(distTree,code,i)    
+    // done
+    return (litTree,distTree,reader)
 
 // Read the code lengths for the HLIT and HDIST alphabets.  These form
 // one continguous block of lengths, which we subsequently break up.
@@ -115,7 +128,6 @@ define lengthCodeMap as [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]
     // are not stored in the obvious manner.
     tree = Huffman.Empty()
     for i in 0..|codes|:
-        // FIXME: following is totally broken.
         code = codes[i]
         if code != null:
             symbol = lengthCodeMap[i]        
