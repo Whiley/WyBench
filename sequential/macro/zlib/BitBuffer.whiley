@@ -6,7 +6,7 @@ define Reader as {
 
 public Reader Reader([byte] data, int start):
     return {
-        index: start    ,
+        index: start,
         boff: 0,
         data: data
     }

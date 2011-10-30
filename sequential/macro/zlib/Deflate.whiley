@@ -45,6 +45,8 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
     lengthCodes,reader = readLengthCodes(reader,HCLEN)
     // third, read the combined code lengths for literal and distance alphabets
     lengths,reader = readLengths_HLIT_HDIST(reader,lengthCodes,HLIT + HDIST)
+    debug "READ: " + |lengths| + " Codes\n"
+    debug "COUNT: " + (HLIT+HDIST) + " Codes\n"
     litLengths = lengths[0..HLIT]
     distLengths = lengths[HLIT..]
     // fourth, genereate huffman codes for literal and distances
@@ -82,27 +84,28 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
             // we have a symbol, now decide what to do with it.
             switch current:
                 case 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15:
+                    debug "READ LITERAL " + current + "\n"
                     l = 1
                     c = current
                 case 16:
+                    debug "COPIED (16)\n"
                     // Copy the previous code length 3 - 6 times     
                     // (2 bits data)
                     l,reader = BitBuffer.read(reader,2)
-                    l = List.reverse(l) // extra data stored in big endian!
                     l = Byte.toUnsignedInt(l)+3
                     c = lengths[|lengths|-1]
                 case 17:
+                    debug "COPIED (17)\n"
                     // Repeat a code length of 0 for 3 - 10 times
                     // (3 bits data)
                     l,reader = BitBuffer.read(reader,3)
-                    l = List.reverse(l) // extra data stored in big endian!
                     l = Byte.toUnsignedInt(l)+3
                     c = 0
                 case 18:
+                    debug "COPIED (18)\n"
                     // Repeat a code length of 0 for 11 - 138 times
                     // (7 bits data)
-                    l,reader = BitBuffer.read(reader,3)
-                    l = List.reverse(l) // extra data stored in big endian!
+                    l,reader = BitBuffer.read(reader,7)
                     l = Byte.toUnsignedInt(l)+11
                     c = 0
                 default:
