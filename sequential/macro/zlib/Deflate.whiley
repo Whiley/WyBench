@@ -1,6 +1,144 @@
 import whiley.lang.*
 import Error from whiley.lang.Errors
 
+// Corresponds to "EXTRA BITS" column of first table from Section
+// 3.2.5 in RFC1951
+define LENGTH_BITS as [
+    0,    // 257
+    0,    // 258
+    0,    // 259
+    0,    // 260
+    0,    // 261
+    0,    // 262
+    0,    // 263
+    0,    // 264
+    1,    // 265
+    1,    // 266
+    1,    // 267
+    1,    // 268
+    2,    // 269
+    2,    // 270
+    2,    // 271
+    2,    // 272
+    3,    // 273
+    3,    // 274
+    3,    // 275
+    3,    // 276
+    4,    // 277
+    4,    // 278
+    4,    // 279
+    4,    // 280
+    5,    // 281
+    5,    // 282
+    5,    // 283
+    5,    // 284    
+    0,    // 285
+]
+
+// Corresponds to "Length(s)" column of first table from Section 3.2.5
+// in RFC1951
+define LENGTH_BASES as [
+    3,    // 257
+    4,    // 258
+    5,    // 259
+    6,    // 260
+    7,    // 261
+    8,    // 262
+    9,    // 263
+    10,    // 264
+    11,    // 265
+    13,    // 266
+    15,    // 267
+    17,    // 268
+    19,    // 269
+    23,    // 270
+    27,    // 271
+    31,    // 272
+    35,    // 273
+    43,    // 274
+    51,    // 275
+    59,    // 276
+    67,    // 277
+    83,    // 278
+    99,    // 279
+    115,   // 280
+    131,   // 281
+    163,   // 282
+    195,   // 283
+    227,   // 284    
+    258    // 285
+]
+
+// Corresponds to "Extra Bits" column of second table from Section
+// 3.2.5 in RFC1951
+define DISTANCE_BITS as [
+    0,  // 0
+    0,  // 1
+    0,  // 2
+    0,  // 3
+    1,  // 4
+    1,  // 5
+    2,  // 6
+    2,  // 7
+    3,  // 8
+    3,  // 9
+    4,  // 10
+    4,  // 11
+    5,  // 12
+    5,  // 13
+    6,  // 14
+    6,  // 15
+    7,  // 16
+    7,  // 17
+    8,  // 18
+    8,  // 19
+    9,  // 20
+    9,  // 21
+    10, // 22
+    10, // 23
+    11, // 24
+    11, // 25
+    12, // 26
+    12, // 27
+    13, // 28
+    13  // 29
+]
+
+// Corresponds to "Dist" column of second table from Section 3.2.5
+// in RFC1951
+define DISTANCE_LENGTHS as [
+    1,     // 0
+    2,     // 1
+    3,     // 2
+    4,     // 3
+    5,     // 4
+    7,     // 5
+    9,     // 6
+    13,    // 7
+    17,    // 8
+    25,    // 9
+    33,    // 10
+    49,    // 11
+    65,    // 12
+    97,    // 13
+    129,   // 14
+    193,   // 15
+    257,   // 16
+    385,   // 17
+    513,   // 18
+    769,   // 19
+    1025,  // 20
+    1537,  // 21
+    2049,  // 22
+    3073,  // 23
+    4097,  // 24
+    6145,  // 25
+    8193,  // 26
+    12289, // 27
+    16385, // 28
+    24577  // 29
+]
+
 public [byte] decompress(BitBuffer.Reader reader) throws Error:
     output = []
     BFINAL = false // slightly annoying
@@ -16,18 +154,34 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
             if BTYPE == 10b:
                 // using dynamic Huffman codes
                 literals,distances,reader = readDynamicHuffmanCodes(reader)
+            else:
+                throw Error("FIXED HUFFMAN CODE ALPABET NOT YET SUPPORTED")
             // now read the block
-            // endOfBlock = false
-            // while !endOfBlock:
-            //     value = decodeValue()
-            //     if value < 256:
-            //         // indicates a literal
-            //         output = output + [Int.toUnsignedByte(value)]
-            //     else if value == 256:
-            //         // end of block
-            //         endOfBlock = true
-            //     else:
-                    // figure out distance                                    
+            endOfBlock = false
+            current = literals
+            while !endOfBlock:
+                bit,reader = BitBuffer.read(reader)
+                current = Huffman.get(current,bit)
+                if current == null:
+                    throw Error("Decode error")
+                else if current is int:
+                    // literal matched
+                    if current < 256:
+                        // indicates a literal
+                        output = output + [Int.toUnsignedByte(current)]
+                    else if current == 256:
+                        // end of block
+                        endOfBlock = true
+                    else:                    
+                        // ok, first figure out length
+                        current = curent - 257
+                        extras = BitBuffer.read(reader,LENGTH_BITS[current])
+                        length = LENGTH_BASES[current] + extras
+                        // second, figure out distance?
+                        wtf?
+                        // finally do the copy
+                     // must reset huffman tree before continuing
+                    current = literals
             // done reading block
     // finally, return uncompressed data
     return output
@@ -56,14 +210,12 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
         code = litCodes[i]
         if code != null:
             litTree = Huffman.put(litTree,code,i)
-    debug "STAGE 2\n"
     // now distances
     distTree = Huffman.Empty()
     for i in 0..|distCodes|:
         code = distCodes[i]
         if code != null:
             distTree = Huffman.put(distTree,code,i)    
-    debug "STAGE 3\n"
     // done
     return (litTree,distTree,reader)
 

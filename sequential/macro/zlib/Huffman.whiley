@@ -11,20 +11,18 @@ define Code as [bool]
 
 // Define the binary to hold Huffman codes
 public define Literal as int
-public define Pair as {int distance, int length}
-public define Leaf as Pair | Literal
 public define Node as {Tree one, Tree zero}
-public define Tree as Leaf | Node | null
+public define Tree as Literal | Node | null
 
 public Tree Empty():
     return null // empty tree
 
 // Map a given code to a given value
-public Tree put(Tree tree, Code code, Leaf value) throws Error:
+public Tree put(Tree tree, Code code, Literal value) throws Error:
     return put(tree, code, value, |code|)
 
 // helper
-Tree put(Tree tree, [bool] bits, Leaf value, int index) throws Error:
+Tree put(Tree tree, [bool] bits, Literal value, int index) throws Error:
     if index == 0:
         if tree == null:
             return value
@@ -33,7 +31,7 @@ Tree put(Tree tree, [bool] bits, Leaf value, int index) throws Error:
     else:
         index = index - 1
         bit = bits[index]
-        if tree is Leaf:
+        if tree is Literal:
             throw Error("invalid tree (2)")
         else if tree is Node:
             if bit:
@@ -64,7 +62,7 @@ Tree get(Tree tree, bool bit) throws Error:
 public int size(Tree tree):
     if tree == null:
         return 0
-    else if tree is Leaf:
+    else if tree is Literal:
         return 1
     else:
         // tree is Node
