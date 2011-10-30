@@ -27,7 +27,7 @@ public (bool,Reader) read(Reader reader):
     // return the bit we've read
     return b == 00000001b,reader
 
-public (byte,Reader) read(Reader reader, int nbits):
+public (byte,Reader) read(Reader reader, int nbits) requires nbits >= 0 && nbits < 8:
     mask = 00000001b
     r = 0b
     for i in 0..nbits:

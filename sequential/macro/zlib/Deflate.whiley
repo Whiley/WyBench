@@ -140,6 +140,11 @@ define DISTANCE_BASES as [
 ]
 
 public [byte] decompress(BitBuffer.Reader reader) throws Error:
+    
+    // NOTE: technically, this method need only retain 32K of the 
+    // sliding window.  That means, once output gets over 32K we could
+    // start dumping that data out.
+    
     output = []
     BFINAL = false 
     while !BFINAL:
@@ -147,7 +152,7 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
         BFINAL,reader = BitBuffer.read(reader)
         BTYPE,reader = BitBuffer.read(reader,2)        
 
-        if BTYPE == 0b:
+        if BTYPE == 00b:
             // stored with no compression
             debug "STORED WITH NO COMRESSION"
         else:
@@ -165,6 +170,7 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
                 if current == null:
                     throw Error("Decode error")
                 else if current is int:
+                    debug "DECODED: " + current + "\n"
                     // literal matched
                     if current < 256:
                         // indicates a literal
@@ -177,7 +183,7 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
                         extras,reader = BitBuffer.read(reader,LENGTH_BITS[current])
                         extras = Byte.toUnsignedInt(extras)
                         length = LENGTH_BASES[current] + extras
-                        // second, figure out distance?
+                        // second, figure out distance
                         current = distances
                         while !(current is int):
                             bit,reader = BitBuffer.read(reader)
@@ -208,6 +214,8 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
     HCLEN = Byte.toUnsignedInt(HCLEN)+4
     HLIT = Byte.toUnsignedInt(HLIT)+257
     HDIST = Byte.toUnsignedInt(HDIST)+1
+    if HDIST == 1:
+        throw Error("Not supported: if only one distance code is used, it is encoded using one bit, not zero bits; in this case there is a single code length of one, with one unused code.")
     // second, read code lengths of code length alphabet
     lengthCodes,reader = readLengthCodes(reader,HCLEN)
     // third, read the combined code lengths for literal and distance alphabets
