@@ -38,13 +38,13 @@ define LENGTH_BITS as [
 // Corresponds to "Length(s)" column of first table from Section 3.2.5
 // in RFC1951
 define LENGTH_BASES as [
-    3,    // 257
-    4,    // 258
-    5,    // 259
-    6,    // 260
-    7,    // 261
-    8,    // 262
-    9,    // 263
+    3,     // 257
+    4,     // 258
+    5,     // 259
+    6,     // 260
+    7,     // 261
+    8,     // 262
+    9,     // 263
     10,    // 264
     11,    // 265
     13,    // 266
@@ -141,7 +141,7 @@ define DISTANCE_BASES as [
 
 public [byte] decompress(BitBuffer.Reader reader) throws Error:
     output = []
-    BFINAL = false // slightly annoying
+    BFINAL = false 
     while !BFINAL:
         // read block header
         BFINAL,reader = BitBuffer.read(reader)
@@ -170,8 +170,7 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
                         // indicates a literal
                         output = output + [Int.toUnsignedByte(current)]
                     else if current == 256:
-                        // end of block
-                        BFINAL = true
+                        endOfBlock = true
                     else:                    
                         // ok, first figure out length
                         current = current - 257
@@ -196,7 +195,7 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
                         // done!
                      // must reset huffman tree before continuing
                     current = literals
-            // done reading block
+            // done reading block    
     // finally, return uncompressed data
     return output
 
