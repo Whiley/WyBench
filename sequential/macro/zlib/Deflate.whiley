@@ -32,7 +32,7 @@ define LENGTH_BITS as [
     5,    // 282
     5,    // 283
     5,    // 284    
-    0,    // 285
+    0     // 285
 ]
 
 // Corresponds to "Length(s)" column of first table from Section 3.2.5
@@ -106,7 +106,7 @@ define DISTANCE_BITS as [
 
 // Corresponds to "Dist" column of second table from Section 3.2.5
 // in RFC1951
-define DISTANCE_LENGTHS as [
+define DISTANCE_BASES as [
     1,     // 0
     2,     // 1
     3,     // 2
@@ -171,15 +171,29 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
                         output = output + [Int.toUnsignedByte(current)]
                     else if current == 256:
                         // end of block
-                        endOfBlock = true
+                        BFINAL = true
                     else:                    
                         // ok, first figure out length
-                        current = curent - 257
-                        extras = BitBuffer.read(reader,LENGTH_BITS[current])
+                        current = current - 257
+                        extras,reader = BitBuffer.read(reader,LENGTH_BITS[current])
+                        extras = Byte.toUnsignedInt(extras)
                         length = LENGTH_BASES[current] + extras
                         // second, figure out distance?
-                        wtf?
+                        current = distances
+                        while !(current is int):
+                            bit,reader = BitBuffer.read(reader)
+                            current = Huffman.get(current,bit)
+                        if !(current is int):
+                            throw Error("dead code") // hmmm, compiler bug?
+                        extras,reader = BitBuffer.read(reader,DISTANCE_BITS[current])
+                        extras = Byte.toUnsignedInt(extras)
+                        distance = DISTANCE_BASES[current] + extras
                         // finally do the copy
+                        start = |output| - distance
+                        end = start + length
+                        for i in start..end:
+                            output = output + [output[i]]
+                        // done!
                      // must reset huffman tree before continuing
                     current = literals
             // done reading block
