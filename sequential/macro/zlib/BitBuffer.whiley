@@ -1,3 +1,5 @@
+import whiley.lang.*
+
 define Reader as {
     int index,  // index of current byte in data
     int boff,    // bit offset in current byte
@@ -35,6 +37,16 @@ public (byte,Reader) read(Reader reader, int nbits) requires nbits >= 0 && nbits
         if bit:
             r = r | mask
         mask = mask << 1
+    return r,reader
+
+public (int,Reader) readUnsignedInt(Reader reader, int nbits):
+    base = 1
+    r = 0
+    for i in 0..nbits:
+        bit,reader = read(reader)
+        if bit:
+            r = r + base
+        base = base * 2
     return r,reader
 
 define Writer as {

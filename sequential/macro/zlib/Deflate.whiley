@@ -170,7 +170,6 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
                 if current == null:
                     throw Error("Decode error")
                 else if current is int:
-                    debug "DECODED: " + current + "\n"
                     // literal matched
                     if current < 256:
                         // indicates a literal
@@ -180,8 +179,7 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
                     else:                    
                         // ok, first figure out length
                         current = current - 257
-                        extras,reader = BitBuffer.read(reader,LENGTH_BITS[current])
-                        extras = Byte.toUnsignedInt(extras)
+                        extras,reader = BitBuffer.readUnsignedInt(reader,LENGTH_BITS[current])
                         length = LENGTH_BASES[current] + extras
                         // second, figure out distance
                         current = distances
@@ -190,8 +188,7 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
                             current = Huffman.get(current,bit)
                         if !(current is int):
                             throw Error("dead code") // hmmm, compiler bug?
-                        extras,reader = BitBuffer.read(reader,DISTANCE_BITS[current])
-                        extras = Byte.toUnsignedInt(extras)
+                        extras,reader = BitBuffer.readUnsignedInt(reader,DISTANCE_BITS[current])
                         distance = DISTANCE_BASES[current] + extras
                         // finally do the copy
                         start = |output| - distance
@@ -207,13 +204,13 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
 
 (Huffman.Tree,Huffman.Tree,BitBuffer.Reader) readDynamicHuffmanCodes(BitBuffer.Reader reader) throws Error:
     // first, read header information
-    HLIT,reader = BitBuffer.read(reader,5)   // # of Literal/Length codes - 257 
-    HDIST,reader = BitBuffer.read(reader,5)  // # of Distance codes - 1 
-    HCLEN,reader = BitBuffer.read(reader,4)  // # of Code Length codes - 4    
-    // convert bytes into integers
-    HCLEN = Byte.toUnsignedInt(HCLEN)+4
-    HLIT = Byte.toUnsignedInt(HLIT)+257
-    HDIST = Byte.toUnsignedInt(HDIST)+1
+    HLIT,reader = BitBuffer.readUnsignedInt(reader,5)   // # of Literal/Length codes - 257 
+    HDIST,reader = BitBuffer.readUnsignedInt(reader,5)  // # of Distance codes - 1 
+    HCLEN,reader = BitBuffer.readUnsignedInt(reader,4)  // # of Code Length codes - 4    
+    // add offsets
+    HCLEN = HCLEN + 4
+    HLIT = HLIT + 257
+    HDIST = HDIST + 1
     if HDIST == 1:
         throw Error("Not supported: if only one distance code is used, it is encoded using one bit, not zero bits; in this case there is a single code length of one, with one unused code.")
     // second, read code lengths of code length alphabet
@@ -259,20 +256,20 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
                 case 16:
                     // Copy the previous code length 3 - 6 times     
                     // (2 bits data)
-                    l,reader = BitBuffer.read(reader,2)
-                    l = Byte.toUnsignedInt(l)+3
+                    l,reader = BitBuffer.readUnsignedInt(reader,2)
+                    l = l + 3
                     c = lengths[|lengths|-1]
                 case 17:
                     // Repeat a code length of 0 for 3 - 10 times
                     // (3 bits data)
-                    l,reader = BitBuffer.read(reader,3)
-                    l = Byte.toUnsignedInt(l)+3
+                    l,reader = BitBuffer.readUnsignedInt(reader,3)
+                    l = l + 3
                     c = 0
                 case 18:
                     // Repeat a code length of 0 for 11 - 138 times
                     // (7 bits data)
-                    l,reader = BitBuffer.read(reader,7)
-                    l = Byte.toUnsignedInt(l)+11
+                    l,reader = BitBuffer.readUnsignedInt(reader,7)
+                    l = l + 11
                     c = 0
                 default:
                     throw Error("unknown code length symbol encountered")
@@ -291,8 +288,7 @@ define lengthCodeMap as [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]
     codeLengths = []
     // first, read raw code lengths
     for i in 0..len:
-        b,reader = BitBuffer.read(reader,3)
-        clen = Byte.toUnsignedInt(b)
+        clen,reader = BitBuffer.readUnsignedInt(reader,3)
         j = lengthCodeMap[i]
         while |codeLengths| <= j:
             codeLengths = codeLengths + [0]
