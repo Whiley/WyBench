@@ -11,6 +11,9 @@ public void ::main(System sys, [string] args):
     contents = file.read()
     try:
         gzf = GZipFile(contents)
+        writer = File.Writer("data.out")
+        writer.write(gzf.data)
+        writer.close()
     catch(string err):
         sys.out.println("error: " + err)
     catch(Error err):
