@@ -45,19 +45,15 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
     lengthCodes,reader = readLengthCodes(reader,HCLEN)
     // third, read the combined code lengths for literal and distance alphabets
     lengths,reader = readLengths_HLIT_HDIST(reader,lengthCodes,HLIT + HDIST)
-    debug "READ: " + |lengths| + " Codes\n"
-    debug "COUNT: " + (HLIT+HDIST) + " Codes\n"
     litLengths = lengths[0..HLIT]
     distLengths = lengths[HLIT..]
     // fourth, genereate huffman codes for literal and distances
     litCodes = Huffman.generate(litLengths)
     distCodes = Huffman.generate(distLengths)
     // fifth, construct corresponding huffman trees
-    debug "STAGE 1\n"
     litTree = Huffman.Empty()
     for i in 0..|litCodes|:
         code = litCodes[i]
-        debug "READING " + i + " : " + code + "\n"
         if code != null:
             litTree = Huffman.put(litTree,code,i)
     debug "STAGE 2\n"
@@ -67,6 +63,7 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
         code = distCodes[i]
         if code != null:
             distTree = Huffman.put(distTree,code,i)    
+    debug "STAGE 3\n"
     // done
     return (litTree,distTree,reader)
 
@@ -84,25 +81,21 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
             // we have a symbol, now decide what to do with it.
             switch current:
                 case 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15:
-                    debug "READ LITERAL " + current + "\n"
                     l = 1
                     c = current
                 case 16:
-                    debug "COPIED (16)\n"
                     // Copy the previous code length 3 - 6 times     
                     // (2 bits data)
                     l,reader = BitBuffer.read(reader,2)
                     l = Byte.toUnsignedInt(l)+3
                     c = lengths[|lengths|-1]
                 case 17:
-                    debug "COPIED (17)\n"
                     // Repeat a code length of 0 for 3 - 10 times
                     // (3 bits data)
                     l,reader = BitBuffer.read(reader,3)
                     l = Byte.toUnsignedInt(l)+3
                     c = 0
                 case 18:
-                    debug "COPIED (18)\n"
                     // Repeat a code length of 0 for 11 - 138 times
                     // (7 bits data)
                     l,reader = BitBuffer.read(reader,7)
@@ -127,7 +120,10 @@ define lengthCodeMap as [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]
     for i in 0..len:
         b,reader = BitBuffer.read(reader,3)
         clen = Byte.toUnsignedInt(b)
-        codeLengths = codeLengths + [clen]    
+        j = lengthCodeMap[i]
+        while |codeLengths| <= j:
+            codeLengths = codeLengths + [0]
+        codeLengths[j] = clen
     // second, expand code lengths to form huffman codes
     codes = Huffman.generate(codeLengths)
     // third, construct bitinary tree, whilst remembering that the codes
@@ -136,8 +132,7 @@ define lengthCodeMap as [16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]
     for i in 0..|codes|:
         code = codes[i]
         if code != null:
-            symbol = lengthCodeMap[i]        
-            tree = Huffman.put(tree,code,symbol)
+            tree = Huffman.put(tree,code,i)
     // done
     return tree,reader
 
