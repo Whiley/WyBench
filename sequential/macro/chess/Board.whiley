@@ -199,7 +199,7 @@ string toString(Board b):
     r = ""
     i=8
     while i >= 1:
-        r = r + String.str(i) + row2str(b.rows[i-1])
+        r = r + i + row2str(b.rows[i-1])
         i = i - 1
     return r + "  a b c d e f g h\n"
 

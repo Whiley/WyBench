@@ -19,7 +19,7 @@ void ::main(System sys, [string] args):
         sign = false
         // process each move in turn, updating the board
         while i < |game|:
-            sys.out.print(String.str(i+1) + ". ")
+            sys.out.print((i+1) + ". ")
             white,black = game[i]
             // test white
             board = ShortMove.apply(white,board)        
