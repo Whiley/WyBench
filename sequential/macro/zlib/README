@@ -1,5 +1,6 @@
-Whiley ZLIB Benchmark
-=====================
+Whiley ZLIB Benchmark, 
+============================================================================
+Author: David J. Pearce, 2011
 
 This benchmark represents a reimplementation of the well known ZLib
 library in Whiley.  This implementation has been written completely
@@ -9,8 +10,9 @@ to be particularly efficient.
 
 NOTES: currently, only decompression is implemented.
 
+===========================================================================
 References
-==========
+===========================================================================
 
 [1] http://www.gzip.org/zlib/rfc-deflate.html
 
