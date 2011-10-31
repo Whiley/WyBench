@@ -1,0 +1,23 @@
+Whiley ZLIB Benchmark
+=====================
+
+This benchmark represents a reimplementation of the well known ZLib
+library in Whiley.  This implementation has been written completely
+from scratch based on RFC1951 and without reference to any other
+existing implementations.  As such the implementation is not intended
+to be particularly efficient.  
+
+NOTES: currently, only decompression is implemented.
+
+References
+==========
+
+[1] http://www.gzip.org/zlib/rfc-deflate.html
+
+[2] http://www.ietf.org/rfc/rfc1951.txt
+
+[3] http://www.ietf.org/rfc/rfc1952.txt
+
+[4] http://www.commandlinefanatic.com/cgi-bin/showarticle.cgi?article=art001
+
+[5] http://www.commandlinefanatic.com/cgi-bin/showarticle.cgi?article=art007
