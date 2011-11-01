@@ -57,7 +57,6 @@ Move inferMove(ShortMove m, Board b, bool isCheck) throws Invalid:
     else:
         matches = findPiece(m.piece,b)
         matches = narrowTarget(m,matches,b, isCheck)
-        debug "MATCHES: " + matches + "\n"
         matches = narrowShortPos(m.from,matches)
         if |matches| == 1:
             if m.isTake:

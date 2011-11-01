@@ -41,7 +41,6 @@ define Invalid as { Move move, Board board }
 public Invalid Invalid(Board b, Move m):
     return { board: b, move: m }
 
-// castling
 // en passant
 
 // =============================================================
@@ -51,14 +50,10 @@ public Invalid Invalid(Board b, Move m):
 // The purpose of the validMove method is to check whether or not a
 // move is valid on a given board.
 bool validMove(Move move, Board board):
-    try:
-        nboard = applyMoveDispatch(move,board)
-        return validMove(move,board,nboard)
-    catch(Invalid e):
-        return false
+    nboard = applyMoveDispatch(move,board)
+    return validMove(move,board,nboard)
 
 bool validMove(Move move, Board board, Board nboard):
-    debug "TRYING: " + move + "\n"
     // first, test the check status of this side, and the opposition
     // side.
     if move is CheckMove:
@@ -209,12 +204,12 @@ Board applyMove(Move move, Board board) throws Invalid:
     else:
         return nboard
 
-Board applyMoveDispatch(Move move, Board board) throws Invalid:
+Board applyMoveDispatch(Move move, Board board):
     if move is SingleMove:
         // SingleTake is processed in the same way
         return applySingleMove(move,board)
     else if move is CheckMove:
-        return applyMove(move.check,board)
+        return applyMoveDispatch(move.check,board)
     else if move is CastleMove:
         return applyCastleMove(move,board)
     return board
