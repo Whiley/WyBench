@@ -1,0 +1,7 @@
+public final class Test {
+       int field;
+
+       public void method(int) {
+
+       }
+}
