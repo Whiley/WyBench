@@ -144,7 +144,7 @@ string methodModifiers2str({MethodModifier} modifiers):
 
 void ::printCodeAttr(System sys, CodeAttr code):
     sys.out.print("      ")
-    sys.out.println("// stack=" + String.str(code.maxStack) + ", locals=" + String.str(code.maxLocals))
+    sys.out.println("// stack=" + code.maxStack + ", locals=" + code.maxLocals)
     for bc in code.bytecodes:
         sys.out.print("      ")
         sys.out.println(Bytecode.toString(bc) + ";")

@@ -39,7 +39,7 @@ ConstIndex ConstIndex(int offset, int op, ConstantPool.Constant constant):
 
 string toString(Bytecode b):
     if b is ConstIndex:
-        return bytecodeStrings[b.op] + " " + String.str(b.constant)
+        return bytecodeStrings[b.op] + " " + b.constant
     else if b is MethodIndex:
         return bytecodeStrings[b.op] + " " + JvmType.toString(b.owner) + "." + b.name + ":" + JvmType.toString(b.type)
     else:
