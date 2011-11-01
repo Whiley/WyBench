@@ -15,9 +15,29 @@ define SimpleMove as SingleMove | SingleTake
 
 define CastleMove as { bool isWhite, bool kingSide }
 define CheckMove as { Move check }
+
 define Move as CheckMove | CastleMove | SimpleMove
 
+// constructors
+
+public SingleMove SingleMove(Piece piece, Pos from, Pos to):
+    return {piece: piece, from: from, to: to}
+
+public SingleTake SingleMove(Piece piece, Pos from, Pos to, Piece taken):
+    return {piece: piece, from: from, to: to, taken: taken}
+
+public CheckMove Check(Move move):
+    return {check: move}
+
+public CastleMove Castle(bool isWhite, bool kingSide):
+    return {isWhite: isWhite, kingSide: kingSide}
+
+// =============================================================
+// Errors
+// =============================================================
+
 define Invalid as { Move move, Board board }
+
 public Invalid Invalid(Board b, Move m):
     return { board: b, move: m }
 
@@ -38,6 +58,7 @@ bool validMove(Move move, Board board):
         return false
 
 bool validMove(Move move, Board board, Board nboard):
+    debug "TRYING: " + move + "\n"
     // first, test the check status of this side, and the opposition
     // side.
     if move is CheckMove:
@@ -54,7 +75,6 @@ bool validMove(Move move, Board board, Board nboard):
     else:
         isWhite = false // deadcode
     // finally, check everything is OK
-
     return !inCheck(isWhite,nboard) && // I'm in check?
         oppCheck == inCheck(!isWhite,nboard) && // oppo in check?
         internalValidMove(move, board) // move otherwise ok?
@@ -176,7 +196,7 @@ bool validKingMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
     diffCol = Math.max(from.col,to.col) - Math.min(from.col,to.col)
     diffRow = Math.max(from.row,to.row) - Math.min(from.row,to.row)
     total = diffCol + diffRow
-    return total == 1 && diffRow >= 0 && diffRow <= 1 && diffCol >= 0 && diffCol <= 1
+    return total > 0 && diffRow >= 0 && diffRow <= 1 && diffCol >= 0 && diffCol <= 1
 
 // =============================================================
 // Apply Move

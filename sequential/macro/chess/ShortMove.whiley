@@ -2,6 +2,10 @@ import whiley.lang.*
 import * from Board
 import * from Move
 
+// =============================================================
+// Types
+// =============================================================
+
 define RankPos as { int row }
 define FilePos as { int col }
 define ShortPos as Pos | RankPos | FilePos | null
@@ -12,24 +16,48 @@ define ShortCheckMove as { ShortMove check }
 define ShortMove as ShortSingleMove | ShortCheckMove | CastleMove
 define ShortRound as (ShortMove,ShortMove|null)
 
+public ShortSingleMove Simple(Piece piece, ShortPos from, Pos to, bool isTake):
+    return {piece: piece, from: from, to: to, isTake: isTake}
+
+public ShortCheckMove Check(ShortMove move):
+    return {check: move}
+
+// =============================================================
+// Errors
+// =============================================================
+
 define Invalid as { ShortMove move, Board board }
 public Invalid Invalid(Board b, ShortMove m):
     return { board: b, move: m }
+
+// =============================================================
+// Move dispatch
+// =============================================================
 
 Board apply(ShortMove move, Board board) throws Move.Invalid|Invalid:
     move = inferMove(move,board)
     return applyMove(move,board)
 
+// =============================================================
+// Move inference
+// =============================================================
+
 Move inferMove(ShortMove m, Board b) throws Invalid:
+    return inferMove(m, b, false)
+
+Move inferMove(ShortMove m, Board b, bool isCheck) throws Invalid:
     if m is CastleMove:
         return m
     else if m is ShortCheckMove:
-        m = inferMove(m.check, b)
-        return { check: m }
+        try:
+            m = inferMove(m.check,b,true)
+            return {check: m}
+        catch(Invalid e):
+            throw Invalid(e.board,{check: e.move})
     else:
         matches = findPiece(m.piece,b)
+        matches = narrowTarget(m,matches,b, isCheck)
         debug "MATCHES: " + matches + "\n"
-        matches = narrowTarget(m,matches,b)
         matches = narrowShortPos(m.from,matches)
         if |matches| == 1:
             if m.isTake:
@@ -37,15 +65,16 @@ Move inferMove(ShortMove m, Board b) throws Invalid:
                 // null check needed for type system, but we know it must succeed
                 if piece != null:
                     return { piece: m.piece, from: matches[0], to: m.to, taken: piece }
+                else:
+                    // dead-code
+                    return { piece: WHITE_PAWN, from: A2, to: A3 }
             else:
                 return { piece: m.piece, from: matches[0], to: m.to }
         else:
             throw Invalid(b,m)
-    // BUG: what does the following line do??
-    return { piece: WHITE_PAWN, from: A2, to: A3 }
 
 // nawwor based on move destination
-[Pos] narrowTarget(ShortSingleMove sm, [Pos] matches, Board b):
+[Pos] narrowTarget(ShortSingleMove sm, [Pos] matches, Board b, bool isCheck):
     if sm.isTake:
         taken = squareAt(sm.to,b)
         if taken is null:
@@ -53,12 +82,16 @@ Move inferMove(ShortMove m, Board b) throws Invalid:
         r = []
         for pos in matches:
             move = { piece: sm.piece, from: pos, to: sm.to, taken: taken }
+            if isCheck:
+                move = {check: move}
             if validMove(move,b):
                 r = r + [pos]
     else:
         r = []
         for pos in matches:
             move = { piece: sm.piece, from: pos, to: sm.to }
+            if isCheck:
+                move = {check: move}
             if validMove(move,b):
                 r = r + [pos]
     return r
@@ -102,5 +135,5 @@ string toString(ShortMove m):
             return "O-O-O"
     else: 
         // ShortCheckMove
-        return "???+"  
+        return toString(m.check) + "+"  
 

@@ -42,10 +42,10 @@ int parseNumber(int pos, string input) throws Error:
 (ShortMove,int) parseMove(int pos, string input, bool isWhite):
     // first, we check for castling moves    
     if |input| >= (pos+5) && input[pos..(pos+5)] == "O-O-O":
-        move = { isWhite: isWhite, kingSide: false }
+        move = Move.Castle(isWhite, false)
         pos = pos + 5
     else if |input| >= (pos+3) && input[pos..(pos+3)] == "O-O":
-        move = { isWhite: isWhite, kingSide: true }
+        move = Move.Castle(isWhite, true)
         pos = pos + 3
     else:
         // not a castling move
