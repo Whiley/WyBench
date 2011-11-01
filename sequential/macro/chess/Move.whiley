@@ -54,6 +54,7 @@ bool validMove(Move move, Board board, Board nboard):
     else:
         isWhite = false // deadcode
     // finally, check everything is OK
+
     return !inCheck(isWhite,nboard) && // I'm in check?
         oppCheck == inCheck(!isWhite,nboard) && // oppo in check?
         internalValidMove(move, board) // move otherwise ok?
@@ -157,9 +158,9 @@ bool validPawnMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
     return true    
 
 bool validKnightMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
-    diffcol = Math.max(from.col,to.col) - Math.min(from.col,to.col)
-    diffrow = Math.max(from.row,to.row) - Math.min(from.row,to.row)
-    return (diffcol == 2 && diffrow == 1) || (diffcol == 1 && diffrow == 2)
+    diffCol = Math.max(from.col,to.col) - Math.min(from.col,to.col)
+    diffRow = Math.max(from.row,to.row) - Math.min(from.row,to.row)
+    return (diffCol == 2 && diffRow == 1) || (diffCol == 1 && diffRow == 2)
 
 bool validBishopMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
     return clearDiaganolExcept(from,to,board)
@@ -172,9 +173,10 @@ bool validQueenMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
         clearDiaganolExcept(from,to,board)
 
 bool validKingMove(bool isWhite, Pos from, Pos to, bool isTake, Board board):
-    diffcol = Math.max(from.col,to.col) - Math.min(from.col,to.col)
-    diffrow = Math.max(from.row,to.row) - Math.min(from.row,to.row)
-    return diffcol == 1 || diffrow == 1
+    diffCol = Math.max(from.col,to.col) - Math.min(from.col,to.col)
+    diffRow = Math.max(from.row,to.row) - Math.min(from.row,to.row)
+    total = diffCol + diffRow
+    return total == 1 && diffRow >= 0 && diffRow <= 1 && diffCol >= 0 && diffCol <= 1
 
 // =============================================================
 // Apply Move

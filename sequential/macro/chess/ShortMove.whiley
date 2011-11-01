@@ -28,6 +28,7 @@ Move inferMove(ShortMove m, Board b) throws Invalid:
         return { check: m }
     else:
         matches = findPiece(m.piece,b)
+        debug "MATCHES: " + matches + "\n"
         matches = narrowTarget(m,matches,b)
         matches = narrowShortPos(m.from,matches)
         if |matches| == 1:
