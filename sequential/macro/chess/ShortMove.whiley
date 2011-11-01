@@ -82,9 +82,9 @@ string shortPos2str(ShortPos p):
     if p is null:
         return ""
     else if p is RankPos:
-        return "" + ('1' + p.row)
+        return "" + (char) ('1' + p.row)
     else if p is FilePos:
-        return "" + ('a' + p.col)
+        return "" + (char) ('a' + p.col)
     else: 
         return pos2str(p)
 

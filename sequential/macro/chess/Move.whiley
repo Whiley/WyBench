@@ -223,7 +223,7 @@ Board applyCastleMove(CastleMove move, Board board):
     return board
 
 string pos2str(Pos p):
-    return "" + ('a' + p.col) + ('1' + p.row)
+    return "" + (char) ('a' + p.col) + (char) ('1' + p.row)
 
 string toString(Move m):
     if m is SingleMove:

@@ -40,7 +40,11 @@ void ::main(System sys, [string] args):
     catch(Move.Invalid im):
         sys.out.println("invalid move: " + Move.toString(im.move))
     catch(any x):
-        sys.out.println("dead-code reached!")
+        // FYI, this is because of a compiler bug
+        if x is ShortMove.Invalid:
+            sys.out.println("invalid move: " + ShortMove.toString(x.move))
+        else:
+            sys.out.println("error: " + x)
 
 void ::usage(System sys):
     sys.out.println("usage: chess file")
