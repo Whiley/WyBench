@@ -548,7 +548,7 @@ define bytecodeStrings as [
     "invokevirtual",
     "invokespecial",
     "invokestatic",
-    "invokeerface",
+    "invokeinterface",
     "unused",
     "new",
     "newarray",
