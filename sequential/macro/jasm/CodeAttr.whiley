@@ -39,7 +39,7 @@ CodeAttr read([byte] data, [ConstantPool.Item] pool) throws Error:
                  FMT_INT3:
                 return Unit(pos-14, opcode),pos+1
             case FMT_I8:
-                idx = Byte.toUnsignedInt(data[pos+2..pos+1])
+                idx = Byte.toUnsignedInt(data[pos+1..pos+2])
                 // need to immediate
                 return {offset: pos-14, op: opcode},pos+2
             case FMT_I16:
@@ -70,6 +70,14 @@ CodeAttr read([byte] data, [ConstantPool.Item] pool) throws Error:
                 idx = Byte.toUnsignedInt(data[pos+3..pos+1])
                 // need to read type
                 return {offset: pos-14, op: opcode},pos+3
+            case FMT_TYPEAINDEX16:
+                idx = Byte.toUnsignedInt(data[pos+3..pos+1])
+                // need to read type
+                return {offset: pos-14, op: opcode},pos+3
+            case FMT_ATYPE:
+                idx = Byte.toUnsignedInt(data[pos+1..pos+2])
+                // need to decode type
+                return {offset: pos-14, op: opcode},pos+2
             case FMT_TARGET16:
                 offset = Byte.toUnsignedInt(data[pos+3..pos+1])
                 return {offset: pos-14, op: opcode},pos+3
