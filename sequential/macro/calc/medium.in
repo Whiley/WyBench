@@ -1,0 +1,111 @@
+set p 1
+set q 1
+set r 1
+set s 1
+set t 1
+set u 1
+set v 1
+set w 1
+set x 1
+set y 1
+set z 1
+print q-u*t*p*s+s+y-u-z+z+w*x+t*s-w/s*s+s-p+s/s*r*v+y*x-s*r-s+u+q+s-w/y-v/u/x*p+q-w/s-q*p+x+x-z*p-t*p/x/x/v-v/w-w-w-r/q*r/q-x/t-x+v*q*u/t*x*y+t/y*t+z*z*u+u*p/r/r
+print y+s-v-v*u/q/u*v-w/w-v+z-r*t-w-x-w+z-p/t/t/z-t*y/y+s*t/u+r-x*q+u+z+r+r*y-p/w*w+p
+print u+x*v+t+t+p+q*t+q-q+r-p*w+q*q*x-q-s/z*q-s/u*w/y+s*r+y+w*u*u+w+r*w-y*y+t/v/q/r+v/z+t*y-v*u+r/t-w/r-r*t/x-v/v-z+p-t*r-q*y*u-v/u+w*w*y*t-u+q+t/w/p+q*u
+print s*q*s-t/x*p*r*y/s/t*q+t+u+r+u+z/s-t+x/u*q*x+s+z+w-s-u*q/t-r-q+s*s/p-q
+print v/u*p*x*t-x+x*q/u+x+r*p*t+y/v-p*r+r+w-z+x+p*t/u-x+s/z+p/w+y/z/y*x/q*s+x*w+y/u*t*q+w-w-z-v-s*p+v+p+u-u*t+r+w*s
+print q*u*y*s+t+s/t-y+z-s*w+u*q+w-s-v+u/x/v+p/s-p+p*r/u/v*u+r+r-r-r*t/p*s/s*v+v*s/z/z/v-x+w+r*u/p+p
+print u+y*y/s/t*p+x+y-t*z+z-r-p*v+y*s+v/q+u*q+z-x/q*p/v*z/z+w+v-p-v/w+t*z-q/p*s*v+t-w/r+q-s/p/x+v/x+x*s*p*v*x+x/u/u/r*w*v/r-r/q*s-u/q+p+p*y*v+u-q/q-q
+print r-p*x-q-w*p-p*p-r-z+r+x/s-z/q+q*t*q/p/t*z+q-x-p+q/t+u-x-w*y/u-t/s*y-p-y*s+x/x-v-r+w-v*r+p*p/x/w/r-q+y-t/z-p*v*x-w+q-s*p/z*z*t-z-w-r+y/z*t*z/s+w*u*w*p/q/y*y/q*s+z*u-q/t-r+q+t-u-z-t
+print y-x+z/q/u*y+v+u-z*p-w+p*w*y-r*u/z+t/x/y+x*w*p-q+s-z*u*x*r/x+q+s*z*z-s-v+u
+set q 783838
+set z 111181
+print z-s-z+w*s/r*r*x-r+v+w+p+y-y+p*y-u/t-u+u-y+r+u*r-s*z-u+r
+print s+z*u-s+p/v*q+p+w-q-y*x+z/s-v-y*w/z
+set x 562941
+print q+y/u+v-r*p-q+p*t/p+r-v/p+v/r+s+r*y-u/p/s/u-t+p-t-z*y/s-y+p+y-r+y*t*z/v*q+s-v/p/x/r*x*w/x-v+x/y+r*t-z+v-p-y-z-y/v+v-x-x-t-p/y+s/u/r*q/s*p-x/t*s-x+p-t/p-w-v+r-u+p-q*p/r/y
+set t 51887
+print q/p+u+v*x-y-z*r+p/p+u/v/w*q/s-w/x/u-p/p*q+y-w-p-r+s+w-q*x+z/r-p*x*z-r/z-x+p*p-t+v+w+u/u/p/y*r-t*p*s/u+s+w+q+q/y*y+w+x/q*y+x+w/u*w-y+y+z*z+q*r*z+v*x-r-s/u-r*p+q-s+p+t-r-r+v-u-v/r+z-q-v-z/u+t
+print q-p*t+w+w-w-p/x/z/q-t-y/r/z+y/t*t*p+p+s+z*u*r+v-x*x*z*w*p+t+p+u-u-t*z+r*w-z-u+w*r/y-y*x-v+z-w*p/y-v+z/t*p+s*p*q/u*v-r*r/p-p/s-z/y*v/u*r/u*p-r+r*w+x/p/y/p*u/t/x*t*s-q/v-q*w/z-t*t+y*r+y/p-q-s
+set t 156492
+print s*w/s*v
+print t*w/z/s-y-y*u+q/p*r-w*x*s+r/p-p/s/t/q/x*x-z-p-p/u-s+w/p/y+y/p-z/q+t*y-q-u+q/s/x-q+v
+set w 380764
+print v/p*y+r/x+w+u-q/x-w/y+q-s*x-t/z*q+v/w/v*s-r*s/x-u/r-z+u/q*s/p/v-r/y-q+y*u/y-y+y+v-s+p*u/x*v/t-q*t-q+z/u/x/v*w/p*r/t/q-w+p+z-z/z/x+z+x-r/w+q-y+q+w*u-r-t-y-s/s/v-q-s*y/q-s*p*t*w*x/q/y-p+u
+set q 17490
+print z*p*t-z*s-y/v+p*u+s/x-w*s-s+z/p-q/x+p/q+y/p-y*t*u/t-v+u*q-v/y-s*u
+print z+y+q*s+z-w+w/w+r/t+q-r/y-z+u/t/r/w+q+y+z/v/v-r*v+t*w-u*p-y*y*r*t-z*u-y+u+q-r/p-u
+print u/u*p/v*s+v+p/x+w-v+w+t*u*w/x-y*w-y*z/r/t-y-y*q+y+u/v*p/r*v+r*z/x/t/t-w-y/y+y*p/x/v/v-u/v/r-s*y*q/y-u/t*p/t*y-s*z+z*w-s*t*x-y-q+y+u+r+w-p*p*t*r*u+v-w+r+w+t-t*s*z-q+w+q
+print q
+print t/x*r*r*p-u+r*t/t*s+x*p+u/v*s/v*u+p-w*z+s-t+t*t-z*z-z*s-y/s
+print t+v*s-z/u+z/t+s/t/u+v-r-q-w-u*t-s*u-u+p-y*x+t-v+v/v*s/w+t/v/p/w+t-u-z+y-u-v+p/s*t-t+t*t+w/w-u-r/s+p*u*u-t+t-y/w*s/q+v*u+y-p/s+v+q-r-y-s*r*u*v*p/y+q-z+x*s*t+v-s+r/t*p*u+u-u+r*t+q
+print y/w+q+y/z-s+r*z+p+q/t/x*s/w-s/x-z-y+v-t-p+w-y/z
+set u 243641
+set p 369573
+print u-r+y/s*u+p+z-x-p*s+r-z-t*x-q/z*r-u-y-x+x*q/x+x/v/r-x*y/y+v*t*y-x*y+z*s*s+s*z/y-w-v/v+w+z+x-s+v-x*y*y*z+x*x+y-x-u/y/t
+print w/s/p+q+s-q-t*w*r+w-v/w/t+y-y+p-q*r/z+x+t*t*v*y/y*x/y+t*y+x-w/p-p*u+z/y/x/y*x+u+v*v+u+p*v+s/w*t-z-q-x+u+s*x/p/s+x-p-z/y*v+s*p*q-t*t+y+s*r-z+x-t*r*q-q*x*x*v-t+v*v-x*x-v+s-s-w*q*q/p*s-z+w+w-t+x*z*r
+print u*q*p*r+u+t+z*x/q-y/u+r*r/y*w/t-w*r/v-u*w/x-u+y/s*v
+print u/z+r*z+p-w-r*r-x-q/w-z*w*y+r-z-v+s/v/x*r/u/z-q+u-v+r+u/z-v+x+y*r/q*w-y*x/t+r
+print q*t+r*u+r*w+q*y/w/x*r/t+u/p-s+w*t/v/r*w*u*u+s-r+w
+print y*u/x-w-r-s*q+u*u+u*u/w+r/z+z+w/y/s-w*t+q*y/q
+set x 649719
+print p/u/p-t-x+s+s*t-v*y-s*q/y*r+t*t/y+r/r/t-z-u+v*p
+set p 764513
+print z/w*p*u*t/w+x/t+r+w+y-y*x*s/t+s+r*p-u/p-p+s*w-u*w/r/w*p+u/s/z+z-v/s
+set r 511430
+print p/u-x*y*v+y/y*p+z-v+z+q+r+r+y+r+u+z*z-v/t+t/s+u*p/w-q+t
+set r 107386
+print s+v*z*p+z-w+y*y*p-y/t-q/w+p*z/z+x/w*r+z+v+u*x*t-w+r*u*v+q*q/t+y*r-r-z*z*q/t*w-p-q*y/q+s+w+w/z*w*t*r-p-x+p-y/s*y+u+p
+print q*w/w+w-v*x*x+u*u-u/v-y*q/u*v*x+r+s*y+q-s*v+w/z+y/t+r-s-t-x*v+y+r*t-q+r+u/q*y+r+r/u-q+t*v/r/y+t+q+t+q-v/p+w*t+s/u-r+z/x*x-y/v+s/p+q/r/w*w*z/p+u
+print w*x*z*x/r-y-w/v*q-s*w*s/w-v-t/q*u+v+x-z-t/v*w/s-z+z+p*x*z/w+p-r-r-x-r/r-t-y*v+p+s/y-s*y+s+s-p/r/q+y*p/s/x+w-y/t-p+q*y*u+x+y+w+z*w
+print s-w-s+w/s*y*u+w/s/w/z*s-z*z+z/v/z*q/r-z+s/t-z-v/x+x/z/r+w+y/u+w/q/p-x*r*v*y/z*v/y/p-u/t*y+t/s*q-z-v+u/t+w*z*r+w+r+y-x+q-p/z/r+y*t/p/q+z*t+q+x
+print v*v*r/z/v+x+p-y-p+y-w*q+u*s+s+v+r+z/q-u*p*p*s*z-y*z/z*r+z*s-r+z/u/t*r/v-u+z-p*x+r*s*w*t+p/y/s+p+q/w/s*r/w-z-y/p+z-x-q/y-q/y-t+y/s-r*p/p*t-t-t-x+s*w+v*q+v/w/s+r/z-r-q/u+q+z+q*p+t/p*x/x*q/v*p
+set y 445169
+print y+s-y-z/w-y-x-y-t-x/s/w
+print p/w-p/r+s-p*q+y/v-t-s/z-r*q+v/u*x/u*r*s*w*y-z-v/t*u*s+x*t+w*x*r*u*w-s+u+p-w*y/s*y+x/v*z/y+q+w*s-x-p+s/v/s-z/y/x-w/x/q/t/s+u-q*v+t-t+v*y+p+t+y/x/t/s*z+z*s*x+z+q/y+r-v*z/x/x+v/r/x+v-w
+print w*v-w*v/u*p-s-q*x/q/y*w+v+p-u/x-w*y*z-p/t-w*r/p*v*z/v/u*t/w*y*y/q+z/t+u*t*r*p*u+s/x/y-q*y*w+q+p+z-s/s/v+u+x+s*r-x-u+t*q+v-v-w+t/w/w*w+t-x-y*q/u-x*q*x*w*s/z*t*q/r/w-z/v/p/p-x-s*u-w*v/q/r
+print r*s+y*r+v*u+r*r/v/x*y/w+s*x-q+p-p*p/w+x/x*w+v-r*r
+print w+x/q+u+x*z*r/t+r+r/y*r+s-s-q+p/y+x+p-w+p-w/w+s+z*y/y+u*u-x+y/y/v-u-s*s/t/r-w+v*w*q/p-y+p+v*q*u-x+p*w/x*p+p-x+p/q+v*t/y-p*t+z*y-q*s-w*q*s*r-q/v*v/s/x/p/s*p/r
+print p/q-r-q/p+q+q*t+w*r-y-s/u*x-p-t-r/x/z+v/r/v/u+v*w*y*x*x-u-z-u*r+y-y+z/r-y+v+w-v*r-q*u*x+s/p-p-p-z-v*v-t/s/r*p+r-s-r*y+y-z
+set q 265934
+set w 357575
+print w+u-t-r+v-r*v*y/w*v-z+y-w*t-y*s/y+p/y+t+r+s+x*v+y+r*z-u/p-z*q/t*q+x-u+r-p*w/w+w+s/u*r/v-u+p/v+r*p/q+u*u*z/s*p*t*u-r*p-t-x-v/p+t-p/s-p-r-s/u-p/v*u-x-w-r-v/x+w+p*p-s+t-u+v*y-w+s
+print y-r*p/t*v-x-y*q/p+w/t/x/w*v-y-r*r+y+t*p/x
+print u+q/x+r-v+z*w+z+s*s+v-s+w/t-p/r-x-r/v+p-w*y+w/y-w-y/w-w+y
+print v*s+p-t*x/q*y/v*p-w-x-r/s*t+s+t*t
+print v*u-u+q/p-q/u*x*w/q-p*w
+print q/u+w/w+u+x+q+s-v-p+w*p/p/r+u-x*x-t+z*r+u+z*p-r+x-x*q*r-w*z-t-q-y*p-t+u/z-w+p+z/q/y*z+x-v*s/v-u/v+y*v*r/u-p/w+x*y/s
+set x 348083
+print r+v-s+x+t*y/s*t/v/x+s/q/z/z/s/y/r+r*v-u/x*v*q/y+t-t*z+p/x*q*x-s/w*y-u/u-r-v/z-u/t-q+r/t-u-s*v+p
+set y 591217
+print w-s+r/r*v+p/x*z*z*q*s/v/u
+set t 179094
+print y*t/u*v-p+t-v+s*u-r/s*r+s+v/v+r/x/r+s/z/v+y-q/q/v-v+p/s-s-w/r-q*s*s/v/s*z-v/r+v+u/r/x+t*x-w/x*w/s-z*v*v*z/w/z-t/x-z*w-w+x*q+t+x+s+u/q-v+z*z-z-r+q+x-y*w/v-y/u/w+q*u-p+r/s+r-u*y/y-w/w+p*z
+print r*w+p-u/q-z*z+x-x-u/y+s+t/w/x+r/u+q/v*v+p+y/p
+print q*r*p*y-w+r*s/y/y/w+t-x*q+w*x/p+x-x*p/w*p*z+s-u-u+w/x-x-u*x+r/t-p/t*q/y+q+x+p-y*z/v-x/v
+print z/x/y+v+x*r*u/z-t*u*r/z*q+q-z-s+r+w/s/u*q+q/u/y/v*w/y
+print q*p+u-s+s/w+y*z-r+v*v/q+x-s+p+u+z+y*v*y+z/r*t/v-r+v*q+u*x-y*t/w+y+p-q/p+t+q*q+s-z-q+z/x-y-s*r+y*t-p-t/t-u*v+q/t*p/z-v*r+w+q/q*t/u/z*t/p+v-u/w-x*r/r/z/x+y/w+r+v+v*t/s/r
+print r-z-p*q/w/v/q*p/y/w-s-q-u/r+p/u
+print v*p+q+z-q+y*t*v-v+z+x-r/t-z/w-u-p*u*q-t+w/p-t-p/t-u*r+w
+print x+y-x/q*v-w*z/y-u/t*z/z-y-v/t-y/u+u*v-q*z*z*y
+print v-p-z-q-u-x-t/s/q+w-w/w*u/z/u-v-w/y+s/x*q-s-p*s/t*y/z+w*p*s/x*r+q+t*s/q/w+q-x/t/q-v/w/r*s*q*v+x+s/x/s-u-w/t-w*p-z*s*z-r-y/w*t+y-y*s-p-q*u-y/v/s*z+p*v/z
+print x-p-y-p-v-t*w*y*u+r/x+q*v/v-v*x*t+v-q+z*t/s-u/t*v*y-x-q*y+v*y-s*y/r/t-s*q/y+p*u*u*r-r+w*u-p/u-x*s
+print v+x*y/y/s/r/p-r-x/u/y+y-s/r+v-r/s+w*q+w+w*s*p+t-w+s-y/q*q+y-y-p+u+u*s*t-w+x+q+z/z/z+p-z-u+v-r/p/w-r/x*q-w+v*s/r+z/z-r+z/z+w-v-v*u*s/w*r/x/q/p/w-z/s-r*t/z/v-y*w-t/p+p-s-v+v/p+x+v*u-x-p/x/w/t/v/r
+set p 435914
+print v*p*t-x/y-y/y-t*x/q+y/v+y-y*p*u-v-z-q-p/w*y*w+u*s/t-s+v*x+t/s-y/s+y/z+y*t*y*v-x/s/w-x-p-w+v
+set x 798602
+print y*z+p-v/p-x/r/u
+print u/v+z/v+x*x-v/x/s*x/w+x/x+p-r/p/w+y-q+y/v+z+v*r*v*u*x-x+x-w/x+r*t-w+v-z/w-u+v+r/v-t/v*z-s*r*s-v/p/z-u-x/t+v-u+w*v*x+u-x-r+z-t/r/x-y+t+p-z+q*r*t-y/x+y*y-w+x-u-u*w/s+x+t-r/v+q+s-p*p+u/w+p/r/v+p*r+r+t
+print q/x*v*t/q*u*q/s*r+p/z/u+x*s/v-t+v/p-q/x/s*p/x/s-z*u/w+s-s-z*x/u/z-z/x+z*r-v*q+u+q/y+x+s/p-s+w-q-w+y
+print v*z/z-u+x/z*x/r-p+q*w+z+z+y*x+w*x/x-s-w/x+z/x+y+r-w+r*t-t+z+x-y+t+w*v-z*x+y-x*v/p*w+v-t-w/t/s+y-r-y-y*y*r+p-v/s/z/w+x*t-y/q-y/s-w-r/t/w
+print r+p*p+x+u*x/s/w*v-q*y*x*w/s-r/y*s*q*r+r+u/y-q-x/y*y+v-r*x*z/v-v/s-y/p*t*y*v-t+w/r/y*s+x+x-p/s*r+r/y-p-w-p/u/q*w*z+r/z+p+t-q
+set u 874097
+print v+r
+print y/v*p/w*q-q/w*t+r+s+x+v/z+p-p-u+z-r*t+v/y+w/t*r-v*r/s*y+q-u+v*q/z/t-u-z-r/w/t*w*s/p*z-u
+print t+s*v+t+p/q-p-z+q+q-p+y-t-s-u+q/r+u/p/y*x/r/y*q+w+w*u+t/x*p+x/y*q
+print z*x*y*p-q/x+q-u*s/r+s/q/p-s+x*w-p+w+z
+set x 179749
+print z+z-q*z/x+p-s+z-p+x*t-u+r*v-r/v+w-x*s-w+x-z/p+z-v*z-z+v/u*t-y*t-r*x*z-w-q-w-w+p+w-w/z-v+p-q+q-s/t+y*y*w*y/y/t*t*q+v-y/u+w*y/q-q/q-s+t*y+z+t-p*y-t-r/q+p-y*q-x/v+p/v/u+w-t*v-s
+set s 538970
+set s 935487
+print w-s/y

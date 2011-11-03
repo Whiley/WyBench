@@ -1,2 +1,21 @@
-set x 2
-print x*43
+set p 1
+set q 1
+set r 1
+set s 1
+set t 1
+set u 1
+set v 1
+set w 1
+set x 1
+set y 1
+set z 1
+print q*r-y*s/x/w*u*z*r/t/p/p*q*q+r+y-v/q+v/q*r+r+s/s-q/x*p-w*w-v/z*u/x-v*p-y*r+r+x-x+z/v/w-u/u*q/q+z-q/t*w*z-w/q-p/y/y+x/v*s/u*p
+set z 263960
+set w 372700
+print v-q-z/v*x+t-v-q*v*r+t/r+q/q-z+v*y-v*v*y+y-p+y*z/r+y-y-r-t+y+s/z/r/y/v+r*u/r-w/u/s*w+x/s/r+r/w-w-w+w+r/v+w-x+v+v+v*x-y/p/q+s+x/w-p/x/y*p+y-w*q/x*x-p+y
+print u-u+r-u*z+v*q/s/z/q+s+z-t+z/w+v/t*t-u-z-t+s*z+v*p*x*w/t/q-w*r+y*p/p*v*u-r-q-z*r/r-w*z*u-r-s-u-u*u*v/t/r-p/p*u*x/v*w+q*u*z+r-x/u+u-z-v+r-s/y+x-v-y*p*s*p+z-q/q
+print v*x/t+q+z-r*v/y+p-v+q+p*t-p/x/p+y+z/p+x*p/q*x*s-r+w*z+r-t+q*u/y+w/z*r-x+x-v/r-v+r
+set r 120837
+print t*s/s-w/q-u/q*t/v/w/q-q*w-x+s*w-v+s-y*t+v+s+z+u/y+u
+print q-u-w+q+t+z-w-z/s/t/p/v+p*u*q*s+x/v*r*w-p-u+p/q/w*v-z/z/u*z/s/v/q-t*x/z+x-v/w+s-y/q*z*t/s/z*w/r+y-r*s+r/v-x*p/p+t-x+v+w+r/v+r-z+q+z-y-t*s/w*v*v*q/s/x/u/y+z-y*y*r/x+p+u-u*q-r+r-r+y
+print q*r-w+z*x*u+q*u*y*x+t+w+t/y/x/r/v*q/v*r+s+y*s/u/y-u/w+p/q-r*s/v-r/w+t/r-u-v-p
