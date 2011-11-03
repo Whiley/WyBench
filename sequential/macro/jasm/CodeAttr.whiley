@@ -31,12 +31,12 @@ CodeAttr read([byte] data, [ConstantPool.Item] pool) throws Error:
     else if info is (int,int,int):
         kind,fmt,type = info
         switch fmt:
-            case FMT_EMPTY:
-            case FMT_INTM1:
-            case FMT_INT0:
-            case FMT_INT1:
-            case FMT_INT2:
-            case FMT_INT3:
+            case FMT_EMPTY,
+                 FMT_INTM1,
+                 FMT_INT0,
+                 FMT_INT1,
+                 FMT_INT2,
+                 FMT_INT3:
                 return Unit(pos-14, opcode),pos+1
             case FMT_I8:
                 idx = Byte.toUnsignedInt(data[pos+2..pos+1])

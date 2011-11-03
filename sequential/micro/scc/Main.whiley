@@ -152,7 +152,7 @@ void ::main(System sys, [string] args):
         // third, print output
         count = 0
         for graph in graphs:
-            sys.out.println("=== Graph #" + count + " ===")
+            sys.out.println("=== Graph #" + count + " (" + |graph| + " nodes) ===")
             count = count + 1
             sccs = find_components(graph)
             for scc in sccs:

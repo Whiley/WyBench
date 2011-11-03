@@ -8,10 +8,21 @@ void ::main(System sys, [string] args):
     if |args| == 0:
         sys.out.println("usage: jasm [options] file(s)")
         return
-    file = File.Reader(args[0])
+    disassemble(sys, args[0])
+
+void ::disassemble(System sys, string filename):
+    file = File.Reader(filename)
+    contents = file.read()
+    try:
+        cf = ClassFileReader.readClassFile(contents)
+        JasmFileWriter.write(sys,cf)
+    catch(Error e):
+        sys.out.println("error: " + e.msg)
+    
+void ::assemble(System sys, string filename):
+    file = File.Reader(filename)
     contents = file.read()
     contents = String.fromASCII(contents)
-    //cf = ClassFileReader.readClassFile(contents)
     try:    
         cf = JasmFileReader.read(contents)
         JasmFileWriter.write(sys,cf)
