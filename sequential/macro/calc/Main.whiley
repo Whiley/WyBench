@@ -65,7 +65,8 @@ Value evaluate(Expr e, {string->Value} env) throws RuntimeError:
             return lhs * rhs
         else if rhs != 0:
             return lhs / rhs
-        throw {msg: "divide-by-zero"}
+        else:
+            return 0 // for div-by-zero
     else if e is [Expr]:
         r = []
         for i in e:
@@ -101,7 +102,7 @@ define State as { string input, int pos }
             e,st = parseAddSubExpr(st)
             return {lhs: v.id, rhs: e},st
         default:
-            throw SyntaxError("unknown statement",start,st.pos-1)
+            throw SyntaxError("unknown statement (" + keyword.id + ")",start,st.pos-1)
 
 (Expr, State) parseAddSubExpr(State st) throws SyntaxError:    
     // First, pass left-hand side    
