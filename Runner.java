@@ -54,7 +54,7 @@ public class Runner {
 		double average = average(data);
 		double standardDeviation = standardDeviation(average,data);
 		double coefficientOfError = standardDeviation / average;		
-		output.printf("%f\t%f\t%f\n", average,standardDeviation,coefficientOfError);
+		output.printf("%f\t%f\t%f", average,standardDeviation,coefficientOfError);
 	}
 	
 	public static double average(ArrayList<Long> data) {
