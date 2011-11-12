@@ -38,7 +38,7 @@ void ::main(System sys, [string] args):
         // first, read data
         while pos < |input|:
             i,pos = parseInt(pos,input)
-            data = data + i
+            data = data + [i]
             pos = skipWhiteSpace(pos,input)
         // second, compute gcds
         for i in 0..|data|:

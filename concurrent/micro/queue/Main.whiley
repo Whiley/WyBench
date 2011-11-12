@@ -1,6 +1,7 @@
 import whiley.lang.*
-import whiley.lang.System:*
-import whiley.io.File:*
+import * from whiley.lang.System
+import * from whiley.io.File
+import * from whiley.lang.Errors
 
 // ========================================================
 // Benchmark
@@ -26,12 +27,12 @@ Queue ::Queue():
 // Parser
 // ========================================================
 
-(int,int) parseInt(int pos, string input):
+(int,int) parseInt(int pos, string input) throws SyntaxError:
     start = pos
     while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
-        throw "Missing number"
+        throw SyntaxError("Missing number",pos,pos)
     return String.toInt(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
@@ -47,20 +48,24 @@ bool isWhiteSpace(char c):
 // ========================================================
 
 void ::main(System sys, [string] args):
-    file = File.Reader(args[0])
-    input = String.fromASCII(file.read())
-    pos = 0
-    data = []
-    pos = skipWhiteSpace(pos,input)
-    // first, read data
-    while pos < |input|:
-        i,pos = parseInt(pos,input)
-        data = data + i
+    try:
+        file = File.Reader(args[0])
+        input = String.fromASCII(file.read())
+        pos = 0
+        data = []
         pos = skipWhiteSpace(pos,input)
-    // second, run the benchmark
-    queue = Queue()
-    for d in data:
-        queue.put(d)
-    while !queue.isEmpty():
-        sys.out.println(String.str(queue.get()))
+        // first, read data
+        while pos < |input|:
+            i,pos = parseInt(pos,input)
+            data = data + [i]
+            pos = skipWhiteSpace(pos,input)
+        // second, run the benchmark
+        queue = Queue()
+        for d in data:
+            queue.put(d)
+        while !queue.isEmpty():
+            sys.out.println(queue.get())
+    catch(SyntaxError e):
+        sys.out.println("syntax error")
+
     

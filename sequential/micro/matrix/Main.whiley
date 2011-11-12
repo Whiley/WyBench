@@ -45,7 +45,7 @@ Matrix run(Matrix A, Matrix B):
     ints = []
     while pos < |input| && |ints| != count:       
         i,pos = parseInt(pos,input)
-        ints = ints + i
+        ints = ints + [i]
         pos = skipWhiteSpace(pos,input)
     if |ints| != count:  
         throw SyntaxError("invalid input file",pos,pos)
