@@ -39,6 +39,6 @@ void ::main(System sys, [string] args):
     dim = 10
     init = []
     for i in 0..dim:
-        init = init + (0,0)
+        init = init + [(0,0)]
     solutions = run(init,0,dim)
     sys.out.println("Found " + |solutions| + " solutions.")

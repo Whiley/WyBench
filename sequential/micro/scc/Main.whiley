@@ -63,7 +63,7 @@ int match(string match, int pos, string input) throws SyntaxError:
         pos = pos + 1
     if pos == start:
         throw SyntaxError("Missing number",pos,pos)
-    return String.toInt(input[start..pos]),pos
+    return Int.parse(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):

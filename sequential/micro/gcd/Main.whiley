@@ -8,7 +8,7 @@ import * from whiley.io.File
         pos = pos + 1
     if pos == start:
         throw SyntaxError("Missing number",start,pos)
-    return String.toInt(input[start..pos]),pos
+    return Int.parse(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):
@@ -38,7 +38,7 @@ void ::main(System sys, [string] args):
         // first, read data
         while pos < |input|:
             i,pos = parseInt(pos,input)
-            data = data + i
+            data = data + [i]
             pos = skipWhiteSpace(pos,input)
         // second, compute gcds
         for i in 0..|data|:

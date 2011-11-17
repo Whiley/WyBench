@@ -24,7 +24,7 @@ define Test as {
     tests = []
     while ntests > 0:
         t,pos = parseTest(pos,input)
-        tests = tests + t
+        tests = tests + [t]
         ntests = ntests - 1
     return tests
 
@@ -68,7 +68,7 @@ define Test as {
         pos = pos + 1
     if pos == start:
         throw SyntaxError("Missing number",pos,pos)
-    return String.toInt(input[start..pos]),pos
+    return Int.parse(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):

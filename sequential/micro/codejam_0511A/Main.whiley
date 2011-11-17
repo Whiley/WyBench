@@ -20,7 +20,7 @@ define Job as { int button, bool orange }
         flag = (input[pos] == 'O')
         pos = skipWhiteSpace(pos+1,input)
         target,pos = parseInt(pos,input)
-        jobs = jobs + { button: target, orange: flag }
+        jobs = jobs + [{ button: target, orange: flag }]
         nitems = nitems - 1
     return jobs,pos
 
@@ -31,7 +31,7 @@ define Job as { int button, bool orange }
         pos = pos + 1
     if pos == start:
         throw SyntaxError("Missing number",pos,pos)
-    return String.toInt(input[start..pos]),pos
+    return Int.parse(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):

@@ -45,7 +45,7 @@ Matrix run(Matrix A, Matrix B):
     ints = []
     while pos < |input| && |ints| != count:       
         i,pos = parseInt(pos,input)
-        ints = ints + i
+        ints = ints + [i]
         pos = skipWhiteSpace(pos,input)
     if |ints| != count:  
         throw SyntaxError("invalid input file",pos,pos)
@@ -57,7 +57,7 @@ Matrix run(Matrix A, Matrix B):
         pos = pos + 1
     if pos == start:
         throw SyntaxError("Missing number",start,pos)
-    return String.toInt(input[start..pos]),pos
+    return Int.parse(input[start..pos]),pos
 
 int skipWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):
