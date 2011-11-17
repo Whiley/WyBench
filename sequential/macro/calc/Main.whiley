@@ -220,7 +220,7 @@ public void ::main(System sys, [string] args):
                 else:
                     sys.out.println(r)
                 st = parseWhiteSpace(st)
-        catch(RuntimeError e1):
-            sys.out.println("runtime error: " + e1.msg)
         catch(SyntaxError e2):
             sys.out.println("syntax error: " + e2.msg)
+        catch(RuntimeError e1):
+            sys.out.println("runtime error: " + e1.msg)
