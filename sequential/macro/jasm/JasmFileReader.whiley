@@ -61,7 +61,7 @@ bool isIdentifierBody(char c):
     while index < |input| && Char.isDigit(input[index]):
         txt = txt + input[index]
         index = index + 1
-    return Number(String.toInt(txt),start,index),index
+    return Number(Int.parse(txt),start,index),index
     
 int skipWhiteSpace(string input, int index):
     while index < |input| && Char.isWhiteSpace(input[index]):
