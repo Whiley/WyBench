@@ -54,7 +54,8 @@ import * from Bytecodes
         bytes = write_u1(bytes,item.tag)        
         bytes = write_u2(bytes,item.class_index)
         bytes = write_u2(bytes,item.name_and_type_index)
-    else if item is ConstantPool.NameAndTypeInfo:
+    else:
+        // item is ConstantPool.NameAndTypeInfo
         bytes = write_u1(bytes,item.tag)
         bytes = write_u2(bytes,item.name_index)
         bytes = write_u2(bytes,item.descriptor_index)
