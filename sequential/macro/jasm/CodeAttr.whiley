@@ -4,6 +4,7 @@ import * from ConstantPool
 import * from Bytecode
 
 define CodeAttr as {
+    string name,
     int maxStack,
     int maxLocals,
     [Bytecode] bytecodes
@@ -18,6 +19,7 @@ CodeAttr read([byte] data, [ConstantPool.Item] pool) throws Error:
         code,pos = readBytecode(pos,data,pool)
         codes = codes + [code]
     return {
+        name: "Code",
         maxStack: Byte.toUnsignedInt(data[8..6]),
         maxLocals: Byte.toUnsignedInt(data[10..8]),
         bytecodes: codes

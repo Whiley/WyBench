@@ -47,15 +47,10 @@ public define UnknownAttr as {
     [byte] data
 }
 
-define TmpCodeAttr as {
-    int maxStack,
-    int maxLocals,
-    [Bytecode] bytecodes
+define AttributeInfo as {
+    string name,
+    ...
 }
-
-// The following is a hack, because we cannot properly define an
-// unknown attribute.
-define AttributeInfo as UnknownAttr | TmpCodeAttr
 
 define ACC_PUBLIC as 0x0001
 define ACC_PRIVATE as 0x0002
