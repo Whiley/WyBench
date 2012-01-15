@@ -35,7 +35,7 @@ bool conflict(Pos p, int row, int col):
                 solutions = solutions + run(queens,n+1,dim)                    
         return solutions
 
-void ::main(System sys, [string] args):
+void ::main(System.Console sys):
     dim = 10
     init = []
     for i in 0..dim:

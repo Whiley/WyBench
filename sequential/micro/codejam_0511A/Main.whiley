@@ -38,9 +38,6 @@ int skipWhiteSpace(int index, string input):
         index = index + 1
     return index
 
-bool isWhiteSpace(char c):
-    return c == ' ' || c == '\t' || c == '\n'
-
 // ===============================================
 // Main Computation
 // ===============================================
@@ -70,9 +67,9 @@ int processJobs([Job] jobs):
     // finally, return total time accumulated
     return time
             
-void ::main(System sys, [string] args):
+void ::main(System.Console sys):
     // first, read the input file
-    file = File.Reader(args[0])
+    file = File.Reader(sys.args[0])
     input = String.fromASCII(file.read())
     try:
         ntests,pos = parseInt(0,input)

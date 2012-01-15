@@ -7,7 +7,7 @@ int fib(int x):
     else:
         return fib(x-1) + fib(x-2)
 
-void ::main(System sys, [string] args):
+void ::main(System.Console sys):
     for i in 1 .. 41:
         r = fib(i)
         sys.out.println(r)

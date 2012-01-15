@@ -71,7 +71,7 @@ bool isWhiteSpace(char c):
 // Main
 // ========================================================
 
-void ::printMat(System sys, Matrix A):
+void ::printMat(System.Console sys, Matrix A):
     for i in 0 .. |A|:
         row = A[i]
         for j in 0 .. |row|:
@@ -79,8 +79,8 @@ void ::printMat(System sys, Matrix A):
             sys.out.print(" ")
         sys.out.println("")
 
-void ::main(System sys, [string] args):
-    file = File.Reader(args[0])
+void ::main(System.Console sys):
+    file = File.Reader(sys.args[0])
     // first, read data
     input = String.fromASCII(file.read())
     try:

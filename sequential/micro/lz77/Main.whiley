@@ -67,8 +67,8 @@ int match([byte] data, int offset, int end):
 [byte] write_u1([byte] bytes, int u1):
     return bytes + [Int.toUnsignedByte(u1)]
 
-void ::main(System sys, [string] args):
-    file = File.Reader(args[0])
+void ::main(System.Console sys):
+    file = File.Reader(sys.args[0])
     data = file.read()
     sys.out.println("READ:         " + |data| + " bytes")
     data = compress(data)

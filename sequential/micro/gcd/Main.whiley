@@ -15,9 +15,6 @@ int skipWhiteSpace(int index, string input):
         index = index + 1
     return index
 
-bool isWhiteSpace(char c):
-    return c == ' ' || c == '\t' || c == '\n' || c == '\r'
-
 int gcd(int a, int b):
     if(a == 0):
         return b		   
@@ -28,8 +25,8 @@ int gcd(int a, int b):
             b = b - a
     return a
 
-void ::main(System sys, [string] args):
-    file = File.Reader(args[0])
+void ::main(System.Console sys):
+    file = File.Reader(sys.args[0])
     input = String.fromASCII(file.read())
     try:
         pos = 0

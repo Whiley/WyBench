@@ -44,8 +44,8 @@ int skipWhiteSpace(int index, string input):
 bool isWhiteSpace(char c):
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
-void ::main(System sys, [string] args):
-    file = File.Reader(args[0])
+void ::main(System.Console sys):
+    file = File.Reader(sys.args[0])
     input = String.fromASCII(file.read())
     try:
         pos = 0

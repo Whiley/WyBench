@@ -53,8 +53,8 @@ bool matchStar(char c, string regex, string text):
         pos = pos + 1
     return line,pos
 
-void ::main(System sys, [string] args):
-    file = File.Reader(args[0])
+void ::main(System.Console sys):
+    file = File.Reader(sys.args[0])
     input = String.fromASCII(file.read())
     pos = 0
     nmatches = 0

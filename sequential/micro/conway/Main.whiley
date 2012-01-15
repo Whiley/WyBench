@@ -121,8 +121,8 @@ bool isWhiteSpace(char c):
 // Main
 // ============================================
 
-void ::main(System sys, [string] args):
-    file = File.Reader(args[0])
+void ::main(System.Console sys):
+    file = File.Reader(sys.args[0])
     input = String.fromASCII(file.read())
     try:
         board,niters = parseConfig(input)
@@ -132,7 +132,7 @@ void ::main(System sys, [string] args):
     catch(SyntaxError e):
         sys.out.println("error: " + e.msg)
 
-void ::printBoard(System sys, Board board):
+void ::printBoard(System.Console sys, Board board):
     ncols = |board[0]|
     sys.out.print("+")
     for i in 0..ncols:
