@@ -7,21 +7,21 @@ import * from whiley.lang.Errors
 // Benchmark
 // ========================================================
 
-define Queue as process { [int] items }
+define Queue as ref { [int] items }
 	 
 int Queue::get():
-    item = this.items[0]
-    this.items = this.items[1..]
+    item = this->items[0]
+    this->items = this->items[1..]
     return item
 	 
 void Queue::put(int item):
-    this.items = this.items + [item]
+    this->items = this->items + [item]
 
 bool Queue::isEmpty():
-    return |this.items| == 0
+    return |this->items| == 0
 
 Queue ::Queue():
-    return spawn { items: [] }
+    return new { items: [] }
 
 // ========================================================
 // Parser
@@ -47,9 +47,9 @@ bool isWhiteSpace(char c):
 // Main
 // ========================================================
 
-void ::main(System sys, [string] args):
+void ::main(System.Console sys):
     try:
-        file = File.Reader(args[0])
+        file = File.Reader(sys.args[0])
         input = String.fromASCII(file.read())
         pos = 0
         data = []

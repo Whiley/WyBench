@@ -12,7 +12,7 @@ import * from whiley.lang.Errors
 //actor, etc.  
 define N as 100
 
-define Sum as process { 
+define Sum as ref { 
     [int] items, 
     int start, 
     int end, 
@@ -21,15 +21,15 @@ define Sum as process {
 
 void Sum::start():
     sum = 0
-    for i in this.start .. this.end:
-        sum = sum + this.items[i]
-    this.result = sum    
+    for i in this->start .. this->end:
+        sum = sum + this->items[i]
+    this->result = sum    
 
 int Sum::get():
-    return this.result
+    return this->result
 
 Sum ::create([int] items, int start, int end):
-    return spawn { items: items, start: start, end: end, result: 0 }
+    return new { items: items, start: start, end: end, result: 0 }
 
 int ::run([int] items):
     while |items| != 1:
@@ -80,9 +80,9 @@ bool isWhiteSpace(char c):
 // Main
 // ========================================================
 
-void ::main(System sys, [string] args):
+void ::main(System.Console sys):
     try:
-        file = File.Reader(args[0])
+        file = File.Reader(sys.args[0])
         input = String.fromASCII(file.read())
         pos = 0
         data = []
