@@ -9,18 +9,18 @@ import * from Game
  * 
  */
 public export void Global::move(int y):
-    this.game = Game.movePiece(this.game, 0, y)
+    this->game = Game.movePiece(this->game, 0, y)
 	
 public void Global::moveX(int x):
-	this.game = Game.movePiece(this.game, x, 0)
+	this->game = Game.movePiece(this->game, x, 0)
 	
 public export void Global::hardDrop():
-	this.game = Game.hardDrop(this.game)
+	this->game = Game.hardDrop(this->game)
 	
 public export void Global::rotate(bool clockwise):
-	this.game = Game.rotate(this.game, clockwise)
+	this->game = Game.rotate(this->game, clockwise)
 
-void ::main(System sys, [string] args):	
+void ::main(System.Console sys):	
 	ui = UIFrame.Frame("Tetris")
 	global = Global()
 	UIFrame.setGlobal(global)

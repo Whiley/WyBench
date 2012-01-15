@@ -3,16 +3,16 @@
  * @author LeeTrezise
  * 
  */
-define Frame as process { string fileName }
+define Frame as ref { string fileName }
 
 public native Frame ::Frame ( string title ):
 
 public native void Frame::render(string str):
 
-define Global as process { Game.GameState game }
+define Global as ref { Game.GameState game }
 
 Global ::Global():
-	return spawn { game: Game.Initial }
+	return new { game: Game.Initial }
 
 public native void ::setGlobal(Global g):
 

@@ -4,13 +4,13 @@ import * from ClassFile
 import * from CodeAttr
 import * from whiley.io.File
 
-void ::main(System sys, [string] args):
+void ::main(System.Console sys):
     if |args| == 0:
         sys.out.println("usage: jasm [options] file(s)")
         return
-    disassemble(sys, args[0])
+    disassemble(sys, sys.args[0])
 
-void ::disassemble(System sys, string filename):
+void ::disassemble(System.Console sys, string filename):
     file = File.Reader(filename)
     contents = file.read()
     try:
@@ -19,7 +19,7 @@ void ::disassemble(System sys, string filename):
     catch(Error e):
         sys.out.println("error: " + e.msg)
     
-void ::assemble(System sys, string filename):
+void ::assemble(System.Console sys, string filename):
     file = File.Reader(filename)
     contents = file.read()
     contents = String.fromASCII(contents)

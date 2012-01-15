@@ -3,11 +3,11 @@ import * from whiley.lang.Errors
 import * from whiley.lang.System
 import * from whiley.io.File
 
-void ::main(System sys, [string] args):
-    if |args| == 0:
+void ::main(System.Console sys):
+    if |sys.args| == 0:
         usage(sys)
         return
-    file = File.Reader(args[0])
+    file = File.Reader(sys.args[0])
     contents = String.fromASCII(file.read())
     try:
         game = Parser.parseChessGame(contents)
@@ -46,5 +46,5 @@ void ::main(System sys, [string] args):
         else:
             sys.out.println("error: " + x)
 
-void ::usage(System sys):
+void ::usage(System.Console sys):
     sys.out.println("usage: chess file")

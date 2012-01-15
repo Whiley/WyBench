@@ -120,7 +120,7 @@ public ([Item],Index) constantPool(ClassFile cf):
         // the first as a dummy.
         {tag: CONSTANT_Integer, value: 0}
     ]
-    index = {->}
+    index = {=>}
     pool,index = add(pool,index,ClassTree(cf.type))
     pool,index = add(pool,index,ClassTree(cf.super))
     // add interface types

@@ -6,8 +6,8 @@ import * from whiley.io.File
 import * from GZipFile
 import * from ZipFile
 
-public void ::main(System sys, [string] args):
-    file = File.Reader(args[0] )
+public void ::main(System.Console sys):
+    file = File.Reader(sys.args[0])
     contents = file.read()
     try:
         gzf = GZipFile(contents)
@@ -19,7 +19,7 @@ public void ::main(System sys, [string] args):
     catch(Error err):
         sys.out.println("error: " + err.msg)
 
-void ::readZipFile(System sys, string filename):
+void ::readZipFile(System.Console sys, string filename):
     file = File.Reader(filename)
     contents = file.read()
     try:

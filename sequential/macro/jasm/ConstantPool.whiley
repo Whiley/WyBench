@@ -233,7 +233,7 @@ define Tree as FieldRefTree |
         LongTree | 
         NameAndTypeTree
 
-public define Index as {Tree->int}
+public define Index as {Tree=>int}
 
 public Utf8Tree Utf8Tree(string utf8):
     bytes = String.toUTF8(utf8)
