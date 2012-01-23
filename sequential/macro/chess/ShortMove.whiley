@@ -54,7 +54,7 @@ Move inferMove(ShortMove m, Board b, bool isCheck) throws Invalid:
             return {check: m}
         catch(Invalid e):
             throw Invalid(e.board,{check: e.move})
-    else:
+    else if m is ShortSingleMove:
         matches = findPiece(m.piece,b)
         matches = narrowTarget(m,matches,b, isCheck)
         matches = narrowShortPos(m.from,matches)
@@ -71,6 +71,8 @@ Move inferMove(ShortMove m, Board b, bool isCheck) throws Invalid:
                 return { piece: m.piece, from: matches[0], to: m.to }
         else:
             throw Invalid(b,m)
+    else:
+        throw Invalid(b,m)
 
 // nawwor based on move destination
 [Pos] narrowTarget(ShortSingleMove sm, [Pos] matches, Board b, bool isCheck):
@@ -132,7 +134,9 @@ string toString(ShortMove m):
             return "O-O"
         else:
             return "O-O-O"
-    else: 
+    else if m is CheckMove: 
         // ShortCheckMove
-        return toString(m.check) + "+"  
+        return Move.toString(m.check) + "+"  
+    else:
+        return "" // dead-code
 
