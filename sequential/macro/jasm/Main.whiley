@@ -5,7 +5,7 @@ import * from CodeAttr
 import * from whiley.io.File
 
 void ::main(System.Console sys):
-    if |args| == 0:
+    if |sys.args| == 0:
         sys.out.println("usage: jasm [options] file(s)")
         return
     disassemble(sys, sys.args[0])

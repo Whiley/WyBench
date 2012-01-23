@@ -3,7 +3,7 @@ import * from CodeAttr
 import * from ClassFile
 import * from whiley.lang.System
 
-public void ::write(System sys, ClassFile cf):
+public void ::write(System.Console sys, ClassFile cf):
     // First, print out the class and its modifiers
     sys.out.print(classModifiers2str(cf.modifiers))
     sys.out.print("class " + JvmType.toString(cf.type))
@@ -27,11 +27,11 @@ public void ::write(System sys, ClassFile cf):
         writeMethod(sys,method)
     sys.out.println("}")
 
-void ::writeField(System sys, FieldInfo field):
+void ::writeField(System.Console sys, FieldInfo field):
     sys.out.print("    " + fieldModifiers2str(field.modifiers))
     sys.out.println(JvmType.toString(field.type) + " " + field.name + ";")
 
-void ::writeMethod(System sys, MethodInfo method):
+void ::writeMethod(System.Console sys, MethodInfo method):
     sys.out.print("    " + methodModifiers2str(method.modifiers))
     sys.out.print(JvmType.toString(method.type.ret) + " " + method.name + "(")
     firstTime=true
@@ -142,7 +142,7 @@ string methodModifiers2str({MethodModifier} modifiers):
                 break
     return r
 
-void ::printCodeAttr(System sys, CodeAttr code):
+void ::printCodeAttr(System.Console sys, CodeAttr code):
     sys.out.print("      ")
     sys.out.println("// stack=" + code.maxStack + ", locals=" + code.maxLocals)
     for bc in code.bytecodes:
