@@ -30,11 +30,11 @@ void ::main(System.Console sys):
 	sleepTime = 500
 	iterate = true
 	while iterate:
-		sleepTime = global.game.tickTime
-		ui.setNext(global.game.next.type)
-		ui.render(Game.getUIString(global.game))
+		sleepTime = global->game.tickTime
+		ui.setNext(global->game.next.type)
+		ui.render(Game.getUIString(global->game))
 		global.moveX(-1)
-		ui.updateStats(global.game.filled, global.game.score, global.game.level)
+		ui.updateStats(global->game.filled, global->game.score, global->game.level)
 		Thread.sleep(sleepTime)
 		
 		

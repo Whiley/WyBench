@@ -114,7 +114,7 @@ Code construct(int code, int len):
         code = code / 2
     return r
 
-public void ::main(System sys, [string] args):
+public void ::main(System.Console sys):
     //codes = generate([2,1,3,3])
     codes = generate([3,3,3,3,3,2,4,4])
     // first, print generated codes

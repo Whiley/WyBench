@@ -186,8 +186,6 @@ public [byte] decompress(BitBuffer.Reader reader) throws Error:
                         while !(current is int):
                             bit,reader = BitBuffer.read(reader)
                             current = Huffman.get(current,bit)
-                        if !(current is int):
-                            throw Error("dead code") // hmmm, compiler bug?
                         extras,reader = BitBuffer.readUnsignedInt(reader,DISTANCE_BITS[current])
                         distance = DISTANCE_BASES[current] + extras
                         // finally do the copy
