@@ -205,7 +205,7 @@ Board applyMove(Move move, Board board) throws Invalid:
         return nboard
 
 Board applyMoveDispatch(Move move, Board board):
-    if move is SingleMove:
+    if move is SingleMove|SingleTake:
         // SingleTake is processed in the same way
         return applySingleMove(move,board)
     else if move is CheckMove:
@@ -214,7 +214,7 @@ Board applyMoveDispatch(Move move, Board board):
         return applyCastleMove(move,board)
     return board
 
-Board applySingleMove(SingleMove move, Board board):
+Board applySingleMove(SingleMove|SingleTake move, Board board):
     from = move.from
     to = move.to
     board.rows[from.row][from.col] = null
