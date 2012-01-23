@@ -37,9 +37,9 @@ bool isWhiteSpace(char c):
 // Main
 // ========================================================
 
-void ::main(System sys, [string] args):
+void ::main(System.Console sys):
     try:
-        file = File.Reader(args[0])
+        file = File.Reader(sys.args[0])
         input = String.fromASCII(file.read())
         pos = 0
         data = []
