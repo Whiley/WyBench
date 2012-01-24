@@ -10,7 +10,7 @@ define Short as 9
 define Int as 10
 define Long as 11
 
-define Primitive as { Boolean, Char, Float, Double, Byte, Short, Int, Long }
+define Primitive as { Void, Boolean, Char, Float, Double, Byte, Short, Int, Long }
 define Array as { Any element }
 define Class as { string pkg, [string] classes }
 define Ref as Array | Class
