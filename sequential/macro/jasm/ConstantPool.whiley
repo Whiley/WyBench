@@ -374,9 +374,10 @@ string descriptor(JvmType.Any t):
                 return "D"
     else if t is JvmType.Array:
         return "[" + descriptor(t.element)
-    else: 
-        // t is JvmType.Class:
+    else if t is JvmType.Class:
         return "L" + classDescriptor(t) + ";"
+    else:
+        return "" // deadcode
 
 string descriptor(JvmType.Fun t):
     desc = "("
