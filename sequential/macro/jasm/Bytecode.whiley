@@ -4,6 +4,23 @@ import whiley.lang.*
 // Bytecode Structures
 // ===========================================
 
+define Void as 3
+define Boolean as 4
+define Char as 5
+define Float as 6
+define Double as 7
+define Byte as 8
+define Short as 9
+define Int as 10
+define Long as 11
+
+define Primitive as { Boolean, Char, Float, Double, Byte, Short, Int, Long }
+define Array as { Any element }
+define Class as { string pkg, [string] classes }
+define Ref as Array | Class
+define Fun as { Any ret, [Any] params }
+define Any as Primitive | Ref
+
 define Unit as { int offset, int op }
 define Branch as { int offset, int op, Type.int16 offset }
 
