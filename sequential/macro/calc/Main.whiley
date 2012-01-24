@@ -1,4 +1,4 @@
-import * from whiley.lang.System
+import println from whiley.lang.*
 import * from whiley.io.File
 import SyntaxError from whiley.lang.Errors
 
@@ -65,15 +65,14 @@ Value evaluate(Expr e, {string=>Value} env) throws RuntimeError:
             return lhs * rhs
         else if rhs != 0:
             return lhs / rhs
-        else:
-            return 0 // for div-by-zero
+        throw {msg: "divide-by-zero"}
     else if e is [Expr]:
         r = []
         for i in e:
             v = evaluate(i, env)
             r = r + [v]
         return r
-    else:
+    else if e is ListAccess:
         src = evaluate(e.src, env)
         index = evaluate(e.index, env)
         // santity checks
@@ -81,6 +80,8 @@ Value evaluate(Expr e, {string=>Value} env) throws RuntimeError:
             return src[index]
         else:
             throw {msg: "invalid list access"}
+    else:
+        return 0 // dead-code
 
 // ====================================================
 // Expression Parser
@@ -102,7 +103,7 @@ define State as { string input, int pos }
             e,st = parseAddSubExpr(st)
             return {lhs: v.id, rhs: e},st
         default:
-            throw SyntaxError("unknown statement (" + keyword.id + ")",start,st.pos-1)
+            throw SyntaxError("unknown statement",start,st.pos-1)
 
 (Expr, State) parseAddSubExpr(State st) throws SyntaxError:    
     // First, pass left-hand side    
@@ -190,27 +191,23 @@ define State as { string input, int pos }
  
 // Parse all whitespace upto end-of-file
 State parseWhiteSpace(State st):
-    while st.pos < |st.input| && isWhiteSpace(st.input[st.pos]):
+    while st.pos < |st.input| && Char.isWhiteSpace(st.input[st.pos]):
         st.pos = st.pos + 1
     return st
-
-// Determine what is whitespace
-bool isWhiteSpace(char c):
-    return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
 // ====================================================
 // Main Method
 // ====================================================
 
 public void ::main(System.Console sys):
-    file = File.Reader(sys.args[0])
-    input = String.fromASCII(file.read())
-
     if(|sys.args| == 0):
         sys.out.println("no parameter provided!")
     else:
+        file = File.Reader(sys.args[0])
+        input = String.fromASCII(file.read())
+
         try:
-            env = {"$" => 0} 
+            env = {"$"=>0} 
             st = {pos: 0, input: input}
             while st.pos < |st.input|:
                 s,st = parse(st)
@@ -220,7 +217,7 @@ public void ::main(System.Console sys):
                 else:
                     sys.out.println(r)
                 st = parseWhiteSpace(st)
-        catch(SyntaxError e2):
-            sys.out.println("syntax error: " + e2.msg)
         catch(RuntimeError e1):
             sys.out.println("runtime error: " + e1.msg)
+        catch(SyntaxError e2):
+            sys.out.println("syntax error: " + e2.msg)
