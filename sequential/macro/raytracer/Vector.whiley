@@ -1,19 +1,30 @@
-define Vector as [real]
+define Vector as (real,real,real)
 
-public real length(Vector v1):
-    sum = 0.0
-    for a in v1:
-        sum = sum + (a*a)
-    return Math.sqrt(sum)
+define ERROR as 0.001
 
-public Vector cross(Vector v1, Vector v2):
-    return v1 // TEMPORARY
+public real length(Vector a):
+    a1,a2,a3 = a
+    sum = (a1*a1) + (a2*a2) + (a3*a3)
+    return Math.sqrt(sum,ERROR)
 
-public real dot(Vector v1, Vector v2) requires |v1| == |v2|:
-    sum = 0.0
-    for i in 0..|v1|:
-        sum = sum + (v1[i]*v2[i])
-    return sum
+public Vector cross(Vector a, Vector b):
+    a1,a2,a3 = a
+    b1,b2,b3 = b
+    c1 = (a2*b3) - (a3*b2)
+    c2 = (a3*b1) - (a1*b3)
+    c3 = (a1*b2) - (a2*b1)
+    return c1,c2,c3
+    
+
+public real dot(Vector a, Vector b):
+    a1,a2,a3 = a
+    b1,b2,b3 = b
+    return (a1*b1) + (a2*b2) + (a3*b3)
+
+// Return a normalised vector pointing in the same direction as the
+// parameter.
+public Vector normalise(Vector a):
+    return a
 
 
 
