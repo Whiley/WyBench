@@ -1,9 +1,11 @@
 import * from whiley.lang.System
 
 void ::main(System.Console sys):
-    v1 = (1,5,0)
-    v2 = (4,-2,-1)
-    sys.out.println("||V1|| = " + Real.toDecimal(Vector.length(v1),5))
-    sys.out.println("||V2|| = " + Real.toDecimal(Vector.length(v2),5))
-    sys.out.println("V1 * V2 = " + Vector.dot(v1,v2))
-
+    p1 = Point.Point(1,2,-2)
+    p2 = Point.Point(3,-2,1)
+    p3 = Point.Point(5,1,-4)
+    plane = Plane.Plane(p1,p2,p3)
+    sys.out.println("A = " + Real.toDecimal(plane.A,5) + 
+                    ", B = " + Real.toDecimal(plane.B,5) + 
+                    ", C = " + Real.toDecimal(plane.C,5) + 
+                    ", D = " + Real.toDecimal(plane.D,5))

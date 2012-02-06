@@ -24,7 +24,9 @@ public real dot(Vector a, Vector b):
 // Return a normalised vector pointing in the same direction as the
 // parameter.
 public Vector normalise(Vector a):
-    return a
+    a1,a2,a3 = a
+    len = length(a)
+    return a1/len,a2/len,a3/len
 
 
 
