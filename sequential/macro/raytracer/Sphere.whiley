@@ -21,7 +21,7 @@ public Sphere Sphere(Point origin, real radius):
 // these or null if there is no intersection.
 public null|(Point,Point) intersect(Sphere s, Ray r):
     // transform into object space
-    rOrigin = Point.subtract(s.origin, r.origin)
+    rOrigin = Point.subtract(r.origin, s.origin)
     
     A = Vector.dot(r.direction, r.direction)
     B = 2 * Vector.dot(r.direction, rOrigin)
@@ -30,13 +30,11 @@ public null|(Point,Point) intersect(Sphere s, Ray r):
     t = solveQuadratic(A,B,C,0.0001)    
 
     if t == null:
+        // there is no intersection!
         return null
     t0,t1 = t
 
-    // TODO: somewhere here I need to decide whether or not there is
-    // actually an intersection.
-    
-    return Ray.project(r,t0),Ray.project(r,t1)
+    return project(r,t0),project(r,t1)
 
 // Find solutions for x in a quadratric equation of the form:
 //
@@ -55,5 +53,12 @@ null|(real,real) solveQuadratic(real A, real B, real C, real err):
     t0 = (-B - root) / _2A
     t1 = (-B + root) / _2A
     return (t0,t1)
-    
-    
+       
+// project a given ray by a certain amount of distance
+public Point project(Ray ray, real dist):
+    d = ray.direction
+    o = ray.origin
+    x = (d.x * dist) + o.x
+    y = (d.y * dist) + o.y
+    z = (d.z * dist) + o.z
+    return Point(x,y,z)

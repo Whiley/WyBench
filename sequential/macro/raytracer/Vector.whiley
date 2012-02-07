@@ -28,9 +28,9 @@ public real dot(Vector a, Vector b):
 public Vector normalise(Vector a):
     len = length(a)
     return { 
-        x: a.x/len,
-        y: a.y/len,
-        z: a.z/len
+        x: a.x / len,
+        y: a.y / len,
+        z: a.z / len
     }
 
 
