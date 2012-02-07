@@ -13,13 +13,6 @@ public void ::writeBMP([[RGB]] array, string filename):
 	// |array| ----- HEIGHT
 	debug "Height: " + |array| + "\n"
 	debug "Width: " + |array[0]| + "\n"
-	debug "" + array[0][0]
-	debug "" + array[0][0] + "\n"
-	debug "" + array[40][134] + "\n"
-	debug "" + array[70][1] + "\n"
-	debug "" + array[30][23] + "\n"
-	debug "" + array[12][43] + "\n"
-	debug "" + array[96][18] + "\n"
 	paddingVal = 3*|array[0]|
 	blankBytes = paddingVal % 4
 	debug "Blank Bytes: " + blankBytes + "\n"
@@ -54,13 +47,9 @@ public void ::writeBMP([[RGB]] array, string filename):
 	
 	for i in 0..|array|:
 		for j in 0..|array[0]|:
-			writer.write([Int.toUnsignedByte(array[i][j].r)])
-			writer.write([Int.toUnsignedByte(array[i][j].g)])
 			writer.write([Int.toUnsignedByte(array[i][j].b)])
-			if i == 0 && j == 0:
-				debug "R: " + (array[i][j].r) + "-> " + Byte.toUnsignedInt(Int.toUnsignedByte(array[i][j].r)) + "\n"
-				debug "G: " + (array[i][j].g) + "-> " + Byte.toUnsignedInt(Int.toUnsignedByte(array[i][j].g)) + "\n"
-				debug "B: " + (array[i][j].b) + "-> " + Byte.toUnsignedInt(Int.toUnsignedByte(array[i][j].b)) + "\n"
+			writer.write([Int.toUnsignedByte(array[i][j].g)])
+			writer.write([Int.toUnsignedByte(array[i][j].r)])
 			
 		if blankBytes != 0:
 			writer.write(Util.padUnsignedInt(0, blankBytes))
@@ -69,11 +58,11 @@ public void ::writeBMP([[RGB]] array, string filename):
 public [[RGB]] ::readBMP(Reader file):
 	debug "Reading Bitmap File\n"
 	BMPSize = Byte.toUnsignedInt(file.read(4))
-	debug "BMP File Size: " + BMPSize + "\n"
+	//debug "BMP File Size: " + BMPSize + "\n"
 	reservedBlockA = file.read(2)
 	reservedBlockB = file.read(2)
 	pixelArrayOffset = Byte.toUnsignedInt(file.read(4))
-	debug "Pixel Array offset: " + pixelArrayOffset + "\n"
+	//debug "Pixel Array offset: " + pixelArrayOffset + "\n"
 	
 	//Reading the Information Header
 	//This Contains Size, resolution, bpp, compression and color information
@@ -91,16 +80,16 @@ public [[RGB]] ::readBMP(Reader file):
 	verticalResolution = Byte.toInt(DIBInfo[24..27])
 	numColors = Byte.toUnsignedInt(DIBInfo[28..31])
 	importantColors = Byte.toUnsignedInt(DIBInfo[32..])
-	debug "Bitmap Width: " + bitmapWidth + "\n"
-	debug "Bitmap Height: " + bitmapHeight + "\n"
-	debug "Colour Planes: " + colorPlanes + "\n"
-	debug "Bits Per Pixel: " + bitsPerPixel + "\n"
-	debug "Compression Method: " + compressionMethod + "\n"
-	debug "imageSize: " + imageSize + "\n"
-	debug "Horizontal Res: " + horizResolution + "\n"
-	debug "Vertical Res: " + verticalResolution + "\n"
-	debug "Number of Colours: " + numColors + "\n"
-	debug "Important Colours: " + importantColors + "\n"
+	//debug "Bitmap Width: " + bitmapWidth + "\n"
+	//debug "Bitmap Height: " + bitmapHeight + "\n"
+	//debug "Colour Planes: " + colorPlanes + "\n"
+	//debug "Bits Per Pixel: " + bitsPerPixel + "\n"
+	//debug "Compression Method: " + compressionMethod + "\n"
+	//debug "imageSize: " + imageSize + "\n"
+	////debug "Horizontal Res: " + horizResolution + "\n"
+	//debug "Vertical Res: " + verticalResolution + "\n"
+	//debug "Number of Colours: " + numColors + "\n"
+	//debug "Important Colours: " + importantColors + "\n" */
 	dArray = []
 	
 	if bitsPerPixel <= 8:
@@ -125,14 +114,6 @@ public [[RGB]] ::readBMP(Reader file):
 			dArray = dArray+[widthArray]
 			widthArray = []
 			file.read(blankBytes)
-	
-	
-	debug "Returning: " + dArray[0][0] + "\n"
-	debug "Returning: " + dArray[40][134] + "\n"
-	debug "Returning: " + dArray[70][1] + "\n"
-	debug "Returning: " + dArray[30][23] + "\n"
-	debug "Returning: " + dArray[12][43] + "\n"
-	debug "Returning: " + dArray[96][18] + "\n"
+			
 	return dArray
-	
 

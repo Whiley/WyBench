@@ -1,5 +1,6 @@
 import * from whiley.lang.*
 import * from whiley.io.File
+import * from whiley.lang.Errors
 import RGB from Util
 
 define gifDescriptor as "GIF89a"
@@ -53,6 +54,38 @@ void ::printUsage(System.Console sys):
 	sys.out.println("-trans <List of Transforms>")
 	sys.out.println("Note: Transformations must be the last arguments specified")
 
+int parseInt(string s):
+	try:
+		return Int.parse(s)
+	catch (SyntaxError e):
+		return 0
+
+
+[[RGB]] ::processTransformations([[RGB]] array, [string] args, int begin):
+	for i in begin..|args|:
+		//Parse the Transform
+		if args[i] == "-brighten":
+			//Bring in Second Arguments
+			bFactor = parseInt(args[i+1])
+			debug "Brightening: " + bFactor + "\n"
+			array = Transforms.brighten(array, bFactor)
+			i = i+1
+		else if args[i] == "-hue": 
+			factor = parseInt(args[i+1])
+			debug "Adjusting Hue: " + factor + "\n"
+			array = Transforms.adjustHue(array, factor)
+			i = i+1
+		else if args[i] == "-contrast": 
+			factor = parseInt(args[i+1])
+			debug "Adjusting Contrast: " + factor + "\n"
+			array = Transforms.contrast(array, factor)
+			i = i+1
+		else if args[i] == "-sat": 
+			factor = parseInt(args[i+1])
+			debug "Adjusting Saturation: " + factor + "\n"
+			array = Transforms.adjustSaturation(array, factor)
+			i = i+1
+	return array
 
 void ::main(System.Console sys):
 	sys.out.println("Image Conversion. Supported Input formats: BMP, GIF. Supported Output Formats: BMP")
@@ -85,5 +118,5 @@ void ::main(System.Console sys):
 	if dArray == null:
 		sys.out.println("Input File Format not supported")
 		return
-	
+	dArray = processTransformations(dArray, sys.args, transBegin)
 	outputFile(dArray, outputFile)
