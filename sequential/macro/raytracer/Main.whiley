@@ -1,11 +1,12 @@
 import * from whiley.lang.System
 
 void ::main(System.Console sys):
-    p1 = Point.Point(1,2,-2)
-    p2 = Point.Point(3,-2,1)
-    p3 = Point.Point(5,1,-4)
-    plane = Plane.Plane(p1,p2,p3)
-    sys.out.println("A = " + Real.toDecimal(plane.A,5) + 
-                    ", B = " + Real.toDecimal(plane.B,5) + 
-                    ", C = " + Real.toDecimal(plane.C,5) + 
-                    ", D = " + Real.toDecimal(plane.D,5))
+    sphere = Sphere.Sphere(Point.Point(20,20,20),10.0)
+    ray = Ray.Ray(Point.Point(1,1,1),Vector.Vector(1,1,1))
+    r = Sphere.intersect(sphere,ray)
+    if r != null:
+        p0,p1 = r
+        sys.out.println("P0 = " + Point.toString(p0))
+        sys.out.println("P1 = " + Point.toString(p1))
+    else:
+        sys.out.println("no intersection")

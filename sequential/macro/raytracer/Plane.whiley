@@ -37,4 +37,5 @@ public real distance(Plane pl, Point pt):
 // other) then null is returned.
 public null|Point intersection(Plane p, Vector v):
     return null // TODO
+
     
