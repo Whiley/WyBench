@@ -27,17 +27,33 @@ public null|(Point,Point) intersect(Sphere s, Ray r):
     B = 2 * Vector.dot(r.direction, rOrigin)
     C = Vector.dot(rOrigin,rOrigin) - (s.radius * s.radius)
     
-    t0,t1 = solveQuadratic(A,B,C)    
-    
+    t = solveQuadratic(A,B,C,0.0001)    
+
+    if t == null:
+        return null
+    t0,t1 = t
+
     // TODO: somewhere here I need to decide whether or not there is
     // actually an intersection.
     
     return Ray.project(r,t0),Ray.project(r,t1)
 
-(real,real) solveQuadratic(real A, real B, real C):
-    rB2m4AC = Math.sqrt((B*B) - 4*A*C,0.0001)
-    t0 = (-B - rB2m4AC) / (2*A)
-    t1 = (-B + rB2m4AC) / (2*A)
+// Find solutions for x in a quadratric equation of the form:
+//
+//  Ax^2 + Bx + C = 0.  
+//
+// This is of course a classic problem and there are not 
+// necessarily any real solutions.  This method will only return
+// return solutions, or null if there are none.
+null|(real,real) solveQuadratic(real A, real B, real C, real err):
+    discriminant = (B*B) - 4*A*C
+    if discriminant < 0:
+        // no real roots
+        return null
+    root = Math.sqrt(discriminant,err)
+    _2A = 2*A
+    t0 = (-B - root) / _2A
+    t1 = (-B + root) / _2A
     return (t0,t1)
     
     
