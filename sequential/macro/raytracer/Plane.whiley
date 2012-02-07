@@ -1,4 +1,5 @@
 import * from Point
+import * from Vector
 
 // The plane is represented using the classical "plane equation" 
 // where for any point x,y,z on the plane we have Ax+By+Cz+D=0.  
@@ -28,13 +29,12 @@ public Plane Plane(Point p1, Point p2, Point p3) requires p1 != p2 && p1 != p3 &
 
 
 // Determine the distance of a point from the plane.
-public real distance(Plane plane, Point p):
-    return (p.x * plane.A) + (p.y * plane.B) + 
-        (p.z * plane.C) + plane.D
+public real distance(Plane pl, Point pt):
+    return (pt.x * pl.A) + (pt.y * pl.B) + (pt.z * pl.C) + pl.D
 
 // Determine the intersection point of a vecctor and plane.  In the
 // case that no intersection exists (i.e. they are parallel to each
 // other) then null is returned.
-public null|Point intersection(Plane plane, Vector v):
+public null|Point intersection(Plane p, Vector v):
+    return null // TODO
     
-
