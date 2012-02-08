@@ -92,15 +92,111 @@ public [[RGB]] ::readGif(Reader file):
 	leadByte = Byte.toUnsignedInt(file.read(1)[0])
 	dArray = []
 	dict = generateIntDict(LZWminSize)
+	byteList = []
+	dSize = 0
 	while leadByte != 0:
-		debug  "Bytes to Read: " + leadByte + "\n"
+		//debug  "Bytes to Read: " + leadByte + "\n"
 		subBlock = file.read(leadByte)
-		dArray, dict = decodeLZW(subBlock, LZWminSize, leadByte, dict, width)
+		byteList = byteList + subBlock
+		dSize = dSize + leadByte
+		//dArray, dict = decodeLZW(subBlock, LZWminSize, leadByte, dict, width)
 		leadByte = Byte.toUnsignedInt(file.read(1)[0])
 	//When we get here, there is no data left to read in the block
-	debug "" + dArray + "\n"
+	//debug "" + dArray + "\n"
+	codeList = computeLZWDecode(byteList, LZWminSize, dSize, dict, width)
+	dArray = generateTable(codeList, LZWminSize, width)
+	debug "Completed DECODE\n"
+	//debug "Codes" + codeList + "\n"
+	debug "" + file.read(1) + "\n"
 	file.close()
 	return codeToRGB(dArray, colourTable)
+
+[[int]] generateTable([int] codes, int bitSize, int width):
+	dict = generateIntDict(bitSize)
+	values = []
+	dictSize = Util.intPower(2, bitSize)
+	debug "Dict Generation. bitSize: " + bitSize + " Generated Size: " + |dict| + " DictS: " + dictSize +"\n"
+	clearCode = dictSize + ""
+	endCode = (dictSize + 1) + ""
+	oldCode = dict[codes[0]]
+	debug "Clear Code: " + clearCode + " End Code: " + endCode + " OldCode: " + oldCode + "\n"
+	ch = oldCode
+	debug "Dict Size: " + |dict| + "\n"
+	for val in 1..|codes|-1:
+		str = ""
+		debug "Current Code: " +  codes[val] + "\n"
+		if oldCode == clearCode:
+			debug "Clear Code Found: \n"
+			dict = generateIntDict(bitSize)
+			oldCode = dict[codes[val]]
+			values = values +[Util.charToInt(oldCode)]
+			ch = oldCode
+			val = val + 1
+		else:
+			debug "Search: " + codes[val] + "      " + (oldCode+ ' ' + codes[val]) +"\n"
+			
+			debug "In Array: " + Util.contains(dict, (oldCode+ ' ' + codes[val])) + "\n"
+			if codes[val] >= |dict|:
+			//if Util.contains(dict, (oldCode+ ' ' + codes[val])):
+				//Value is not in the dictionary
+				str = oldCode
+				str = str + ' ' +  ch
+			else:
+				str = dict[codes[val]]
+			for cha in str:
+				if cha != ' ':
+					//Dont Print out the Spaces.
+					values = values + [Util.charToInt(cha)]
+			ch = Util.stringSplit(str, ' ')[0]
+			dict = dict + [(oldCode+ ' ' +ch)]
+			debug "Adding to Dict: (" + codes[val] + ")" + (oldCode+ ' ' +ch) + " CURRENT DICT SIZE:  " + |dict| + "\n"
+			oldCode = dict[codes[val]]
+			
+	value = |values|/width
+	dArray = []
+	for i in 0..value:
+		dArray = dArray + [values[(i*width)..((i+1)*width)]]
+	return dArray
+
+
+[int] computeLZWDecode([byte] bArray, int bitSize, int dataSize, [string] dict, int width):
+	buff = BitBuffer.Reader(bArray, 0)
+	codes = []
+	bitReadSize = bitSize + 1
+	readBits = 0
+	loopTimes = 0
+	maxLoop = Util.intPower(2, bitSize)
+	maxBits = |bArray| * 8
+	debug "Max Bits: " + maxBits + "\n"
+	debug "Bytes to Read: " + |bArray| + "\n"
+	continueLoop = true
+	
+	while continueLoop:
+		maxLength = Util.mathMin(|bArray|, 254)
+		if maxLength < 253:
+			continueLoop = false
+			debug "Setting Loop False:\n"
+		tArray = bArray[0..maxLength]
+		
+		bArray = bArray[maxLength..]
+		//debug "Array Sizes: (T)" + |tArray| + " (B): " + |bArray| + "\n"
+		buff = BitBuffer.Reader(tArray, 0)
+		bitReadSize = bitSize + 1
+		readBits = 0
+		loopTimes = 0
+		maxLoop = Util.intPower(2, bitSize)
+		maxBits = |tArray| * 8
+		while readBits < maxBits && readBits+bitReadSize < maxBits:
+			if loopTimes >=maxLoop:
+				loopTimes = 0
+				maxLoop = Util.intPower(2,bitReadSize)
+				bitReadSize = bitReadSize + 1
+				debug "Bit Read Size: " + bitReadSize + "\n"
+			(val, buff) = BitBuffer.readUnsignedInt(buff, bitReadSize)
+			codes = codes +[val]
+			readBits = readBits + bitReadSize
+			loopTimes = loopTimes + 1
+	return codes
 
 [byte] encodeLZW([[RGB]] array, [RGB] table, int bitWidth):
 	//Need to Convert Array to Table
@@ -122,9 +218,6 @@ public [[RGB]] ::readGif(Reader file):
 			output = output + [Int.toUnsignedByte(Util.indexOf(dict, currentString))]
 			dict = dict + [temp]
 			currentString = "" + ch
-	
-	
-	
 	output = output + [Int.toUnsignedByte(Util.indexOf(dict, currentString))]
 	output = output + [Int.toUnsignedByte(initDict-1)]
 	return output
@@ -188,19 +281,24 @@ public [[RGB]] ::readGif(Reader file):
 			loopTimes = 0
 			maxLoop = Util.intPower(2,bitReadSize)
 			bitReadSize = bitReadSize + 1
+			debug "Bit Read Size: " + bitReadSize + "\n"
 		(val, buff) = BitBuffer.readUnsignedInt(buff, bitReadSize)
 		codes = codes +[val]
 		readBits = readBits + bitReadSize
 		loopTimes = loopTimes + 1
+	debug "Codes: " + codes + "\n"
 	values = []
 	dictSize = Util.intPower(2, bitSize)
 	clearCode = dictSize + ""
 	endCode = (dictSize + 1) + ""
 	oldCode = dict[codes[0]]
 	ch = oldCode
-	
-	for val in 1..|codes|-1:
-		str = ""
+	abcdfd = 258
+	debug "Dict Size: " + |dict| + "\n"
+	for val in 0..|codes|:
+		
+		newCode = codes[val]
+		//debug "Code: " + codes[val] + "\n"
 		if oldCode == clearCode:
 			dict = generateIntDict(bitSize)
 			oldCode = dict[codes[val]]
@@ -208,20 +306,45 @@ public [[RGB]] ::readGif(Reader file):
 			ch = oldCode
 			val = val + 1
 		else:
+			str = ""
 			if codes[val] >= |dict|:
-				//Value is not in the dictionary
 				str = oldCode
-				str = str + ' ' +  ch
+				str = str + ' ' + ch
 			else:
-				str = dict[codes[val]]
+				str = dict[newCode]
 			for cha in str:
 				if cha != ' ':
 					//Dont Print out the Spaces.
 					values = values + [Util.charToInt(cha)]
 			ch = Util.stringSplit(str, ' ')[0]
 			dict = dict + [(oldCode+ ' ' +ch)]
+			//l = dict[256..]
 			oldCode = dict[codes[val]]
-			
+	//for val in 1..|codes|-1:
+	//	str = ""
+	//	if oldCode == clearCode:
+	//		dict = generateIntDict(bitSize)
+	//		oldCode = dict[codes[val]]
+	//		values = values +[Util.charToInt(oldCode)]
+	//		ch = oldCode
+	//		val = val + 1
+	//	else:
+	//		//if codes[val] >= |dict|:
+	//		if Util.contains(dict, (oldCode+ ' ' + codes[val])):
+	//			//Value is not in the dictionary
+	//			str = oldCode
+	//			str = str + ' ' +  ch
+	//		else:
+	//			str = dict[codes[val]]
+	//		for cha in str:
+	//			if cha != ' ':
+	//				//Dont Print out the Spaces.
+	//				values = values + [Util.charToInt(cha)]
+	//		ch = Util.stringSplit(str, ' ')[0]
+	//		dict = dict + [(oldCode+ ' ' +ch)]
+	//		debug "Adding to Dict: (" + codes[val] + ")" + (oldCode+ ' ' +ch) + "\n"
+	//		oldCode = dict[codes[val]]
+	//		
 	value = |values|/width
 	dArray = []
 	for i in 0..value:

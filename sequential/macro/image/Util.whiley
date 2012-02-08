@@ -34,7 +34,11 @@ public real realMin(real a, real b):
 	else:
 		return b
 
-
+public bool contains([any] array, any object):
+	for i in 0..|array|:
+		if array[i] == object:
+			return true
+	return false
 
 public int getBitDepth([[RGB]] array, [int] potential):
 	numColors = getDistinctColors(array)
