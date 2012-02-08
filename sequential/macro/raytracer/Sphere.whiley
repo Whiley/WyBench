@@ -1,5 +1,5 @@
-import * from Point
-import * from Ray
+import Point
+import Ray
 
 // A Sphere is the simplest object to ray trace.  If we have a sphere
 // of radius r centered at position c, then any point p on the sphere
