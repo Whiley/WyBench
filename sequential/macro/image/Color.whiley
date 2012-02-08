@@ -31,7 +31,6 @@ public RGB HSBtoRGB(HSB h):
 	q = n*255 / d
 	n,d = t
 	t = n*255 / d
-	debug "HI: " + hi + "\n"
 	if hi == 0:
 		return {r:v, g:t, b:p}
 	else if hi == 1:
