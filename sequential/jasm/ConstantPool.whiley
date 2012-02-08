@@ -24,52 +24,52 @@ define CONSTANT_InterfaceMethodRef as 11
 define CONSTANT_NameAndType as 12
 
 define StringInfo as {
-    Type.uint8 tag,
-    Type.uint16 string_index
+    Int.u8 tag,
+    Int.u16 string_index
 }
 
 define ClassInfo as {
-    Type.uint8 tag,
-    Type.uint16 name_index
+    Int.u8 tag,
+    Int.u16 name_index
 }
 
 define Utf8Info as {
-    Type.uint8 tag,
+    Int.u8 tag,
     [byte] value        
 }
 
 define IntegerInfo as {
-    Type.uint8 tag,
+    Int.u8 tag,
     Type.int32 value        
 }
 
 define LongInfo as {
-    Type.uint8 tag,
+    Int.u8 tag,
     Type.int64 value        
 }
 
 define FieldRefInfo as { 
-    Type.uint8 tag,
-    Type.uint16 class_index,
-    Type.uint16 name_and_type_index
+    Int.u8 tag,
+    Int.u16 class_index,
+    Int.u16 name_and_type_index
 }
 
 define MethodRefInfo as { 
-    Type.uint8 tag,
-    Type.uint16 class_index,
-    Type.uint16 name_and_type_index
+    Int.u8 tag,
+    Int.u16 class_index,
+    Int.u16 name_and_type_index
 }
 
 define InterfaceMethodRefInfo as { 
-    Type.uint8 tag,
-    Type.uint16 class_index,
-    Type.uint16 name_and_type_index
+    Int.u8 tag,
+    Int.u16 class_index,
+    Int.u16 name_and_type_index
 }
 
 define NameAndTypeInfo as {
-    Type.uint8 tag,
-    Type.uint16 name_index,
-    Type.uint16 descriptor_index    
+    Int.u8 tag,
+    Int.u16 name_index,
+    Int.u16 descriptor_index    
 }
 
 define Item as FieldRefInfo | 
@@ -175,50 +175,50 @@ Constant numberOrStringItem(int index, [Item] pool) throws Error:
 // ============================================================
 
 define Utf8Tree as {
-    Type.uint8 tag,
+    Int.u8 tag,
     [byte] value        
 }
 
 define IntegerTree as {
-    Type.uint8 tag,
+    Int.u8 tag,
     Type.int32 value        
 }
 
 define LongTree as {
-    Type.uint8 tag,
+    Int.u8 tag,
     Type.int64 value        
 }
 
 define StringTree as {
-    Type.uint8 tag,
+    Int.u8 tag,
     Utf8Tree string_index
 }
 
 define ClassTree as {
-    Type.uint8 tag,
+    Int.u8 tag,
     Utf8Tree name_index
 }
 
 define NameAndTypeTree as {
-    Type.uint8 tag,
+    Int.u8 tag,
     Utf8Tree name_index,
     Utf8Tree descriptor_index    
 }
 
 define FieldRefTree as { 
-    Type.uint8 tag,
+    Int.u8 tag,
     ClassTree class_index,
     NameAndTypeTree name_and_type_index
 }
 
 define MethodRefTree as { 
-    Type.uint8 tag,
+    Int.u8 tag,
     ClassTree class_index,
     NameAndTypeTree name_and_type_index
 }
 
 define InterfaceMethodRefTree as { 
-    Type.uint8 tag,
+    Int.u8 tag,
     ClassTree class_index,
     NameAndTypeTree name_and_type_index
 }
