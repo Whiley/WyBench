@@ -1,7 +1,7 @@
 import * from whiley.lang.*
 import * from whiley.io.File
 import * from whiley.lang.Errors
-import RGB from Util
+import RGB from Color
 
 define gifDescriptor as "GIF89a"
 
@@ -62,6 +62,8 @@ int parseInt(string s):
 
 
 [[RGB]] ::processTransformations([[RGB]] array, [string] args, int begin):
+	if begin == -1:
+		return array
 	for i in begin..|args|:
 		//Parse the Transform
 		if args[i] == "-brighten":

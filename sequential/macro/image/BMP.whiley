@@ -1,6 +1,6 @@
 import * from whiley.lang.*
 import * from whiley.io.File
-import RGB from Util
+import RGB from Color
 
 public void ::writeBMP([[RGB]] array, string filename):
 	debug "Writing BMP File: " + filename + "\n"

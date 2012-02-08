@@ -21,6 +21,21 @@ public int mathMin(int a, int b):
 	else:
 		return b
 
+
+public real realMax(real a, real b):
+	if a > b:
+		return a
+	else:
+		return b
+
+public real realMin(real a, real b):
+	if a < b:
+		return a
+	else:
+		return b
+
+
+
 public int getBitDepth([[RGB]] array, [int] potential):
 	numColors = getDistinctColors(array)
 	debug "Number of Distinct Colours: " + numColors + "\n"
