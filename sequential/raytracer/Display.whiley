@@ -9,4 +9,4 @@ public void ::draw(int x, int y, Colour c):
     blue = Math.round(c.blue*255)
     draw(x,y,red,green,blue)
 
-public native void ::draw(int x, int y, Type.int8 r, Type.int8 g, Type.int8 b):
+public native void ::draw(int x, int y, Type.uint8 r, Type.uint8 g, Type.uint8 b):
