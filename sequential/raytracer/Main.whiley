@@ -1,12 +1,12 @@
 import * from whiley.lang.System
 
+import Point
+import Sphere
+import Scene
+
 void ::main(System.Console sys):
-    sphere = Sphere.Sphere(Point.Point(20,20,0),10)
-    ray = Ray.Ray(Point.Point(1,1,0),Vector.Vector(1,1,0))
-    r = Sphere.intersect(sphere,ray)
-    if r != null:
-        p0,p1 = r
-        sys.out.println("P0 = " + Point.toString(p0))
-        sys.out.println("P1 = " + Point.toString(p1))
-    else:
-        sys.out.println("no intersection")
+    s1 = Sphere(Point(100,100,0),50)
+    s2 = Sphere(Point(400,400,0),20)
+    l1 = Point(10,10,10)
+    scene = Scene([s1,s2],[l1])
+    Scene.render(scene)
