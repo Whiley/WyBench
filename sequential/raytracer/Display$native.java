@@ -31,7 +31,7 @@ public class Display$native extends Canvas {
 		offscreen = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
 		// clear the exposed area
 		Graphics offgc = offscreen.getGraphics();
-		offgc.setColor(Color.WHITE);
+		offgc.setColor(Color.BLACK);
 		offgc.fillRect(0, 0, WIDTH, HEIGHT);		
 	}
 	

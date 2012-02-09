@@ -26,7 +26,7 @@ public null|(Point,Point) intersect(Sphere s, Ray r):
     A = Vector.dot(r.direction, r.direction)
     B = 2 * Vector.dot(r.direction, rOrigin)
     C = Vector.dot(rOrigin,rOrigin) - (s.radius * s.radius)
-    
+
     t = solveQuadratic(A,B,C,0.0001)    
 
     if t == null:
@@ -48,7 +48,12 @@ null|(real,real) solveQuadratic(real A, real B, real C, real err):
     if discriminant < 0:
         // no real roots
         return null
+
+    // HACK
+    discriminant = Math.round(discriminant * 100) / 100.0    
+
     root = Math.sqrt(discriminant,err)
+    
     _2A = 2*A
     t0 = (-B - root) / _2A
     t1 = (-B + root) / _2A
