@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.math.BigInteger;
 
 import javax.swing.JFrame;
+import wyjc.runtime.List;
 
 /*
  * This File is part of the Tetris Benchmark for Whiley
@@ -18,8 +19,8 @@ import javax.swing.JFrame;
  */
 public class Display$native extends Canvas {
     
-	private static final int WIDTH = 512;
-	private static final int HEIGHT = 512;
+	private static final int WIDTH = 128;
+	private static final int HEIGHT = 128;
 	
 	private static BufferedImage offscreen = null;
 	public void paint(Graphics g) {	
@@ -38,11 +39,20 @@ public class Display$native extends Canvas {
 	private static JFrame frame;
 	private static Display$native display;
 
-	public static void draw(BigInteger x, BigInteger y, BigInteger r, BigInteger g, BigInteger b) {
-		draw(x.intValue(),y.intValue(),r.byteValue(),g.byteValue(),b.byteValue());
+        public static void paint(List reds, List greens, List blues) {
+	    int size = reds.size();
+	    int[] data = new int[size];
+	    for(int i=0;i!=size;++i) {
+		int red = ((BigInteger)reds.get(i)).byteValue();
+		int green = ((BigInteger)greens.get(i)).byteValue();
+		int blue = ((BigInteger)blues.get(i)).byteValue();
+		int rgb = ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | ((blue & 0xFF));
+		data[i] = rgb;
+	    }
+	    paint(data);
 	}
 	
-	public static void draw(int x, int y, int r, int g, int b) {	
+	public static void paint(int[] data) {	
 		if(display == null) {
 			frame = new JFrame("Raytracer Display");
 			display = new Display$native();
@@ -51,11 +61,18 @@ public class Display$native extends Canvas {
 			frame.setSize(WIDTH,HEIGHT);
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.pack();
-			frame.setVisible(true);
 			initialiseOffscreen();
 		}
-		int rgb = ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));
-		offscreen.setRGB(x, y, rgb);
+		offscreen.setRGB(0,0,WIDTH,HEIGHT,data,0,WIDTH);
 		display.repaint();
+		frame.setVisible(true);
 	}    
+
+    public static void main(String[] args) {
+	int[] data = new int[WIDTH*HEIGHT];
+	for(int i=0;i!=100;++i) {
+	    data[i + (i*WIDTH)] = 100;
+	}
+	paint(data);
+    }
 }

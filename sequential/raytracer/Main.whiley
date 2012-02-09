@@ -5,8 +5,10 @@ import Sphere
 import Scene
 
 void ::main(System.Console sys):
-    s1 = Sphere(Point(100,100,0),50)
-    s2 = Sphere(Point(400,400,0),20)
-    l1 = Point(10,10,10)
-    scene = Scene([s1,s2],[l1])
-    Scene.render(scene)
+    c = Point(64,64,-100)
+    s1 = Sphere(Point(20,34,40),10)
+    s2 = Sphere(Point(40,40,40),15)
+    l1 = Point(10,10,20)
+    scene = Scene([s1,s2],[l1],c)
+    pixels = Scene.render(scene,Display.WIDTH,Display.HEIGHT)
+    Display.paint(pixels)

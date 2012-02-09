@@ -4,32 +4,42 @@ import Point
 import Sphere
 import Vector
 
+// A Scene is made up of zero or more objects, and zero or more light
+// sources.  The position of the camera is also required.  However, 
+// the viewing plane is currently assumed to be in the direction of the
+// z-axis, and containing position 0,0,0
 define Scene as {
     [Sphere] objects,
-    [Point] lights
+    [Point] lights,  
+    Point camera                         
 }
 
-public Scene Scene([Sphere] objects, [Point] lights):
-    return { objects: objects, lights: lights }
+public Scene Scene([Sphere] objects, [Point] lights, Point camera):
+    return { objects: objects, lights: lights, camera: camera }
 
-public void ::render(Scene scene):
-    v = Vector(0,0,1)
-    for i in 0..Display.WIDTH:
-        for j in 0..Display.HEIGHT:
-            ray = Ray(Point(i,j,0),v)
-            colour = rayCast(scene,ray)
-            if colour != null:
-                Display.draw(i,j,colour)
+public [Colour] ::render(Scene scene, int width, int height):
+    pixels = []
+    total = width*height
+    count = 0
+    for i in 0..width:
+        for j in 0..height:
+            vec = Point.subtract(Point(i,j,0),scene.camera)
+            ray = Ray(scene.camera,vec)
+            col = rayCast(scene,ray)
+            pixels = pixels + [col]    
+            debug "\r" + count + " / " + total
+            count = count + 1
     // done
+    return pixels
 
-public Colour|null rayCast(Scene scene, Ray ray):
+public Colour rayCast(Scene scene, Ray ray):
     for s in scene.objects:
         r = Sphere.intersect(s,ray)
         if r != null:
             entry,exit = r
             i = lightCast(scene,entry,s)
             return Colour(i,i,i)
-    return null // no intersection
+    return Colour.BLACK
 
 public real lightCast(Scene scene, Point pt, Sphere h):
     intensity = 0.0
@@ -45,7 +55,7 @@ public real lightCast(Scene scene, Point pt, Sphere h):
                     break
         if !intersection:
             // not obstructed
-            magnitude = Vector.length(ray.direction) / 100            
+            magnitude = Vector.length(ray.direction) / 10
             i = 1.0 / magnitude
             intensity = Math.min(1.0,intensity + i)
     return intensity            

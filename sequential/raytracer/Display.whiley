@@ -1,12 +1,16 @@
 import Colour
 
-define WIDTH as 512
-define HEIGHT as 512
+define WIDTH as 128
+define HEIGHT as 128
 
-public void ::draw(int x, int y, Colour c):
-    red = Math.round(c.red*255)
-    green = Math.round(c.green*255)
-    blue = Math.round(c.blue*255)
-    draw(x,y,red,green,blue)
+public void ::paint([Colour] pixels):
+    reds = []
+    greens = []
+    blues = []
+    for p in pixels:
+        reds = reds + [Math.round(p.red*255)]
+        greens = greens + [Math.round(p.green*255)]
+        blues = blues + [Math.round(p.blue*255)]
+    paint(reds,greens,blues)
 
-public native void ::draw(int x, int y, Int.u8 r, Int.u8 g, Int.u8 b):
+public native void ::paint([Int.u8] reds,[Int.u8] greens,[Int.u8] blues):
