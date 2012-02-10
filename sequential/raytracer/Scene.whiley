@@ -55,7 +55,7 @@ public real lightCast(Scene scene, Point pt, Sphere h):
                     break
         if !intersection:
             // not obstructed
-            magnitude = Vector.length(ray.direction) / 10
-            i = 1.0 / magnitude
+            magnitude = Vector.length(ray.direction)
+            i = 1000.0 / (magnitude * magnitude)
             intensity = Math.min(1.0,intensity + i)
     return intensity            
