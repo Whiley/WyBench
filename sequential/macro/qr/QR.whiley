@@ -12,14 +12,14 @@ public [[bool]] ::parseImage(string filename):
 	//Can Read Format
 	rgbArray = BMP.readBMP(file)
 	boolArray = RGBtoBW(rgbArray) // This converts the Image from RGB to Boolean B/W Codes
-	
-	normArray = normaliseBW(boolArray) // This normalises the size of the array. Scales everything down to 1x1. Used for image scanning/Recognition
-	
-	
-	return [[]]
+	//normArray = normaliseBW(boolArray) // This normalises the size of the array. Scales everything down to 1x1. Used for image scanning/Recognition
+	return normaliseBW(boolArray)
 
 	
-		
+
+void debugArray([any] array):
+	for elem in array:
+		debug "" + elem + "\n"
 [[bool]] normaliseBW([[bool]] array):
 	initArray = array[0]
 	//debugArray(array)
@@ -36,14 +36,19 @@ public [[bool]] ::parseImage(string filename):
 	assert count % 7 == 0
 	
 	width = |array[0]|/pixWidth
+	height = |array|/pixWidth
 	ret = []
 	currRow = []
-	for i in 0..|array|:
+	for i in 0..height:
 		for j in 0..width:
-			check = array[i][j*pixWidth..(j*pixWidth)+pixWidth] //Take an array from the current element, spanning 8 along
+			
+			check = []
+			
+			for ij in i*pixWidth..(i*pixWidth)+pixWidth:
+				check = check + [array[ij][j*pixWidth..(j*pixWidth)+pixWidth]]
 			//This is just a sanity check that needs to pass. FIXME: Make this error
 			if allElementsEqual(check):
-				currRow = currRow + [check[0]]
+				currRow = currRow + [check[0][0]]
 			else:
 				debug "ERROR. NOT EQUAL. SHOULD EXIT HERE\n"
 		
@@ -53,13 +58,12 @@ public [[bool]] ::parseImage(string filename):
 
 	
 	
-bool allElementsEqual([any] array):
-	
-	element = array[0]
-	for ele in array:
-		if ele != element:
-			debug "Elements Not Same. \n"
-			return false
+bool allElementsEqual([[any]] array):
+	element = array[0][0]
+	for i in 0..|array|:
+		for j in 0..|array[0]|:
+			if array[i][j] != element:
+				return false
 	return true
 [[bool]] RGBtoBW([[RGB]] array):
 	ret = []
