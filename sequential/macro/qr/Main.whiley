@@ -8,4 +8,3 @@ void ::main(System.Console sys):
 	filename = sys.args[0]
 	debug "File Name: " + filename + "\n"
 	data = QR.parseImage(filename)
-	

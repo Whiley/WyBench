@@ -11,7 +11,7 @@ define QR as {
 	int dataModules, //Calculated by (A^2-B-C)
 	int dataCapacity, // Number of Available Codewords
 	int remainderBits, // Number of Bits left
-	[int] markerCentres, //List of alignment centers
+	[(int, int)] markerCentres, //List of alignment centers
 	[[bool]] rawData //Binary Representation of the Data
 	}
 
@@ -77,8 +77,24 @@ QR getQRfromArray([[bool]] array):
 	
 	return {version: version, numAligns: numAligns, numModulesSide:width, funcModules: funcPatternModules, FVIModules: FIVMod, dataModules: dataMod, dataCapacity: dataCapacity, remainderBits: remainderBits, markerCentres: alignmentCentres, rawData: array}
 
-[int] getAlignmentCentres(int version):
-	return [1]
+[(int,int)] getAlignmentCentres(int v):
+	list = Constants.centres[v-1]
+	ret = []
+	const = { }
+	for i in 0..|list|:
+		for j in i..|list|:
+			
+			const = const + {(list[i], list[j])}
+	
+	debug "Constants List(PRE REMOVAL): " + const + "\n"
+	//Need to remove corners
+	remove = {(list[0], list[0]), (list[0], list[|list|-1]), (list[|list|-1], list[0])}
+	const = const - remove
+	for item in const:
+		ret = ret + [item]
+	debug "Constants List(POST REMOVAL): " + ret + "\n"
+	return ret
+	
 	
 void debugArray([any] array):
 	for elem in array:
