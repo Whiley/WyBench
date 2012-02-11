@@ -2,7 +2,20 @@ import * from whiley.lang.*
 import * from whiley.io.File
 import RGB from Util
 
-public [[bool]] ::parseImage(string filename):
+define QR as { 
+	int version, //(DONE) Version Number, Between 1 and 40 
+	int numAligns, //(DONE)  Number of Extra aligment blocks. Does not include the 3 corner alignments
+	int numModulesSide, //(DONE) Number of Modules. Equals to 17 + (Version *4)  	(Denoted as A)
+	int funcModules, //Number of Functional Pattern Modules  			(Denoted as B)
+	int FVIModules, // Format & Version Modules							(Denoted as C)
+	int dataModules, //Calculated by (A^2-B-C)
+	int dataCapacity, // Number of Available Codewords
+	int remainderBits, // Number of Bits left
+	[int] markerCentres, //List of alignment centers
+	[[bool]] rawData //Binary Representation of the Data
+	}
+
+public QR ::parseImage(string filename):
 	file = File.Reader(filename)
 	header = String.fromASCII(file.read(2))
 	if header != "BM":
@@ -12,14 +25,65 @@ public [[bool]] ::parseImage(string filename):
 	//Can Read Format
 	rgbArray = BMP.readBMP(file)
 	boolArray = RGBtoBW(rgbArray) // This converts the Image from RGB to Boolean B/W Codes
-	//normArray = normaliseBW(boolArray) // This normalises the size of the array. Scales everything down to 1x1. Used for image scanning/Recognition
-	return normaliseBW(boolArray)
-
+	normArray = normaliseBW(boolArray) // This normalises the size of the array. Scales everything down to 1x1. Used for image scanning/Recognition
 	
+	return getQRfromArray(normArray)
 
+//@param v - QR Version
+int getFuncModules(int v):
+	//Func can be calced in levels. There are multiple 'base' levels.
+	//Each level above this, until another 'base' level is base + (actual-base)*8
+	minV = 0
+	baseMod = 0
+	if v == 1:
+		return 202
+	else if v < 7:
+		minV = 2
+		baseMod = 235
+	else if v < 14:
+		minV = 7
+		baseMod = 390
+	else if v < 21:
+		minV = 14
+		baseMod = 611
+	else if v < 28:
+		minV = 21
+		baseMod = 882
+	else if v < 35:
+		minV = 28
+		baseMod = 1203
+	else:
+		minV = 35
+		baseMod = 1574
+	
+	return baseMod + ((v-minV)*8)
+	
+	
+QR getQRfromArray([[bool]] array):
+	//Array is Normalised. Need to Calculate all other information
+	width = |array| // A
+	version = (width-17)/4
+	numAligns = getAlignBlocks(version)
+	funcPatternModules = getFuncModules(version)
+	FIVMod = 0
+	if version < 7:
+		FIVMod = 31
+	else:
+		FIVMod = 67
+	dataMod = (width*width) - funcPatternModules - FIVMod
+	dataCapacity = dataMod / 8
+	remainderBits = dataMod % 8
+	alignmentCentres = getAlignmentCentres(version)
+	
+	return {version: version, numAligns: numAligns, numModulesSide:width, funcModules: funcPatternModules, FVIModules: FIVMod, dataModules: dataMod, dataCapacity: dataCapacity, remainderBits: remainderBits, markerCentres: alignmentCentres, rawData: array}
+
+[int] getAlignmentCentres(int version):
+	return [1]
+	
 void debugArray([any] array):
 	for elem in array:
 		debug "" + elem + "\n"
+
 [[bool]] normaliseBW([[bool]] array):
 	initArray = array[0]
 	//debugArray(array)
@@ -56,7 +120,28 @@ void debugArray([any] array):
 		currRow = []
 	return ret
 
+public void decodeData([[bool]] data):
+	assert |data| == |data[0]|
+	version = ((|data|-17)/4)
+	alignBlocks = getAlignBlocks(version)
 	
+	
+// 
+// Returns the number of aligment blocks
+//
+int getAlignBlocks(int version):
+	if version == 0:
+		return 0
+	else if version < 7:
+		return 1
+	else if version < 21:
+		return 6
+	else if version < 28:
+		return 22
+	else if version < 35:
+		return 33
+	else:
+		return 46
 	
 bool allElementsEqual([[any]] array):
 	element = array[0][0]
@@ -65,6 +150,7 @@ bool allElementsEqual([[any]] array):
 			if array[i][j] != element:
 				return false
 	return true
+	
 [[bool]] RGBtoBW([[RGB]] array):
 	ret = []
 	currentRow = []
@@ -86,3 +172,4 @@ bool allElementsEqual([[any]] array):
 		
 		currentRow = []
 	return ret
+	

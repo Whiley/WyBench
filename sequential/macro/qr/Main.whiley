@@ -1,5 +1,5 @@
 import * from whiley.lang.*
-
+import QR from QR
 
 
 void ::main(System.Console sys):
@@ -7,4 +7,5 @@ void ::main(System.Console sys):
 		sys.out.println("No Input File")
 	filename = sys.args[0]
 	debug "File Name: " + filename + "\n"
-	data = QR.parseImage(filename)	
+	data = QR.parseImage(filename)
+	
