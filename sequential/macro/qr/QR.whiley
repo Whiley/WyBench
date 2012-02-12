@@ -15,6 +15,70 @@ define QR as {
 	[[bool]] rawData //Binary Representation of the Data
 	}
 
+	
+public void decodeQR(QR q):
+	//Reparse the Image. Stripout the tracking grids
+	grid = removeTracking(q)
+
+//@Param - coord - Gives the bottom right location
+[[int]] removeTracking([[int]] array, (int, int) coord, int size):
+	x,y = coord
+	x = x + 1
+	y = y + 1
+	for i in x-size..x:
+		for j in y-size..y:
+			array[i][j] = 2
+	
+	return array
+	
+[[int]] removeCorners([[int]] array):
+	//Note here. While the tracking marker is a 7x7 grid at each corner
+	//There is a l module wide buffer zone. This neccisitates removing an 8x8 grid
+	array = removeTracking(array, (7,7), 8)
+	array = removeTracking(array, (7,|array|-1), 8)
+	array = removeTracking(array, (|array|-1, 7), 8)
+	
+	return array
+
+	
+[[int]] removeTrackingSquares([[int]] array, [(int, int)] marks):
+	for element in marks:
+		x,y = element
+		x = x+2
+		y = y+2
+		array = removeTracking(array, (x,y), 5)
+	return array
+	
+	
+[[int]] removeTracking(QR q):
+	dArray = []
+	ret = []
+	qrData = q.rawData
+	markers = q.markerCentres
+	for i in 0..|qrData|:
+		for j in 0..|qrData[0]|:
+			if qrData[i][j]:
+				dArray = dArray + [1]
+			else:
+				dArray = dArray + [0]
+		
+		ret = ret + [dArray]
+		dArray = []
+	//Converted to 0,1.
+	
+	//Parse out the corners
+	ret = removeCorners(ret)
+	//Remove the Track Squares
+	ret = removeTrackingSquares(ret, markers)
+	//Remove Tracking Lines
+	for i in 7..q.numModulesSide-6:
+		ret[i][6] = 2
+		ret[6][i] = 2
+
+	
+	debugArray(ret)
+	return ret
+	
 public QR ::parseImage(string filename):
 	file = File.Reader(filename)
 	header = String.fromASCII(file.read(2))

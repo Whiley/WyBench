@@ -7,4 +7,6 @@ void ::main(System.Console sys):
 		sys.out.println("No Input File")
 	filename = sys.args[0]
 	debug "File Name: " + filename + "\n"
-	data = QR.parseImage(filename)
+	qr = QR.parseImage(filename)
+	
+	QR.decodeQR(qr)
