@@ -1,10 +1,11 @@
+import * from whiley.lang.Errors
 import * from whiley.lang.System
 import * from whiley.io.File
 import * from BitBuffer
 
 define Error as {string msg}
 
-define RGB as {int r, int g, int b}
+public define RGB as {int r, int g, int b}
 define RGBA as {int r, int g, int b, int a}
 
 // RGB constructor
@@ -43,7 +44,7 @@ void read([byte] data) throws Error:
     packed = data[pos]
     bitsPerPixel = Byte.toUnsignedInt(packed & 111b)
     bitsOfColourResolution = Byte.toUnsignedInt((packed & 01110000b) >> 4)
-    hasGlobalMap = (packed & 10000000b) != 0
+    hasGlobalMap = (packed & 10000000b) != 0b
     pos = pos + 1
     // read background colour index
     background = data[pos]    
@@ -73,38 +74,39 @@ void read([byte] data) throws Error:
                 // Terminator
                 break
 
-Reader skipExtensionBlock(Reader reader):
-    code,reader = readUnsignedInt(reader,8)
-    count,reader = readUnsignedInt(reader,8)
+int skipExtensionBlock([byte] data, int pos):
+    code = Byte.toUnsignedInt(data[pos])
+    pos = pos + 1
+    count = Byte.toUnsignedInt(data[pos])
+    pos = pos + 1
     while count != 0:
-        while count > 0:
-            dummy,reader = readUnsignedInt(reader,8)
-            count = count - 1
-        count,reader = readUnsignedInt(reader,8)    
-    return reader
+        pos = pos + count
+        count = Byte.toUnsignedInt(data[pos])
+    return pos
             
-(Descriptor,Reader) readImageDescriptor(Reader reader, [RGB] globalColourMap) throws Error:
+(Descriptor,int) readImageDescriptor([byte] data, int pos, [RGB] globalColourMap) throws Error:
     // read image dimensions
-    left,reader = readUnsignedInt(reader,16)
-    top,reader = readUnsignedInt(reader,16)
-    width,reader = readUnsignedInt(reader,16)
-    height,reader = readUnsignedInt(reader,16)
-    // read bits per pixel
-    bitsPerPixel,reader = readUnsignedInt(reader,3)  
-    bitsPerPixel = bitsPerPixel + 1
-    // read dummy bits
-    dummy,reader = read(reader,3)
-    // read interlave bit
-    interlaced,reader = read(reader)        
-    // read global bit
-    lct,reader = read(reader)   
+    left,reader = Byte.toUnsignedInt(data[pos..pos+2])
+    pos = pos + 2
+    top,reader = Byte.toUnsignedInt(data[pos..pos+2])
+    pos = pos + 2
+    width,reader = Byte.toUnsignedInt(data[pos..pos+2])
+    pos = pos + 2
+    height,reader = Byte.toUnsignedInt(data[pos..pos+2])
+    pos = pos + 2
+    // read packed data
+    packed = data[pos]
+    bitsPerPixel = Byte.toUnsignedInt(packed & 111b)
+    interlaced = (packed & 01000000b) != 0b
+    hasLocalMap = (packed & 10000000b) != 0b
+    pos = pos + 1
     // read local colour map
-    if lct:
-        colourMap,reader = readColourMap(reader,bitsPerPixel)
+    if hasLocalMap:
+        colourMap,reader = readColourMap(data,pos,bitsPerPixel)
     else:
         colourMap = globalColourMap
     // now, we need to decode the lzw data    
-    reader = decodeImageData(reader,width*height)    
+
     // done
     return {
         left: left,
@@ -113,10 +115,10 @@ Reader skipExtensionBlock(Reader reader):
         height: height,
         bitsPerPixel: bitsPerPixel,
         interlaced: interlaced
-    },reader     
+    },pos
 
 Reader decodeImageData(Reader reader, int numPixels):
-    codeSize,reader = readUnsignedInt(reader,8)
+    codeSize,reader = BitBuffer.readUnsignedInt(reader,8)
     // first, initialise suffix and prefix maps
     suffix = []
     prefix = []
@@ -125,16 +127,19 @@ Reader decodeImageData(Reader reader, int numPixels):
         
 
 // read a colour map
-([RGB],Reader) readColourMap(Reader reader, int bitsPerPixel):
+([RGB],int) readColourMap([byte] data, int pos, int bitsPerPixel):
     ncols = Math.pow(2,bitsPerPixel)
     colourTable = []
     for i in 0..ncols:
-        red,reader = readUnsignedInt(reader,8)
-        green,reader = readUnsignedInt(reader,8)
-        blue,reader = readUnsignedInt(reader,8)
+        red,reader = Byte.toUnsignedInt(data[pos])
+        pos = pos + 1
+        green,reader = Byte.toUnsignedInt(data[pos])
+        pos = pos + 1
+        blue,reader = Byte.toUnsignedInt(data[pos])
+        pos = pos + 1
         colourTable = colourTable + [RGB(red,green,blue)]
     // done
-    return colourTable,reader
+    return colourTable,pos
 
 public void ::main(System.Console sys):
     file = File.Reader(sys.args[0])
