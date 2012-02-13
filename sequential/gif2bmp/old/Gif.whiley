@@ -1,7 +1,56 @@
-import * from whiley.lang.*
+import whiley.lang.*
 import * from BitBuffer
 import * from whiley.io.File
 import RGB from Util
+
+// Object Definitions
+define GIFFile as {
+	string|null header,
+	screenDescriptor LSD,
+	[RGB] colourTable,
+	[Frame] frames
+}
+
+define screenDescriptor as {
+	int width,
+	int height, 
+	bool GCT, //If a global Colour Table Exists
+	int resolution, 
+	bool sort,
+	int GCTSize,
+	int bgIndex,
+	int aspectRatio
+}
+
+define Frame as {
+	imageDescriptor|null ID,
+	controlExtension|null GCE,
+	int LZWMin,
+	[imageSubblock] data
+}
+
+define controlExtension as {
+	int disposal,
+	bool input,
+	bool transFlag,
+	int delayTime,
+	RGB transparentColor
+}
+
+
+define imageDescriptor as {
+	int imageLeft,
+	int imageTop,
+	int imageWidth,
+	int imageHeight,
+	bool LCTFlag, //Defines whether a local colour table exists
+	bool interlace, //Defines if the image is interlaced
+	bool sort, // If the LCT is sorted
+	int LCTSize //Size of the LCT (If Defined)
+} 
+
+
+define imageSubblock as {int length, [byte] data}
 
 public void ::writeGif([[RGB]] array, string filename):
 	writer = File.Writer(filename)
@@ -46,62 +95,244 @@ public void ::writeGif([[RGB]] array, string filename):
 	writer.write(List.reverse(Int.toUnsignedBytes(0x3B))) // Trailer Byte
 	writer.close()
 
-public [[RGB]] ::readGif(Reader file):
-	//When we're here, the only thing read is the magic number
-	width = Byte.toUnsignedInt(file.read(2))
-	height = Byte.toUnsignedInt(file.read(2))
+	
+//
+// Parses the Image Descriptor
+// This contains width, height, Colour Table
+// And background Information
+// 
+	
+(screenDescriptor, Reader) ::getDescriptor(Reader file):
+	iWidth = Byte.toUnsignedInt(file.read(2))
+	iHeight = Byte.toUnsignedInt(file.read(2))
 	packed = file.read(1)[0]
-	global = 0 //Whether a Global Colour Table Exists
+	global = false //Whether a Global Colour Table Exists
 	if (packed & 10000000b) == 10000000b:
-		global = 1
+		global = true
 	packed = packed << 1
 	packed, resolution = Util.toUnsignedInt(packed, 3)
 	resolution = resolution + 1
-	sortflag = 0
+	sortflag = false
 	if (packed & 10000000b) == 10000000b:
-		sortflag = 1
+		sortflag = true
 	packed = packed << 1
 	packed, tableSize = Util.toUnsignedInt(packed,3)
-	
-	debug "Width: " + width + "\n"
-	debug "Height: " + height + "\n"
-	debug "Global Table: " + global + "\n"
-	debug "Res Depth: " + resolution + "\n"
-	debug "Sort Flag: " + sortflag + "\n"
-	debug "Table Size N: " + tableSize + "\n"
-	
 	backgroundIndex = Byte.toUnsignedInt(file.read(1)) // Reads in the background is no Color is specified 
 	aspectRatio = Byte.toUnsignedInt(file.read(1))
-	colourTable = buildColourTable(file, tableSize)
-	debug  "Colour Table Built" + "\n"
+	
+	return ({width: iWidth, height:iHeight, GCT: global, resolution: resolution, sort: sortflag, GCTSize: tableSize, bgIndex: backgroundIndex, aspectRatio: aspectRatio}, file)
+
+
+(imageDescriptor, Reader) ::parseImageDescriptor(Reader file):
+	left = Byte.toUnsignedInt(file.read(2))
+	top = Byte.toUnsignedInt(file.read(2))
+	width = Byte.toUnsignedInt(file.read(2))
+	height = Byte.toUnsignedInt(file.read(2))
+	byt = file.read(1)[0]
+	colorTable = false
+	if (byt & 10000000b) == 10000000b:
+		colorTable = true
+	interlace = false
+	if (byt & 01000000b) == 01000000b:
+		interlace = true
+	sort = false
+	if (byt & 00100000b) == 00100000b:
+		sort = true
+	byt = byt << 5
+	byt, size = Util.toUnsignedInt(byt, 3)
+	return ({imageLeft:left, imageTop:top, imageWidth:width, imageHeight:height, LCTFlag:colorTable, interlace:interlace, sort:sort, LCTSize:size}, file)
+	
+//
+// Parses an image sub-block, given a length. This could really be
+// Taken out of a method
+//
+(imageSubblock, Reader) ::parseSubblock(Reader file, int length):
+	data = file.read(length)
+	return ({length:length, data:data}, file)
+	
+	
+[Frame] ::parseFrames(Reader file):
+	frames = []
+	
 	leadByte = file.read(1)[0]
-	
-	// Parses the Image Descriptor and Graphical Control Extensions (Used for Transparency and Animation)
-	while leadByte == 00100001b || leadByte == 00101100b:
-		if(leadByte == 00100001b):
-			size = file.read(2)[1]
-			file.read(Byte.toUnsignedInt(size)+1)
-		else if(leadByte == 00101100b):
-			file.read(9) //FIXME: Deal with this Correctly
-		leadByte = file.read(1)[0]
+	while leadByte != 00111011b:
+		GCE = null
+		imageDescriptor = null
 		
-	//When we get here. The byte currently stored in leadByte is the first of the image data
-	LZWminSize = Byte.toUnsignedInt(leadByte) //Minimum Compression code size. Used to decode compressed output codes.
-	debug  "Min LZW Size: " + LZWminSize + "\n"
-	
-	dArray = decodeLZW(subBlock, LZWminSize, leadByte, dict, width)
-
-	dArray = []
-	dict = generateIntDict(LZWminSize)
-	while leadByte != 0:
-		debug  "Bytes to Read: " + leadByte + "\n"
-		subBlock = file.read(leadByte)
-
+		while leadByte == 00100001b || leadByte == 00101100b:
+			if(leadByte == 00100001b):
+				//GCE
+				size = file.read(2)[1]
+				file.read(Byte.toUnsignedInt(size)+1)
+			else if(leadByte == 00101100b):
+				//IMAGE DESCRIPTOR
+				imageDescriptor, file = parseImageDescriptor(file)
+			leadByte = file.read(1)[0]
+		
+		//WHEN WE GET HERE. THE IMAGE DATA FOLLOWS
+		minSize = Byte.toUnsignedInt(leadByte)
+		
 		leadByte = Byte.toUnsignedInt(file.read(1)[0])
-	//When we get here, there is no data left to read in the block
-	debug "" + dArray + "\n"
+		blocks = []
+		while leadByte != 0:
+			imageBlock, file = parseSubblock(file, leadByte)
+			blocks = blocks + [imageBlock]	
+			leadByte = Byte.toUnsignedInt(file.read(1)[0])
+		
+		//Add New Frame
+		cFrame = {GCE:GCE, ID:imageDescriptor, LZWMin:minSize, data:blocks}
+		frames = frames + [cFrame]
+		leadByte = file.read(1)[0]
+	
+	
+	return frames
+	
+	
+public [[int]] decodeFrame(Frame f, int width):
+	codes = []
+	nullCode = -1
+	data_size = f.LZWMin
+	array = []
+	for arr in f.data:
+		array = array + arr.data
+	clear = Math.pow(2, data_size) // Dict already Contains the clear codes.
+	end_of_information = clear + 1
+	available = clear + 2
+	code_size = data_size + 1
+	code_mask = Byte.toUnsignedInt(Int.toUnsignedByte(1) << 1) - 1
+	suffix = []
+	prefix = []
+	for i in 0..clear:
+		suffix = suffix  + [Int.toUnsignedByte(i)]
+		prefix = prefix + [0]
+	length = |array|*8
+	readBits = code_size
+	read = BitBuffer.Reader(array, 0)
+	val, read = BitBuffer.readUnsignedInt(read, code_size)
+	old_code = val
+	ch = val
+	pixelStack = []
+	available = Math.pow(2, code_size) -1
+	debug "Available: " + available + "\n"
+	dict = generateIntDict(data_size)
+	values = []
+	str = ""
+	while readBits+code_size < length:
+		code, read = BitBuffer.readUnsignedInt(read, code_size)
+		debug "Code: " + code + " CodeSize: " + code_size + "\n"
+		codes = codes + [code]
+		readBits = readBits + code_size
+		// Interpret the code
+		
+		if(code == end_of_information):
+			break
+		else if(code == clear):
+			dict = generateIntDict(data_size)
+			code_size = data_size + 1
+			available = Math.pow(2, code_size) -1
+			//code, read = BitBuffer.readUnsignedInt(read, code_size) 
+			//readBits = readBits + code_size
+			//old_code = code
+			
+			
+		else:
+			str = ""
+			if Util.contains(dict, ""+code):
+				str = str + old_code
+				str = str + ' ' + ch
+			else:
+				str = dict[code]
+			for cha in str:
+				if cha != ' ':
+					//Dont Print out the Spaces.
+					values = values + [Util.charToInt(cha)]
+			ch = Util.stringSplit(str, ' ')[0]
+			
+			tempStr = ""
+			tempStr = tempStr + old_code + ' ' + ch
+			dict = dict + [tempStr]
+			old_code = dict[code]
+			
+			//debug "Dict Size: " + |dict| + " Avail: " + available + "\n"
+			if |dict|-1 > available:
+				// Dict is 'full'
+				// Increase Code size
+				if code_size != 12:
+					code_size = code_size + 1
+					available = Math.pow(2, code_size) -1
+				// Changed because the next code should be a 12 bit 256 clear code
+				
+			
+			
+	return generateTable(values, data_size, width)
+
+[string] generateIntDict(int codeWidth):
+	list = []
+	i = 0
+	while i < Util.intPower(2, codeWidth)+2:
+		list = list + [""+i]
+		i = i+1
+	
+	return list	
+	
+public [[RGB]] ::readGif(Reader file):
+	LSD, file = getDescriptor(file)
+	colourTable = buildColourTable(file, LSD.GCTSize)
+	frames = parseFrames(file)
+	frame = frames[0]
 	file.close()
-	return codeToRGB(dArray, colourTable)
+	//codeList = computeLZWDecode(byteList, LZWminSize, dSize, dict, width)
+	//dArray = generateTable(codeList, LZWminSize, width)
+	val = decodeFrame(frame, LSD.width)
+	return codeToRGB(val, colourTable)
+
+[[int]] generateTable([int] codes, int bitSize, int width):
+	dict = generateIntDict(bitSize)
+	values = []
+	dictSize = Util.intPower(2, bitSize)
+	debug "Dict Generation. bitSize: " + bitSize + " Generated Size: " + |dict| + " DictS: " + dictSize +"\n"
+	clearCode = dictSize + ""
+	endCode = (dictSize + 1) + ""
+	oldCode = dict[codes[0]]
+	debug "Clear Code: " + clearCode + " End Code: " + endCode + " OldCode: " + oldCode + "\n"
+	ch = oldCode
+	debug "Dict Size: " + |dict| + "\n"
+	for val in 1..|codes|-1:
+		str = ""
+		debug "Current Code: " +  codes[val] + "\n"
+		if oldCode == clearCode:
+			debug "Clear Code Found: \n"
+			dict = generateIntDict(bitSize)
+			oldCode = dict[codes[val]]
+			values = values +[Util.charToInt(oldCode)]
+			ch = oldCode
+			val = val + 1
+		else:
+			debug "Search: " + codes[val] + "      " + (oldCode+ ' ' + codes[val]) +"\n"
+			
+			debug "In Array: " + Util.contains(dict, (oldCode+ ' ' + codes[val])) + "\n"
+			if codes[val] >= |dict|:
+			//if Util.contains(dict, (oldCode+ ' ' + codes[val])):
+				//Value is not in the dictionary
+				str = oldCode
+				str = str + ' ' +  ch
+			else:
+				str = dict[codes[val]]
+			for cha in str:
+				if cha != ' ':
+					//Dont Print out the Spaces.
+					values = values + [Util.charToInt(cha)]
+			ch = Util.stringSplit(str, ' ')[0]
+			dict = dict + [(oldCode+ ' ' +ch)]
+			debug "Adding to Dict: (" + codes[val] + ")" + (oldCode+ ' ' +ch) + " CURRENT DICT SIZE:  " + |dict| + "\n"
+			oldCode = dict[codes[val]]
+			
+	value = |values|/width
+	dArray = []
+	for i in 0..value:
+		dArray = dArray + [values[(i*width)..((i+1)*width)]]
+	return dArray
+
 
 [byte] encodeLZW([[RGB]] array, [RGB] table, int bitWidth):
 	//Need to Convert Array to Table
@@ -123,9 +354,6 @@ public [[RGB]] ::readGif(Reader file):
 			output = output + [Int.toUnsignedByte(Util.indexOf(dict, currentString))]
 			dict = dict + [temp]
 			currentString = "" + ch
-	
-	
-	
 	output = output + [Int.toUnsignedByte(Util.indexOf(dict, currentString))]
 	output = output + [Int.toUnsignedByte(initDict-1)]
 	return output
@@ -167,67 +395,6 @@ public [[RGB]] ::readGif(Reader file):
 	debug "Table Size: " + |table| + "\n"
 	return table, init
 
-[string] generateIntDict(int codeWidth):
-	list = []
-	i = 0
-	while i < Util.intPower(2, codeWidth)+2:
-		list = list + [""+i]
-		i = i+1
-	
-	return list
-
-[[int]] ::decodeLZW([byte] bArray, int bitSize, int dataSize, int width):
-	buff = BitBuffer.Reader(bArray, 0)
-	codes = []
-	bitReadSize = bitSize + 1
-	readBits = 0
-	loopTimes = 0
-	maxLoop = Util.intPower(2, bitSize)
-	maxBits = dataSize * 8
-	while readBits < maxBits && readBits+bitReadSize < maxBits:
-		if loopTimes >=maxLoop:
-			loopTimes = 0
-			maxLoop = Util.intPower(2,bitReadSize)
-			bitReadSize = bitReadSize + 1
-		(val, buff) = BitBuffer.readUnsignedInt(buff, bitReadSize)
-		codes = codes +[val]
-		readBits = readBits + bitReadSize
-		loopTimes = loopTimes + 1
-	values = []
-	dictSize = Util.intPower(2, bitSize)
-	clearCode = dictSize + ""
-	endCode = (dictSize + 1) + ""
-	oldCode = dict[codes[0]]
-	ch = oldCode
-	
-	for val in 1..|codes|-1:
-		str = ""
-		if oldCode == clearCode:
-			dict = generateIntDict(bitSize)
-			oldCode = dict[codes[val]]
-			values = values +[Util.charToInt(oldCode)]
-			ch = oldCode
-			val = val + 1
-		else:
-			if codes[val] >= |dict|:
-				//Value is not in the dictionary
-				str = oldCode
-				str = str + ' ' +  ch
-			else:
-				str = dict[codes[val]]
-			for cha in str:
-				if cha != ' ':
-					//Dont Print out the Spaces.
-					values = values + [Util.charToInt(cha)]
-			ch = Util.stringSplit(str, ' ')[0]
-			dict = dict + [(oldCode+ ' ' +ch)]
-			oldCode = dict[codes[val]]
-			
-	value = |values|/width
-	dArray = []
-	for i in 0..value:
-		dArray = dArray + [values[(i*width)..((i+1)*width)]]
-	return (dArray, dict)
 
 [byte] compressCodes([byte] array, int bitsize):
 	debug "Bitsize: " + bitsize + "\n"
