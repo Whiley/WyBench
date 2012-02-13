@@ -89,13 +89,14 @@ public [[RGB]] ::readGif(Reader file):
 	LZWminSize = Byte.toUnsignedInt(leadByte) //Minimum Compression code size. Used to decode compressed output codes.
 	debug  "Min LZW Size: " + LZWminSize + "\n"
 	
-	leadByte = Byte.toUnsignedInt(file.read(1)[0])
+	dArray = decodeLZW(subBlock, LZWminSize, leadByte, dict, width)
+
 	dArray = []
 	dict = generateIntDict(LZWminSize)
 	while leadByte != 0:
 		debug  "Bytes to Read: " + leadByte + "\n"
 		subBlock = file.read(leadByte)
-		dArray, dict = decodeLZW(subBlock, LZWminSize, leadByte, dict, width)
+
 		leadByte = Byte.toUnsignedInt(file.read(1)[0])
 	//When we get here, there is no data left to read in the block
 	debug "" + dArray + "\n"
@@ -175,7 +176,7 @@ public [[RGB]] ::readGif(Reader file):
 	
 	return list
 
-([[int]], [string]) ::decodeLZW([byte] bArray, int bitSize, int dataSize, [string] dict, int width):
+[[int]] ::decodeLZW([byte] bArray, int bitSize, int dataSize, int width):
 	buff = BitBuffer.Reader(bArray, 0)
 	codes = []
 	bitReadSize = bitSize + 1
