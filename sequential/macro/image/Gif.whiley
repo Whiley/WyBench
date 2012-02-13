@@ -3,13 +3,13 @@ import * from BitBuffer
 import * from whiley.io.File
 import RGB from Util
 
+// Object Definitions
 define GIFFile as {
 	string|null header,
 	screenDescriptor LSD,
 	[RGB] colourTable,
 	[Frame] frames
 }
-
 
 define screenDescriptor as {
 	int width,
@@ -95,6 +95,13 @@ public void ::writeGif([[RGB]] array, string filename):
 	writer.write(List.reverse(Int.toUnsignedBytes(0x3B))) // Trailer Byte
 	writer.close()
 
+	
+//
+// Parses the Image Descriptor
+// This contains width, height, Colour Table
+// And background Information
+// 
+	
 (screenDescriptor, Reader) ::getDescriptor(Reader file):
 	iWidth = Byte.toUnsignedInt(file.read(2))
 	iHeight = Byte.toUnsignedInt(file.read(2))
@@ -135,7 +142,10 @@ public void ::writeGif([[RGB]] array, string filename):
 	byt, size = Util.toUnsignedInt(byt, 3)
 	return ({imageLeft:left, imageTop:top, imageWidth:width, imageHeight:height, LCTFlag:colorTable, interlace:interlace, sort:sort, LCTSize:size}, file)
 	
-	
+//
+// Parses an image sub-block, given a length. This could really be
+// Taken out of a method
+//
 (imageSubblock, Reader) ::parseSubblock(Reader file, int length):
 	data = file.read(length)
 	return ({length:length, data:data}, file)
@@ -199,11 +209,6 @@ public [[int]] decodeFrame(Frame f, int width):
 	readBits = code_size
 	read = BitBuffer.Reader(array, 0)
 	val, read = BitBuffer.readUnsignedInt(read, code_size)
-	count = 0
-	first = 0
-	top = 0
-	pi = 0
-	bi = 0
 	old_code = val
 	ch = val
 	pixelStack = []
@@ -222,8 +227,14 @@ public [[int]] decodeFrame(Frame f, int width):
 			break
 		else if(code == clear):
 			dict = generateIntDict(data_size)
-			old_code = code
+			
 			code_size = data_size + 1
+			available = Math.pow(2, code_size) -1
+			code, read = BitBuffer.readUnsignedInt(read, code_size) 
+			readBits = readBits + code_size
+			old_code = code
+			
+			
 		else:
 			str = ""
 			if code >= |dict|:
@@ -242,15 +253,15 @@ public [[int]] decodeFrame(Frame f, int width):
 			dict = dict + [tempStr]
 			old_code = dict[code]
 			
-			// debug "Dict Size: " + |dict| + " Avail: " + available + "\n"
+			debug "Dict Size: " + |dict| + " Avail: " + available + "\n"
 			if |dict|-1 > available:
 				// Dict is 'full'
 				// Increase Code size
-				if code_size == 12:
-					code_size = data_size + 1
-				else:
+				if code_size != 12:
 					code_size = code_size + 1
-				available = Math.pow(2, code_size) -1
+					available = Math.pow(2, code_size) -1
+				// Changed because the next code should be a 12 bit 256 clear code
+				
 			
 			
 	return generateTable(values, data_size, width)
