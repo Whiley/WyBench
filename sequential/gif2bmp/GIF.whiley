@@ -27,8 +27,7 @@ define Descriptor as {
     int width,
     int height,
     int bitsPerPixel,
-    bool interlaced,
-    bool useGlobalMap    
+    bool interlaced
 }
 
 void read([byte] data) throws Error:
@@ -37,7 +36,7 @@ void read([byte] data) throws Error:
     header,reader = readHeader(reader)
     // read colour map (if present)
     if header.hasGlobalMap:
-        map,reader = readGlobalColourMap(reader,header)
+        globalColourMap,reader = readColourMap(reader,header.bitsPerPixel)
     else:
         throw Error("need to implement default colour map")
     // read contents of this file
@@ -49,11 +48,10 @@ void read([byte] data) throws Error:
                 reader = skipExtensionBlock(reader)
             case 00101100b:
                 // Image Descriptor
-                image = readImageDescriptor(reader)
+                image = readImageDescriptor(reader,globalColourMap)
             case 00111011b:
                 // Terminator
-                break        
-    // decode lzw data
+                break
 
 // read the GIF header
 (Header,Reader) readHeader(Reader reader) throws Error:
@@ -94,18 +92,6 @@ void read([byte] data) throws Error:
         background: background        
     },reader
 
-// read the colour colour map
-([RGB],Reader) readGlobalColourMap(Reader reader, Header header):
-    ncols = Math.pow(2,header.bitsPerPixel)
-    colourTable = []
-    for i in 0..ncols:
-        red,reader = readUnsignedInt(reader,8)
-        green,reader = readUnsignedInt(reader,8)
-        blue,reader = readUnsignedInt(reader,8)
-        colourTable = colourTable + [RGB(red,green,blue)]
-    // done
-    return colourTable,reader
-
 Reader skipExtensionBlock(Reader reader):
     code,reader = readUnsignedInt(reader,8)
     count,reader = readUnsignedInt(reader,8)
@@ -116,7 +102,7 @@ Reader skipExtensionBlock(Reader reader):
         count,reader = readUnsignedInt(reader,8)    
     return reader
             
-(Descriptor,Reader) readImageDescriptor(Reader reader) throws Error:
+(Descriptor,Reader) readImageDescriptor(Reader reader, [RGB] globalColourMap) throws Error:
     // read image dimensions
     left,reader = readUnsignedInt(reader,16)
     top,reader = readUnsignedInt(reader,16)
@@ -130,7 +116,14 @@ Reader skipExtensionBlock(Reader reader):
     // read interlave bit
     interlaced,reader = read(reader)        
     // read global bit
-    global,reader = read(reader)   
+    lct,reader = read(reader)   
+    // read local colour map
+    if lct:
+        colourMap,reader = readColourMap(reader,bitsPerPixel)
+    else:
+        colourMap = globalColourMap
+    // now, we need to decode the lzw data    
+
     // done
     return {
         left: left,
@@ -138,9 +131,20 @@ Reader skipExtensionBlock(Reader reader):
         width: width,
         height: height,
         bitsPerPixel: bitsPerPixel,
-        interlaced: interlaced,
-        useGlobalMap: global
+        interlaced: interlaced
     },reader     
+
+// read a colour map
+([RGB],Reader) readColourMap(Reader reader, int bitsPerPixel):
+    ncols = Math.pow(2,bitsPerPixel)
+    colourTable = []
+    for i in 0..ncols:
+        red,reader = readUnsignedInt(reader,8)
+        green,reader = readUnsignedInt(reader,8)
+        blue,reader = readUnsignedInt(reader,8)
+        colourTable = colourTable + [RGB(red,green,blue)]
+    // done
+    return colourTable,reader
 
 public void ::main(System.Console sys):
     file = File.Reader(sys.args[0])
