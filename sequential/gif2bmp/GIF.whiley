@@ -123,7 +123,7 @@ Reader skipExtensionBlock(Reader reader):
     else:
         colourMap = globalColourMap
     // now, we need to decode the lzw data    
-
+    reader = decodeImageData(reader,width*height)    
     // done
     return {
         left: left,
@@ -133,6 +133,15 @@ Reader skipExtensionBlock(Reader reader):
         bitsPerPixel: bitsPerPixel,
         interlaced: interlaced
     },reader     
+
+Reader decodeImageData(Reader reader, int numPixels):
+    codeSize,reader = readUnsignedInt(reader,8)
+    // first, initialise suffix and prefix maps
+    suffix = []
+    prefix = []
+    // second, read blocks until none left
+    count,reader = readUnsignedInt(reader,8)
+        
 
 // read a colour map
 ([RGB],Reader) readColourMap(Reader reader, int bitsPerPixel):
