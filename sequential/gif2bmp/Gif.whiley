@@ -117,14 +117,53 @@ int skipExtensionBlock([byte] data, int pos):
         interlaced: interlaced
     },pos
 
-Reader decodeImageData(Reader reader, int numPixels):
-    codeSize,reader = BitBuffer.readUnsignedInt(reader,8)
+Reader decodeImageData([byte] data, int pos, int numPixels):
+    codeSize,reader = Byte.toUnsignedInt(data[pos])
+    codeSize = codeSize + 1
+    pos = pos + 1
+    clearCode = Math.pow(2,codeSize)
+    endOfInformation = clearCode+1
+    available = clearCode+2
     // first, initialise suffix and prefix maps
-    suffix = []
-    prefix = []
-    // second, read blocks until none left
-    count,reader = readUnsignedInt(reader,8)
-        
+    codeTable = []
+    indices = []
+    for i in 0..clearCode:
+        codeTable = codeTable + [i]
+        indices = indices + [0]
+
+    // now, read codes until none left.
+    currentSize = codeSize
+    currentClearCode = clearCode
+    currentEndOfInfo = endOfInformation
+    
+    end = pos + Byte.toUnsignedInt(data[pos]) ???    
+    pos = pos +  1
+    stream = []
+    reader = BitBuffer.Reader(data,pos)
+    code = null
+    
+    while numPixels > 0
+        oldCode = code
+        // read next code
+        code = BitBuffer.readUnsignedInt(reader,currentSize)
+        if code == clearCode:
+            // reset the code table
+            currentSize = codeSize
+            currentClearCode = clearCode
+            currentEndOfInfor = endOfInformation
+            codeTable = codeTable[0..clearCode]
+        else if code == endOfInformation:
+            break
+        else if code < |codeTable|:
+            // code is in table
+            code = codeTable[code]
+            stream = stream + [code]
+            indices            
+        else:
+            // code is not in table
+            
+        numPixels = numPixels - 1
+    retun ??
 
 // read a colour map
 ([RGB],int) readColourMap([byte] data, int pos, int bitsPerPixel):
