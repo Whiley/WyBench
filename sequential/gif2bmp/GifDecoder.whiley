@@ -61,9 +61,9 @@ void read([byte] data) throws Error:
     // ===============================================
 
     // read logical screen resolution
-    width,reader = Byte.toUnsignedInt(data[pos..pos+2])
+    width = Byte.toUnsignedInt(data[pos..pos+2])
     pos = pos + 2
-    height,reader = Byte.toUnsignedInt(data[pos..pos+2])
+    height = Byte.toUnsignedInt(data[pos..pos+2])
     pos = pos + 2
     // read packed data
     packed = data[pos]
@@ -222,13 +222,13 @@ int skipExtensionBlock([byte] data, int pos):
 // second row from the top. 
 (Descriptor,int) readImageDescriptor([byte] data, int pos, [RGB] globalColourMap) throws Error:
     // read image dimensions
-    left,reader = Byte.toUnsignedInt(data[pos..pos+2])
+    left = Byte.toUnsignedInt(data[pos..pos+2])
     pos = pos + 2
-    top,reader = Byte.toUnsignedInt(data[pos..pos+2])
+    top = Byte.toUnsignedInt(data[pos..pos+2])
     pos = pos + 2
-    width,reader = Byte.toUnsignedInt(data[pos..pos+2])
+    width = Byte.toUnsignedInt(data[pos..pos+2])
     pos = pos + 2
-    height,reader = Byte.toUnsignedInt(data[pos..pos+2])
+    height = Byte.toUnsignedInt(data[pos..pos+2])
     pos = pos + 2
     // read packed data
     packed = data[pos]
@@ -325,59 +325,72 @@ int skipExtensionBlock([byte] data, int pos):
 //      the  current  code length, the code length is increased by one.	The
 //      packing/unpacking of these codes must then be altered to reflect the
 //      new code length.
-[int] decodeImageData([byte] data, int pos, int numPixels):
+([int],int) decodeImageData([byte] data, int pos, int numPixels):
     
     //  establish code size
-    codeSize,reader = Byte.toUnsignedInt(data[pos])
-    codeSize = codeSize + 1
+    codeSize = Byte.toUnsignedInt(data[pos])
+    codeSizeLimit = Math.pow(2,codeSize) - 1
+    debug "CODE SIZE: " + codeSize + "\n"
     pos = pos + 1
     clearCode = Math.pow(2,codeSize)
-    endOfInformation = clearCode+1
-    
+    endOfInformation = clearCode + 1
+    codeSize = codeSize + 1
+
     // initialise code and index tables
     codes = []
-    indices = []
+    prefixes = []
     for i in 0..clearCode:
         codes = codes + [i]
-        indices = indices + [0]
-
+        prefixes = prefixes + [0]
+    
     // initialise working values for codeSize, clearCode and EOI
     currentCodeSize = codeSize
     currentClearCode = clearCode
     currentEndOfInfo = endOfInformation    
     available = clearCode + 2
+    currentCodeSizeLimit = codeSizeLimit
     
     stream = [] // raster data stream to be produced
     code = null // old code value initially null
-    reader = BlockReader(data,pos)
-    
-    while numPixels > 0
+    reader = BlockBuffer.Reader(data,pos)
+    sequence = [] // code sequence being constructed    
+
+    while numPixels > 0:            
         oldCode = code
         // read next code
-        code = BitBuffer.readUnsignedInt(reader,currentCodeSize)
+        code,reader = BlockBuffer.readUnsignedInt(reader,currentCodeSize)    
         // now decode it
-        if code == clearCode:
+        if code == currentClearCode:
+            debug "READ CLEAR CODE\n"
             // reset the code table
             currentCodeSize = codeSize
+            currentCodeSizeLimit = codeSizeLimit
             currentClearCode = clearCode
             currentEndOfInfo = endOfInformation
             available = clearCode + 2
-            codeTable = codeTable[0..clearCode]    
+            codes = codes[0..clearCode]    
+            prefixes = prefixes[0..clearCode]
         else if code == endOfInformation:
             // indicates we're done
             break
-        else if code < |codeTable|:
+        else if code < available:
             // code is in table
-            code = codeTable[code]
-            stream = stream + [code]
-            indices            
-        else:
+            sequence = sequence + [prefixes[code]]
+        else if code == available:
             // code is not in table
-            
+            stream = stream + sequence
+            codes = codes + [sequence]
+            prefixes = prefixes + [sequence[0]]    
+            available = available + 1
+            sequence = []    
+            // check whether table is full
+            if available == currentCodeSizeLimit:
+                // code size limit reached
+                currentCodeSize = currentCodeSize + 1
+                currentCodeSizeLimit = currentCodeSizeLimit * 2                           
         numPixels = numPixels - 1
-
+    // end while    
     // sanity check reader position
-
     return stream,reader.index
 
 // GLOBAL COLOR MAP
@@ -436,11 +449,11 @@ int skipExtensionBlock([byte] data, int pos):
     ncols = Math.pow(2,bitsPerPixel)
     colourTable = []
     for i in 0..ncols:
-        red,reader = Byte.toUnsignedInt(data[pos])
+        red = Byte.toUnsignedInt(data[pos])
         pos = pos + 1
-        green,reader = Byte.toUnsignedInt(data[pos])
+        green = Byte.toUnsignedInt(data[pos])
         pos = pos + 1
-        blue,reader = Byte.toUnsignedInt(data[pos])
+        blue = Byte.toUnsignedInt(data[pos])
         pos = pos + 1
         colourTable = colourTable + [RGB(red,green,blue)]
     // done
