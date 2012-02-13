@@ -216,6 +216,7 @@ public [[int]] decodeFrame(Frame f, int width):
 	debug "Available: " + available + "\n"
 	dict = generateIntDict(data_size)
 	values = []
+	str = ""
 	while readBits+code_size < length:
 		code, read = BitBuffer.readUnsignedInt(read, code_size)
 		debug "Code: " + code + " CodeSize: " + code_size + "\n"
@@ -227,17 +228,16 @@ public [[int]] decodeFrame(Frame f, int width):
 			break
 		else if(code == clear):
 			dict = generateIntDict(data_size)
-			
 			code_size = data_size + 1
 			available = Math.pow(2, code_size) -1
-			code, read = BitBuffer.readUnsignedInt(read, code_size) 
-			readBits = readBits + code_size
-			old_code = code
+			//code, read = BitBuffer.readUnsignedInt(read, code_size) 
+			//readBits = readBits + code_size
+			//old_code = code
 			
 			
 		else:
 			str = ""
-			if code >= |dict|:
+			if Util.contains(dict, ""+code):
 				str = str + old_code
 				str = str + ' ' + ch
 			else:
@@ -253,7 +253,7 @@ public [[int]] decodeFrame(Frame f, int width):
 			dict = dict + [tempStr]
 			old_code = dict[code]
 			
-			debug "Dict Size: " + |dict| + " Avail: " + available + "\n"
+			//debug "Dict Size: " + |dict| + " Avail: " + available + "\n"
 			if |dict|-1 > available:
 				// Dict is 'full'
 				// Increase Code size
