@@ -329,67 +329,70 @@ int skipExtensionBlock([byte] data, int pos):
     
     //  establish code size
     codeSize = Byte.toUnsignedInt(data[pos])
-    codeSizeLimit = Math.pow(2,codeSize) - 1
     debug "CODE SIZE: " + codeSize + "\n"
     pos = pos + 1
     clearCode = Math.pow(2,codeSize)
     endOfInformation = clearCode + 1
+    codeSizeLimit = clearCode * 2
     codeSize = codeSize + 1
+    debug "CODE SIZE LIMIT: " + codeSizeLimit + "\n"
 
     // initialise code and index tables
     codes = []
-    prefixes = []
-    for i in 0..clearCode:
+    for i in 0 .. clearCode + 2:
         codes = codes + [i]
-        prefixes = prefixes + [0]
     
     // initialise working values for codeSize, clearCode and EOI
     currentCodeSize = codeSize
-    currentClearCode = clearCode
-    currentEndOfInfo = endOfInformation    
     available = clearCode + 2
     currentCodeSizeLimit = codeSizeLimit
     
     stream = [] // raster data stream to be produced
-    code = null // old code value initially null
+    oldCode = null // old code value initially null
     reader = BlockBuffer.Reader(data,pos)
-    sequence = [] // code sequence being constructed    
 
     while numPixels > 0:            
-        oldCode = code
         // read next code
         code,reader = BlockBuffer.readUnsignedInt(reader,currentCodeSize)    
+        debug "READ: " + code + "\n"
         // now decode it
-        if code == currentClearCode:
-            debug "READ CLEAR CODE\n"
+        if code == clearCode:
             // reset the code table
+            debug "CLEAR CODE\n"
             currentCodeSize = codeSize
             currentCodeSizeLimit = codeSizeLimit
-            currentClearCode = clearCode
-            currentEndOfInfo = endOfInformation
             available = clearCode + 2
-            codes = codes[0..clearCode]    
-            prefixes = prefixes[0..clearCode]
+            codes = codes[0 .. clearCode+2]    
         else if code == endOfInformation:
             // indicates we're done
             break
+        else if oldCode == null:            
+            stream = stream + [codes[code]]
+            oldCode = code
+            // continue
         else if code < available:
-            // code is in table
-            sequence = sequence + [prefixes[code]]
-        else if code == available:
-            // code is not in table
-            stream = stream + sequence
-            codes = codes + [sequence]
-            prefixes = prefixes + [sequence[0]]    
+            // Yes, code is in table!
+            current = codes[code]
+            stream = stream + [current]
+            next = (codes[oldCode] * 256) + (current % 256)
+            codes = codes + [next]
             available = available + 1
-            sequence = []    
-            // check whether table is full
-            if available == currentCodeSizeLimit:
-                // code size limit reached
-                currentCodeSize = currentCodeSize + 1
-                currentCodeSizeLimit = currentCodeSizeLimit * 2                           
+            oldCode = code
+        else if code == available:
+            // No, code is not in table :(
+            next = (codes[oldCode] * 256) + (codes[oldCode] % 256)
+            stream = stream + [next]
+            codes = codes + [next]
+            available = available + 1
+            oldCode = code
+        // check whether code table is full
+        if available == currentCodeSizeLimit:
+            // code size limit reached
+            debug "CODE SIZE LIMIT REACHED\n"
+            currentCodeSize = currentCodeSize + 1
+            currentCodeSizeLimit = currentCodeSizeLimit * 2                           
         numPixels = numPixels - 1
-    // end while    
+    // end while        
     // sanity check reader position
     return stream,reader.index
 
