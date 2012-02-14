@@ -14,7 +14,7 @@ public void ::main(System.Console sys):
             for j in 0..image.width:
                 debug "" + image.data[(j*image.width)+i]
             debug "\n"
-        //BMP.write(Image(image.width,image.height,image.data),"file.bmp")
+        BMP.write(Image(image.width,image.height,image.data),"file.bmp")
     catch(Error e):
         sys.out.println("Error: " + e)
     
