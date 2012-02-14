@@ -1,7 +1,9 @@
+package imagelib.bmp
+
 import * from whiley.lang.*
 import * from whiley.io.File
-import RGB from Color
-import Image
+import RGB from imagelib.core.Color
+import imagelib.core.Image
 
 public void ::write(Image img, string filename):
 	debug "Writing BMP File: " + filename + "\n"

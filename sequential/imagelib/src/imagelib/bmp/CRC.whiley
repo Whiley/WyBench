@@ -1,3 +1,4 @@
+package imagelib.bmp
 
 define CRC as {[int] table, bool init }
 
