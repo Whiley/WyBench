@@ -1,3 +1,5 @@
+package imagelib.gif
+
 import whiley.lang.*
 
 define Reader as {

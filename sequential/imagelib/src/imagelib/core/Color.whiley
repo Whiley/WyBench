@@ -1,3 +1,5 @@
+package imagelib.core
+
 import * from whiley.lang.*
 
 define RGB as {int r, int g, int b}

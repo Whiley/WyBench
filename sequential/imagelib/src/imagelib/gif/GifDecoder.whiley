@@ -1,8 +1,10 @@
+package imagelib.gif
+
 import * from whiley.lang.Errors
 import * from whiley.lang.System
 import * from whiley.io.File
 import * from BitBuffer
-import RGB from Color
+import RGB from imagelib.core.Color
 
 // RGB constructor
 public define GIF as {  

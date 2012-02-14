@@ -1,7 +1,10 @@
+package imagelib
+
 import * from whiley.lang.Errors
 import * from whiley.io.*
 import * from whiley.lang.System
-import Image
+import imagelib.core.Image
+import imagelib.gif.*
 
 // hacky test function
 public void ::main(System.Console sys):
