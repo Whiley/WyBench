@@ -71,7 +71,10 @@ public GIF read([byte] data) throws Error:
     pos = pos + 1
     // read background colour index
     background = data[pos]    
-    
+    pos = pos + 1
+    // skip zero byte
+    pos = pos + 1
+
     // ===============================================
     // GLOBAL COLOUR MAP (if present)
     // ===============================================
