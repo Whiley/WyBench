@@ -2,26 +2,24 @@ import * from whiley.lang.Errors
 import * from whiley.lang.System
 import * from whiley.io.File
 import * from BitBuffer
-
-define Error as {string msg}
-
-public define RGB as {int r, int g, int b}
-define RGBA as {int r, int g, int b, int a}
+import RGB from Color
 
 // RGB constructor
-public RGB RGB(int red, int green, int blue):
-    return {r: red, g: green, b: blue}
+public define GIF as {  
+    [Image] images
+}
 
-define Descriptor as {
+define Image as {
     int left,
     int top,
     int width,
     int height,
     int bitsPerPixel,
-    bool interlaced
+    bool interlaced,
+    [RGB] data
 }
 
-void read([byte] data) throws Error:
+public GIF read([byte] data) throws Error:
     pos = 0
 
     // ===============================================
@@ -86,7 +84,7 @@ void read([byte] data) throws Error:
     // ===============================================
     // CONTENTS
     // ===============================================
-    
+    images = []
     while true:
         lookahead = data[pos]
         pos = pos + 1
@@ -97,10 +95,12 @@ void read([byte] data) throws Error:
             case 00101100b:
                 // Image Descriptor
                 image,pos = readImageDescriptor(data,pos,globalColourMap)
+                images = images + [image]
             case 00111011b:
                 // Terminator
-                break
+                break    
     // done
+    return { images: images }
 
 // GIF EXTENSION BLOCK
 //
@@ -220,7 +220,7 @@ int skipExtensionBlock([byte] data, int pos):
 // writes every 4th row starting at the third row from the top.  The fourth
 // pass completes the image, writing  every  other  row,  starting  at	the
 // second row from the top. 
-(Descriptor,int) readImageDescriptor([byte] data, int pos, [RGB] globalColourMap) throws Error:
+(Image,int) readImageDescriptor([byte] data, int pos, [RGB] globalColourMap) throws Error:
     // read image dimensions
     left = Byte.toUnsignedInt(data[pos..pos+2])
     pos = pos + 2
@@ -229,6 +229,7 @@ int skipExtensionBlock([byte] data, int pos):
     width = Byte.toUnsignedInt(data[pos..pos+2])
     pos = pos + 2
     height = Byte.toUnsignedInt(data[pos..pos+2])
+    debug "DIMENSIONS: " + (width*height) + "\n"
     pos = pos + 2
     // read packed data
     packed = data[pos]
@@ -242,7 +243,13 @@ int skipExtensionBlock([byte] data, int pos):
     else:
         colourMap = globalColourMap
     // now, decode the lzw data    
-    data,pos = decodeImageData(data,pos,width*height)
+    indexData,pos = decodeImageData(data,pos,width*height)
+    // convert from colour indices into rgb data
+    rgbData = []
+    debug "COLOURMAP SIZE: " + |colourMap| + "\n"
+    for index in indexData:
+        debug "INDEX: " + index + "\n"
+        rgbData = rgbData + [colourMap[index]]
     // done
     return {
         left: left,
@@ -250,7 +257,8 @@ int skipExtensionBlock([byte] data, int pos):
         width: width,
         height: height,
         bitsPerPixel: bitsPerPixel,
-        interlaced: interlaced
+        interlaced: interlaced,
+        data: rgbData
     },pos
 
 // Appendix C - Image Packaging & Compression
@@ -325,8 +333,7 @@ int skipExtensionBlock([byte] data, int pos):
 //      the  current  code length, the code length is increased by one.	The
 //      packing/unpacking of these codes must then be altered to reflect the
 //      new code length.
-([int],int) decodeImageData([byte] data, int pos, int numPixels):
-    
+([int],int) decodeImageData([byte] data, int pos, int numPixels):    
     //  establish code size
     codeSize = Byte.toUnsignedInt(data[pos])
     debug "CODE SIZE: " + codeSize + "\n"
@@ -340,7 +347,7 @@ int skipExtensionBlock([byte] data, int pos):
     // initialise code and index tables
     codes = []
     for i in 0 .. clearCode + 2:
-        codes = codes + [i]
+        codes = codes + [[i]]
     
     // initialise working values for codeSize, clearCode and EOI
     currentCodeSize = codeSize
@@ -354,47 +361,50 @@ int skipExtensionBlock([byte] data, int pos):
     while numPixels > 0:            
         // read next code
         code,reader = BlockBuffer.readUnsignedInt(reader,currentCodeSize)    
-        debug "READ: " + code + "\n"
         // now decode it
         if code == clearCode:
             // reset the code table
-            debug "CLEAR CODE\n"
             currentCodeSize = codeSize
             currentCodeSizeLimit = codeSizeLimit
             available = clearCode + 2
             codes = codes[0 .. clearCode+2]    
         else if code == endOfInformation:
             // indicates we're done
+            debug "END OF INFORMATION\n"
             break
         else if oldCode == null:            
-            stream = stream + [codes[code]]
+            stream = stream + codes[code]
             oldCode = code
             // continue
         else if code < available:
             // Yes, code is in table!
             current = codes[code]
-            stream = stream + [current]
-            next = (codes[oldCode] * 256) + (current % 256)
+            stream = stream + current
+            next = codes[oldCode] + [current[0]]
             codes = codes + [next]
             available = available + 1
             oldCode = code
         else if code == available:
             // No, code is not in table :(
-            next = (codes[oldCode] * 256) + (codes[oldCode] % 256)
-            stream = stream + [next]
+            current = codes[oldCode]
+            next = current + [current[0]]
+            stream = stream + current
             codes = codes + [next]
             available = available + 1
             oldCode = code
         // check whether code table is full
         if available == currentCodeSizeLimit:
             // code size limit reached
-            debug "CODE SIZE LIMIT REACHED\n"
             currentCodeSize = currentCodeSize + 1
             currentCodeSizeLimit = currentCodeSizeLimit * 2                           
         numPixels = numPixels - 1
     // end while        
-    // sanity check reader position
-    return stream,reader.index
+    debug "READ: " + |stream| + " pixels\n"
+    // determine next byte boundary
+    pos = reader.index
+    if reader.boff != 0:
+        pos = pos + 1
+    return stream,pos
 
 // GLOBAL COLOR MAP
 //
@@ -461,13 +471,3 @@ int skipExtensionBlock([byte] data, int pos):
         colourTable = colourTable + [RGB(red,green,blue)]
     // done
     return colourTable,pos
-
-// hacky test function
-public void ::main(System.Console sys):
-    file = File.Reader(sys.args[0])
-    contents = file.read()
-    try:
-        read(contents)
-    catch(Error e):
-        sys.out.println("Error: " + e)
-    
