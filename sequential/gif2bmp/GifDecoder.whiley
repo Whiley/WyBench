@@ -334,13 +334,11 @@ int skipExtensionBlock([byte] data, int pos):
 ([int],int) decodeImageData([byte] data, int pos, int numPixels):    
     //  establish code size
     codeSize = Byte.toUnsignedInt(data[pos])
-    debug "CODE SIZE: " + codeSize + "\n"
     pos = pos + 1
     clearCode = Math.pow(2,codeSize)
     endOfInformation = clearCode + 1
     codeSizeLimit = clearCode * 2
     codeSize = codeSize + 1
-    debug "CODE SIZE LIMIT: " + codeSizeLimit + "\n"
 
     // initialise code and index tables
     codes = []
@@ -353,10 +351,10 @@ int skipExtensionBlock([byte] data, int pos):
     currentCodeSizeLimit = codeSizeLimit
     
     stream = [] // raster data stream to be produced
-    oldCode = null // old code value initially null
+    old = [] // old code value initially null
     reader = BlockBuffer.Reader(data,pos)
 
-    while numPixels > 0:            
+    while true:            
         // read next code
         code,reader = BlockBuffer.readUnsignedInt(reader,currentCodeSize)    
         // now decode it
@@ -365,42 +363,40 @@ int skipExtensionBlock([byte] data, int pos):
             currentCodeSize = codeSize
             currentCodeSizeLimit = codeSizeLimit
             available = clearCode + 2
-            codes = codes[0 .. clearCode+2]    
+            codes = codes[0 .. available]    
+            old = []
         else if code == endOfInformation:
             // indicates we're done
             break
-        else if oldCode == null:            
+        else if old == []:
             stream = stream + codes[code]
-            oldCode = code
+            old = codes[code]
             // continue
-        else if code < available:
-            // Yes, code is in table!
-            current = codes[code]
-            stream = stream + current
-            next = codes[oldCode] + [current[0]]
-            codes = codes + [next]
+        else:
+            next = []
+            if code < available:
+                // Yes, code is in table!
+                current = codes[code]
+                next = old + [current[0]]
+                stream = stream + current
+                old = current
+            else if code == available:
+                // No, code is not in table :(
+                next = old + [old[0]]
+                stream = stream + next                
+                old = next
+            codes = codes + [next]   
             available = available + 1
-            oldCode = code
-        else if code == available:
-            // No, code is not in table :(
-            current = codes[oldCode]
-            next = current + [current[0]]
-            stream = stream + current
-            codes = codes + [next]
-            available = available + 1
-            oldCode = code
-        // check whether code table is full
-        if available == currentCodeSizeLimit:
-            // code size limit reached
-            currentCodeSize = currentCodeSize + 1
-            currentCodeSizeLimit = currentCodeSizeLimit * 2                           
-        numPixels = numPixels - 1
+            // check whether code table is full
+            if available == currentCodeSizeLimit:
+                // code size limit reached
+                currentCodeSize = currentCodeSize + 1
+                currentCodeSizeLimit = currentCodeSizeLimit * 2                           
     // end while        
-    debug "READ: " + |stream| + " pixels\n"
-    // determine next byte boundary
     pos = reader.index
-    if reader.boff != 0:
-        pos = pos + 1
+    if reader.boff != 0: 
+        pos = pos + 1 // discard excess bits
+
     return stream,pos
 
 // GLOBAL COLOR MAP
