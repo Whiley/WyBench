@@ -65,7 +65,7 @@ public GIF read([byte] data) throws Error:
     pos = pos + 2
     // read packed data
     packed = data[pos]
-    bitsPerPixel = Byte.toUnsignedInt(packed & 111b)
+    bitsPerPixel = Byte.toUnsignedInt(packed & 111b) + 1
     bitsOfColourResolution = Byte.toUnsignedInt((packed & 01110000b) >> 4)
     hasGlobalMap = (packed & 10000000b) != 0b
     pos = pos + 1
@@ -77,6 +77,7 @@ public GIF read([byte] data) throws Error:
     // ===============================================
 
     if hasGlobalMap:
+        debug "READING GLOBAL COLOUR MAP: " + bitsPerPixel + "\n"
         globalColourMap,pos = readColourMap(data,pos,bitsPerPixel)
     else:
         throw Error("need to implement default colour map")
@@ -229,11 +230,10 @@ int skipExtensionBlock([byte] data, int pos):
     width = Byte.toUnsignedInt(data[pos..pos+2])
     pos = pos + 2
     height = Byte.toUnsignedInt(data[pos..pos+2])
-    debug "DIMENSIONS: " + (width*height) + "\n"
     pos = pos + 2
     // read packed data
     packed = data[pos]
-    bitsPerPixel = Byte.toUnsignedInt(packed & 111b)
+    bitsPerPixel = Byte.toUnsignedInt(packed & 111b) + 1  
     interlaced = (packed & 01000000b) != 0b
     hasLocalMap = (packed & 10000000b) != 0b
     pos = pos + 1
@@ -246,9 +246,7 @@ int skipExtensionBlock([byte] data, int pos):
     indexData,pos = decodeImageData(data,pos,width*height)
     // convert from colour indices into rgb data
     rgbData = []
-    debug "COLOURMAP SIZE: " + |colourMap| + "\n"
     for index in indexData:
-        debug "INDEX: " + index + "\n"
         rgbData = rgbData + [colourMap[index]]
     // done
     return {
@@ -370,7 +368,6 @@ int skipExtensionBlock([byte] data, int pos):
             codes = codes[0 .. clearCode+2]    
         else if code == endOfInformation:
             // indicates we're done
-            debug "END OF INFORMATION\n"
             break
         else if oldCode == null:            
             stream = stream + codes[code]
