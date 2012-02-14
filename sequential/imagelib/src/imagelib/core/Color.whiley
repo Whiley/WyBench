@@ -7,20 +7,7 @@ define RGB as {int r, int g, int b}
 public RGB RGB(int red, int green, int blue):
     return {r: red, g: green, b: blue}
 
-
 define HSB as {real h, real s, real b}
-
-real realMax(real a, real b):
-	if a >= b:
-		return a
-	else:
-		return b
-		
-real realMin(real a, real b):
-	if a <= b:
-		return a
-	else:
-		return b
 
 public RGB HSBtoRGB(HSB h):
 	n,d = h.h
@@ -37,28 +24,30 @@ public RGB HSBtoRGB(HSB h):
 	q = n*255 / d
 	n,d = t
 	t = n*255 / d
-	if hi == 0:
-		return {r:v, g:t, b:p}
-	else if hi == 1:
-		return {r:q, g:v, b:p}
-	else if hi == 2:
-		return {r:p, g:v, b:t}
-	else if hi == 3:
-		return {r:p, g:q, b:v}
-	else if hi == 4:
-		return {r:t, g:p, b:v}
-	else if hi == 5:
-		return {r:v, g:p, b:q}
-	return {r:0, g:0, b:0}
+	switch hi:
+		case 0:
+			return {r:v, g:t, b:p}
+		case 1:
+			return {r:q, g:v, b:p}
+		case 2:
+			return {r:p, g:v, b:t}
+		case 3:
+			return {r:p, g:q, b:v}
+		case 4:
+			return {r:t, g:p, b:v}
+		case 5:
+			return {r:v, g:p, b:q}
+		default:
+			return {r:0, g:0, b:0}
 
 public HSB RGBtoHSB(RGB a):
 	r = (real)a.r/255
 	g = (real)a.g/255
 	b = (real)a.b/255
-	M = realMax(r, g)
-	M = realMax(M, b)
-	m = realMin(r, g)
-	m = realMin(m, b)
+	M = Math.max(r, g)
+	M = Math.max(M, b)
+	m = Math.min(r, g)
+	m = Math.min(m, b)
 	chroma = M - m
 	H = 0.0
 	// Adjusted Values
