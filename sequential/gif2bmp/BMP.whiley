@@ -4,48 +4,50 @@ import RGB from Color
 import Image
 
 public void ::write(Image img, string filename):
-    debug "Writing BMP File: " + filename + "\n"
-    writer = File.Writer(filename)
-    //Write out Magic Header
-    writer.write([01000010b, 01001101b])
-    
-    paddingVal = 3*img.width
-    blankBytes = paddingVal % 4
-    debug "Blank Bytes: " + blankBytes + "\n"
-    if blankBytes != 0:
-    	debug "Adding Padding: " + blankBytes + "\n"
-    	blankBytes = 4 - blankBytes
-    debug "Blank Bytes: " + blankBytes + "\n" 	
-    debug "Padded up to: " + (paddingVal + blankBytes) + "\n"
-    size = 54 + 3*(img.height * img.width) + (blankBytes * img.height)
-    debug "WRITING SIZE: " + size + "\n"
-    writer.write(Util.padUnsignedInt(size,4))
-    writer.write(Util.padUnsignedInt(0, 4))
-    writer.write(Util.padUnsignedInt(54, 4))
+	debug "Writing BMP File: " + filename + "\n"
+	writer = File.Writer(filename)
+	//Write out Magic Header
+	writer.write([01000010b, 01001101b])
+	debug "Height: " + img.height + "\n"
+	debug "Width: " + img.width + "\n"
+	paddingVal = 3*img.width
+	debug "Padding Value: " + paddingVal + "\n"
+	blankBytes = paddingVal % 4
+	if blankBytes != 0:
+		blankBytes = 4 - blankBytes
+	debug "Blank Bytes: " + blankBytes + "\n" 	
+	debug "Padded up to: " + (paddingVal + blankBytes) + "\n"
+	size = 54 + 3*(img.height * img.width) + (blankBytes * img.height)
+	debug "WRITING SIZE: " + size + "\n"
+	writer.write(Util.padUnsignedInt(size,4))
+	writer.write(Util.padUnsignedInt(0, 4))
+	writer.write(Util.padUnsignedInt(54, 4))
 
-    //Finished Writing Data Header. Writing Info Header
-    writer.write(Util.padUnsignedInt(40, 4)) // Header Size
-    writer.write(Util.padSignedInt(img.width, 4)) //Width	
-    writer.write(Util.padSignedInt(img.height, 4)) //Height
-    writer.write(Util.padUnsignedInt(1, 2)) //Color Planes (MUST BE ONE)
+	//Finished Writing Data Header. Writing Info Header
+	writer.write(Util.padUnsignedInt(40, 4)) // Header Size
+	writer.write(Util.padUnsignedInt(img.width, 4)) //Width	
+	writer.write(Util.padUnsignedInt(img.height, 4)) //Height
+	writer.write(Util.padUnsignedInt(1, 2)) //Color Planes (MUST BE ONE)
 
-    depth = getBitDepth(img, [1, 4, 8, 16, 24, 32])
-    //debug "DEBUG DEPTH: " + depth + "\n"
-    writer.write(Util.padUnsignedInt(24, 2)) // Bit Depth
-    writer.write(Util.padUnsignedInt(0, 4)) // Compression Value
-    writer.write(Util.padUnsignedInt(size - 54, 4)) // Size of raw Bitmap Data
-    writer.write(Util.padUnsignedInt(2834, 4)) // Horizontal Resolution
-    writer.write(Util.padUnsignedInt(2834, 4))	// Vertical Resolution
-    writer.write(Util.padUnsignedInt(0, 4))
-    writer.write(Util.padUnsignedInt(0, 4))
-	
-    for col in img.data:
-        writer.write([Int.toUnsignedByte(col.b)])
-        writer.write([Int.toUnsignedByte(col.g)])
-        writer.write([Int.toUnsignedByte(col.r)])
-        if blankBytes != 0:
-            writer.write(Util.padUnsignedInt(0, blankBytes))
-    writer.close()
+	writer.write(Util.padUnsignedInt(24, 2)) // Bit Depth
+	writer.write(Util.padUnsignedInt(0, 4)) // Compression Value
+	writer.write(Util.padUnsignedInt(size - 54, 4)) // Size of raw Bitmap Data
+	writer.write(Util.padUnsignedInt(2834, 4)) // Horizontal Resolution
+	writer.write(Util.padUnsignedInt(2834, 4))	// Vertical Resolution
+	writer.write(Util.padUnsignedInt(0, 4))
+	writer.write(Util.padUnsignedInt(0, 4))
+	debug "Size of Data: " + |img.data| + "\n"
+	currWidth = 0
+	for col in img.data:
+		writer.write([Int.toUnsignedByte(col.b)])
+		writer.write([Int.toUnsignedByte(col.g)])
+		writer.write([Int.toUnsignedByte(col.r)])
+		currWidth = currWidth + 1
+		if currWidth == img.width:
+			currWidth = 0
+			if blankBytes != 0:
+				writer.write(Util.padUnsignedInt(0, blankBytes))
+	writer.close()
 
 public int getBitDepth(Image img, [int] potential):
     numColors = getDistinctColors(img)
