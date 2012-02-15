@@ -9,12 +9,11 @@ import imagelib.bmp.*
 
 // hacky test function
 public void ::main(System.Console sys):
-    file = File.Reader(sys.args[0])
-    contents = file.read()
-    try:
-        gif = GifDecoder.read(contents)
-        image = GIF.toImage(gif,gif.images[0])
-        BMP.write(Image(image.width,image.height,image.data),"file.bmp")
-    catch(Error e):
-        sys.out.println("Error: " + e)
-    
+	file = File.Reader(sys.args[0])
+	contents = file.read()
+	try:
+		gif = GifDecoder.read(contents)
+		image = GIF.toImage(gif,gif.images[0])
+		//BMPEncoder.write(Image(image.width,image.height,image.data),"file.bmp")
+	catch(Error e):
+		sys.out.println("Error: " + e)
