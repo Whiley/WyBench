@@ -29,6 +29,8 @@
 //
 // http://www.pkware.com/documents/casestudies/APPNOTE.TXT
 
+package zlib.io
+
 import whiley.lang.*
 import Error from whiley.lang.Errors
 
