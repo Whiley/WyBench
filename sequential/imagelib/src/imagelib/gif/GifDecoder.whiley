@@ -82,7 +82,6 @@ public GIF read([byte] data) throws Error:
     // ===============================================
 
     if hasGlobalMap:
-        debug "READING GLOBAL COLOUR MAP: " + bitsPerPixel + "\n"
         globalColourMap,pos = readColourMap(data,pos,bitsPerPixel)
     else:
         throw Error("need to implement default colour map")
@@ -352,14 +351,14 @@ int skipExtensionBlock([byte] data, int pos):
     
     // initialise working values for codeSize, clearCode and EOI
     currentCodeSize = codeSize
-    available = clearCode + 2
     currentCodeSizeLimit = codeSizeLimit
+    available = clearCode + 2
     
     stream = [] // raster data stream to be produced
     old = [] // old code value initially null
     reader = BlockBuffer.Reader(data,pos)
-
-    while true:            
+    
+    while |stream| < numPixels:            
         // read next code
         code,reader = BlockBuffer.readUnsignedInt(reader,currentCodeSize)    
         // now decode it
@@ -373,14 +372,14 @@ int skipExtensionBlock([byte] data, int pos):
         else if code == endOfInformation:
             // indicates we're done
             break
-        else if old == []:
-            stream = stream + codes[code]
-            old = codes[code]
+        else if old == []:          
+            old = [code]  
+            stream = stream + old
             // continue
         else:
             next = []
             if code < available:
-                // Yes, code is in table!
+                // Yes, code is in table :)
                 current = codes[code]
                 next = old + [current[0]]
                 stream = stream + current
@@ -388,20 +387,19 @@ int skipExtensionBlock([byte] data, int pos):
             else if code == available:
                 // No, code is not in table :(
                 next = old + [old[0]]
-                stream = stream + next                
+                stream = stream + next
                 old = next
             codes = codes + [next]   
             available = available + 1
             // check whether code table is full
-            if available == currentCodeSizeLimit:
+            if available == currentCodeSizeLimit && currentCodeSize != 12:
                 // code size limit reached
                 currentCodeSize = currentCodeSize + 1
-                currentCodeSizeLimit = currentCodeSizeLimit * 2                           
+                currentCodeSizeLimit = currentCodeSizeLimit * 2
     // end while        
     pos = reader.index
     if reader.boff != 0: 
-        pos = pos + 1 // discard excess bits
-
+        pos = pos + 1 // discard excess bits    
     return stream,pos
 
 // GLOBAL COLOR MAP

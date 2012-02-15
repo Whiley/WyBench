@@ -13,7 +13,7 @@ public Reader Reader([byte] data, int start):
     end = Byte.toUnsignedInt(data[start])
     return {
         index: start+1,
-        end: end,
+        end: start+1+end,
         boff: 0,
         data: data
     }
@@ -28,8 +28,13 @@ public (bool,Reader) read(Reader reader):
     boff = boff + 1
     if boff == 8:
         reader.boff = 0
-        reader.index = reader.index + 1
-        // FIXME ROLL OVER TO NEXT BLOCK
+        index = reader.index + 1
+        if index == reader.end:
+            // need to roll over to next block
+            end = Byte.toUnsignedInt(reader.data[index])
+            index = index + 1
+            reader.end = index + end
+         reader.index = index
     else:
         reader.boff = boff
     // return the bit we've read
