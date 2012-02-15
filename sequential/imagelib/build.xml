@@ -1,12 +1,19 @@
 <!-- Build file for Tetris -->
 <!-- Requires environment WHILEY_HOME is set -->
 
-<project name="tetris" default="compile">  
+<project name="tetris" default="ilib">  
   
   <property environment="env"/>
+  <taskdef name="wyjc" classname="wyjc.util.AntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
 
-  <target name="compile">
-    <taskdef name="wyjc" classname="wyjc.util.AntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
+
+  <target name="zlib">
+    <echo message="Compiling ZLib"/>
+    <wyjc verbose="false" srcdir="src/" includes="zlib/**/*.whiley"/>
+  </target>
+
+  <target name="ilib" depends="zlib">
+    <echo message="Compiling ImageLib"/>
     <wyjc verbose="false" srcdir="src/" includes="imagelib/**/*.whiley"/>
   </target>
 
