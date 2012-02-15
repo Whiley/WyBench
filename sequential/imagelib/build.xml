@@ -8,12 +8,12 @@
 
 
   <target name="zlib">
-    <echo message="Compiling ZLib"/>
+    <echo message="======== Compiling ZLib ============"/>
     <wyjc verbose="false" srcdir="src/" includes="zlib/**/*.whiley"/>
   </target>
 
   <target name="ilib" depends="zlib">
-    <echo message="Compiling ImageLib"/>
+    <echo message="======== Compiling ImageLib ========"/>
     <wyjc verbose="false" srcdir="src/" includes="imagelib/**/*.whiley"/>
   </target>
 
