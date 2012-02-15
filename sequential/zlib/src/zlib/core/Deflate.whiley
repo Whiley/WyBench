@@ -28,6 +28,8 @@ package zlib.core
 import whiley.lang.*
 import Error from whiley.lang.Errors
 
+import zlib.util.*
+
 // Corresponds to "EXTRA BITS" column of first table from Section
 // 3.2.5 in RFC1951
 define LENGTH_BITS as [

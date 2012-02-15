@@ -33,6 +33,8 @@ package zlib.io
 
 import whiley.lang.*
 import Error from whiley.lang.Errors
+import zlib.core.*
+import zlib.util.*
 
 define ZIP_LOCAL_HEADER as 0x04034b50
 

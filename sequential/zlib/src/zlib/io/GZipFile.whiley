@@ -27,14 +27,15 @@ package zlib.io
 
 import whiley.lang.*
 import Error from whiley.lang.Errors
+import zlib.core.*
+import zlib.util.*
 
-define GZipFile as {
+public define GZipFile as {
     int method,           // compression method (8 == Deflate)
     int mtime,            // modification time
     string|null filename, // filename (optional)
     [byte] data
 }
-
 
 public GZipFile GZipFile([byte] data) throws string|Error:
     // first, check magic number
