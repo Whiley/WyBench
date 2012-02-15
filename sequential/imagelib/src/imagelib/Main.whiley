@@ -5,6 +5,7 @@ import * from whiley.io.*
 import * from whiley.lang.System
 import imagelib.core.Image
 import imagelib.gif.*
+import imagelib.bmp.*
 
 // hacky test function
 public void ::main(System.Console sys):
