@@ -6,49 +6,51 @@ import imagelib.core.RGBA
 import imagelib.core.Image
 
 public void ::write(Image img, string filename):
-	debug "Writing BMP File: " + filename + "\n"
 	writer = File.Writer(filename)
 	//Write out Magic Header
-	writer.write([01000010b, 01001101b])
-	debug "Height: " + img.height + "\n"
-	debug "Width: " + img.width + "\n"
-	paddingVal = 3*img.width
-	debug "Padding Value: " + paddingVal + "\n"
+	writer.write([01000010b, 01001101b]) // "BM"
+	paddingVal = 3*img.width //This is the width of a row in bytes.
+	
+	//The total width of a row in the BMP format must be a multiple of Four. 
 	blankBytes = paddingVal % 4
 	if blankBytes != 0:
 		blankBytes = 4 - blankBytes
-	debug "Blank Bytes: " + blankBytes + "\n" 	
-	debug "Padded up to: " + (paddingVal + blankBytes) + "\n"
 	size = 54 + 3*(img.height * img.width) + (blankBytes * img.height)
-	debug "WRITING SIZE: " + size + "\n"
-	writer.write(Util.padUnsignedInt(size,4))
-	writer.write(Util.padUnsignedInt(0, 4))
-	writer.write(Util.padUnsignedInt(54, 4))
+	
+	writer.write(padUnsignedInt(size,4)) //Total Size of the BMP file, including header information
+	writer.write(padUnsignedInt(0, 4)) // Two reserved 2 byte blocks. The values can be used for whatever the creation software wants. Leave blank
+	writer.write(padUnsignedInt(54, 4)) // Offset of the Pixel array (Always 54, 14 byte file header, 40 byte Information Header)
 
 	//Finished Writing Data Header. Writing Info Header
-	writer.write(Util.padUnsignedInt(40, 4)) // Header Size
-	writer.write(Util.padUnsignedInt(img.width, 4)) //Width	
-	writer.write(Util.padUnsignedInt(img.height, 4)) //Height
-	writer.write(Util.padUnsignedInt(1, 2)) //Color Planes (MUST BE ONE)
+	writer.write(padUnsignedInt(40, 4)) // Header Size
+	writer.write(padUnsignedInt(img.width, 4)) //Width	
+	writer.write(padUnsignedInt(img.height, 4)) //Height
+	writer.write(padUnsignedInt(1, 2)) //Color Planes (MUST BE ONE)
 
-	writer.write(Util.padUnsignedInt(24, 2)) // Bit Depth
-	writer.write(Util.padUnsignedInt(0, 4)) // Compression Value
-	writer.write(Util.padUnsignedInt(size - 54, 4)) // Size of raw Bitmap Data
-	writer.write(Util.padUnsignedInt(2834, 4)) // Horizontal Resolution
-	writer.write(Util.padUnsignedInt(2834, 4))	// Vertical Resolution
-	writer.write(Util.padUnsignedInt(0, 4))
-	writer.write(Util.padUnsignedInt(0, 4))
-	debug "Size of Data: " + |img.data| + "\n"
+	writer.write(padUnsignedInt(24, 2)) // Bit Depth
+	writer.write(padUnsignedInt(0, 4)) // Compression Value
+	writer.write(padUnsignedInt(size - 54, 4)) // Size of raw Bitmap Data
+	writer.write(padUnsignedInt(2834, 4)) // Horizontal Resolution
+	writer.write(padUnsignedInt(2834, 4))	// Vertical Resolution
+	writer.write(padUnsignedInt(0, 4)) 
+	writer.write(padUnsignedInt(0, 4)) //Important Colours used. This is generally ignored
+	
 	currWidth = 0
+	imageData = []
+	currRow = []
 	for col in img.data:
-		writer.write([Int.toUnsignedByte(Math.round(col.blue*255))])
-		writer.write([Int.toUnsignedByte(Math.round(col.green*255))])
-		writer.write([Int.toUnsignedByte(Math.round(col.red*255))])
+		currRow = currRow + [Int.toUnsignedByte(Math.round(col.blue*255))]
+		currRow = currRow + [Int.toUnsignedByte(Math.round(col.green*255))]
+		currRow = currRow + [Int.toUnsignedByte(Math.round(col.red*255))]
 		currWidth = currWidth + 1
 		if currWidth == img.width:
 			currWidth = 0
 			if blankBytes != 0:
-				writer.write(Util.padUnsignedInt(0, blankBytes))
+				imageData = imageData + padUnsignedInt(0, blankBytes)
+			imageData = currRow + imageData
+			currRow = []
+	
+	writer.write(imageData)
 	writer.close()
 
 public int getBitDepth(Image img, [int] potential):
@@ -59,30 +61,37 @@ public int getBitDepth(Image img, [int] potential):
             return i
     return -1
 
+[byte] padUnsignedInt(int i, int padLength):
+	data = Int.toUnsignedBytes(i)
+	
+	for j in |data|..padLength:
+		data = data + [00000000b]
+	return data
+
 int getDistinctColors(Image img):
     table = {}
     for col in img.data:
         table = table + {col}
     return |table|
 
-public [[RGBA]] ::readBMP(Reader file):
+public Image ::readBMP(Reader file):
 	debug "Reading Bitmap File\n"
-	BMPSize = Byte.toUnsignedInt(file.read(4))
-	//debug "BMP File Size: " + BMPSize + "\n"
-	reservedBlockA = file.read(2)
-	reservedBlockB = file.read(2)
+	size = Byte.toUnsignedInt(file.read(4))
+	file.read(4) // Skip the two application Reserved Blocks
 	pixelArrayOffset = Byte.toUnsignedInt(file.read(4))
-	//debug "Pixel Array offset: " + pixelArrayOffset + "\n"
 	
 	//Reading the Information Header
 	//This Contains Size, resolution, bpp, compression and color information
 	headerSize = Byte.toUnsignedInt(file.read(4))
-	debug "Reading Header Size: " + headerSize + "\n"
-	assert headerSize == 40
+	assert headerSize == 40 //No reason this would ever fail, except if corrupt
+	
 	DIBInfo = file.read(36) // Read the rest of the 40 byte header, minus the information already read
-	bitmapWidth = Byte.toInt(DIBInfo[0..3])
-	bitmapHeight = Byte.toInt(DIBInfo[4..7])
+	width = Byte.toInt(DIBInfo[0..3])
+	height = Byte.toInt(DIBInfo[4..7])
 	colorPlanes = Byte.toUnsignedInt(DIBInfo[8..9])
+	assert colorPlanes == 1
+	//Not Doing Anything with this information
+	
 	bitsPerPixel = Byte.toUnsignedInt(DIBInfo[10..11])
 	compressionMethod = Byte.toUnsignedInt(DIBInfo[12..15])
 	imageSize = Byte.toUnsignedInt(DIBInfo[16..19])
@@ -90,40 +99,26 @@ public [[RGBA]] ::readBMP(Reader file):
 	verticalResolution = Byte.toInt(DIBInfo[24..27])
 	numColors = Byte.toUnsignedInt(DIBInfo[28..31])
 	importantColors = Byte.toUnsignedInt(DIBInfo[32..])
-	//debug "Bitmap Width: " + bitmapWidth + "\n"
-	//debug "Bitmap Height: " + bitmapHeight + "\n"
-	//debug "Colour Planes: " + colorPlanes + "\n"
-	//debug "Bits Per Pixel: " + bitsPerPixel + "\n"
-	//debug "Compression Method: " + compressionMethod + "\n"
-	//debug "imageSize: " + imageSize + "\n"
-	////debug "Horizontal Res: " + horizResolution + "\n"
-	//debug "Vertical Res: " + verticalResolution + "\n"
-	//debug "Number of Colours: " + numColors + "\n"
-	//debug "Important Colours: " + importantColors + "\n" */
-	dArray = []
+	data = []
 	
 	if bitsPerPixel <= 8:
 		//Need to read in a Colour Table
 	else:
-		paddingVal = 3*bitmapWidth
-		width = 4
-		//while width < paddingVal:
-		//	width = width *2 
+		paddingVal = 3*width
 		blankBytes = paddingVal % 4
 		if blankBytes != 0:
 			blankBytes = 4 - blankBytes
-		debug "Padding Val: " + paddingVal + "\n"
-		debug "Blank Bytes: " + blankBytes + "\n"
-		widthArray = []
-		for i in 0..bitmapHeight:
-			for j in 0..bitmapWidth:
-				values=RGBA(Byte.toUnsignedInt(file.read(1)),Byte.toUnsignedInt(file.read(1)),Byte.toUnsignedInt(file.read(1)),0.0)
-				widthArray = widthArray + [values]
+		//Need to read in the data
+		dataSize = height*width
+		currWidth = 0
+		for i in 0..dataSize:
+			values=RGBA(Byte.toUnsignedInt(file.read(1)),Byte.toUnsignedInt(file.read(1)),Byte.toUnsignedInt(file.read(1)),0.0)
 			//When we get here. There might need to be more padding.
-			//debug "Width Array: " + widthArray + "\n"
-			dArray = dArray+[widthArray]
-			widthArray = []
-			file.read(blankBytes)
+			data = data+[values]
+			currWidth = currWidth + 1
+			if currWidth == width:
+				file.read(blankBytes)
+				currWidth = 0
 			
-	return dArray
+	return Image.Image(width, height, data)
 
