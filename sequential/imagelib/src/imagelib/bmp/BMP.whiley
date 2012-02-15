@@ -36,15 +36,21 @@ public void ::write(Image img, string filename):
 	writer.write(padUnsignedInt(0, 4)) //Important Colours used. This is generally ignored
 	
 	currWidth = 0
+	imageData = []
+	currRow = []
 	for col in img.data:
-		writer.write([Int.toUnsignedByte(col.b)])
-		writer.write([Int.toUnsignedByte(col.g)])
-		writer.write([Int.toUnsignedByte(col.r)])
+		currRow = currRow + [Int.toUnsignedByte(col.b)]
+		currRow = currRow + [Int.toUnsignedByte(col.g)]
+		currRow = currRow + [Int.toUnsignedByte(col.r)]
 		currWidth = currWidth + 1
 		if currWidth == img.width:
 			currWidth = 0
 			if blankBytes != 0:
-				writer.write(padUnsignedInt(0, blankBytes))
+				imageData = imageData + padUnsignedInt(0, blankBytes)
+			imageData = currRow + imageData
+			currRow = []
+	
+	writer.write(imageData)
 	writer.close()
 
 public int getBitDepth(Image img, [int] potential):
