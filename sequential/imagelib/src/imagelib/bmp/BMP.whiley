@@ -2,7 +2,7 @@ package imagelib.bmp
 
 import * from whiley.lang.*
 import * from whiley.io.File
-import RGB from imagelib.core.Color
+import imagelib.core.RGBA
 import imagelib.core.Image
 
 public void ::write(Image img, string filename):
@@ -41,9 +41,9 @@ public void ::write(Image img, string filename):
 	debug "Size of Data: " + |img.data| + "\n"
 	currWidth = 0
 	for col in img.data:
-		writer.write([Int.toUnsignedByte(col.b)])
-		writer.write([Int.toUnsignedByte(col.g)])
-		writer.write([Int.toUnsignedByte(col.r)])
+		writer.write([Int.toUnsignedByte(Math.round(col.blue*255))])
+		writer.write([Int.toUnsignedByte(Math.round(col.green*255))])
+		writer.write([Int.toUnsignedByte(Math.round(col.red*255))])
 		currWidth = currWidth + 1
 		if currWidth == img.width:
 			currWidth = 0
@@ -65,7 +65,7 @@ int getDistinctColors(Image img):
         table = table + {col}
     return |table|
 
-public [[RGB]] ::readBMP(Reader file):
+public [[RGBA]] ::readBMP(Reader file):
 	debug "Reading Bitmap File\n"
 	BMPSize = Byte.toUnsignedInt(file.read(4))
 	//debug "BMP File Size: " + BMPSize + "\n"
@@ -117,7 +117,7 @@ public [[RGB]] ::readBMP(Reader file):
 		widthArray = []
 		for i in 0..bitmapHeight:
 			for j in 0..bitmapWidth:
-				values={r:Byte.toUnsignedInt(file.read(1)),g:Byte.toUnsignedInt(file.read(1)), b:Byte.toUnsignedInt(file.read(1))}
+				values=RGBA(Byte.toUnsignedInt(file.read(1)),Byte.toUnsignedInt(file.read(1)),Byte.toUnsignedInt(file.read(1)),0.0)
 				widthArray = widthArray + [values]
 			//When we get here. There might need to be more padding.
 			//debug "Width Array: " + widthArray + "\n"

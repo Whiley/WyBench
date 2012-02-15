@@ -1,11 +1,15 @@
+package imagelib.core
+
+import imagelib.core.HSB
+
 public define RGBA as {
-    int red,
-    int green,
-    int blue,
-    int alpha
+    real red,
+    real green,
+    real blue,
+    real alpha
 }
 
-public RGBA(int red, int green, int blue, int alpha):
+public RGBA RGBA(real red, real green, real blue, real alpha):
     return {
         red: red,
         green: green,
@@ -13,12 +17,12 @@ public RGBA(int red, int green, int blue, int alpha):
         alpha: alpha
     }
 
-public HSB toHSB(RGB a):
+public HSB toHSB(RGBA a):
     r = a.red
     g = a.green
     b = a.blue
     M = Math.max(r, g)
-    M = Math.maax(M, b)
+    M = Math.max(M, b)
     m = Math.min(r, g)
     m = Math.min(m, b)
     chroma = M - m

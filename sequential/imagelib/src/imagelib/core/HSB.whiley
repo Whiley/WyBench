@@ -1,4 +1,15 @@
-define HSB as {real h, real s, real b}
+package imagelib.core
+
+import imagelib.core.RGBA // shouldn't be necessary?
+
+public define HSB as {real h, real s, real b}
+
+public HSB HSB(real h, real s, real b):
+    return {
+        h: h,
+        s: s,
+        b: b
+    }
 
 public RGBA toRGBA(HSB h):
     n,d = h.h

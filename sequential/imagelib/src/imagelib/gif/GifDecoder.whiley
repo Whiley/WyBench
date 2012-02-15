@@ -224,7 +224,7 @@ public GIF read([byte] data) throws Error:
 // writes every 4th row starting at the third row from the top.  The fourth
 // pass completes the image, writing  every  other  row,  starting  at	the
 // second row from the top. 
-(Image,int) readImageDescriptor([byte] data, int pos) throws Error:
+(ImageDescriptor,int) readImageDescriptor([byte] data, int pos) throws Error:
     // read image dimensions
     left = Byte.toUnsignedInt(data[pos..pos+2])
     pos = pos + 2
