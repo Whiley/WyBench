@@ -13,11 +13,11 @@ public void ::main(System.Console sys):
     try:
         gif = GifDecoder.read(contents)
         image = gif.images[0]
-        for i in 0..image.height:
-            for j in 0..image.width:
-                debug "" + image.data[(j*image.width)+i]
-            debug "\n"
-        //BMP.write(Image(image.width,image.height,image.data),"file.bmp")
+       // for i in 0..image.height:
+        //   for j in 0..image.width:
+        //     debug "" + image.data[(j*image.width)+i]
+        //debug "\n"
+        BMP.write(Image(image.width,image.height,image.data),"file.bmp")
     catch(Error e):
         sys.out.println("Error: " + e)
     
