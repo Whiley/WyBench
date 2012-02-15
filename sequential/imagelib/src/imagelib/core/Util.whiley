@@ -1,13 +1,5 @@
 package imagelib.core
 
-import * from whiley.lang.*
-
-define RGB as {int r, int g, int b}
-
-public RGB RGB(int red, int green, int blue):
-    return {r: red, g: green, b: blue}
-
-
 define HSB as {real h, real s, real b}
 
 public RGB HSBtoRGB(HSB h):
