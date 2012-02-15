@@ -31,9 +31,7 @@ public (bool,Reader) read(Reader reader):
         index = reader.index + 1
         if index == reader.end:
             // need to roll over to next block
-            debug "ROLLING OVER\n"
             end = Byte.toUnsignedInt(reader.data[index])
-            debug "BLOCK SIZE = " + end + "\n"
             index = index + 1
             reader.end = index + end
          reader.index = index

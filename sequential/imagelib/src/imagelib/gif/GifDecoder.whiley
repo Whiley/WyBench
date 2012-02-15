@@ -357,13 +357,12 @@ int skipExtensionBlock([byte] data, int pos):
     stream = [] // raster data stream to be produced
     old = [] // old code value initially null
     reader = BlockBuffer.Reader(data,pos)
-    debug "NUM PIXELS = " + numPixels + "\n"
+    
     while |stream| < numPixels:            
         // read next code
         code,reader = BlockBuffer.readUnsignedInt(reader,currentCodeSize)    
         // now decode it
         if code == clearCode:
-            debug "CLEAR CODE\n"
             // reset the code table
             currentCodeSize = codeSize
             currentCodeSizeLimit = codeSizeLimit
@@ -373,14 +372,14 @@ int skipExtensionBlock([byte] data, int pos):
         else if code == endOfInformation:
             // indicates we're done
             break
-        else if old == []:            
-            stream = stream + codes[code]
-            old = codes[code]
+        else if old == []:          
+            old = [code]  
+            stream = stream + old
             // continue
         else:
             next = []
             if code < available:
-                // Yes, code is in table!
+                // Yes, code is in table :)
                 current = codes[code]
                 next = old + [current[0]]
                 stream = stream + current
@@ -388,7 +387,7 @@ int skipExtensionBlock([byte] data, int pos):
             else if code == available:
                 // No, code is not in table :(
                 next = old + [old[0]]
-                stream = stream + next                
+                stream = stream + next
                 old = next
             codes = codes + [next]   
             available = available + 1
