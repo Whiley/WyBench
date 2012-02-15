@@ -1,19 +1,6 @@
 package imagelib.core
 
-define RGBA as {
-    real red, 
-    real green, 
-    real blue, 
-    real alpha
-}
-
-public RGBA RGBA(real red, real green, real blue, real alpha):
-    return {
-        red: red, 
-        green: green,
-        blue: blue,
-        alpha: alpha
-    }
+import imagelib.core.RGBA // should be unnecessary?
 
 define Image as {
     [RGBA] data,
