@@ -357,12 +357,13 @@ int skipExtensionBlock([byte] data, int pos):
     stream = [] // raster data stream to be produced
     old = [] // old code value initially null
     reader = BlockBuffer.Reader(data,pos)
-
-    while true:            
+    debug "NUM PIXELS = " + numPixels + "\n"
+    while |stream| < numPixels:            
         // read next code
         code,reader = BlockBuffer.readUnsignedInt(reader,currentCodeSize)    
         // now decode it
         if code == clearCode:
+            debug "CLEAR CODE\n"
             // reset the code table
             currentCodeSize = codeSize
             currentCodeSizeLimit = codeSizeLimit
@@ -395,12 +396,11 @@ int skipExtensionBlock([byte] data, int pos):
             if available == currentCodeSizeLimit && currentCodeSize != 12:
                 // code size limit reached
                 currentCodeSize = currentCodeSize + 1
-                currentCodeSizeLimit = currentCodeSizeLimit * 2                           
+                currentCodeSizeLimit = currentCodeSizeLimit * 2
     // end while        
     pos = reader.index
     if reader.boff != 0: 
-        pos = pos + 1 // discard excess bits
-
+        pos = pos + 1 // discard excess bits    
     return stream,pos
 
 // GLOBAL COLOR MAP
