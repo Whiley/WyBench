@@ -82,7 +82,6 @@ public GIF read([byte] data) throws Error:
     // ===============================================
 
     if hasGlobalMap:
-        debug "READING GLOBAL COLOUR MAP: " + bitsPerPixel + "\n"
         globalColourMap,pos = readColourMap(data,pos,bitsPerPixel)
     else:
         throw Error("need to implement default colour map")
@@ -352,8 +351,8 @@ int skipExtensionBlock([byte] data, int pos):
     
     // initialise working values for codeSize, clearCode and EOI
     currentCodeSize = codeSize
-    available = clearCode + 2
     currentCodeSizeLimit = codeSizeLimit
+    available = clearCode + 2
     
     stream = [] // raster data stream to be produced
     old = [] // old code value initially null
@@ -373,7 +372,7 @@ int skipExtensionBlock([byte] data, int pos):
         else if code == endOfInformation:
             // indicates we're done
             break
-        else if old == []:
+        else if old == []:            
             stream = stream + codes[code]
             old = codes[code]
             // continue
@@ -393,7 +392,7 @@ int skipExtensionBlock([byte] data, int pos):
             codes = codes + [next]   
             available = available + 1
             // check whether code table is full
-            if available == currentCodeSizeLimit:
+            if available == currentCodeSizeLimit && currentCodeSize != 12:
                 // code size limit reached
                 currentCodeSize = currentCodeSize + 1
                 currentCodeSizeLimit = currentCodeSizeLimit * 2                           
