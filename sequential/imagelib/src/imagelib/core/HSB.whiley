@@ -2,23 +2,27 @@ package imagelib.core
 
 import imagelib.core.RGBA // shouldn't be necessary?
 
-public define HSB as {real h, real s, real b}
+public define HSB as {
+    real hue, 
+    real saturation, 
+    real brightness
+}
 
-public HSB HSB(real h, real s, real b):
+public HSB HSB(real hue, real saturation, real brightness):
     return {
-        h: h,
-        s: s,
-        b: b
+        hue: hue,
+        saturation: saturation,
+        brightness: brightness
     }
 
 public RGBA toRGBA(HSB h):
-    n,d = h.h
+    n,d = h.hue
     hi =  ((n/d)/60) % 6
-    f = (h.h/60.0) - ((n/d)/60)
-    p = h.b*(1.0-(h.s))
-    q = h.b*(1.0-(f*h.s))
-    t = h.b*(1.0-((1.0-f)* h.s))
-    v = h.b    
+    f = (h.hue/60.0) - ((n/d)/60)
+    p = h.brightness*(1.0-(h.saturation))
+    q = h.brightness*(1.0-(f*h.saturation))
+    t = h.brightness*(1.0-((1.0-f)* h.saturation))
+    v = h.brightness    
     if hi == 0:
         return {red:v, green:t, blue:p, alpha:0.0}
     else if hi == 1:

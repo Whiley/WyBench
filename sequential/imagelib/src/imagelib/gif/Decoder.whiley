@@ -4,7 +4,7 @@ import * from imagelib.gif.GIF
 import * from whiley.lang.Errors
 import * from BitBuffer
 
-public GIF read([byte] data) throws Error:
+public GIF decode([byte] data) throws Error:
     pos = 0
 
     // ===============================================

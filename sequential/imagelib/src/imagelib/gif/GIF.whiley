@@ -1,5 +1,6 @@
 package imagelib.gif
 
+import Error from whiley.lang.Errors
 import u8 from whiley.lang.Int
 import u16 from whiley.lang.Int
 
@@ -51,6 +52,11 @@ public GIF GIF(string magic, u16 width, u16 height, u8 background,
         images: images,
         extensions: extensions
     }
+
+// Decode a GIF file from a give list of bytes
+public GIF decode([byte] bytes) throws Error:
+    return Decoder.decode(bytes)
+    
 
 // An image descriptor within a GIF file
 public define ImageDescriptor as {

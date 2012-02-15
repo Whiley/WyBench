@@ -53,4 +53,4 @@ public HSB toHSB(RGBA a):
     if chroma != 0 && V != 0:
         S = chroma/V
     //debug "Saturation: " + S + "\n"
-    return {h: H, s: S, b: V}
+    return {hue: H, saturation: S, brightness: V}
