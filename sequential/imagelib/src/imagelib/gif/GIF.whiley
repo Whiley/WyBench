@@ -3,6 +3,9 @@ package imagelib.gif
 import u8 from whiley.lang.Int
 import u16 from whiley.lang.Int
 
+import imagelib.core.Image
+import imagelib.core.RGBA
+
 // A colour in a GIF file is an unsigned integer between 0..255.
 public define Colour as {
     u8 red,
@@ -21,6 +24,7 @@ public Colour Colour(int red, int green, int blue):
 // values.
 define ColourMap as [Colour]|null
 
+// Defines standard magic numbersx
 define GIF87a_MAGIC as "GIF87a"
 define GIF89a_MAGIC as "GIF89a"
 
@@ -31,13 +35,13 @@ public define GIF as {
     u16 height, // screen height
     u8 background, // index of background colour
     ColourMap colourMap,
-    [Image] images,
+    [ImageDescriptor] images,
     [Extension] extensions
 }
 
 // Construct a GIF file with the given attributes
 public GIF GIF(string magic, u16 width, u16 height, u8 background, 
-            ColourMap colourMap, [Image] images, [Extension] extensions):
+            ColourMap colourMap, [ImageDescriptor] images, [Extension] extensions):
     return {
         magic: magic,
         width: width,
@@ -49,7 +53,7 @@ public GIF GIF(string magic, u16 width, u16 height, u8 background,
     }
 
 // An image descriptor within a GIF file
-public define Image as {
+public define ImageDescriptor as {
     u16 left,
     u16 top,
     u16 width,
@@ -60,7 +64,7 @@ public define Image as {
 }
 
 // Construct a GIF image with the given attributes.
-public Image Image(u16 left, u16 top, u16 width, u16 height, bool interlaced, 
+public ImageDescriptor ImageDescriptor(u16 left, u16 top, u16 width, u16 height, bool interlaced, 
                 ColourMap colourMap, [int] data):
     return {
         left: left,
@@ -76,3 +80,22 @@ public define Extension as {
     int code,
     [byte] data
 }
+
+public Image toImage(GIF gif, ImageDescriptor img) throws {string msg}:
+    colourMap = img.colourMap
+    if colourMap == null:
+        colourMap = gif.colourMap
+    if colourMap == null:
+        throw {msg: "BROKEN"}
+    data = []
+    for index in img.data:
+        col = colourMap[index]
+        red = ((real)col.red) / 255
+        green = ((real)col.green) / 255
+        blue = ((real)col.blue) / 255
+        data = data + [RGBA(red,green,blue,1.0)]
+    return {
+        width: img.width,
+        height: img.height,
+        data: data
+    }
