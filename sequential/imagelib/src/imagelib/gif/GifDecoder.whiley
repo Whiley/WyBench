@@ -1,25 +1,8 @@
 package imagelib.gif
 
+import * from imagelib.gif.GIF
 import * from whiley.lang.Errors
-import * from whiley.lang.System
-import * from whiley.io.File
 import * from BitBuffer
-import RGB from imagelib.core.Color
-
-// RGB constructor
-public define GIF as {  
-    [Image] images
-}
-
-define Image as {
-    int left,
-    int top,
-    int width,
-    int height,
-    int bitsPerPixel,
-    bool interlaced,
-    [RGB] data
-}
 
 public GIF read([byte] data) throws Error:
     pos = 0
@@ -72,7 +55,7 @@ public GIF read([byte] data) throws Error:
     hasGlobalMap = (packed & 10000000b) != 0b
     pos = pos + 1
     // read background colour index
-    background = data[pos]    
+    background = Byte.toUnsignedInt(data[pos])
     pos = pos + 1
     // skip zero byte
     pos = pos + 1
@@ -84,28 +67,38 @@ public GIF read([byte] data) throws Error:
     if hasGlobalMap:
         globalColourMap,pos = readColourMap(data,pos,bitsPerPixel)
     else:
-        throw Error("need to implement default colour map")
+        globalColourMap = null
 
     // ===============================================
     // CONTENTS
     // ===============================================
     images = []
+    extensions = []
     while true:
         lookahead = data[pos]
         pos = pos + 1
         switch lookahead:
             case 0010000b:
                 // GIF Extension Block
-                pos = skipExtensionBlock(data,pos)
+                extension,pos = readExtensionBlock(data,pos)
+                extensions = extensions + [extension]
             case 00101100b:
                 // Image Descriptor
-                image,pos = readImageDescriptor(data,pos,globalColourMap)
+                image,pos = readImageDescriptor(data,pos)
                 images = images + [image]
             case 00111011b:
                 // Terminator
-                break    
+                break
     // done
-    return { images: images }
+    return { 
+        magic: magic,
+        width: width,
+        height: height,
+        background: background,
+        colourMap: globalColourMap,
+        images: images,
+        extensions: extensions
+    }
 
 // GIF EXTENSION BLOCK
 //
@@ -141,15 +134,21 @@ public GIF read([byte] data) throws Error:
 // code.  This ensures that older decoders will be able to process extended
 // GIF image	 files	 in  the  future,  though  without  the  additional
 // functionality.
-int skipExtensionBlock([byte] data, int pos):
+(Extension,int) readExtensionBlock([byte] data, int pos):
     code = Byte.toUnsignedInt(data[pos])
     pos = pos + 1
     count = Byte.toUnsignedInt(data[pos])
     pos = pos + 1
+    bytes = []
     while count != 0:
+        start = pos
         pos = pos + count
+        bytes = bytes + data[pos .. pos]
         count = Byte.toUnsignedInt(data[pos])
-    return pos
+    return {
+        code: code,
+        data: bytes
+    },pos
 
 // IMAGE DESCRIPTOR
 //
@@ -225,7 +224,7 @@ int skipExtensionBlock([byte] data, int pos):
 // writes every 4th row starting at the third row from the top.  The fourth
 // pass completes the image, writing  every  other  row,  starting  at	the
 // second row from the top. 
-(Image,int) readImageDescriptor([byte] data, int pos, [RGB] globalColourMap) throws Error:
+(Image,int) readImageDescriptor([byte] data, int pos) throws Error:
     // read image dimensions
     left = Byte.toUnsignedInt(data[pos..pos+2])
     pos = pos + 2
@@ -245,22 +244,18 @@ int skipExtensionBlock([byte] data, int pos):
     if hasLocalMap:
         colourMap,reader = readColourMap(data,pos,bitsPerPixel)
     else:
-        colourMap = globalColourMap
+        colourMap = null
     // now, decode the lzw data    
-    indexData,pos = decodeImageData(data,pos,width*height)
-    // convert from colour indices into rgb data
-    rgbData = []
-    for index in indexData:
-        rgbData = rgbData + [colourMap[index]]
+    data,pos = decodeImageData(data,pos,width*height)
     // done
     return {
         left: left,
         top: top,
         width: width,
         height: height,
-        bitsPerPixel: bitsPerPixel,
         interlaced: interlaced,
-        data: rgbData
+        colourMap: colourMap,
+        data: data
     },pos
 
 // Appendix C - Image Packaging & Compression
@@ -454,7 +449,7 @@ int skipExtensionBlock([byte] data, int pos):
 // a default color map is generated internally	which  maps  each  possible
 // incoming  color  index to the same hardware color index modulo <n> where
 // <n> is the number of available hardware colors.
-([RGB],int) readColourMap([byte] data, int pos, int bitsPerPixel):
+([Colour],int) readColourMap([byte] data, int pos, int bitsPerPixel):
     ncols = Math.pow(2,bitsPerPixel)
     colourTable = []
     for i in 0..ncols:
@@ -464,6 +459,6 @@ int skipExtensionBlock([byte] data, int pos):
         pos = pos + 1
         blue = Byte.toUnsignedInt(data[pos])
         pos = pos + 1
-        colourTable = colourTable + [RGB(red,green,blue)]
+        colourTable = colourTable + [Colour(red,green,blue)]
     // done
     return colourTable,pos
