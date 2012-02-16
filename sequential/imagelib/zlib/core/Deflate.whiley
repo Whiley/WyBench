@@ -186,15 +186,6 @@ public [byte] decompress([byte] data) throws Error:
             // in current partially processed byte.  Theb, read LEN
             // and NLEN and copy LEN bytes of data to output.
             reader = BitBuffer.skipToByteBoundary(reader)
-            debug "READER INDEX: " + reader.index + "\n"
-            debug "B1: " + reader.data[reader.index] + "\n"
-            debug "B2: " + reader.data[reader.index+1] + "\n"
-            debug "B3: " + reader.data[reader.index+2] + "\n"
-            debug "B4: " + reader.data[reader.index+3] + "\n"
-            debug "B5: " + reader.data[reader.index+4] + "\n"
-            debug "B6: " + reader.data[reader.index+5] + "\n"
-            debug "B7: " + reader.data[reader.index+6] + "\n"
-            debug "B8: " + reader.data[reader.index+7] + "\n"
             LEN,reader = BitBuffer.readUnsignedInt(reader,16)
             NLEN,reader = BitBuffer.readUnsignedInt(reader,16)
             debug "TO READ: " + LEN + " bytes\n"
@@ -205,7 +196,7 @@ public [byte] decompress([byte] data) throws Error:
                 // using dynamic Huffman codes
                 literals,distances,reader = readDynamicHuffmanCodes(reader)
             else:
-                throw Error("FIXED HUFFMAN CODE ALPABET NOT YET SUPPORTED")
+                literals,distances = initFixedHuffmanCodes()
             // now read the block
             endOfBlock = false
             current = literals
@@ -244,6 +235,11 @@ public [byte] decompress([byte] data) throws Error:
             // done reading block    
     // finally, return uncompressed data
     return output
+
+(Huffman.Tree,Huffman.Tree) fixedHuffmanCodes():
+    litTree = Huffman.Empty()
+    distTree = Huffman.Empty()
+    // FOR HERE
 
 (Huffman.Tree,Huffman.Tree,BitBuffer.Reader) readDynamicHuffmanCodes(BitBuffer.Reader reader) throws Error:
     // first, read header information
