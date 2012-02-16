@@ -83,6 +83,7 @@ public BMP ::readBMP([byte] data) throws Error:
 	
 	//data = [] OVERWRITTEN HERE
 	array = []
+	row = []
 	if bitsPerPixel <= 8:
 		throw Error ("Images with less than 16 bpp not supported")
 	else:
@@ -94,9 +95,10 @@ public BMP ::readBMP([byte] data) throws Error:
 		dataSize = height*width
 		currWidth = 0
 		for i in 0..dataSize:
-			array = array + [Byte.toUnsignedInt(data[pos])] // Red
-			array = array + [Byte.toUnsignedInt(data[pos+1])] // Green
-			array = array + [Byte.toUnsignedInt(data[pos+2])] // Blue
+			row = row + [Byte.toUnsignedInt(data[pos+2])] // Blue
+			row = row + [Byte.toUnsignedInt(data[pos+1])] // Green
+			row = row + [Byte.toUnsignedInt(data[pos])] // Red
+			
 			
 			//THIS LINE CAUSES INTERNAL FAILURE. NEED TO FIGURE OUT WHY
 			//Something to do with accidently overwriting the data array (I think)
@@ -107,6 +109,8 @@ public BMP ::readBMP([byte] data) throws Error:
 			currWidth = currWidth + 1
 			if currWidth == width:
 				pos = pos + blankBytes
+				array = row + array
+				row = []
 				currWidth = 0
 			
 	

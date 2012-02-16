@@ -62,11 +62,12 @@ public DIBHeader DIBHeader(int size, int width, int height, int bitsPerPixel, in
 	
 public Image toImage(BMP bmp):
 	rgb = []
-	for i in 0..|bmp.data|:
+	i = 0
+	while i < |bmp.data|:
 		red = ((real)bmp.data[i]) / 255
 		green = ((real)bmp.data[i+1]) / 255
 		blue = ((real)bmp.data[i+2]) / 255
-		i = i+2
+		i = i+3
 		rgb = rgb + [RGBA(red, green, blue, 1.0)]
 	return {
 	width: bmp.dib.width,
