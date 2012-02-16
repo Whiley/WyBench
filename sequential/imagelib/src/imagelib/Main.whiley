@@ -12,12 +12,11 @@ public void ::main(System.Console sys):
 	file = File.Reader(sys.args[0])
 	contents = file.read()
 	try:
-		//gif = GifDecoder.read(contents)
-		//image = GIF.toImage(gif,gif.images[0])
-		bmp = BMPDecoder.readBMP(contents)
-		image = BMP.toImage(bmp)
-		data = BMPEncoder.encode(Image(image.width,image.height,image.data))
-		writer = File.Writer("file.bmp")
+		gif = GifDecoder.read(contents)
+		image = GIF.toImage(gif,gif.images[0])
+		
+		data = GifEncoder.encode(Image(image.width,image.height,image.data))
+		writer = File.Writer("file.gif")
 		writer.write(data)
 		writer.close()
 	catch(Error e):
