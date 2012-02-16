@@ -23,7 +23,7 @@ public [byte] ::encode(Image img):
 	packed = 10000000b //Always Include the Global Colour Table
 	packed = packed | 00010000b // Resolution
 	list, size = getColorTable(img.data)
-	packed = packed | Int.toUnsignedByte(size)
+	packed = packed | Int.toUnsignedByte(size-1)
 	data = data + [packed]
 	data = data + [Int.toUnsignedByte(0)] // Background Colour Index
 	data = data + [Int.toUnsignedByte(0)] // Pixel Aspect Ratio
@@ -32,13 +32,13 @@ public [byte] ::encode(Image img):
 	//--------------------------
 	// GLOBAL COLOUR TABLE
 	//--------------------------
-	lookupTable = [] // To be used in the encoding process
+	//lookupTable = [] // To be used in the encoding process
 	for item in list:
 		data = data + [Int.toUnsignedByte(Math.round(item.red*255))]
 		data = data + [Int.toUnsignedByte(Math.round(item.green*255))]
 		data = data + [Int.toUnsignedByte(Math.round(item.blue*255))]
-		lookupTable = lookupTable + [item]
-	currentSize = currentSize + (3*|lookupTable|)
+		//lookupTable = lookupTable + [item]
+	currentSize = currentSize + (3*|list|)
 	debug "Data Size After Colour Table: " + |data| + " Should be: " + currentSize + "\n"
 	
 	//--------------------------
@@ -53,9 +53,9 @@ public [byte] ::encode(Image img):
 	currentSize = currentSize + 10
 	debug "Data Size After Image Descriptor: " + |data| + " Should be: " + currentSize + "\n"
 	//Time to Encode and compress the image data
-	codes = encodeGif(img.data, lookupTable, size)
-	
-	data = data + [Int.toUnsignedByte(size+1)]
+	codes = encodeGif(img.data, list, size)
+	debug "Size: " + size + "\n"
+	data = data + [Int.toUnsignedByte(size)]
 	currentSize = currentSize + 1
 	debug "Data Size After Adding Lead MinSize: " + |data| + " Should be: " + currentSize + "\n"
 	while |codes| > 254:
@@ -64,14 +64,12 @@ public [byte] ::encode(Image img):
 		data = data + codes[0..254]
 		codes = codes[254..]
 	data = data + [Int.toUnsignedByte(|codes|)]
+	
 	debug "Adding Last Codes of Length: " + |codes| + "\n"
 	data = data + codes
-	
-	
-	debug "Data: " + data + "\n"
-	debug "Codes: " + codes + "\n"
-	//data = data + codes
-	debug "Data Length: " + |data| + "\n"
+	debug "Size of all data: " + |data| + "\n"
+	data = data + padUnsignedInt(0, 1) //No More Data left
+	data = data + List.reverse(Int.toUnsignedBytes(0x3B)) 
 	return data
 
 [byte] padUnsignedInt(int i, int padLength):
@@ -82,7 +80,6 @@ public [byte] ::encode(Image img):
 
 [byte] ::encodeGif([RGBA] array, [RGBA] lookup, int codeWidth):
 	codes = [] //Codes holds the list of table values
-	codeWidth = codeWidth + 1
 	for rgb in array:
 		codes = codes + [indexOf(lookup, rgb)]
 		
@@ -146,7 +143,11 @@ public [byte] ::encode(Image img):
 BlockBuffer.Writer ::compressInt(BlockBuffer.Writer write, int value, int width):
 	
 	bytes = Int.toUnsignedBytes(value)
-	debug "Writing Int: " + value + " Width: " + width +  " Bytes: " + bytes + "\n"
+	if width > 8 && |bytes| == 1:
+		//The Writer requires >8 bits to be read, but the top values are all zero.
+		//This just pads out the byte array so the writer can process the small value
+		bytes = bytes + [00000000b] 
+	//debug "Writing Int: " + value + " Width: " + width +  " Bytes: " + bytes + "\n"
 	pos = 0 //The position in the current Byte. If this becomes > 8, read the other byte
 	currentByte = bytes[0]
 	for i in 0..width:
@@ -170,13 +171,21 @@ int indexOf([any] array, any element):
 			return i
 	return -1
 
-({RGBA}, int) getColorTable([RGBA] array):
+([RGBA], int) getColorTable([RGBA] array):
 	table = {}
 	for i in 0..|array|:
 		table = table + {array[i]}
-	table = table + {RGBA.RGBA(0.0, 0.0, 0.0, 1.0)}
-	//Figure out the size of the table to be written out.
-	init = 1
-	while Math.pow(2, init+1) < |table|:
-		init = init + 1
-	return table, init
+	
+	tableArray = []
+	for element in table:
+		tableArray = tableArray + [element]
+	
+	loop = 1
+	while Math.pow(2, loop) < |table|:
+		//debug "MathPower: " + Math.pow(2, init) + " Init: " + init + " Table Size: " + |table| + "\n"
+		loop = loop + 1
+	
+	for i in |table|..Math.pow(2, loop):
+		tableArray = tableArray + [RGBA.RGBA(0.0, 0.0, 0.0, 1.0)]
+	
+	return tableArray, loop
