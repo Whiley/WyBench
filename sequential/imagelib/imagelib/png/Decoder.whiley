@@ -112,7 +112,7 @@ public IHDR decodeIHDR([byte] bytes, int pos):
         height: height,
         bitDepth: depth,
         colorType: type,
-        compressionMethod: compression,
+        compression: compression,
         filterMethod: filter,
         interlaceMethod: interlace
     }

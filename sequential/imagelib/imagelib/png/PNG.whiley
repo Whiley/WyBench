@@ -139,23 +139,29 @@ public define ValidColorDepths as [
     {8,16}        // truecolor with alpha
 ]
 
+public define ZLIB as 0
+public define OTHER as 1
+
+// Currently, only zlib compression is defined for PNG
+public define CompressionMethod as { ZLIB, OTHER }
+
 public define IHDR as { // Image Header
     u32 width,
     u32 height,
     BitDepth bitDepth,
     ColorType colorType,
-    u8  compressionMethod,
+    CompressionMethod  compression,
     u8  filterMethod,
     u8  interlaceMethod
 } where width > 0 && height > 0 && bitDepth in ValidColorDepths[colorType]
 
-public IHDR IHDR(u32 width, u32 height, BitDepth bitDepth, ColorType colorType, u8 compressionMethod, u8 filterMethod, u8 interlaceMethod):
+public IHDR IHDR(u32 width, u32 height, BitDepth bitDepth, ColorType colorType, CompressionMethod compression, u8 filterMethod, u8 interlaceMethod):
     return {
         width: width,
         height: height,
         bitDepth: bitDepth,
         colorType: colorType,
-        compressionMethod: compressionMethod,
+        compression: compression,
         filterMethod: filterMethod,
         interlaceMethod: interlaceMethod
     }
@@ -169,8 +175,15 @@ public define IEND_TYPE as 0x444e4549
 // ==============================================================================
 // IDAT
 // ==============================================================================
-
+//
+// The IDAT chunk contains the actual image data which is the output
+// stream of the compression algorithm.
+//
 public define IDAT_TYPE as 0x54414449
+
+public define IDAT as {
+    [byte] data // uncompressed data
+}
 
 // ==============================================================================
 // PLTE
