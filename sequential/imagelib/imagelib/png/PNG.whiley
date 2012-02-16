@@ -51,7 +51,7 @@ public PNG decode([byte] bytes) throws Error:
 // Chunk
 // ==============================================================================
 
-public define Chunk as IHDR | PLTE | TIME | RAW
+public define Chunk as IHDR | PLTE | PHYS | TIME | RAW
 
 // the RAW chunk is provided to protect against future extensions to the standard.
 public define RAW as {
@@ -164,13 +164,23 @@ public define SRGB_TYPE as 0x42475273
 
 public define PHYS_TYPE as 0x73594870
 
+public define UNKNOWN as 0
+public define METERS as 1
+public define Unit as { UNKNOWN, METERS }
+
+public define PHYS as {
+    u32 xPixelsPerUnit,
+    u32 yPixelsPerUnit,
+    Unit unit 
+}
+
 // ==============================================================================
 // tIME
 // ==============================================================================
 
 public define TIME_TYPE as 0x454d4974
 
-define TIME as {
+public define TIME as {
     u16 year,
     u8 month,
     u8 day,

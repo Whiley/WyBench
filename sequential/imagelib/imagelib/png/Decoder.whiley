@@ -64,6 +64,8 @@ public (Chunk,int) decodeChunk([byte] bytes,int pos):
             chunk = decodeIEND(bytes,pos)
         case PLTE_TYPE:
             chunk = decodePLTE(bytes,pos,length)
+        case PHYS_TYPE:
+            chunk = decodePHYS(bytes,pos)
         case TIME_TYPE:
             chunk = decodeTIME(bytes,pos)
         default:
@@ -116,6 +118,16 @@ public PLTE decodePLTE([byte] bytes, int pos, int length) requires (length % 3) 
         colors = colors + [RGB(red,green,blue)]
     return {
         colors: colors
+    }
+
+public PHYS decodePHYS([byte] bytes, int pos):
+    xppu = Byte.toUnsignedInt(bytes[pos+4..pos])
+    yppu = Byte.toUnsignedInt(bytes[pos+8..pos+4])
+    unit = Byte.toUnsignedInt(bytes[pos+8])
+    return {
+        xPixelsPerUnit: xppu,
+        yPixelsPerUnit: yppu,
+        unit: unit
     }
 
 public TIME decodeTIME([byte] bytes, int pos):
