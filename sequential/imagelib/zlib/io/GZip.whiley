@@ -30,14 +30,14 @@ import Error from whiley.lang.Errors
 import zlib.core.*
 import zlib.util.*
 
-public define GZipFile as {
+public define GZip as {
     int method,           // compression method (8 == Deflate)
     int mtime,            // modification time
     string|null filename, // filename (optional)
     [byte] data
 }
 
-public GZipFile decompress([byte] data) throws string|Error:
+public GZip decompress([byte] data) throws string|Error:
     // first, check magic number
     ID1 = Byte.toUnsignedInt(data[0])
     ID2 = Byte.toUnsignedInt(data[1])
@@ -68,7 +68,7 @@ public GZipFile decompress([byte] data) throws string|Error:
     // now decompress the actual data
     data = Deflate.decompress(data[index..])    
 
-    // finally, return a GZipFile record
+    // finally, return a GZip record
     return {
         method: CM,
         mtime: MTIME,
