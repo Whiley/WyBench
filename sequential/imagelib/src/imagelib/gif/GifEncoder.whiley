@@ -159,7 +159,8 @@ BlockBuffer.Writer ::compressInt(BlockBuffer.Writer write, int value, int width)
 		currentByte = currentByte >> 1 
 		
 		pos = pos + 1
-		if pos == 8:
+		if pos == 8 && width > 8:
+			//debug "Bytes: " + bytes + "\n"
 			currentByte = bytes[1]
 			pos = 0
 	//debug "" +  write.data + "\n"
