@@ -12,6 +12,7 @@ public void ::main(System.Console sys):
     contents = file.read()
     try:
         png = PNG.decode(contents)
+        data = PNG.decompress(png)
         //image = GIF.toImage(gif,gif.images[0])
         //BMPEncoder.write(Image(image.width,image.height,image.data),"file.bmp")
     catch(Error e):

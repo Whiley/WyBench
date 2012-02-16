@@ -31,9 +31,6 @@ package imagelib.png
 
 import Error from whiley.lang.Errors
 import * from imagelib.png.*
-import zlib.io.ZLib
-import Deflate from zlib.core.*
-import BitBuffer from zlib.util.* 
 
 // Decode a stream of bytes representing a PNG file.
 public PNG decode([byte] bytes) throws Error:
@@ -66,7 +63,7 @@ public (Chunk,int) decodeChunk([byte] bytes,int pos) throws Error:
         case IEND_TYPE:
             chunk = decodeIEND(bytes,pos)
         case IDAT_TYPE:
-            chunk = decodeIDAT(bytes,pos)
+            chunk = decodeIDAT(bytes,pos,length)
         case PLTE_TYPE:
             chunk = decodePLTE(bytes,pos,length)
         case PHYS_TYPE:
@@ -139,15 +136,11 @@ public Chunk decodeIEND([byte] bytes, int pos):
 // The IDAT chunk contains the actual image data which is the output
 // stream of the compression algorithm.
 
-public IDAT decodeIDAT([byte] bytes, int pos) throws Error:
-    
-    // NOTE: this is totally broken because the zlib stream can be
-    // split across multiple IDAT structures.
-    
-    data = ZLib.decompress(bytes[pos..])
+public IDAT decodeIDAT([byte] bytes, int pos, int length) throws Error:
     return {
-        data: data
+        data: bytes[pos..pos+length]
     }
+
 // ==============================================================================
 // PLTE
 // ==============================================================================

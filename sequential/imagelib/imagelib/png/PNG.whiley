@@ -36,6 +36,8 @@ import u32 from whiley.lang.Int
 import u16 from whiley.lang.Int
 import u8 from whiley.lang.Int
 
+import zlib.io.ZLib // for decompression.
+
 define PNG_MAGIC as 0x0A1A0A0D474E5089
 
 // ==============================================================================
@@ -46,8 +48,21 @@ define PNG as {
     [Chunk] chunks
 }
 
+// Decode a stream of bytes representing a PNG file.  Note, that this
+// does not decompress the given image and a subsequent call to
+// decompress is needed for this.
 public PNG decode([byte] bytes) throws Error:
     return Decoder.decode(bytes)
+
+// Decompress a given PNG file to generat the image it represents.
+public [byte] decompress(PNG png) throws Error:
+    data = []
+    // first, accumulate all data
+    for chunk in png.chunks:
+        if chunk is IDAT:
+            data = data + chunk.data
+    // second, decompress the full data
+    return ZLib.decompress(data)
 
 // ==============================================================================
 // Chunk
@@ -182,7 +197,7 @@ public define IEND_TYPE as 0x444e4549
 public define IDAT_TYPE as 0x54414449
 
 public define IDAT as {
-    [byte] data // uncompressed data
+    [byte] data // compressed (partial) data
 }
 
 // ==============================================================================

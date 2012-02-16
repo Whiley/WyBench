@@ -79,6 +79,7 @@ public [byte] decompress([byte] data) throws Error:
     FLEVEL = Byte.toUnsignedInt((FLG >> 6) & 11b)
 
     if FDICT:
+        debug "*** PROBLEM: ZLIB STREAM HAS FDICT ***\n"
         DICTID = data[2 .. 6]
         index = 6
     else:
