@@ -29,14 +29,26 @@
 
 package imagelib.png
 
+import Error from whiley.lang.Errors
 import u32 from whiley.lang.Int
 import u8 from whiley.lang.Int
 
-define PNG_MAGIC as 0x89504E470D0A1A0A
+define PNG_MAGIC as 0x0A1A0A0D474E5089
+
+// ==============================================================================
+// PNG
+// ==============================================================================
 
 define PNG as {
     [Chunk] chunks
 }
+
+public PNG decode([byte] bytes) throws Error:
+    return Decoder.decode(bytes)
+
+// ==============================================================================
+// Chunk
+// ==============================================================================
 
 public define Chunk as IHDR | PLTE | RAW
 
@@ -126,7 +138,6 @@ public PLTE PLTE([RGB] colors):
     return {
         colors: colors
     }
-
 
 
 
