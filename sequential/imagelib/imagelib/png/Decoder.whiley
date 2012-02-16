@@ -31,6 +31,8 @@ package imagelib.png
 
 import Error from whiley.lang.Errors
 import * from imagelib.png.*
+import Deflate from zlib.core.*
+import BitBuffer from zlib.util.* 
 
 // Decode a stream of bytes representing a PNG file.
 public PNG decode([byte] bytes) throws Error:
@@ -51,7 +53,7 @@ public PNG decode([byte] bytes) throws Error:
 // CHUNK
 // ==============================================================================
 
-public (Chunk,int) decodeChunk([byte] bytes,int pos):
+public (Chunk,int) decodeChunk([byte] bytes,int pos) throws Error:
     length = Byte.toUnsignedInt(bytes[pos+4..pos])
     pos = pos + 4
     type = Byte.toUnsignedInt(bytes[pos..pos+4])
@@ -62,6 +64,8 @@ public (Chunk,int) decodeChunk([byte] bytes,int pos):
             chunk = decodeIHDR(bytes,pos)
         case IEND_TYPE:
             chunk = decodeIEND(bytes,pos)
+        case IDAT_TYPE:
+            chunk = decodeIDAT(bytes,pos)
         case PLTE_TYPE:
             chunk = decodePLTE(bytes,pos,length)
         case PHYS_TYPE:
@@ -126,6 +130,16 @@ public Chunk decodeIEND([byte] bytes, int pos):
         type: IEND_TYPE,
         data: []
     }
+
+// ==============================================================================
+// IDAT
+// ==============================================================================
+//
+// The IDAT chunk contains the actual image data which is the output
+// stream of the compression algorithm.
+
+public IDAT decodeIDAT([byte] bytes, int pos) throws Error:
+    data = Deflate.decompress(BitBuffer.Reader(bytes,pos))
 
 // ==============================================================================
 // PLTE

@@ -53,7 +53,7 @@ public PNG decode([byte] bytes) throws Error:
 // Chunk
 // ==============================================================================
 
-public define Chunk as IHDR | PLTE | PHYS | TIME | SRGB | RAW
+public define Chunk as IHDR | IDAT | PLTE | PHYS | TIME | SRGB | RAW
 
 // the RAW chunk is provided to protect against future extensions to the standard.
 public define RAW as {
