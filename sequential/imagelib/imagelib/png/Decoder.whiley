@@ -31,6 +31,7 @@ package imagelib.png
 
 import Error from whiley.lang.Errors
 import * from imagelib.png.*
+import zlib.io.ZLib
 import Deflate from zlib.core.*
 import BitBuffer from zlib.util.* 
 
@@ -139,10 +140,9 @@ public Chunk decodeIEND([byte] bytes, int pos):
 // stream of the compression algorithm.
 
 public IDAT decodeIDAT([byte] bytes, int pos) throws Error:
-    //data = Deflate.decompress(bytes[pos..])
-    data = []
+    zlib = ZLib.decompress(bytes[pos..])
     return {
-        data: data
+        data: zlib.data
     }
 // ==============================================================================
 // PLTE

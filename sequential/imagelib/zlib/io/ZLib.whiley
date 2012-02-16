@@ -23,7 +23,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // -----------------------------------------------------------------------------
-package zlib.core
+package zlib.io
+
+import Error from whiley.lang.Errors
+import zlib.core.Deflate
 
 // Compression Methods
 public define DEFLATE as 8 
@@ -34,17 +37,30 @@ public define FAST as 1
 public define DEFAULT as 2
 public define MAXIMUM as 3
 
-// zlib header
-define Header as {
+// zlib stream
+public define ZLib as {
     int method, // Compression Method
-    int info,   // Compression info
-    int level   // Compression Level
+    [byte] data // Uncompressed data
 }
 
-public Header Header(int method, int info, int level):
-    return {
-        method: method,
-        info: info,
-        level: level
-    }
+public ZLib decompress([byte] data) throws Error:
+    CMF = data[0]
+    CM = Byte.toUnsignedInt(CMF & 1111b)
+    CINFO = Byte.toUnsignedInt(CMF >> 4)
+    FLG = data[1]
+    
+    FCHECK = (FLG & 00001111b)
+    FDICT  = (FLG & 00010000b) != 0b
+    FLEVEL = Byte.toUnsignedInt(FLG >> 6)
 
+    if FDICT:
+        throw Error("Need to implement FDICT")
+        
+    // now decompress the actual data
+    data = Deflate.decompress(data[2..])    
+
+    // finally, return a GZipFile record
+    return {
+        method: CM,        
+        data: data
+    }

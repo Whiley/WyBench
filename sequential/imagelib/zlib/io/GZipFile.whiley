@@ -37,7 +37,7 @@ public define GZipFile as {
     [byte] data
 }
 
-public GZipFile GZipFile([byte] data) throws string|Error:
+public GZipFile decompress([byte] data) throws string|Error:
     // first, check magic number
     ID1 = Byte.toUnsignedInt(data[0])
     ID2 = Byte.toUnsignedInt(data[1])
