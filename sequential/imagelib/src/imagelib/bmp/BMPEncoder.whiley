@@ -36,19 +36,25 @@ public [byte] encode(Image img):
 	data = data + padUnsignedInt(0, 4) //Important Colours used. This is generally ignored
 	
 	currWidth = 0
-	
+	//Need to do this in order to write the bytes from Bottom to top
+	imageData = []
+	currentRow = []
+	debug "Size of Image Data: " + |img.data| + "\n"
 	for col in img.data:
-		data = data + [Int.toUnsignedByte(Math.round(col.blue*255))]
-		data = data + [Int.toUnsignedByte(Math.round(col.green*255))]
-		data = data + [Int.toUnsignedByte(Math.round(col.red*255))]
+		currentRow = currentRow + [Int.toUnsignedByte(Math.round(col.blue*255))]
+		currentRow = currentRow + [Int.toUnsignedByte(Math.round(col.green*255))]
+		currentRow = currentRow + [Int.toUnsignedByte(Math.round(col.red*255))]
 		
 		currWidth = currWidth + 1
 		if currWidth == img.width:
 			currWidth = 0
 			if blankBytes != 0:
-				data = data + padUnsignedInt(0, blankBytes)
+				currentRow = currentRow + padUnsignedInt(0, blankBytes)
+			imageData = currentRow + imageData
+			currentRow = []
 			
-	
+	data = data + imageData
+	debug "Complete: \n"
 	return data
 	
 public int getBitDepth(Image img, [int] potential):
