@@ -140,6 +140,10 @@ public Chunk decodeIEND([byte] bytes, int pos):
 // stream of the compression algorithm.
 
 public IDAT decodeIDAT([byte] bytes, int pos) throws Error:
+    
+    // NOTE: this is totally broken because the zlib stream can be
+    // split across multiple IDAT structures.
+    
     zlib = ZLib.decompress(bytes[pos..])
     return {
         data: zlib.data

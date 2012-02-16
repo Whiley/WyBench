@@ -39,8 +39,8 @@ public define MAXIMUM as 3
 
 // zlib stream
 public define ZLib as {
-    int method, // Compression Method
-    [byte] data // Uncompressed data
+    int method,   // Compression Method
+    [byte] data   // Uncompressed data
 }
 
 public ZLib decompress([byte] data) throws Error:
@@ -51,16 +51,20 @@ public ZLib decompress([byte] data) throws Error:
     
     FCHECK = (FLG & 00001111b)
     FDICT  = (FLG & 00010000b) != 0b
-    FLEVEL = Byte.toUnsignedInt(FLG >> 6)
+    FLEVEL = Byte.toUnsignedInt((FLG >> 6) & 11b)
 
     if FDICT:
-        throw Error("Need to implement FDICT")
+        DICTID = data[2 .. 6]
+        index = 6
+    else:
+        DICTID = null
+        index = 2
         
     // now decompress the actual data
-    data = Deflate.decompress(data[2..])    
+    data = Deflate.decompress(data[index..])    
 
     // finally, return a GZipFile record
     return {
-        method: CM,        
+        method: CM,
         data: data
     }
