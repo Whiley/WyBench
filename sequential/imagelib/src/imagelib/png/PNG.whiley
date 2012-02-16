@@ -38,7 +38,13 @@ define PNG as {
     [Chunk] chunks
 }
 
-public define Chunk as IHDR | PLTE
+public define Chunk as IHDR | PLTE | RAW
+
+// the RAW chunk is provided to protect against future extensions to the standard.
+public define RAW as {
+    u32 type,   
+    [byte] data
+}
 
 // ==============================================================================
 // IHDR
@@ -120,6 +126,8 @@ public PLTE PLTE([RGB] colors):
     return {
         colors: colors
     }
+
+
 
 
 
