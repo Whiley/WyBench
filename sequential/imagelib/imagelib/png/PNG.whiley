@@ -62,7 +62,7 @@ public define RAW as {
 // IHDR
 // ==============================================================================
 
-define IHDR_TYPE as 0x73726882
+define IHDR_TYPE as 0x52444849
 
 public define GREYSCALE as 0
 public define TRUECOLOR as 2
@@ -115,7 +115,7 @@ public IHDR IHDR(u32 width, u32 height, BitDepth bitDepth, ColorType colorType, 
 // PLTE
 // ==============================================================================
 
-define PLTE_TYPE as 0x80768469
+define PLTE_TYPE as 0x45544c50
 
 public define RGB as {
     u8 red,
