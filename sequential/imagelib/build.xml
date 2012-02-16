@@ -9,28 +9,29 @@
 
   <target name="zlib">
     <echo message="======== Compiling ZLib ============"/>
-    <wyjc verbose="false" srcdir="src/" includes="zlib/**/*.whiley"/>
-    <jar destfile="lib/zlib.jar">
-      <fileset dir="src" includes="zlib/**/*.class"/>
-    </jar>
+    <wyjc verbose="false" srcdir="." includes="zlib/**/*.whiley"/>
+    <!-- <jar destfile="lib/zlib.jar"> -->
+    <!--   <fileset dir="src" includes="zlib/**/*.class"/> -->
+    <!-- </jar> -->
   </target>
 
   <target name="ilib" depends="zlib">
     <echo message="======== Compiling ImageLib ========"/>
-    <wyjc verbose="false" srcdir="src/" includes="imagelib/**/*.whiley"/>
-    <jar destfile="lib/imagelib.jar">
-      <fileset dir="src" includes="imagelib/**/*.class"/>
-    </jar>
+    <wyjc verbose="false" srcdir="." includes="imagelib/**/*.whiley"/>
+    <!-- <jar destfile="lib/imagelib.jar"> -->
+    <!--   <fileset dir="src" includes="imagelib/**/*.class"/> -->
+    <!-- </jar> -->
   </target>
 
   <target name="benchmark" depends="ilib">
     <echo message="======== Compiling Benchmark ========"/>
-    <wyjc verbose="false" srcdir="." includes="Main.whiley" whileypath="lib/zlib.jar:lib/imagelib.jar"/>
+    <!-- <wyjc verbose="false" srcdir="." includes="Main.whiley" whileypath="lib/zlib.jar:lib/imagelib.jar"/> -->
+    <wyjc verbose="false" srcdir="." includes="Main.whiley" whileypath="."/>
   </target>
 
  <target name="clean">
   <delete includeEmptyDirs="true" failonerror="false">
-   <fileset dir="." includes="*.class"/>
+   <fileset dir="." includes="zlib/**/*.class,imagelib/**/*.class,*.class"/>
    <fileset dir="." includes="*.wyil"/>
   </delete>
  </target>
