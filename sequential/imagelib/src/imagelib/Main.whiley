@@ -15,5 +15,9 @@ public void ::main(System.Console sys):
 		gif = GifDecoder.read(contents)
 		image = GIF.toImage(gif,gif.images[0])
 		//BMPEncoder.write(Image(image.width,image.height,image.data),"file.bmp")
+		data = BMPEncoder.encode(Image(image.width,image.height,image.data))
+		writer = File.Writer("file.bmp")
+		writer.write(data)
+		writer.close()
 	catch(Error e):
 		sys.out.println("Error: " + e)
