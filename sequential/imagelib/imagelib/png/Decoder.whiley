@@ -60,10 +60,12 @@ public (Chunk,int) decodeChunk([byte] bytes,int pos):
     switch type:
         case IHDR_TYPE:
             chunk = decodeIHDR(bytes,pos)
-        case PLTE_TYPE:
-            chunk = decodePLTE(bytes,pos,length)
         case IEND_TYPE:
             chunk = decodeIEND(bytes,pos)
+        case PLTE_TYPE:
+            chunk = decodePLTE(bytes,pos,length)
+        case TIME_TYPE:
+            chunk = decodeTIME(bytes,pos)
         default:
             // unknown chunk
             chunk = {
@@ -116,3 +118,18 @@ public PLTE decodePLTE([byte] bytes, int pos, int length) requires (length % 3) 
         colors: colors
     }
 
+public TIME decodeTIME([byte] bytes, int pos):
+    year = Byte.toUnsignedInt(bytes[pos+2..pos])
+    month = Byte.toUnsignedInt(bytes[pos+2])
+    day = Byte.toUnsignedInt(bytes[pos+3])
+    hour = Byte.toUnsignedInt(bytes[pos+4])
+    minute = Byte.toUnsignedInt(bytes[pos+5])
+    second = Byte.toUnsignedInt(bytes[pos+6])
+    return {
+        year: year,
+        month: month,
+        day: day,
+        hour: hour,
+        minute: minute,
+        second: second
+    }

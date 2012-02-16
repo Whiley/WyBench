@@ -31,6 +31,7 @@ package imagelib.png
 
 import Error from whiley.lang.Errors
 import u32 from whiley.lang.Int
+import u16 from whiley.lang.Int
 import u8 from whiley.lang.Int
 
 define PNG_MAGIC as 0x0A1A0A0D474E5089
@@ -50,7 +51,7 @@ public PNG decode([byte] bytes) throws Error:
 // Chunk
 // ==============================================================================
 
-public define Chunk as IHDR | PLTE | RAW
+public define Chunk as IHDR | PLTE | TIME | RAW
 
 // the RAW chunk is provided to protect against future extensions to the standard.
 public define RAW as {
@@ -118,10 +119,16 @@ public IHDR IHDR(u32 width, u32 height, BitDepth bitDepth, ColorType colorType, 
 public define IEND_TYPE as 0x444e4549
 
 // ==============================================================================
+// IDAT
+// ==============================================================================
+
+public define IDAT_TYPE as 0x54414449
+
+// ==============================================================================
 // PLTE
 // ==============================================================================
 
-define PLTE_TYPE as 0x45544c50
+public define PLTE_TYPE as 0x45544c50
 
 public define RGB as {
     u8 red,
@@ -145,12 +152,36 @@ public PLTE PLTE([RGB] colors):
         colors: colors
     }
 
+// ==============================================================================
+// sRGB
+// ==============================================================================
 
+public define SRGB_TYPE as 0x42475273
 
+// ==============================================================================
+// pHYs
+// ==============================================================================
 
+public define PHYS_TYPE as 0x73594870
 
+// ==============================================================================
+// tIME
+// ==============================================================================
 
+public define TIME_TYPE as 0x454d4974
 
-
+define TIME as {
+    u16 year,
+    u8 month,
+    u8 day,
+    u8 hour,
+    u8 minute,
+    u8 second
+} where 1 <= month && month <= 12 &&
+    1 <= day && day <= 31 && // could presumably do better here
+    0 <= hour && hour <= 23 &&
+    0 <= minute && minute <= 59 &&
+    0 <= second && second <= 60 // 60 to allow for leap seconds
+    
 
 
