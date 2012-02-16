@@ -38,12 +38,37 @@ public define DEFAULT as 2
 public define MAXIMUM as 3
 
 // zlib stream
-public define ZLib as {
-    int method,   // Compression Method
-    [byte] data   // Uncompressed data
+public define Header as {
+    int CM,         // Compression Method
+    int CINFO,      // Compression Info
+    int FLEVEL,     // Compression Level
+    int|null DICTID // Dictionary identifier
 }
 
-public ZLib decompress([byte] data) throws Error:
+public Header decodeHeader([byte] data):
+    CMF = data[0]
+    CM = Byte.toUnsignedInt(CMF & 1111b)
+    CINFO = Byte.toUnsignedInt(CMF >> 4)
+    FLG = data[1]
+    
+    FCHECK = (FLG & 00001111b)
+    FDICT  = (FLG & 00010000b) != 0b
+    FLEVEL = Byte.toUnsignedInt((FLG >> 6) & 11b)
+
+    if FDICT:
+        DICTID = Byte.toUnsignedInt(data[2 .. 6])
+    else:
+        DICTID = null
+    // done
+    return {
+        CM: CM,
+        CINFO: CINFO,
+        FLEVEL: FLEVEL,
+        DICTID: DICTID
+    }
+
+// Decompress an entire stream
+public [byte] decompress([byte] data) throws Error:
     CMF = data[0]
     CM = Byte.toUnsignedInt(CMF & 1111b)
     CINFO = Byte.toUnsignedInt(CMF >> 4)
@@ -64,7 +89,4 @@ public ZLib decompress([byte] data) throws Error:
     data = Deflate.decompress(data[index..])    
 
     // finally, return a GZipFile record
-    return {
-        method: CM,
-        data: data
-    }
+    return data
