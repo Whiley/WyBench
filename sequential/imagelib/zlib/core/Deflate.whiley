@@ -191,6 +191,10 @@ public [byte] decompress([byte] data) throws Error:
             debug "B2: " + reader.data[reader.index+1] + "\n"
             debug "B3: " + reader.data[reader.index+2] + "\n"
             debug "B4: " + reader.data[reader.index+3] + "\n"
+            debug "B5: " + reader.data[reader.index+4] + "\n"
+            debug "B6: " + reader.data[reader.index+5] + "\n"
+            debug "B7: " + reader.data[reader.index+6] + "\n"
+            debug "B8: " + reader.data[reader.index+7] + "\n"
             LEN,reader = BitBuffer.readUnsignedInt(reader,16)
             NLEN,reader = BitBuffer.readUnsignedInt(reader,16)
             debug "TO READ: " + LEN + " bytes\n"

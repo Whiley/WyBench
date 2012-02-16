@@ -139,7 +139,8 @@ public Chunk decodeIEND([byte] bytes, int pos):
 // stream of the compression algorithm.
 
 public IDAT decodeIDAT([byte] bytes, int pos) throws Error:
-    data = Deflate.decompress(bytes[pos..])
+    //data = Deflate.decompress(bytes[pos..])
+    data = []
     return {
         data: data
     }
