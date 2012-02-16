@@ -66,6 +66,23 @@ public (byte,Reader) read(Reader reader, int nbits) requires nbits >= 0 && nbits
         mask = mask << 1
     return r,reader
 
+// read zero or more bytes directly off the stream.  
+public ([byte],Reader) readBytes(Reader reader, int nbytes) requires nbytes > 0:
+    if reader.boff == 0:
+        // can perform a direct copy (faster)
+        start = reader.index
+        end = start + nbytes
+        reader.index = end
+        return reader.data[start .. end],reader
+    else:
+        // can't perform a direct copy (slower)
+        bytes = []
+        while nbytes > 0:
+            b,reader = read(reader,8)
+            bytes = bytes + [b]
+            nbytes = nbytes - 1
+        return bytes,reader
+
 public (int,Reader) readUnsignedInt(Reader reader, int nbits):
     base = 1
     r = 0
@@ -75,6 +92,15 @@ public (int,Reader) readUnsignedInt(Reader reader, int nbits):
             r = r + base
         base = base * 2
     return r,reader
+
+// Move to the next byte boundary, whilst skipping over any remaining
+// bits in the current byte.  If we're already on a byte boundary, then
+// do nothing.
+public Reader skipToByteBoundary(Reader reader):
+    if reader.boff != 0:
+        reader.boff = 0
+        reader.index = reader.index + 1
+    return reader
 
 define Writer as {
     int index,  // index of current byte in data

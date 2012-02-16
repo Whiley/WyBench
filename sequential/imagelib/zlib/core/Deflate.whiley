@@ -181,10 +181,21 @@ public [byte] decompress([byte] data) throws Error:
         // read block header
         BFINAL,reader = BitBuffer.read(reader)
         BTYPE,reader = BitBuffer.read(reader,2)        
-
         if BTYPE == 00b:
-            // stored with no compression
-            debug "STORED WITH NO COMRESSION"
+            // stored with no compression, so skip any remaining bits
+            // in current partially processed byte.  Theb, read LEN
+            // and NLEN and copy LEN bytes of data to output.
+            reader = BitBuffer.skipToByteBoundary(reader)
+            debug "READER INDEX: " + reader.index + "\n"
+            debug "B1: " + reader.data[reader.index] + "\n"
+            debug "B2: " + reader.data[reader.index+1] + "\n"
+            debug "B3: " + reader.data[reader.index+2] + "\n"
+            debug "B4: " + reader.data[reader.index+3] + "\n"
+            LEN,reader = BitBuffer.readUnsignedInt(reader,16)
+            NLEN,reader = BitBuffer.readUnsignedInt(reader,16)
+            debug "TO READ: " + LEN + " bytes\n"
+            bytes,reader = BitBuffer.readBytes(reader,LEN)            
+            output = output + bytes
         else:
             if BTYPE == 10b:
                 // using dynamic Huffman codes
