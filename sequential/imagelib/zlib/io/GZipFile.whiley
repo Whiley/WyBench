@@ -66,7 +66,7 @@ public GZipFile GZipFile([byte] data) throws string|Error:
         filename = null
 
     // now decompress the actual data
-    data = Deflate.decompress(BitBuffer.Reader(data,index))    
+    data = Deflate.decompress(data[index..])    
 
     // finally, return a GZipFile record
     return {

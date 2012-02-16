@@ -146,7 +146,7 @@ define decompressTable as [
 
 [byte] zipExtractDeflate(ZipEntry e) throws ZipError:
     try:
-        return Deflate.decompress(BitBuffer.Reader(e.data,0))
+        return Deflate.decompress(e.data)
     catch(Error err):
         // yup, this UGLY
         throw ZipError(err.msg,0)

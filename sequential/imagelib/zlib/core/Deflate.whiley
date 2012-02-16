@@ -168,12 +168,13 @@ define DISTANCE_BASES as [
     24577  // 29
 ]
 
-public [byte] decompress(BitBuffer.Reader reader) throws Error:
+public [byte] decompress([byte] data) throws Error:
     
     // NOTE: technically, this method need only retain 32K of the 
     // sliding window.  That means, once output gets over 32K we could
     // start dumping that data out.
-    
+
+    reader = BitBuffer.Reader(data,0)
     output = []
     BFINAL = false 
     while !BFINAL:

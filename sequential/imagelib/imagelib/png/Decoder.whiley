@@ -139,8 +139,10 @@ public Chunk decodeIEND([byte] bytes, int pos):
 // stream of the compression algorithm.
 
 public IDAT decodeIDAT([byte] bytes, int pos) throws Error:
-    data = Deflate.decompress(BitBuffer.Reader(bytes,pos))
-
+    data = Deflate.decompress(bytes[pos..])
+    return {
+        data: data
+    }
 // ==============================================================================
 // PLTE
 // ==============================================================================
