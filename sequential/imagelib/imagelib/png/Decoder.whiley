@@ -55,12 +55,15 @@ public (Chunk,int) decodeChunk([byte] bytes,int pos):
     length = Byte.toUnsignedInt(bytes[pos+4..pos])
     pos = pos + 4
     type = Byte.toUnsignedInt(bytes[pos..pos+4])
+    debug String.fromASCII(bytes[pos..pos+4]) + " : " + Int.toHexString(type) + "\n"
     pos = pos + 4
     switch type:
         case IHDR_TYPE:
             chunk = decodeIHDR(bytes,pos)
         case PLTE_TYPE:
             chunk = decodePLTE(bytes,pos,length)
+        case IEND_TYPE:
+            chunk = decodeIEND(bytes,pos)
         default:
             // unknown chunk
             chunk = {
@@ -89,6 +92,12 @@ public IHDR decodeIHDR([byte] bytes, int pos):
         compressionMethod: compression,
         filterMethod: filter,
         interlaceMethod: interlace
+    }
+
+public Chunk decodeIEND([byte] bytes, int pos):
+    return {
+        type: IEND_TYPE,
+        data: []
     }
 
 // the Pallette length must be divisible by three
