@@ -92,9 +92,6 @@ public Image toImage(PNG png) throws Error:
     else:
         lineLength = lineLength + 1 // +1 for filter method
     // second, do the filtering!
-    debug "LINE LENGTH: " + lineLength + "\n"
-    debug "DEPTH: " + png.bitDepth + "\n"
-    debug "WIDTH: " + png.width + "\n"
     pos = 0
     h = png.height
     while h > 0:
@@ -104,11 +101,9 @@ public Image toImage(PNG png) throws Error:
         switch method:
             case 0b: 
                 // None 
-                debug "NONE\n"
                 pos = end
             case 1b:
                 // Sub
-                debug "Sub\n"
                 a = 0
                 while pos < end:                
                     a = (Byte.toUnsignedInt(data[pos]) + a) % 256
@@ -117,7 +112,6 @@ public Image toImage(PNG png) throws Error:
                 // Done Sub
             case 10b:
                 // UP
-                debug "Up\n"
                 up = pos - lineLength
                 while pos < end:
                     b = Byte.toUnsignedInt(data[up])
@@ -128,7 +122,6 @@ public Image toImage(PNG png) throws Error:
                 // Done Up
             case 11b:
                 // Average
-                debug "Average\n"
                 a = 0
                 up = pos - lineLength
                 while pos < end:
@@ -140,7 +133,6 @@ public Image toImage(PNG png) throws Error:
               // Done Average
             case 100b:
                 // Paeth
-                debug "Paeth\n"
                 a = 0
                 c = 0
                 up = pos - lineLength
