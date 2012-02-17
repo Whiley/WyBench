@@ -13,10 +13,10 @@ public void ::main(System.Console sys):
     file = File.Reader(sys.args[0])
     contents = file.read()
     try:
-        gzip = GZip.decompress(contents)
-        sys.out.println(String.fromASCII(gzip.data))
-        // png = PNG.decode(contents)
-        // data = PNG.decompress(png)
+        // gzip = GZip.decompress(contents)
+        // sys.out.println(String.fromASCII(gzip.data))
+        png = PNG.decode(contents)
+        data = PNG.decompress(png)
         //image = GIF.toImage(gif,gif.images[0])
         //BMPEncoder.write(Image(image.width,image.height,image.data),"file.bmp")
     catch(Error e):

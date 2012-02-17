@@ -74,12 +74,11 @@ public [byte] decompress([byte] data) throws Error:
     CINFO = Byte.toUnsignedInt(CMF >> 4)
     FLG = data[1]
     
-    FCHECK = (FLG & 00001111b)
-    FDICT  = (FLG & 00010000b) != 0b
-    FLEVEL = Byte.toUnsignedInt((FLG >> 6) & 11b)
+    FCHECK = (FLG & 00011111b)
+    FDICT  = (FLG & 00100000b) != 0b
+    FLEVEL = Byte.toUnsignedInt(FLG >> 6)
 
     if FDICT:
-        debug "*** PROBLEM: ZLIB STREAM HAS FDICT ***\n"
         DICTID = data[2 .. 6]
         index = 6
     else:
