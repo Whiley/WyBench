@@ -21,10 +21,9 @@ public [byte] ::encode(Image img):
 	packed = 10000000b //Always Include the Global Colour Table
 	
 	list, size = getColorTable(img.data)
-	res = Int.toUnsignedByte(size-2)
-	debug "Resolution: " + res + "->" + (res << 4) + "\n"
-	res = res << 4
-	packed = packed | res // Resolution
+	res = Int.toUnsignedByte(size-2) //Image Resolution
+	res = res << 4 //Needs to be shifted to the correct position so it can be OR'd 
+	packed = packed | res 
 	packed = packed | Int.toUnsignedByte(size-1)
 	data = data + [packed]
 	data = data + [Int.toUnsignedByte(0)] // Background Colour Index
@@ -33,12 +32,10 @@ public [byte] ::encode(Image img):
 	//--------------------------
 	// GLOBAL COLOUR TABLE
 	//--------------------------
-	//lookupTable = [] // To be used in the encoding process
 	for item in list:
 		data = data + [Int.toUnsignedByte(Math.round(item.red*255))]
 		data = data + [Int.toUnsignedByte(Math.round(item.green*255))]
 		data = data + [Int.toUnsignedByte(Math.round(item.blue*255))]
-		//lookupTable = lookupTable + [item]
 	
 	//--------------------------
 	// Image Descriptor
@@ -50,51 +47,67 @@ public [byte] ::encode(Image img):
 	data = data + padUnsignedInt(img.height,2)
 	data = data + padUnsignedInt(0,1) //Packed byte
 	
-	//Time to Encode and compress the image data
-	debug "Beginning Encode\n"
+	//--------------------------
+	// Data Encoding
+	//--------------------------
 	codes = encodeGif(img.data, list, size)
-	debug "Size: " + size + "\n"
-	data = data + [Int.toUnsignedByte(size)]
+	data = data + [Int.toUnsignedByte(size)] //Write the compression MinSize
 	
+	//--------------------------
+	// LZW Writing
+	// Image sub-blocks can be a max of 255 bytes long, including the length byte
+	// Therefore, the bytes need to be broken up into chunks of 254 bytes
+	//--------------------------
 	while |codes| > 254:
 		data = data + [Int.toUnsignedByte(254)]
-		codesToWrite = codes[0..254]
-		data = data + codesToWrite
+		data = data + codes[0..254]
 		codes = codes[254..]
 	
+	// Add the last remaining block
 	data = data + [Int.toUnsignedByte(|codes|)]
-	
-	debug "Adding Last Codes of Length: " + |codes| + "\n"
 	data = data + codes
-	debug "Size of all data: " + |data| + "\n"
+	
+	//--------------------------
+	// Image Finalising. 
+	//--------------------------
 	data = data + padUnsignedInt(0, 1) //No More Data left
-	data = data + List.reverse(Int.toUnsignedBytes(0x3B)) 
+	data = data + List.reverse(Int.toUnsignedBytes(0x3B)) //Trailer Byte
+	
 	return data
-
+	
+	
 [byte] padUnsignedInt(int i, int padLength):
 	data = Int.toUnsignedBytes(i)
 	for j in |data|..padLength:
 		data = data + [00000000b]
 	return data
-
+	
+//--------------------------
+// Gif Encode Routine
+// @param array - List of RGBA values from the Image
+// @param lookup - A dictionary of the RGBA values that exist in the image 
+// This allows us to turn the RGBA array into a lookup code array
+// @param codeWidth - Minimum LZW code word size
+//--------------------------
 [byte] ::encodeGif([RGBA] array, [RGBA] lookup, int codeWidth):
 	codes = [] //Codes holds the list of table values
+	//Convert RGBA array into index Array
 	for rgb in array:
 		codes = codes + [indexOf(lookup, rgb)]
-	bytes = []	
-	//Define Encoding Variables
-	clearCode = Math.pow(2, codeWidth)
-	endOfInformation = clearCode + 1
-	codeSizeLimit = clearCode * 2
+	
+	//--------------------------
+	// Encode Variables
+	//--------------------------
+	clearCode = Math.pow(2, codeWidth) // Clear Code - The code that tells a decoder to reset the dictionary
+	endOfInformation = clearCode + 1 
 	codeSize = codeWidth + 1
-	maximumSize = 4095 //This is a constant. If the dictionary is this size, then the dict needs to be reset, and a reset code appended
 	currentMaxSize = Math.pow(2, codeWidth)
 	written = 1
-	//Dict is the Code Lookup Table
-	writer = BlockBuffer.Writer()
 	dict = []
 	for i in 0 .. clearCode + 2:
 		dict = dict + [[i]]
+	writer = BlockBuffer.Writer()
+	
 	
 	writer = compressInt(writer, clearCode, codeSize)
 	
@@ -102,32 +115,27 @@ public [byte] ::encode(Image img):
 	iK = [] //This stores the Index Buffer + k value. Saves recomputing multiple times
 	for i in 0..|codes|:
 		k = codes[i]
-		//for elem in indexBuffer:
-		//	iK = iK + [elem]
 		iK = indexBuffer + [k]
-		//iK = iK + [k]
-		
 		
 		if indexOf(dict, iK) != -1:
 			//Means this exists in the Dictionary. Therefore, append it to the buffer, and continue
 			indexBuffer = indexBuffer + [k]
 		else:
-			dict = dict + [iK]
-			vToWrite = indexOf(dict, indexBuffer)
-			
-			writer = compressInt(writer, vToWrite, codeSize)
+			dict = dict + [iK] // Add this entry to the dictionary, as it doesn't exist
+			writer = compressInt(writer, indexOf(dict, indexBuffer), codeSize)
 			
 			written = written + 1
 			indexBuffer = [k]
+			
 			if written == currentMaxSize:
 				//The Dictionary is too full. Need to increase bit length
 				written = 0
 				if codeSize == 12:
-					//Hit max width
-					byes = bytes + writer.data
+					//Max width of LZW Reached. need to reset the dictionary
+					// and Codewidth
 					writer = compressInt(writer, clearCode, codeSize)
 					codeSize = codeWidth +1
-					indexBuffer = []
+					indexBuffer = [] // Reset the Index Buffer
 					written = 1
 					dict = []
 					for j in 0 .. clearCode + 2:
@@ -141,6 +149,15 @@ public [byte] ::encode(Image img):
 	
 	return writer.data
 
+
+//--------------------------
+// Gif Encode Routine
+// @param writer - The Writer to write the bits to
+// @param value - The integer to writer
+// @param width - The width (in bits) that the integer written
+// @Example - Writing 2 with a width of 5 would write out 00010b
+//--------------------------
+
 BlockBuffer.Writer ::compressInt(BlockBuffer.Writer write, int value, int width):
 	
 	bytes = Int.toUnsignedBytes(value)
@@ -148,7 +165,7 @@ BlockBuffer.Writer ::compressInt(BlockBuffer.Writer write, int value, int width)
 		//The Writer requires >8 bits to be read, but the top values are all zero.
 		//This just pads out the byte array so the writer can process the small value
 		bytes = bytes + [00000000b] 
-	//debug "Writing Int: " + value + " Width: " + width +  " Bytes: " + bytes + "\n"
+	
 	pos = 0 //The position in the current Byte. If this becomes > 8, read the other byte
 	currentByte = bytes[0]
 	for i in 0..width:
@@ -161,10 +178,8 @@ BlockBuffer.Writer ::compressInt(BlockBuffer.Writer write, int value, int width)
 		
 		pos = pos + 1
 		if pos == 8 && width > 8:
-			//debug "Bytes: " + bytes + "\n"
 			currentByte = bytes[1]
 			pos = 0
-	//debug "" +  write.data + "\n"
 	return write
 
 int indexOf([any] array, any element):
@@ -177,14 +192,12 @@ int indexOf([any] array, any element):
 	table = {}
 	for i in 0..|array|:
 		table = table + {array[i]}
-	
 	tableArray = []
 	for element in table:
 		tableArray = tableArray + [element]
 	
 	loop = 1
 	while Math.pow(2, loop) < |table|:
-		//debug "MathPower: " + Math.pow(2, init) + " Init: " + init + " Table Size: " + |table| + "\n"
 		loop = loop + 1
 	
 	for i in |table|..Math.pow(2, loop):
