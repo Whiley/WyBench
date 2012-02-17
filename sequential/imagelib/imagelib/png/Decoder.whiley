@@ -55,7 +55,6 @@ public (Chunk,int) decodeChunk([byte] bytes,int pos) throws Error:
     length = Byte.toUnsignedInt(bytes[pos+4..pos])
     pos = pos + 4
     type = Byte.toUnsignedInt(bytes[pos..pos+4])
-    debug String.fromASCII(bytes[pos..pos+4]) + " : " + Int.toHexString(type) + "\n"
     pos = pos + 4
     switch type:
         case IHDR_TYPE:

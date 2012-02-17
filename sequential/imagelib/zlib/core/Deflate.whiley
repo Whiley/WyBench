@@ -188,7 +188,6 @@ public [byte] decompress([byte] data) throws Error:
             reader = BitBuffer.skipToByteBoundary(reader)
             LEN,reader = BitBuffer.readUnsignedInt(reader,16)
             NLEN,reader = BitBuffer.readUnsignedInt(reader,16)
-            debug "TO READ: " + LEN + " bytes\n"
             bytes,reader = BitBuffer.readBytes(reader,LEN)            
             output = output + bytes
         else:
@@ -260,7 +259,7 @@ public [byte] decompress([byte] data) throws Error:
     for i in 0..32:
         distLengths = distLengths + [5]
     // generate distance codes
-    distCodes = Huffman.generate(litLengths)
+    distCodes = Huffman.generate(distLengths)
     // finally, create the distance tree.
     distTree = Huffman.Empty()
     for i in 0..|distCodes|:

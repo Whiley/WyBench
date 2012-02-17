@@ -84,7 +84,7 @@ public [byte] decompress([byte] data) throws Error:
     else:
         DICTID = null
         index = 2
-        
+       
     // now decompress the actual data
     data = Deflate.decompress(data[index..])    
 
