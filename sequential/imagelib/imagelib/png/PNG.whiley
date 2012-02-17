@@ -83,7 +83,7 @@ public Image toImage(PNG png) throws Error:
             throw Error("PNG color type not supported (" + png.colorType + ")")
     // should read alpha here
 
-[byte] filter(PNG png, [byte] data):
+[byte] filter(PNG png, [byte] data) throws Error:
     // first, determine number of bytes per scanline
     wbd = png.width * png.bitDepth
     lineLength = wbd / 8
@@ -96,7 +96,8 @@ public Image toImage(PNG png) throws Error:
     debug "DEPTH: " + png.bitDepth + "\n"
     debug "WIDTH: " + png.width + "\n"
     pos = 0
-    for h in 0 .. png.height:
+    h = png.height
+    while h > 0:
         method = data[pos]
         end = pos + lineLength
         pos = pos + 1
@@ -150,7 +151,10 @@ public Image toImage(PNG png) throws Error:
                     pos = pos + 1
                     up = up + 1
                 // Done Paeth
-        // done for h
+            default:
+                throw Error("invalid PNG file (invalid filter method: " + method + ")")
+        h = h - 1
+        // done for h        
     return data // do nout
 
 int PaethPredictor(int a, int b, int c):
@@ -160,12 +164,11 @@ int PaethPredictor(int a, int b, int c):
     pb = Math.abs(p - b)
     pc = Math.abs(p - c)
     if pa <= pb && pa <= pc:
-        Pr = a
+        return a
     else if pb <= pc:
-        Pr = b
+        return b
     else:
-        Pr = c
-    return Pr
+        return c
 
 Image toImageGrayScale(PNG png, [byte] data) throws Error:
     image = []
@@ -201,8 +204,6 @@ Image toImageIndexed(PNG png, [byte] data) throws Error:
     for h in 0 .. png.height:
         // first, read filter type
         ft,reader = BitBuffer.readUnsignedInt(reader,8)
-        if ft != 0:
-            debug "*** WARNING: PNG SCANLINE FILTERING NOT PERFORMED ***\n"
         // what to do with the filter type?
         // second, read scan-line
         for w in 0 .. png.width:
