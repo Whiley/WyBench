@@ -236,10 +236,39 @@ public [byte] decompress([byte] data) throws Error:
     // finally, return uncompressed data
     return output
 
-(Huffman.Tree,Huffman.Tree) fixedHuffmanCodes():
+(Huffman.Tree,Huffman.Tree) initFixedHuffmanCodes() throws Error:
+    // first, construct the literal code lengths
+    litLengths = []
+    for i in 0..144:
+        litLengths = litLengths + [8]
+    for i in 144..256:
+        litLengths = litLengths + [9]
+    for i in 256..280:
+        litLengths = litLengths + [7]
+    for i in 280..288:
+        litLengths = litLengths + [8]
+    // second, generate the literal codes
+    litCodes = Huffman.generate(litLengths)
+    // finally, create the literal tree.
     litTree = Huffman.Empty()
+    for i in 0..|litCodes|:
+        code = litCodes[i]
+        if code != null:
+            litTree = Huffman.put(litTree,code,i)
+    // done, now repeat for the distances
+    distLengths = []
+    for i in 0..32:
+        distLengths = distLengths + [5]
+    // generate distance codes
+    distCodes = Huffman.generate(litLengths)
+    // finally, create the distance tree.
     distTree = Huffman.Empty()
-    // FOR HERE
+    for i in 0..|distCodes|:
+        code = distCodes[i]
+        if code != null:
+            distTree = Huffman.put(distTree,code,i)
+    // done
+    return litTree,distTree
 
 (Huffman.Tree,Huffman.Tree,BitBuffer.Reader) readDynamicHuffmanCodes(BitBuffer.Reader reader) throws Error:
     // first, read header information
@@ -272,7 +301,8 @@ public [byte] decompress([byte] data) throws Error:
     for i in 0..|distCodes|:
         code = distCodes[i]
         if code != null:
-            distTree = Huffman.put(distTree,code,i)    
+            distTree = Huffman.put(distTree,code,i) 
+            
     // done
     return (litTree,distTree,reader)
 

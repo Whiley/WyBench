@@ -37,12 +37,12 @@ public define GZip as {
     [byte] data
 }
 
-public GZip decompress([byte] data) throws string|Error:
+public GZip decompress([byte] data) throws Error:
     // first, check magic number
     ID1 = Byte.toUnsignedInt(data[0])
     ID2 = Byte.toUnsignedInt(data[1])
     if ID1 != 31 || ID2 != 139:
-        throw "invalid gzip file"
+        throw Error("invalid gzip file")
 
     CM = Byte.toUnsignedInt(data[2])
     FLG = data[3]
