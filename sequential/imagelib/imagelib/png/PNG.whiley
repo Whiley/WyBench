@@ -146,14 +146,13 @@ public Image toImage(PNG png) throws Error:
                 up = pos - lineLength
                 while pos < end:
                     b = Byte.toUnsignedInt(data[up])
-                    a = PaethPredictor(a,b,c)
+                    a = Byte.toUnsignedInt(data[pos]) + PaethPredictor(a,b,c)
                     data[pos] = Int.toUnsignedByte(a)
                     c = b
                     pos = pos + 1
                     up = up + 1
                 // Done Paeth
             default:
-                debug "POS: " + pos + "\n"
                 throw Error("invalid PNG file (invalid filter method: " + method + ")")
         h = h - 1
         // done for h        
