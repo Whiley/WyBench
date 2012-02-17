@@ -105,6 +105,7 @@ public Image toImage(PNG png) throws Error:
             case 0b: 
                 // None 
                 debug "NONE\n"
+                pos = end
             case 1b:
                 // Sub
                 debug "Sub\n"
@@ -152,6 +153,7 @@ public Image toImage(PNG png) throws Error:
                     up = up + 1
                 // Done Paeth
             default:
+                debug "POS: " + pos + "\n"
                 throw Error("invalid PNG file (invalid filter method: " + method + ")")
         h = h - 1
         // done for h        
