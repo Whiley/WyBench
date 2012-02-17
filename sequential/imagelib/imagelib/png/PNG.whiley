@@ -146,7 +146,7 @@ public Image toImage(PNG png) throws Error:
                 up = pos - lineLength
                 while pos < end:
                     b = Byte.toUnsignedInt(data[up])
-                    a = Byte.toUnsignedInt(data[pos]) + PaethPredictor(a,b,c)
+                    a = (Byte.toUnsignedInt(data[pos]) + PaethPredictor(a,b,c)) % 256
                     data[pos] = Int.toUnsignedByte(a)
                     c = b
                     pos = pos + 1
