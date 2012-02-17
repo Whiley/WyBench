@@ -71,26 +71,59 @@ public PNG decode([byte] bytes) throws Error:
 public Image toImage(PNG png) throws Error:
     // first, decompress the data
     data = ZLib.decompress(png.data)
+    // second, filter the image
+    filter(png,data)
     // third, construct the image
     switch(png.colorType):
-        case 0:
+        case GREYSCALE,GREYSCALE_WITH_ALPHA:
             return toImageGrayScale(png,data)
-        case 3:
+        case INDEXCOLOR:
             return toImageIndexed(png,data)
-    // errors
-    throw Error("PNG color type not supported (" + png.colorType + ")")
+        default:
+            throw Error("PNG color type not supported (" + png.colorType + ")")
+    // should read alpha here
+
+[byte] filter(PNG png, [byte] data):
+    // first, determine number of bytes per scanline
+    wbd = png.width * png.bitDepth
+    lineLength = wbd / 8
+    if (lineLength * 8) < wbd:
+        lineLength = lineLength + 1
+    // second, do the filtering!
+    pos = 0
+    for h in 0 .. png.height:
+        method = data[pos]
+        pos = pos + 1
+        switch method:
+            case 0: 
+                // None 
+                pos = pos + lineLength
+            case 1:
+                // Sub
+                last = 0
+                for i in pos .. pos + lineLength:                
+                    last = (Byte.toUnsignedInt(data[i]) + last) % 256
+                    data[i] = Int.toUnsignedByte(last)
+                // Done Sub
+        // done for h
+    return data // do nout
 
 Image toImageGrayScale(PNG png, [byte] data) throws Error:
     image = []
     nbits = png.bitDepth
     ncols = Math.pow(2,nbits) - 1
+    pos = 0    
     reader = BitBuffer.Reader(data,0) 
     for h in 0 .. png.height:
+        ft,reader = BitBuffer.read(reader,8)
+        // what to do with the filter type?
+        // second, read scan-line
         for w in 0 .. png.width:
             i,reader = BitBuffer.readUnsignedInt(reader,nbits)
-            c = ((real)i)/ncols
+            c = ((real)i)/ ncols
             rgba = { red: c, green: c, blue: c, alpha: 1.0 }
             image = image + [rgba]
+            pos = pos + 1
         // finished scanline
         reader = BitBuffer.skipToByteBoundary(reader)
     // done image
@@ -107,15 +140,22 @@ Image toImageIndexed(PNG png, [byte] data) throws Error:
     ncols = Math.pow(2,nbits) - 1
     reader = BitBuffer.Reader(data,0) 
     for h in 0 .. png.height:
+        // first, read filter type
+        ft,reader = BitBuffer.readUnsignedInt(reader,8)
+        if ft != 0:
+            debug "*** WARNING: PNG SCANLINE FILTERING NOT PERFORMED ***\n"
+        // what to do with the filter type?
+        // second, read scan-line
         for w in 0 .. png.width:
             i,reader = BitBuffer.readUnsignedInt(reader,nbits)
             c = colors[i]
             // SHOULD BE ABLE TO USE RGBA constructor here!!
-            rgba = { red: ((real)c.red)/ncols, 
-                green: ((real)c.green)/ncols, 
-                blue: ((real)c.blue)/ncols, 
-                alpha: 1.0 }
+            rgba = { red: ((real) c.red)   / ncols, 
+                   green: ((real) c.green) / ncols, 
+                    blue: ((real) c.blue)  / ncols, 
+                   alpha: 1.0 }
             image = image + [rgba]
+
         // finished scanline
         reader = BitBuffer.skipToByteBoundary(reader)
     // done image

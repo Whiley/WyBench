@@ -88,5 +88,4 @@ public [byte] decompress([byte] data) throws Error:
     // now decompress the actual data
     data = Deflate.decompress(data[index..])    
 
-    // finally, return a GZipFile record
     return data
