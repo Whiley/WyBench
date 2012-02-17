@@ -7,13 +7,11 @@ import BlockBuffer
 
 public [byte] ::encode(Image img):
 	data = []
-	currentSize = 0 //DEBUGGING ONLY
 	//--------------------------
 	// MAGIC NUMBER. 'GIF89A'
 	//--------------------------
 	data = data + List.reverse(Int.toUnsignedBytes(0x474946383961))
-	currentSize = currentSize + 6
-	debug "Data Size After Header: " + |data| + " Should be: " + currentSize + "\n"
+	
 	//--------------------------
 	// LOGICAL SCREEN DESCRIPTOR
 	//--------------------------
@@ -21,14 +19,17 @@ public [byte] ::encode(Image img):
 	data = data + padUnsignedInt(img.height, 2)
 	//Write the packed byte
 	packed = 10000000b //Always Include the Global Colour Table
-	packed = packed | 00010000b // Resolution
+	
 	list, size = getColorTable(img.data)
+	res = Int.toUnsignedByte(size-2)
+	debug "Resolution: " + res + "->" + (res << 4) + "\n"
+	res = res << 4
+	packed = packed | res // Resolution
 	packed = packed | Int.toUnsignedByte(size-1)
 	data = data + [packed]
 	data = data + [Int.toUnsignedByte(0)] // Background Colour Index
 	data = data + [Int.toUnsignedByte(0)] // Pixel Aspect Ratio
-	currentSize = currentSize + 7
-	debug "Data Size After Header: " + |data| + " Should be: " + currentSize + "\n"
+	
 	//--------------------------
 	// GLOBAL COLOUR TABLE
 	//--------------------------
@@ -38,8 +39,6 @@ public [byte] ::encode(Image img):
 		data = data + [Int.toUnsignedByte(Math.round(item.green*255))]
 		data = data + [Int.toUnsignedByte(Math.round(item.blue*255))]
 		//lookupTable = lookupTable + [item]
-	currentSize = currentSize + (3*|list|)
-	debug "Data Size After Colour Table: " + |data| + " Should be: " + currentSize + "\n"
 	
 	//--------------------------
 	// Image Descriptor
@@ -50,19 +49,19 @@ public [byte] ::encode(Image img):
 	data = data + padUnsignedInt(img.width,2) //Image Width (As this is only one frame. Just use the entire image)
 	data = data + padUnsignedInt(img.height,2)
 	data = data + padUnsignedInt(0,1) //Packed byte
-	currentSize = currentSize + 10
-	debug "Data Size After Image Descriptor: " + |data| + " Should be: " + currentSize + "\n"
+	
 	//Time to Encode and compress the image data
+	debug "Beginning Encode\n"
 	codes = encodeGif(img.data, list, size)
 	debug "Size: " + size + "\n"
 	data = data + [Int.toUnsignedByte(size)]
-	currentSize = currentSize + 1
-	debug "Data Size After Adding Lead MinSize: " + |data| + " Should be: " + currentSize + "\n"
+	
 	while |codes| > 254:
 		data = data + [Int.toUnsignedByte(254)]
-		
-		data = data + codes[0..254]
+		codesToWrite = codes[0..254]
+		data = data + codesToWrite
 		codes = codes[254..]
+	
 	data = data + [Int.toUnsignedByte(|codes|)]
 	
 	debug "Adding Last Codes of Length: " + |codes| + "\n"
@@ -82,17 +81,15 @@ public [byte] ::encode(Image img):
 	codes = [] //Codes holds the list of table values
 	for rgb in array:
 		codes = codes + [indexOf(lookup, rgb)]
-		
+	bytes = []	
 	//Define Encoding Variables
 	clearCode = Math.pow(2, codeWidth)
-	debug "CodeWidth: " + codeWidth + "\n"
-	debug "Clear Code: " + clearCode + "\n"
 	endOfInformation = clearCode + 1
 	codeSizeLimit = clearCode * 2
 	codeSize = codeWidth + 1
 	maximumSize = 4095 //This is a constant. If the dictionary is this size, then the dict needs to be reset, and a reset code appended
 	currentMaxSize = Math.pow(2, codeWidth)
-	written = 0
+	written = 1
 	//Dict is the Code Lookup Table
 	writer = BlockBuffer.Writer()
 	dict = []
@@ -100,34 +97,38 @@ public [byte] ::encode(Image img):
 		dict = dict + [[i]]
 	
 	writer = compressInt(writer, clearCode, codeSize)
-	written =1 
+	
 	indexBuffer = []
 	iK = [] //This stores the Index Buffer + k value. Saves recomputing multiple times
 	for i in 0..|codes|:
-		iK = []
 		k = codes[i]
-		for elem in indexBuffer:
-			iK = iK + [elem]
-		iK = iK + [k]
-		//debug "Code: " + k + " Index Buffer: " + indexBuffer + " iK: " + iK + "\n"
+		//for elem in indexBuffer:
+		//	iK = iK + [elem]
+		iK = indexBuffer + [k]
+		//iK = iK + [k]
+		
+		
 		if indexOf(dict, iK) != -1:
 			//Means this exists in the Dictionary. Therefore, append it to the buffer, and continue
-			//debug "Found: " + iK + " at Index: " + indexOf(dict, iK) + "\n"
 			indexBuffer = indexBuffer + [k]
 		else:
 			dict = dict + [iK]
 			vToWrite = indexOf(dict, indexBuffer)
+			
 			writer = compressInt(writer, vToWrite, codeSize)
+			
 			written = written + 1
 			indexBuffer = [k]
-			//debug "Written: " + written + " Max: " + currentMaxSize + "\n"
 			if written == currentMaxSize:
 				//The Dictionary is too full. Need to increase bit length
 				written = 0
 				if codeSize == 12:
 					//Hit max width
+					byes = bytes + writer.data
 					writer = compressInt(writer, clearCode, codeSize)
 					codeSize = codeWidth +1
+					indexBuffer = []
+					written = 1
 					dict = []
 					for j in 0 .. clearCode + 2:
 						dict = dict + [[j]]
