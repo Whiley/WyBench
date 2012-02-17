@@ -6,7 +6,7 @@ import imagelib.core.RGBA
 import imagelib.core.Image
 
 
-public BMP ::readBMP([byte] data) throws Error:
+public BMP ::decode([byte] data) throws Error:
 	pos = 0
 	// =========================
 	// BMP FILE HEADER
