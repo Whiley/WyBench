@@ -36,7 +36,9 @@ import u32 from whiley.lang.Int
 import u16 from whiley.lang.Int
 import u8 from whiley.lang.Int
 
+import zlib.util.BitBuffer
 import zlib.io.ZLib // for decompression.
+import * from imagelib.core.Image
 
 define PNG_MAGIC as 0x0A1A0A0D474E5089
 
@@ -45,8 +47,19 @@ define PNG_MAGIC as 0x0A1A0A0D474E5089
 // ==============================================================================
 
 define PNG as {
-    [Chunk] chunks
-}
+    // from IHDR
+    u32 width,
+    u32 height,
+    BitDepth bitDepth,
+    ColorType colorType,
+    CompressionMethod  compression,
+    u8 filterMethod,
+    u8 interlaceMethod,
+    // from PLTE
+    [RGB] colors,
+    // from IDAT(s)
+    [byte] data // compressed    
+} where width > 0 && height > 0 && bitDepth in ValidColorDepths[colorType]
 
 // Decode a stream of bytes representing a PNG file.  Note, that this
 // does not decompress the given image and a subsequent call to
@@ -54,15 +67,63 @@ define PNG as {
 public PNG decode([byte] bytes) throws Error:
     return Decoder.decode(bytes)
 
-// Decompress a given PNG file to generat the image it represents.
-public [byte] decompress(PNG png) throws Error:
-    data = []
-    // first, accumulate all data
-    for chunk in png.chunks:
-        if chunk is IDAT:
-            data = data + chunk.data
-    // second, decompress the full data
-    return ZLib.decompress(data)
+// Decompress a given PNG file to generate the image it represents.
+public Image toImage(PNG png) throws Error:
+    // first, decompress the data
+    data = ZLib.decompress(png.data)
+    // third, construct the image
+    switch(png.colorType):
+        case 0:
+            return toImageGrayScale(png,data)
+        case 3:
+            return toImageIndexed(png,data)
+    // errors
+    throw Error("PNG color type not supported (" + png.colorType + ")")
+
+Image toImageGrayScale(PNG png, [byte] data) throws Error:
+    image = []
+    nbits = png.bitDepth
+    ncols = Math.pow(2,nbits) - 1
+    reader = BitBuffer.Reader(data,0) 
+    for h in 0 .. png.height:
+        for w in 0 .. png.width:
+            i,reader = BitBuffer.readUnsignedInt(reader,nbits)
+            c = ((real)i)/ncols
+            rgba = { red: c, green: c, blue: c, alpha: 1.0 }
+            image = image + [rgba]
+        // finished scanline
+        reader = BitBuffer.skipToByteBoundary(reader)
+    // done image
+    return {
+        width: png.width,
+        height: png.height,
+        data: image        
+    }
+
+Image toImageIndexed(PNG png, [byte] data) throws Error:
+    image = []
+    colors = png.colors
+    nbits = png.bitDepth
+    ncols = Math.pow(2,nbits) - 1
+    reader = BitBuffer.Reader(data,0) 
+    for h in 0 .. png.height:
+        for w in 0 .. png.width:
+            i,reader = BitBuffer.readUnsignedInt(reader,nbits)
+            c = colors[i]
+            // SHOULD BE ABLE TO USE RGBA constructor here!!
+            rgba = { red: ((real)c.red)/ncols, 
+                green: ((real)c.green)/ncols, 
+                blue: ((real)c.blue)/ncols, 
+                alpha: 1.0 }
+            image = image + [rgba]
+        // finished scanline
+        reader = BitBuffer.skipToByteBoundary(reader)
+    // done image
+    return {
+        width: png.width,
+        height: png.height,
+        data: image        
+    }
 
 // ==============================================================================
 // Chunk
@@ -166,8 +227,8 @@ public define IHDR as { // Image Header
     BitDepth bitDepth,
     ColorType colorType,
     CompressionMethod  compression,
-    u8  filterMethod,
-    u8  interlaceMethod
+    u8 filterMethod,
+    u8 interlaceMethod
 } where width > 0 && height > 0 && bitDepth in ValidColorDepths[colorType]
 
 public IHDR IHDR(u32 width, u32 height, BitDepth bitDepth, ColorType colorType, CompressionMethod compression, u8 filterMethod, u8 interlaceMethod):

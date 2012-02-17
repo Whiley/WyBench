@@ -39,12 +39,33 @@ public PNG decode([byte] bytes) throws Error:
         throw Error("invalid PNG file (bad signature)")
     // second, read chunks
     pos = 8
-    chunks = []
+    // IHDR
+    header,pos = decodeChunk(bytes,pos)
+    if !(header is IHDR):
+        throw Error("invalid PNG file (should start with IHDR)")
+    // REST
+    data = []
+    colors = []
     while pos < |bytes|:
         chunk,pos = decodeChunk(bytes,pos)
-        chunks = chunks + [chunk]
+        if chunk is IDAT:
+            data = data + chunk.data
+        else if chunk is PLTE:
+            colors = chunk.colors
+    // finally, construct PNG abstraction
     return {
-        chunks: chunks
+        // from IHDR
+        width: header.width,
+        height: header.height,
+        bitDepth: header.bitDepth,
+        colorType: header.colorType,
+        compression: header.compression,
+        filterMethod: header.filterMethod,
+        interlaceMethod: header.interlaceMethod,
+        // from PLTE
+        colors: colors,
+        // from IDAT(s)
+        data: data
     }
 
 // ==============================================================================

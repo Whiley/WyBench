@@ -40,6 +40,9 @@ public Reader Reader([byte] data, int start):
         data: data
     }
 
+public bool hasMore(Reader reader):
+    return reader.index < |reader.data|
+
 public (bool,Reader) read(Reader reader):
     boff = reader.boff
     // first, read the current bit

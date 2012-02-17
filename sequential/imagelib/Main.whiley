@@ -16,9 +16,9 @@ public void ::main(System.Console sys):
         // gzip = GZip.decompress(contents)
         // sys.out.println(String.fromASCII(gzip.data))
         png = PNG.decode(contents)
-        data = PNG.decompress(png)
+        img = PNG.toImage(png)
         //image = GIF.toImage(gif,gif.images[0])
-        //BMPEncoder.write(Image(image.width,image.height,image.data),"file.bmp")
+        BMPEncoder.write(img,"file.bmp")
     catch(Error e):
         sys.out.println("Error: " + e.msg)
 
