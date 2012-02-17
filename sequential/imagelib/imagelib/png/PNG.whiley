@@ -72,7 +72,7 @@ public Image toImage(PNG png) throws Error:
     // first, decompress the data
     data = ZLib.decompress(png.data)
     // second, filter the image
-    filter(png,data)
+    data = filter(png,data)
     // third, construct the image
     switch(png.colorType):
         case GREYSCALE,GREYSCALE_WITH_ALPHA:
@@ -88,25 +88,84 @@ public Image toImage(PNG png) throws Error:
     wbd = png.width * png.bitDepth
     lineLength = wbd / 8
     if (lineLength * 8) < wbd:
-        lineLength = lineLength + 1
+        lineLength = lineLength + 2
+    else:
+        lineLength = lineLength + 1 // +1 for filter method
     // second, do the filtering!
+    debug "LINE LENGTH: " + lineLength + "\n"
+    debug "DEPTH: " + png.bitDepth + "\n"
+    debug "WIDTH: " + png.width + "\n"
     pos = 0
     for h in 0 .. png.height:
         method = data[pos]
+        end = pos + lineLength
         pos = pos + 1
         switch method:
-            case 0: 
+            case 0b: 
                 // None 
-                pos = pos + lineLength
-            case 1:
+                debug "NONE\n"
+            case 1b:
                 // Sub
-                last = 0
-                for i in pos .. pos + lineLength:                
-                    last = (Byte.toUnsignedInt(data[i]) + last) % 256
-                    data[i] = Int.toUnsignedByte(last)
+                debug "Sub\n"
+                a = 0
+                while pos < end:                
+                    a = (Byte.toUnsignedInt(data[pos]) + a) % 256
+                    data[pos] = Int.toUnsignedByte(a)
+                    pos = pos + 1
                 // Done Sub
+            case 10b:
+                // UP
+                debug "Up\n"
+                up = pos - lineLength
+                while pos < end:
+                    b = Byte.toUnsignedInt(data[up])
+                    a = (Byte.toUnsignedInt(data[pos]) + b) % 256
+                    data[pos] = Int.toUnsignedByte(a)
+                    pos = pos + 1
+                    up = up + 1
+                // Done Up
+            case 11b:
+                // Average
+                debug "Average\n"
+                a = 0
+                up = pos - lineLength
+                while pos < end:
+                    b = Byte.toUnsignedInt(data[up])
+                    a = (Byte.toUnsignedInt(data[pos]) + (a + b)/2) % 256
+                    data[pos] = Int.toUnsignedByte(a)
+                    pos = pos + 1
+                    up = up + 1
+              // Done Average
+            case 100b:
+                // Paeth
+                debug "Paeth\n"
+                a = 0
+                c = 0
+                up = pos - lineLength
+                while pos < end:
+                    b = Byte.toUnsignedInt(data[up])
+                    a = PaethPredictor(a,b,c)
+                    data[pos] = Int.toUnsignedByte(a)
+                    c = b
+                    pos = pos + 1
+                    up = up + 1
+                // Done Paeth
         // done for h
     return data // do nout
+
+int PaethPredictor(int a, int b, int c):
+    // I really like how close to the origin pseudo-code this is!        
+    p = a + b - c
+    pa = Math.abs(p - a)
+    pb = Math.abs(p - b)
+    pc = Math.abs(p - c)
+    if pa <= pb && pa <= pc:
+        Pr = a
+    else if pb <= pc:
+        Pr = b
+    else:
+        Pr = c
+    return Pr
 
 Image toImageGrayScale(PNG png, [byte] data) throws Error:
     image = []
