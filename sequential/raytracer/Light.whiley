@@ -1,0 +1,3 @@
+public define Light as {
+
+}
