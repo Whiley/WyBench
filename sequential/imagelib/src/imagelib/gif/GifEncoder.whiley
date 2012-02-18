@@ -45,7 +45,7 @@ int searchDict([int] val, Encoder e):
 	if |val| == 1:
 		startVal = 0
 	else:
-		startVal = e.clearCode+2
+		startVal = arrayMax(val)
 	for i in startVal..|e.dict|:
 		if val == e.dict[i]:
 			return i
@@ -146,15 +146,10 @@ public [byte] ::encode(Image img):
 	//--------------------------
 	encoder = makeEncoder(codeWidth)
 	//clearCode = Math.pow(2, codeWidth) // Clear Code - The code that tells a decoder to reset the dictionary
-	//endOfInformation = clearCode + 1 
 	codeSize = codeWidth + 1
 	currentMaxSize = Math.pow(2, codeWidth)
 	written = 1
-	//dict = []
-	//for i in 0 .. clearCode + 2:
-		//dict = dict + [[i]]
 	writer = BlockBuffer.Writer()
-	
 	writer = compressInt(writer, encoder.clearCode, codeSize)
 	
 	indexBuffer = []
@@ -165,12 +160,10 @@ public [byte] ::encode(Image img):
 		
 		if searchDict(iK, encoder) != -1:
 			//Means this exists in the Dictionary. Therefore, append it to the buffer, and continue
-			indexBuffer = indexBuffer + [k]
+			indexBuffer = iK
 		else:
-			//dict = dict + [iK] // Add this entry to the dictionary, as it doesn't exist
 			encoder = addDictEntry(encoder, iK)
 			writer = compressInt(writer, searchDict(indexBuffer, encoder), codeSize)
-			
 			written = written + 1
 			indexBuffer = [k]
 			
@@ -183,13 +176,8 @@ public [byte] ::encode(Image img):
 					writer = compressInt(writer, encoder.clearCode, codeSize)
 					codeSize = codeWidth +1
 					indexBuffer = [] // Reset the Index Buffer
-					
 					written = 1
 					encoder = resetEncoder(encoder)
-					//dict = []
-					//for j in 0 .. clearCode + 2:
-						//dict = dict + [[j]]
-					
 				else:
 					codeSize = codeSize + 1
 				currentMaxSize = Math.pow(2, codeSize-1)
@@ -237,6 +225,12 @@ int indexOf([any] array, any element):
 			return i
 	return -1
 
+	
+int arrayMax([int] array):
+	max = 0
+	for element in array:
+		max = Math.max(max, element)
+	return max
 ([RGBA], int) getColorTable([RGBA] array):
 	table = {}
 	for i in 0..|array|:
