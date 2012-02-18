@@ -42,10 +42,7 @@ int searchDict([int] val, Encoder e):
 	//All values between 0..clearCode + 2 are single int arrays
 	//Therefore, if the size of the array is bigger than 1, you can skip those
 	//Values. Should be a bit faster
-	if |val| == 1:
-		startVal = 0
-	else:
-		startVal = arrayMax(val)
+	startVal = arrayMax(val)
 	for i in startVal..|e.dict|:
 		if val == e.dict[i]:
 			return i
@@ -173,6 +170,7 @@ public [byte] ::encode(Image img):
 				if codeSize == 12:
 					//Max width of LZW Reached. need to reset the dictionary
 					// and Codewidth
+					writer = compressInt(writer, searchDict(iK, encoder), codeSize)
 					writer = compressInt(writer, encoder.clearCode, codeSize)
 					codeSize = codeWidth +1
 					indexBuffer = [] // Reset the Index Buffer
