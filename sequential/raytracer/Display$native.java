@@ -19,8 +19,8 @@ import wyjc.runtime.List;
  */
 public class Display$native extends Canvas {
     
-	private static final int WIDTH = 128;
-	private static final int HEIGHT = 128;
+	private static final int WIDTH = 256;
+	private static final int HEIGHT = 256;
 	
 	private static BufferedImage offscreen = null;
 	public void paint(Graphics g) {	

@@ -3,6 +3,7 @@ import Colour
 import Point
 import Sphere
 import Vector
+import Light
 
 // A Scene is made up of zero or more objects, and zero or more light
 // sources.  The position of the camera is also required.  However, 
@@ -10,19 +11,25 @@ import Vector
 // z-axis, and containing position 0,0,0
 define Scene as {
     [Sphere] objects,
-    [Point] lights,  
+    [Light] lights,
+    Colour ambient, // ambient light      
     Point camera                         
 }
 
-public Scene Scene([Sphere] objects, [Point] lights, Point camera):
-    return { objects: objects, lights: lights, camera: camera }
+public Scene Scene([Sphere] objects, [Light] lights, Colour ambient, Point camera):
+    return { 
+        objects: objects, 
+        lights: lights, 
+        ambient: ambient,
+        camera: camera 
+    }
 
 public [Colour] ::render(Scene scene, int width, int height):
     pixels = []
     total = width*height
     count = 0
-    for i in 0..width:
-        for j in 0..height:
+    for i in 0 .. width:
+        for j in 0 .. height:
             vec = Point.subtract(Point(i,j,0),scene.camera)
             ray = Ray(scene.camera,vec)
             col = rayCast(scene,ray)
@@ -37,14 +44,13 @@ public Colour rayCast(Scene scene, Ray ray):
         r = Sphere.intersect(s,ray)
         if r != null:
             entry,exit = r
-            i = lightCast(scene,entry,s)
-            return Colour(i,i,i)
+            return lightCast(scene,entry,s)
     return Colour.BLACK
 
-public real lightCast(Scene scene, Point pt, Sphere h):
-    intensity = 0.0
-    for s in scene.lights:
-        ray = Ray(pt,Point.subtract(s,pt))
+public Colour lightCast(Scene scene, Point pt, Sphere h):
+    colour = scene.ambient
+    for light in scene.lights:
+        ray = Ray(pt,Point.subtract(light.point,pt))
         intersection = false
         // determine whether light obstructed by something
         for o in scene.objects:
@@ -55,7 +61,6 @@ public real lightCast(Scene scene, Point pt, Sphere h):
                     break
         if !intersection:
             // not obstructed
-            magnitude = Vector.length(ray.direction)
-            i = 1000.0 / (magnitude * magnitude)
-            intensity = Math.min(1.0,intensity + i)
-    return intensity            
+            c = Light.colourAt(light,pt)
+            colour = Colour.blend(colour,c)
+    return colour

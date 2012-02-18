@@ -1,7 +1,7 @@
 import Colour
 
-define WIDTH as 128
-define HEIGHT as 128
+define WIDTH as 256
+define HEIGHT as 256
 
 public void ::paint([Colour] pixels):
     reds = []
