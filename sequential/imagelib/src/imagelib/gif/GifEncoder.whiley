@@ -5,6 +5,52 @@ import imagelib.core.RGBA
 import imagelib.core.Image
 import BlockBuffer
 
+define Encoder as {
+	[[int]] dict,
+	int clearCode,
+	int EOICode
+	}
+
+Encoder makeEncoder(int codeWidth):
+	clearCode = Math.pow(2, codeWidth)
+	endOfInformation = clearCode + 1
+	dict = []
+	for i in 0 .. clearCode + 2:
+		dict = dict + [[i]]
+	return {
+	dict: dict,
+	clearCode: clearCode,
+	EOICode: endOfInformation
+	}
+	
+Encoder resetEncoder(Encoder e):
+	return {
+	dict: e.dict[0..(e.clearCode)+2],
+	clearCode: e.clearCode,
+	EOICode: e.EOICode
+	}
+
+Encoder addDictEntry(Encoder e, [int] entry):
+	return {
+		dict: e.dict + [entry],
+		clearCode: e.clearCode,
+		EOICode: e.EOICode
+	}
+int searchDict([int] val, Encoder e):
+	startVal = 0
+	//Little hack to exploit the dictionary.
+	//All values between 0..clearCode + 2 are single int arrays
+	//Therefore, if the size of the array is bigger than 1, you can skip those
+	//Values. Should be a bit faster
+	if |val| == 1:
+		startVal = 0
+	else:
+		startVal = e.clearCode+2
+	for i in startVal..|e.dict|:
+		if val == e.dict[i]:
+			return i
+	return -1
+	
 public [byte] ::encode(Image img):
 	data = []
 	//--------------------------
@@ -98,18 +144,18 @@ public [byte] ::encode(Image img):
 	//--------------------------
 	// Encode Variables
 	//--------------------------
-	clearCode = Math.pow(2, codeWidth) // Clear Code - The code that tells a decoder to reset the dictionary
-	endOfInformation = clearCode + 1 
+	encoder = makeEncoder(codeWidth)
+	//clearCode = Math.pow(2, codeWidth) // Clear Code - The code that tells a decoder to reset the dictionary
+	//endOfInformation = clearCode + 1 
 	codeSize = codeWidth + 1
 	currentMaxSize = Math.pow(2, codeWidth)
 	written = 1
-	dict = []
-	for i in 0 .. clearCode + 2:
-		dict = dict + [[i]]
+	//dict = []
+	//for i in 0 .. clearCode + 2:
+		//dict = dict + [[i]]
 	writer = BlockBuffer.Writer()
 	
-	
-	writer = compressInt(writer, clearCode, codeSize)
+	writer = compressInt(writer, encoder.clearCode, codeSize)
 	
 	indexBuffer = []
 	iK = [] //This stores the Index Buffer + k value. Saves recomputing multiple times
@@ -117,12 +163,13 @@ public [byte] ::encode(Image img):
 		k = codes[i]
 		iK = indexBuffer + [k]
 		
-		if indexOf(dict, iK) != -1:
+		if searchDict(iK, encoder) != -1:
 			//Means this exists in the Dictionary. Therefore, append it to the buffer, and continue
 			indexBuffer = indexBuffer + [k]
 		else:
-			dict = dict + [iK] // Add this entry to the dictionary, as it doesn't exist
-			writer = compressInt(writer, indexOf(dict, indexBuffer), codeSize)
+			//dict = dict + [iK] // Add this entry to the dictionary, as it doesn't exist
+			encoder = addDictEntry(encoder, iK)
+			writer = compressInt(writer, searchDict(indexBuffer, encoder), codeSize)
 			
 			written = written + 1
 			indexBuffer = [k]
@@ -133,19 +180,21 @@ public [byte] ::encode(Image img):
 				if codeSize == 12:
 					//Max width of LZW Reached. need to reset the dictionary
 					// and Codewidth
-					writer = compressInt(writer, clearCode, codeSize)
+					writer = compressInt(writer, encoder.clearCode, codeSize)
 					codeSize = codeWidth +1
 					indexBuffer = [] // Reset the Index Buffer
+					
 					written = 1
-					dict = []
-					for j in 0 .. clearCode + 2:
-						dict = dict + [[j]]
+					encoder = resetEncoder(encoder)
+					//dict = []
+					//for j in 0 .. clearCode + 2:
+						//dict = dict + [[j]]
 					
 				else:
 					codeSize = codeSize + 1
 				currentMaxSize = Math.pow(2, codeSize-1)
-	writer = compressInt(writer, indexOf(dict, indexBuffer), codeSize)
-	writer = compressInt(writer, endOfInformation, codeSize)
+	writer = compressInt(writer, searchDict(indexBuffer, encoder), codeSize)
+	writer = compressInt(writer, encoder.EOICode, codeSize)
 	
 	return writer.data
 
