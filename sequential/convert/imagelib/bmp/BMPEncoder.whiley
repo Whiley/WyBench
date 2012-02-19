@@ -2,56 +2,60 @@ package imagelib.bmp
 
 import * from whiley.lang.*
 import imagelib.core.RGBA
-import * from whiley.io.File
 import imagelib.core.Image
 
-public void ::write(Image img, string filename):
-	writer = File.Writer(filename)
-	//Write out Magic Header
-	writer.write([01000010b, 01001101b]) // "BM"
-	paddingVal = 3*img.width //This is the width of a row in bytes.
+public [byte] encode(Image img):
+	data = []
+	//Append the Magic Header "BM"
+	data = data + [01000010b, 01001101b]
 	
+	
+	paddingVal = 3*img.width //This is the width of a row in bytes.
 	//The total width of a row in the BMP format must be a multiple of Four. 
 	blankBytes = paddingVal % 4
 	if blankBytes != 0:
 		blankBytes = 4 - blankBytes
 	size = 54 + 3*(img.height * img.width) + (blankBytes * img.height)
 	
-	writer.write(padUnsignedInt(size,4)) //Total Size of the BMP file, including header information
-	writer.write(padUnsignedInt(0, 4)) // Two reserved 2 byte blocks. The values can be used for whatever the creation software wants. Leave blank
-	writer.write(padUnsignedInt(54, 4)) // Offset of the Pixel array (Always 54, 14 byte file header, 40 byte Information Header)
+	data = data + padUnsignedInt(size,4) //Total Size of the BMP file, including header information
+	data = data + padUnsignedInt(0, 4) // Two reserved 2 byte blocks. The values can be used for whatever the creation software wants. Leave blank
+	data = data + padUnsignedInt(54, 4) // Offset of the Pixel array (Always 54, 14 byte file header, 40 byte Information Header)
 
 	//Finished Writing Data Header. Writing Info Header
-	writer.write(padUnsignedInt(40, 4)) // Header Size
-	writer.write(padUnsignedInt(img.width, 4)) //Width	
-	writer.write(padUnsignedInt(img.height, 4)) //Height
-	writer.write(padUnsignedInt(1, 2)) //Color Planes (MUST BE ONE)
+	data = data + padUnsignedInt(40, 4) // Header Size
+	data = data + padUnsignedInt(img.width, 4) //Width	
+	data = data + padUnsignedInt(img.height, 4) //Height
+	data = data + padUnsignedInt(1, 2) //Color Planes (MUST BE ONE)
 
-	writer.write(padUnsignedInt(24, 2)) // Bit Depth
-	writer.write(padUnsignedInt(0, 4)) // Compression Value
-	writer.write(padUnsignedInt(size - 54, 4)) // Size of raw Bitmap Data
-	writer.write(padUnsignedInt(2834, 4)) // Horizontal Resolution
-	writer.write(padUnsignedInt(2834, 4))	// Vertical Resolution
-	writer.write(padUnsignedInt(0, 4)) 
-	writer.write(padUnsignedInt(0, 4)) //Important Colours used. This is generally ignored
+	data = data + padUnsignedInt(24, 2) // Bit Depth
+	data = data + padUnsignedInt(0, 4) // Compression Value
+	data = data + padUnsignedInt(size - 54, 4) // Size of raw Bitmap Data
+	data = data + padUnsignedInt(2834, 4) // Horizontal Resolution
+	data = data + padUnsignedInt(2834, 4)	// Vertical Resolution
+	data = data + padUnsignedInt(0, 4)
+	data = data + padUnsignedInt(0, 4) //Important Colours used. This is generally ignored
 	
 	currWidth = 0
+	//Need to do this in order to write the bytes from Bottom to top
 	imageData = []
-	currRow = []
+	currentRow = []
+	debug "Size of Image Data: " + |img.data| + "\n"
 	for col in img.data:
-		currRow = currRow + [Int.toUnsignedByte(Math.round(col.blue*255))]
-		currRow = currRow + [Int.toUnsignedByte(Math.round(col.green*255))]
-		currRow = currRow + [Int.toUnsignedByte(Math.round(col.red*255))]
+		currentRow = currentRow + [Int.toUnsignedByte(Math.round(col.blue*255))]
+		currentRow = currentRow + [Int.toUnsignedByte(Math.round(col.green*255))]
+		currentRow = currentRow + [Int.toUnsignedByte(Math.round(col.red*255))]
+		
 		currWidth = currWidth + 1
 		if currWidth == img.width:
 			currWidth = 0
 			if blankBytes != 0:
-				imageData = imageData + padUnsignedInt(0, blankBytes)
-			imageData = currRow + imageData
-			currRow = []
-	
-	writer.write(imageData)
-	writer.close()
+				currentRow = currentRow + padUnsignedInt(0, blankBytes)
+			imageData = currentRow + imageData
+			currentRow = []
+			
+	data = data + imageData
+	debug "Complete: \n"
+	return data
 	
 public int getBitDepth(Image img, [int] potential):
     numColors = getDistinctColors(img)

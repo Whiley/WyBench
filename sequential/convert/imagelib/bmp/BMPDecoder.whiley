@@ -1,11 +1,12 @@
 package imagelib.bmp
 
 import * from whiley.lang.*
+import * from imagelib.bmp.BMP
 import imagelib.core.RGBA
 import imagelib.core.Image
 
 
-public Image ::readBMP([byte] data) throws Error:
+public BMP ::decode([byte] data) throws Error:
 	pos = 0
 	// =========================
 	// BMP FILE HEADER
@@ -29,6 +30,7 @@ public Image ::readBMP([byte] data) throws Error:
 	
 	pixelArrayOffset = Byte.toUnsignedInt(data[pos..pos+4])
 	pos = pos + 4
+	bmpHeader = BMP.BMPHeader(size, pixelArrayOffset)
 	
 	// =========================
 	// DIB HEADER (Bitmap Information Header)
@@ -76,8 +78,12 @@ public Image ::readBMP([byte] data) throws Error:
 	pos = pos + 4
 	importantColors = Byte.toUnsignedInt(data[pos..pos+4])
 	pos = pos + 4
+	
+	dibHeader = BMP.DIBHeader(40, width, height, bitsPerPixel, imageSize)
+	
 	//data = [] OVERWRITTEN HERE
 	array = []
+	row = []
 	if bitsPerPixel <= 8:
 		throw Error ("Images with less than 16 bpp not supported")
 	else:
@@ -89,22 +95,23 @@ public Image ::readBMP([byte] data) throws Error:
 		dataSize = height*width
 		currWidth = 0
 		for i in 0..dataSize:
-			red = (real)Byte.toUnsignedInt([data[pos]]) /255.0
-			green = (real)Byte.toUnsignedInt([data[pos]]) / 255.0
-			blue = (real)Byte.toUnsignedInt([data[pos]]) / 255.0
+			row = row + [Byte.toUnsignedInt(data[pos+2])] // Blue
+			row = row + [Byte.toUnsignedInt(data[pos+1])] // Green
+			row = row + [Byte.toUnsignedInt(data[pos])] // Red
+			
+			
 			//THIS LINE CAUSES INTERNAL FAILURE. NEED TO FIGURE OUT WHY
 			//Something to do with accidently overwriting the data array (I think)
 			//value = RGBA((real)Byte.toUnsignedInt(data[pos]),(real)Byte.toUnsignedInt(data[pos+1]),(real)Byte.toUnsignedInt(data[pos+2]),0.0)
-			value = RGBA(red, green, blue, 0.0)
+			//value = RGBA(red, green, blue, 0.0)
 			pos = pos + 3
-			array = array+[value]
+			//array = array+[value]
 			currWidth = currWidth + 1
 			if currWidth == width:
 				pos = pos + blankBytes
+				array = row + array
+				row = []
 				currWidth = 0
 			
-	for i in 0..height:
-		for j in 0..width:
-			debug "" + array[(height*width) + width]
-		debug "\n"
-	return Image.Image(width, height, array)
+	
+	return BMP.BMP(bmpHeader, dibHeader, array)

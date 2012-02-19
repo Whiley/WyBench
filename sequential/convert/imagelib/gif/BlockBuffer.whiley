@@ -59,3 +59,38 @@ public (int,Reader) readUnsignedInt(Reader reader, int nbits):
             r = r + base
         base = base * 2
     return r,reader
+
+
+
+define Writer as {
+    int index,  // index of current byte in data
+    int boff,    // bit offset in current byte
+    [byte] data 
+}
+
+public Writer Writer():
+    return {
+        index: 0,
+        boff: 0,
+        data: []
+    }
+
+public Writer write(Writer writer, bool bit):
+    // first, check there's enough space
+    index = writer.index
+    boff = writer.boff
+    if index >= |writer.data|:
+        writer.data = writer.data + [00000000b]
+    // second, write the bit out
+    if bit:
+        mask = 00000001b << boff
+        writer.data[index] = writer.data[index] | mask
+    // third, update offsets
+    boff = boff + 1
+    if boff == 8:
+        writer.boff = 0
+        writer.index = writer.index + 1
+    else:
+        writer.boff = boff
+    // done!
+    return writer
