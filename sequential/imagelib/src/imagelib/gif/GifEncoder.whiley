@@ -37,12 +37,16 @@ Encoder addDictEntry(Encoder e, [int] entry):
 		EOICode: e.EOICode
 	}
 int searchDict([int] val, Encoder e):
-	startVal = 0
-	//Little hack to exploit the dictionary.
-	//All values between 0..clearCode + 2 are single int arrays
-	//Therefore, if the size of the array is bigger than 1, you can skip those
-	//Values. Should be a bit faster
-	startVal = arrayMax(val)
+	//Little hacky search. Used to exploit the order of the dictionary
+	if |val| == 1:
+		return val[0]
+	
+	startVal = Math.max(e.clearCode, arrayMax(val)) 
+	//The above line does two checks. The first is that it looks at the highest element
+	//in the list, and begins the search there, as it couldn't exist before that.
+	//The second check it does it that it begins past the clear code, i.e so that in a
+	//dictionary with 9 bit width, the arrays start at 258, so if the array is [2,3,4], it will
+	//Automatically skip to 258, as opposed to 4
 	for i in startVal..|e.dict|:
 		if val == e.dict[i]:
 			return i
