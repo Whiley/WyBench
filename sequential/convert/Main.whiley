@@ -23,7 +23,10 @@ public void ::main(System.Console sys):
         //         debug "(" + Math.round(c.red*15) +"," + Math.round(c.green*15) + "," + Math.round(c.blue*15) + ")"
         //     debug "\n"
         //image = GIF.toImage(gif,gif.images[0])
-        BMPEncoder.write(img,"file.bmp")
+        bmp = BMPEncoder.encode(img)
+        file = File.Writer("file.bmp")
+        file.write(bmp)
+        file.close()
     catch(Error e):
         sys.out.println("Error: " + e.msg)
 
