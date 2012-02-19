@@ -8,7 +8,7 @@ public Image brighten(Image img, int factor):
 	
 	for i in 0..|img.data|:
 		hs = RGBA.toHSB(img.data[i])
-		hs.b = Math.min(1.0, hs.b*factor)
+		hs.brightness = Math.min(1.0, hs.brightness*factor)
 		img.data[i] = HSB.toRGBA(hs)
 	
 	return img
