@@ -1,7 +1,7 @@
 import rt.util.Colour
 
-define WIDTH as 256
-define HEIGHT as 256
+public define WIDTH as 256
+public define HEIGHT as 256
 
 public void ::paint([Colour] pixels):
     reds = []
