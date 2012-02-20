@@ -192,7 +192,6 @@ Image toImageIndexed(PNG png, [byte] data) throws Error:
     image = []
     colors = png.colors
     nbits = png.bitDepth
-    ncols = Math.pow(2,nbits) - 1
     reader = BitBuffer.Reader(data,0) 
     for h in 0 .. png.height:
         // first, read filter type
@@ -203,9 +202,9 @@ Image toImageIndexed(PNG png, [byte] data) throws Error:
             i,reader = BitBuffer.readUnsignedInt(reader,nbits)
             c = colors[i]
             // SHOULD BE ABLE TO USE RGBA constructor here!!
-            rgba = { red: ((real) c.red)   / ncols, 
-                   green: ((real) c.green) / ncols, 
-                    blue: ((real) c.blue)  / ncols, 
+            rgba = { red: ((real) c.red)   / 255, 
+                   green: ((real) c.green) / 255, 
+                    blue: ((real) c.blue)  / 255, 
                    alpha: 1.0 }
             image = image + [rgba]
 
