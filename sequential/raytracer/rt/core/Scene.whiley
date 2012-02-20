@@ -27,7 +27,7 @@
 package rt.core
 
 import rt.util.*
-import rt.objects.Sphere // TO BE REMOVED
+import rt.objects.Sphere /// TO BE REMOVED
 
 // A Scene is made up of zero or more objects, and zero or more light
 // sources.  The position of the camera is also required.  However, 
@@ -72,11 +72,11 @@ public [Colour] ::render(Scene scene, int width, int height):
     return pixels
 
 public Colour rayCast(Scene scene, Ray ray):
-    for s in scene.objects:
-        r = Sphere.intersect(s,ray)
+    for o in scene.objects:
+        r = Sphere.intersect(o,ray)
         if r != null:
             entry,exit = r
-            return lightCast(scene,entry,s)
+            return lightCast(scene,entry,o)
     return Colour.BLACK
 
 public Colour lightCast(Scene scene, Vector pt, Sphere h):
