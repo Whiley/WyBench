@@ -95,7 +95,7 @@ public Colour lightCast(Scene scene, Vector pt, Sphere h):
         for o in scene.objects:
             if h != o:
                 t = Sphere.intersect(o,ray)
-                if t != null && t > 0:
+                if t != null && t > 0 && t < 1.0:
                     intersection = true
                     break
         if !intersection:
