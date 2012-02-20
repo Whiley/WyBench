@@ -7,7 +7,7 @@
 
   <target name="compile">
     <taskdef name="wyjc" classname="wyjc.util.AntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
-    <wyjc verbose="false" srcdir="." includes="*.whiley"/>
+    <wyjc verbose="false" srcdir="." includes="*.whiley,rt/**/*.whiley"/>
     <javac debug="true" srcdir="." includeantruntime="false" includes="*.java" classpath=".:${env.WHILEY_HOME}/lib/wyjc.jar"/> 
   </target>
 

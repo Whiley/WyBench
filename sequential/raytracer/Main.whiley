@@ -1,10 +1,7 @@
 import * from whiley.lang.System
 
-import Point
-import Sphere
-import Scene
-import Colour
-import Light
+import rt.core.*
+import rt.util.*
 
 void ::main(System.Console sys):
     ambient = Colour(0.4,0.4,0.4)
