@@ -2,7 +2,7 @@ import Ray
 import Colour
 import Point
 import Sphere
-import Vector
+import * from Vector
 import Light
 
 // A Scene is made up of zero or more objects, and zero or more light
@@ -39,7 +39,7 @@ public [Colour] ::render(Scene scene, int width, int height):
         dx = i - cam_x
         for j in 0 .. height:
             dy = j - cam_y
-            ray.direction = Vector(dx,dy,-cam_z)
+            ray.direction = Vector.Unit(dx,dy,-cam_z)
             col = rayCast(scene,ray)
             pixels = pixels + [col]    
             debug "\r" + count + " / " + total

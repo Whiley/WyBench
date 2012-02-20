@@ -28,12 +28,14 @@ public real dot(Vector a, Vector b):
 
 // Return a unit vector pointing in the same direction as the
 // original.
-public Vector Unit(Vector a):
-    len = length(a)
+public Vector Unit(real x, real y, real z):
+    sum = (x*x) + (y*y) + (z*z)
+    sum = Math.round(sum * 100) / 100.0        
+    len = Math.sqrt(sum,ERROR)
     return { 
-        x: a.x / len,
-        y: a.y / len,
-        z: a.z / len
+        x: x / len,
+        y: y / len,
+        z: z / len
     }
 
 

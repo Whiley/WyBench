@@ -60,8 +60,8 @@ public null|(Point,Point) intersect(Sphere s, Ray r):
     root = Math.sqrt(discriminant,0.001)
         
     _2A = 2*A
-    t0 = (-B - root) / _2A
-    t1 = (-B + root) / _2A
+    t0 = (-B - root) // _2A
+    t1 = (-B + root) // _2A
     
     return project(r,t0),project(r,t1)
    
