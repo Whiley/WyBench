@@ -37,6 +37,19 @@ define ERROR as 0.001
 public Vector Vector(real x, real y, real z):
     return { x:x, y:y, z:z }
 
+// Return a unit vector pointing in the same direction as the
+// original.
+public Vector Unit(real x, real y, real z):
+    sum = (x*x) + (y*y) + (z*z)
+    sum = Math.round(sum * 100) / 100.0        
+    len = Math.sqrt(sum,ERROR)
+    return { 
+        x: x / len,
+        y: y / len,
+        z: z / len
+    }
+
+// Determine the length (a.k.a magnitude) of a Vector
 public real length(Vector a):
     sum = (a.x*a.x) + (a.y*a.y) + (a.z*a.z)
 
@@ -45,24 +58,28 @@ public real length(Vector a):
 
     return Math.sqrt(sum,ERROR)
 
+// Compute the so-called cross-produce of two Vectors
 public Vector cross(Vector a, Vector b):
     x = (a.y*b.z) - (a.z*b.y)
     y = (a.z*b.x) - (a.x*b.z)
     z = (a.x*b.y) - (a.y*b.x)
     return { x:x, y:y, z:z }
    
+// Compute the so-called dot-product of two Vectors
 public real dot(Vector a, Vector b):
     return (a.x*b.x) + (a.y*b.y) + (a.z*b.z)
 
-// Return a normalised vector pointing in the same direction as the
-// parameter.
-public Vector normalise(Vector a):
-    len = length(a)
+// Subtract one Vector from another
+public Vector subtract(Vector v1, Vector v2):
     return { 
-        x: a.x / len,
-        y: a.y / len,
-        z: a.z / len
+        x: v1.x - v2.x, 
+        y: v1.y - v2.y, 
+        z: v1.z - v2.z 
     }
+
+// Convert a vector into a string
+public string toString(Vector v):
+    return "(" + Real.toDecimal(v.x,5) + "," + Real.toDecimal(v.y,5) + "," + Real.toDecimal(v.z,5) + ")"
 
 
 

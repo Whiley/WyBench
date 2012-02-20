@@ -26,7 +26,6 @@
 
 package rt.objects
 
-import rt.core.Point
 import rt.util.Vector
 
 define Box as {
@@ -42,6 +41,6 @@ define Box as {
 // given box.  When there is an intersection there will 
 // be an entry and exit point.  This function returns 
 // the entry point, or null if there is no intersection.
-null|Point intersection(Box b, Vector v):
+null|Vector intersection(Box b, Vector v):
     return null
 

@@ -13,7 +13,7 @@
 
  <target name="clean">
   <delete includeEmptyDirs="true" failonerror="false">
-   <fileset dir="." includes="*.class"/>
+   <fileset dir="." includes="*.class,rt/**/*.class"/>
    <fileset dir="." includes="*.wyil"/>
   </delete>
  </target>
