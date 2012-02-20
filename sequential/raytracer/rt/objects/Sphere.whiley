@@ -49,7 +49,7 @@ public Sphere Sphere(Vector origin, real radius):
 // given box.  When there is an intersection there will 
 // be an entry and exit point.  This function returns 
 // these or null if there is no intersection.
-public null|(Vector,Vector) intersect(Sphere s, Ray r):
+public null|real intersect(Sphere s, Ray r):
     // transform into object space
     rOrigin = Vector.subtract(r.origin, s.origin)
     
@@ -91,14 +91,9 @@ public null|(Vector,Vector) intersect(Sphere s, Ray r):
     _2A = 2*A
     t0 = (-B - root) /_2A
     t1 = (-B + root) / _2A
-    
-    return project(r,t0),project(r,t1)
+
+    if t0 < t1:
+        return t0
+    else:    
+        return t1
    
-// project a given ray by a certain amount of distance
-public Vector project(Ray ray, real dist):
-    d = ray.direction
-    o = ray.origin
-    x = (d.x * dist) + o.x
-    y = (d.y * dist) + o.y
-    z = (d.z * dist) + o.z
-    return Vector(x,y,z)

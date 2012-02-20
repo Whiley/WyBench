@@ -38,4 +38,13 @@ public Ray Ray(Vector origin, Vector direction):
         direction: direction
     }
 
+// project a given ray by a certain amount of distance
+public Vector project(Ray ray, real dist):
+    d = ray.direction
+    o = ray.origin
+    x = (d.x * dist) + o.x
+    y = (d.y * dist) + o.y
+    z = (d.z * dist) + o.z
+    return Vector(x,y,z)
+
 

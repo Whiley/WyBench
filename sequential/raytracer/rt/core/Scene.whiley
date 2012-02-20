@@ -72,11 +72,18 @@ public [Colour] ::render(Scene scene, int width, int height):
     return pixels
 
 public Colour rayCast(Scene scene, Ray ray):
+    mint = 1000000 // arbitrary
+    obj = null
+    // first, determine nearest object hit by ray
     for o in scene.objects:
-        r = Sphere.intersect(o,ray)
-        if r != null:
-            entry,exit = r
-            return lightCast(scene,entry,o)
+        t = Sphere.intersect(o,ray)
+        if t != null && t < mint:
+            obj = o
+            mint = t
+    // second, determine light from that object
+    if obj != null:
+        pt = Ray.project(ray,mint) // intersection point
+        return lightCast(scene,pt,obj)
     return Colour.BLACK
 
 public Colour lightCast(Scene scene, Vector pt, Sphere h):
@@ -87,8 +94,8 @@ public Colour lightCast(Scene scene, Vector pt, Sphere h):
         // determine whether light obstructed by something
         for o in scene.objects:
             if h != o:
-                r = Sphere.intersect(o,ray)
-                if r != null:
+                t = Sphere.intersect(o,ray)
+                if t != null && t > 0:
                     intersection = true
                     break
         if !intersection:
