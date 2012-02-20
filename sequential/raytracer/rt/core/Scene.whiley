@@ -59,11 +59,11 @@ public [Colour] ::render(Scene scene, int width, int height):
     // construct ray object to avoid lots of unnecessary creation
     vec = Vector(0,0,0)
     ray = Ray(scene.camera,vec)
+    ray.direction.z = -cam_z
     for i in 0 .. width:
-        dx = i - cam_x
+        ray.direction.x = i - cam_x
         for j in 0 .. height:
-            dy = j - cam_y
-            ray.direction = Vector.Unit(dx,dy,-cam_z)
+            ray.direction.y = j - cam_y
             col = rayCast(scene,ray)
             pixels = pixels + [col]    
             debug "\r" + count + " / " + total
