@@ -9,7 +9,7 @@ import Light
 void ::main(System.Console sys):
     start = Time.current()
     ambient = Colour(0.4,0.4,0.4)
-    camera = Point(128,128,-100)
+    camera = Point(128,128,-128)
     s1 = Sphere(Point(70,70,30),15)
     s2 = Sphere(Point(50,20,50),30)
     s3 = Sphere(Point(60,160,50),30)

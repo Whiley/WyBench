@@ -30,6 +30,7 @@ public [Colour] ::render(Scene scene, int width, int height):
     cam_z = scene.camera.z
     pixels = []
     total = width*height
+    count = 0
     
     // construct ray object to avoid lots of unnecessary creation
     vec = Vector(0,0,0)
@@ -41,6 +42,8 @@ public [Colour] ::render(Scene scene, int width, int height):
             ray.direction = Vector(dx,dy,-cam_z)
             col = rayCast(scene,ray)
             pixels = pixels + [col]    
+            debug "\r" + count + " / " + total
+            count = count + 1
     // done
     return pixels
 

@@ -46,11 +46,10 @@ public null|(Point,Point) intersect(Sphere s, Ray r):
     
     A = rdir_x*rdir_x + rdir_y*rdir_y + rdir_z*rdir_z    
     B = rorg_x*rdir_x + rorg_y*rdir_y + rorg_z*rdir_z
-    B = B + B
     C = rorg_x*rorg_x + rorg_y*rorg_y + rorg_z*rorg_z
     C = C - s.radius2
 
-    discriminant = (B*B) - 4*A*C
+    discriminant = (B*B) - A*C
     
     if discriminant < 0:
         // no real roots (implies no solutions)
@@ -58,7 +57,7 @@ public null|(Point,Point) intersect(Sphere s, Ray r):
 
     // HACK
     discriminant = Math.round(discriminant * 100) / 100.0    
-    root = Math.sqrt(discriminant,0.01)
+    root = Math.sqrt(discriminant,0.001)
         
     _2A = 2*A
     t0 = (-B - root) / _2A
