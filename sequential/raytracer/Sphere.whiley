@@ -58,7 +58,7 @@ public null|(Point,Point) intersect(Sphere s, Ray r):
 
     // HACK
     discriminant = Math.round(discriminant * 100) / 100.0    
-    root = Math.sqrt(discriminant,0.001)
+    root = Math.sqrt(discriminant,0.01)
         
     _2A = 2*A
     t0 = (-B - root) / _2A

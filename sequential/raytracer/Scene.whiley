@@ -25,17 +25,22 @@ public Scene Scene([Sphere] objects, [Light] lights, Colour ambient, Point camer
     }
 
 public [Colour] ::render(Scene scene, int width, int height):
+    cam_x = scene.camera.x
+    cam_y = scene.camera.y
+    cam_z = scene.camera.z
     pixels = []
     total = width*height
-    count = 0
+    
+    // construct ray object to avoid lots of unnecessary creation
+    vec = Vector(0,0,0)
+    ray = Ray(scene.camera,vec)
     for i in 0 .. width:
+        dx = i - cam_x
         for j in 0 .. height:
-            vec = Point.subtract(Point(i,j,0),scene.camera)
-            ray = Ray(scene.camera,vec)
+            dy = j - cam_y
+            ray.direction = Vector(dx,dy,-cam_z)
             col = rayCast(scene,ray)
             pixels = pixels + [col]    
-            debug "\r" + count + " / " + total
-            count = count + 1
     // done
     return pixels
 
