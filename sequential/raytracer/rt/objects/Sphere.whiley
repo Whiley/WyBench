@@ -26,8 +26,8 @@
 
 package rt.objects
 
-import Point
-import Ray
+import rt.core.*
+import rt.util.*
 
 // A Sphere is the simplest object to ray trace.  If we have a sphere
 // of radius r centered at position c, then any point p on the sphere

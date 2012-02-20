@@ -26,8 +26,7 @@
 
 package rt.core
 
-import * from Point
-import * from Vector
+import rt.util.*
 
 // A ray is described by an origin point, and a 
 // directional (unit) vector.

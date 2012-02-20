@@ -1,4 +1,4 @@
-import Colour
+import rt.util.Colour
 
 define WIDTH as 256
 define HEIGHT as 256

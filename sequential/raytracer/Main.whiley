@@ -2,6 +2,7 @@ import * from whiley.lang.System
 
 import rt.core.*
 import rt.util.*
+import rt.objects.*
 
 void ::main(System.Console sys):
     ambient = Colour(0.4,0.4,0.4)

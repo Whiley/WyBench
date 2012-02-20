@@ -26,12 +26,8 @@
 
 package rt.core
 
-import rt.core.Ray
-import rt.core.Point
-import rt.core.Sphere
-import rt.core.Vector
-import rt.core.Light
-import rt.uril.Colour
+import rt.util.Colour
+import rt.objects.Sphere // TO BE REMOVED
 
 // A Scene is made up of zero or more objects, and zero or more light
 // sources.  The position of the camera is also required.  However, 

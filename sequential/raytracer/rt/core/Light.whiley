@@ -26,8 +26,7 @@
 
 package rt.core
 
-import rt.core.Point
-import rt.util.Colour
+import rt.util.*
 
 public define Light as {
     Point point,
