@@ -26,9 +26,9 @@ public Vector cross(Vector a, Vector b):
 public real dot(Vector a, Vector b):
     return (a.x*b.x) + (a.y*b.y) + (a.z*b.z)
 
-// Return a normalised vector pointing in the same direction as the
-// parameter.
-public Vector normalise(Vector a):
+// Return a unit vector pointing in the same direction as the
+// original.
+public Vector Unit(Vector a):
     len = length(a)
     return { 
         x: a.x / len,

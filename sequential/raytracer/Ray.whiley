@@ -6,4 +6,9 @@ import * from Vector
 define Ray as { Point origin, Vector direction }
 
 public Ray Ray(Point origin, Vector direction):
-    return { origin: origin, direction: direction }
+    return { 
+        origin: origin, 
+        direction: direction
+    }
+
+

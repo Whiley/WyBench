@@ -27,7 +27,6 @@ public Plane Plane(Point p1, Point p2, Point p3) requires p1 != p2 && p1 != p3 &
     len = Math.sqrt(A*A + B*B + C*C,0.0001)
     return {A:A/len, B:B/len, C:C/len, D:-D}
 
-
 // Determine the distance of a point from the plane.
 public real distance(Plane pl, Point pt):
     return (pt.x * pl.A) + (pt.y * pl.B) + (pt.z * pl.C) + pl.D
