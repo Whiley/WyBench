@@ -36,11 +36,11 @@ import rt.objects.Sphere /// TO BE REMOVED
 define Scene as {
     [Sphere] objects,
     [Light] lights,
-    Colour ambient, // ambient light      
+    real ambient, // ambient intensity
     Vector camera                         
 }
 
-public Scene Scene([Sphere] objects, [Light] lights, Colour ambient, Vector camera):
+public Scene Scene([Sphere] objects, [Light] lights, real ambient, Vector camera):
     return { 
         objects: objects, 
         lights: lights, 
@@ -87,7 +87,7 @@ public Colour rayCast(Scene scene, Ray ray):
     return Colour.BLACK
 
 public Colour lightCast(Scene scene, Vector pt, Sphere h):
-    colour = scene.ambient
+    colour = Colour(scene.ambient,scene.ambient,scene.ambient)
     for light in scene.lights:
         ray = Ray(pt,Vector.subtract(light.point,pt))
         intersection = false
