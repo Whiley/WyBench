@@ -5,7 +5,7 @@ import rt.util.*
 import rt.objects.*
 
 void ::main(System.Console sys):
-    start = Time.current()
+    // start = Time.current()
     camera = Vector(128,128,-128)
     s1 = Sphere(Vector(75,75,30),15)
     s2 = Sphere(Vector(60,65,50),30)
@@ -15,5 +15,5 @@ void ::main(System.Console sys):
     pixels = Scene.render(scene,Display.WIDTH,Display.HEIGHT)
     pixels[(100*Display.WIDTH)+100] = Colour.WHITE
     Display.paint(pixels)
-    duration = Time.current() - start
-    debug "\nTIME: " + Math.round(duration * 1000) + "ms"
+    // duration = Time.current() - start
+    // debug "\nTIME: " + Math.round(duration * 1000) + "ms"
