@@ -1,0 +1,21 @@
+<!-- Build file for Tetris -->
+<!-- Requires environment WHILEY_HOME is set -->
+
+<project name="tictactoe" default="benchmark">  
+  
+  <property environment="env"/>
+  <taskdef name="wyjc" classname="wyjc.util.AntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
+
+  <target name="benchmark">
+    <echo message="======== Compiling Benchmark ========"/>
+    <wyjc verbose="false" srcdir="." includes="Main.whiley,game/**/*.whiley" whileypath="."/>
+  </target>
+
+ <target name="clean">
+  <delete includeEmptyDirs="true" failonerror="false">
+   <fileset dir="." includes="game/**/*.class"/>
+   <fileset dir="." includes="*.wyil"/>
+  </delete>
+ </target>
+
+</project>
