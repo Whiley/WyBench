@@ -6,10 +6,9 @@
   <property environment="env"/>
   <taskdef name="wyjc" classname="wyjc.util.AntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
 
-
   <target name="zlib">
     <echo message="======== Compiling ZLib ============"/>
-    <wyjc verbose="false" srcdir="." includes="zlib/**/*.whiley"/>
+    <wyjc verbose="true" srcdir="." includes="zlib/**/*.whiley"/>
     <!-- <jar destfile="lib/zlib.jar"> -->
     <!--   <fileset dir="src" includes="zlib/**/*.class"/> -->
     <!-- </jar> -->
