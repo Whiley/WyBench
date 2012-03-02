@@ -8,7 +8,7 @@
 
   <target name="benchmark">
     <echo message="======== Compiling Benchmark ========"/>
-    <wyjc verbose="false" srcdir="." includes="Main.whiley,game/**/*.whiley" whileypath="."/>
+    <wyjc verbose="false" srcdir="." includes="**/*.whiley" whileypath="."/>
   </target>
 
  <target name="clean">
