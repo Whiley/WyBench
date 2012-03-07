@@ -44,14 +44,15 @@ public class UIFrame$native {
 	public static Actor Frame(String title) {
 		JFrame frame = new JFrame(title);
 		c = new TetrisCanvas(name);
-		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(c, BorderLayout.CENTER);
 		frame.setSize(285, 690);
+		frame.pack();
+		frame.setVisible(true);
 		grid = new char[10][22];
 		c.setFocusable(true);
 		frame.transferFocus(); // Moves Focus to the Canvas.
-		frame.setResizable(false);
+		frame.setResizable(true);
 		Actor a = new Actor(frame);
 		a.start();
 		return a;
