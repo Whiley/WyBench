@@ -1,12 +1,26 @@
 import * from whiley.lang.System
 import game.logic.*
 
+define GAME as [
+	(0,0), // circle
+	(1,1), // cross
+	(0,1), // circle
+	(2,2), // cross
+	(0,2), // circle
+	(2,2)  // should be impossible
+]
+
 public void ::main(System.Console console):
 	game = Game()
-	printBoard(console, game.board)
-	game = Game.play(game,0,0)
-	console.out.println("")
-	printBoard(console, game.board)
+	for m in GAME:
+		r,c = m
+		game = Game.play(game,r,c)	
+		printBoard(console, game.board)
+		console.out.println("")
+		p = Board.isWinner(game.board)
+		if p != Board.BLANK:
+			console.out.println("we have a winner!")
+			break
 
 public void ::printBoard(System.Console console, Board board):
 	for row in 0..3:

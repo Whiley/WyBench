@@ -12,7 +12,9 @@ define Piece as { BLANK, CROSS, CIRCLE }
 /**
  * A Board is a 3x3 grid of pieces
  */
-public define Board as [Piece] where |$| == 9
+public define Board as [Piece] where |$| == 9 && 
+	numPieces($,CIRCLE) >= numPieces($,CROSS) &&
+	numPieces($,CIRCLE) <= (numPieces($,CROSS)+1) 
 
 /**
  * A Board index (for either column or row) is between 0 and 3
@@ -42,6 +44,16 @@ public Board put(Board board, Index row, Index col, Piece piece):
 	return board
 
 /**
+ * Count the number of pieces which have been placed on the board.
+ */
+public int numPieces(Board board, Piece piece):
+	count = 0
+	for p in board:
+		if p == piece:
+			count = count + 1
+	return count
+
+/**
  * Check whether there are any more blank squares on the board.
  */
 public bool isFull(Board board):
@@ -49,7 +61,7 @@ public bool isFull(Board board):
 	for piece in board:
 		if piece != BLANK:
 			count = count + 1
-	return count == 9
+	return count == 9	
 
 /**
  * Check whether there is a winner, and return the 

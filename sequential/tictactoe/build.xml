@@ -8,12 +8,12 @@
 
   <target name="benchmark">
     <echo message="======== Compiling Benchmark ========"/>
-    <wyjc verbose="false" srcdir="." includes="Main.whiley,game/**/*.whiley" whileypath="."/>
+    <wyjc verbose="false" srcdir="." includes="**/*.whiley" whileypath="."/>
   </target>
 
  <target name="clean">
   <delete includeEmptyDirs="true" failonerror="false">
-   <fileset dir="." includes="game/**/*.class"/>
+   <fileset dir="." includes="**/*.class"/>
    <fileset dir="." includes="*.wyil"/>
   </delete>
  </target>

@@ -8,7 +8,7 @@
 
   <target name="zlib">
     <echo message="======== Compiling ZLib ============"/>
-    <wyjc verbose="true" srcdir="." includes="zlib/**/*.whiley"/>
+    <wyjc verbose="false" srcdir="." includes="zlib/**/*.whiley"/>
     <!-- <jar destfile="lib/zlib.jar"> -->
     <!--   <fileset dir="src" includes="zlib/**/*.class"/> -->
     <!-- </jar> -->
