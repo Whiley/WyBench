@@ -3,7 +3,7 @@
 
   <target name="compile">
     <taskdef name="wyjc" classname="wyjc.util.AntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
-    <wyjc srcdir="." includes="*.whiley"/>
+    <wyjc verbose="true" srcdir="." includes="*.whiley"/>
     <jar destfile="jasm.jar">
       <fileset dir="." includes="*.class"/>
     </jar>

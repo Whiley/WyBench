@@ -40,12 +40,12 @@ define Utf8Info as {
 
 define IntegerInfo as {
     Int.u8 tag,
-    Type.int32 value        
+    Int.i32 value        
 }
 
 define LongInfo as {
     Int.u8 tag,
-    Type.int64 value        
+    Int.i64 value        
 }
 
 define FieldRefInfo as { 
@@ -181,12 +181,12 @@ define Utf8Tree as {
 
 define IntegerTree as {
     Int.u8 tag,
-    Type.int32 value        
+    Int.i32 value        
 }
 
 define LongTree as {
     Int.u8 tag,
-    Type.int64 value        
+    Int.i64 value        
 }
 
 define StringTree as {
