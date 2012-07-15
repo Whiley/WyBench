@@ -17,7 +17,7 @@ public define Ref as Array | Class
 public define Fun as { Any ret, [Any] params }
 public define Any as Primitive | Ref
 
-Array public Array(Any element):
+public Array Array(Any element):
     return { element: element }
 
 public Class Class(string pkg, string class):
