@@ -81,7 +81,7 @@ define BLOCK_S as {buff: [[null, 'B', null, null],[ null,'B', 'B', null],[null, 
 define BLOCK_T as {buff: [[null,'I', 'I', null],[null, null, 'I', null],[null, null, 'I', null],[null, null, null, null]], x:19, y:5, size: 3,type: 6}
 define BLOCK_Z as {buff: [[null, null, 'V', null],[null, null, 'V', null],[null,'V', 'V', null],[null, null, null, null]], x:19, y:5, size: 3,type: 7}
 
-define Piece as {
+public define Piece as {
 	bufferGrid buff,
 	int x,
 	int y,
@@ -89,7 +89,7 @@ define Piece as {
 	int type
 }
 
-define GameState as {
+public define GameState as {
 	Grid rows,
 	int score,
 	int filled,
@@ -99,7 +99,7 @@ define GameState as {
 	Piece next
 	}
 	
-define Initial as {
+public define Initial as {
 	rows: startGrid,
 	score:0,
 	filled:0,

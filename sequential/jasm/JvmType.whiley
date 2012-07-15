@@ -1,39 +1,39 @@
 // =========== JVM Types ==============
 
-define Void as 3
-define Boolean as 4
-define Char as 5
-define Float as 6
-define Double as 7
-define Byte as 8
-define Short as 9
-define Int as 10
-define Long as 11
+public define Void as 3
+public define Boolean as 4
+public define Char as 5
+public define Float as 6
+public define Double as 7
+public define Byte as 8
+public define Short as 9
+public define Int as 10
+public define Long as 11
 
-define Primitive as { Void, Boolean, Char, Float, Double, Byte, Short, Int, Long }
-define Array as { Any element }
-define Class as { string pkg, [string] classes }
-define Ref as Array | Class
-define Fun as { Any ret, [Any] params }
-define Any as Primitive | Ref
+public define Primitive as { Void, Boolean, Char, Float, Double, Byte, Short, Int, Long }
+public define Array as { Any element }
+public define Class as { string pkg, [string] classes }
+public define Ref as Array | Class
+public define Fun as { Any ret, [Any] params }
+public define Any as Primitive | Ref
 
-Array Array(Any element):
+Array public Array(Any element):
     return { element: element }
 
-Class Class(string pkg, string class):
+public Class Class(string pkg, string class):
     return {pkg: pkg, classes: [class]}
 
-Class Class(string pkg, [string] classes):
+public Class Class(string pkg, [string] classes):
     return {pkg: pkg, classes: classes}
 
-Fun Fun(Any ret, [Any] params):
+public Fun Fun(Any ret, [Any] params):
     return {ret: ret, params: params}
 
 // useful constants
-define JAVA_LANG_OBJECT as {pkg: "java.lang", classes: ["Object"]}
-define JAVA_LANG_STRING as {pkg: "java.lang", classes: ["String"]}
+public define JAVA_LANG_OBJECT as {pkg: "java.lang", classes: ["Object"]}
+public define JAVA_LANG_STRING as {pkg: "java.lang", classes: ["String"]}
 
-string toString(Any t):
+public string toString(Any t):
     if t is Primitive:
         switch t:
             case Void:
@@ -70,7 +70,7 @@ string toString(Any t):
     else:
         return "" // deadcode
 
-string toString(Fun ft):
+public string toString(Fun ft):
     r = "("
     firstTime=true
     for p in ft.params:
