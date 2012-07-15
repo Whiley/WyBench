@@ -1,26 +1,32 @@
-<project name="wybench" default="dist">  
+<project name="wybench" default="build">  
   <property name="version" value="0.1.6"/>
 
+  <target name="build">
+    <subant failonerror="false" target="">
+      <property name="build.dir" value="subant.build"/>
+      <fileset dir="src" includes="*/build.xml"/>
+    </subant>
+  </target>
+
   <target name="dist">
+    <mkdir dir="wybench-v${version}"/>
 
-  <mkdir dir="wybench-v${version}"/>
-
-  <copy todir="wybench-v${version}">
-    <fileset dir="." includes="sequential/**/*.whiley,concurrent/**/*.whiley"/>
-    <fileset dir="." includes="sequential/**/*.java,concurrent/**/*.java"/>
-    <fileset dir="." includes="sequential/**/*.in,concurrent/**/*.in"/>
-    <fileset dir="." includes="README,build.xml"/>
-  </copy>
-  <tar destfile="wybench-v${version}.tar" longfile="gnu">  
-    <tarfileset dir="." includes="wybench-v${version}/**/*.whiley"/>
-    <tarfileset dir="." includes="wybench-v${version}/**/*.java"/>
-    <tarfileset dir="." includes="wybench-v${version}/**/*.in"/>
-    <tarfileset dir="." includes="wybench-v${version}/README,wybench-v${version}/build.xml"/>
-    <tarfileset dir="." includes="wdk-v${version}/lib/wyrt.jar,wdk-v${version}/lib/wyjc.jar"/>
-  </tar>
-  <gzip destfile="wybench-v${version}.tgz" src="wybench-v${version}.tar"/>
-  <delete file="wybench-v${version}.tar"/>
-  <delete dir="wybench-v${version}"/>
+    <copy todir="wybench-v${version}">
+      <fileset dir="." includes="sequential/**/*.whiley,concurrent/**/*.whiley"/>
+      <fileset dir="." includes="sequential/**/*.java,concurrent/**/*.java"/>
+      <fileset dir="." includes="sequential/**/*.in,concurrent/**/*.in"/>
+      <fileset dir="." includes="README,build.xml"/>
+    </copy>
+    <tar destfile="wybench-v${version}.tar" longfile="gnu">  
+      <tarfileset dir="." includes="wybench-v${version}/**/*.whiley"/>
+      <tarfileset dir="." includes="wybench-v${version}/**/*.java"/>
+      <tarfileset dir="." includes="wybench-v${version}/**/*.in"/>
+      <tarfileset dir="." includes="wybench-v${version}/README,wybench-v${version}/build.xml"/>
+      <tarfileset dir="." includes="wdk-v${version}/lib/wyrt.jar,wdk-v${version}/lib/wyjc.jar"/>
+    </tar>
+    <gzip destfile="wybench-v${version}.tgz" src="wybench-v${version}.tar"/>
+    <delete file="wybench-v${version}.tar"/>
+    <delete dir="wybench-v${version}"/>
   </target>
 
  <target name="clean">
