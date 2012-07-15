@@ -1,4 +1,3 @@
-<!-- Build file for Tetris -->
 <!-- Requires environment WHILEY_HOME is set -->
 
 <project name="103_tetris" default="compile">  
@@ -6,7 +5,7 @@
   <property environment="env"/>
 
   <target name="compile">
-    <echo message="BUILDING: ${ant.project.name}"/>
+    <echo message="COMPILING: ${ant.project.name}"/>
     <echo message="==================================="/>
     <taskdef name="wyjc" classname="wyjc.util.AntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
     <wyjc verbose="false" srcdir="." includes="*.whiley"/>
