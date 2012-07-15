@@ -6,15 +6,15 @@ import * from Move
 // Types
 // =============================================================
 
-define RankPos as { int row }
-define FilePos as { int col }
-define ShortPos as Pos | RankPos | FilePos | null
+public define RankPos as { int row }
+public define FilePos as { int col }
+public define ShortPos as Pos | RankPos | FilePos | null
 
-define ShortSingleMove as { Piece piece, ShortPos from, Pos to, bool isTake }
-define ShortCheckMove as { ShortMove check }
+public define ShortSingleMove as { Piece piece, ShortPos from, Pos to, bool isTake }
+public define ShortCheckMove as { ShortMove check }
 
-define ShortMove as ShortSingleMove | ShortCheckMove | CastleMove
-define ShortRound as (ShortMove,ShortMove|null)
+public define ShortMove as ShortSingleMove | ShortCheckMove | CastleMove
+public define ShortRound as (ShortMove,ShortMove|null)
 
 public ShortSingleMove Simple(Piece piece, ShortPos from, Pos to, bool isTake):
     return {piece: piece, from: from, to: to, isTake: isTake}
@@ -26,7 +26,7 @@ public ShortCheckMove Check(ShortMove move):
 // Errors
 // =============================================================
 
-define Invalid as { ShortMove move, Board board }
+public define Invalid as { ShortMove move, Board board }
 public Invalid Invalid(Board b, ShortMove m):
     return { board: b, move: m }
 

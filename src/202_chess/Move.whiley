@@ -9,14 +9,14 @@ import * from Board
 // Moves
 // =============================================================
 
-define SingleMove as { Piece piece, Pos from, Pos to }
-define SingleTake as { Piece piece, Pos from, Pos to, Piece taken }
-define SimpleMove as SingleMove | SingleTake
+public define SingleMove as { Piece piece, Pos from, Pos to }
+public define SingleTake as { Piece piece, Pos from, Pos to, Piece taken }
+public define SimpleMove as SingleMove | SingleTake
 
-define CastleMove as { bool isWhite, bool kingSide }
-define CheckMove as { Move check }
+public define CastleMove as { bool isWhite, bool kingSide }
+public define CheckMove as { Move check }
 
-define Move as CheckMove | CastleMove | SimpleMove
+public define Move as CheckMove | CastleMove | SimpleMove
 
 // constructors
 
@@ -36,7 +36,7 @@ public CastleMove Castle(bool isWhite, bool kingSide):
 // Errors
 // =============================================================
 
-define Invalid as { Move move, Board board }
+public define Invalid as { Move move, Board board }
 
 public Invalid Invalid(Board b, Move m):
     return { board: b, move: m }

@@ -4,72 +4,72 @@ import whiley.lang.*
 // Pieces
 // =============================================================
 
-define PAWN as 0
-define KNIGHT as 1 
-define BISHOP as 2
-define ROOK as 3
-define QUEEN as 4
-define KING as 5
-define PIECE_CHARS as [ 'P', 'N', 'B', 'R', 'Q', 'K' ]
+public define PAWN as 0
+public define KNIGHT as 1 
+public define BISHOP as 2
+public define ROOK as 3
+public define QUEEN as 4
+public define KING as 5
+public define PIECE_CHARS as [ 'P', 'N', 'B', 'R', 'Q', 'K' ]
 
-define PieceKind as { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING }
-define Piece as { PieceKind kind, bool colour }
+public define PieceKind as { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING }
+public define Piece as { PieceKind kind, bool colour }
 
-define WHITE_PAWN as { kind: PAWN, colour: true }
-define WHITE_KNIGHT as { kind: KNIGHT, colour: true }
-define WHITE_BISHOP as { kind: BISHOP, colour: true }
-define WHITE_ROOK as { kind: ROOK, colour: true }
-define WHITE_QUEEN as { kind: QUEEN, colour: true }
-define WHITE_KING as { kind: KING, colour: true }
+public define WHITE_PAWN as { kind: PAWN, colour: true }
+public define WHITE_KNIGHT as { kind: KNIGHT, colour: true }
+public define WHITE_BISHOP as { kind: BISHOP, colour: true }
+public define WHITE_ROOK as { kind: ROOK, colour: true }
+public define WHITE_QUEEN as { kind: QUEEN, colour: true }
+public define WHITE_KING as { kind: KING, colour: true }
 
-define BLACK_PAWN as { kind: PAWN, colour: false }
-define BLACK_KNIGHT as { kind: KNIGHT, colour: false }
-define BLACK_BISHOP as { kind: BISHOP, colour: false }
-define BLACK_ROOK as { kind: ROOK, colour: false }
-define BLACK_QUEEN as { kind: QUEEN, colour: false }
-define BLACK_KING as { kind: KING, colour: false }
+public define BLACK_PAWN as { kind: PAWN, colour: false }
+public define BLACK_KNIGHT as { kind: KNIGHT, colour: false }
+public define BLACK_BISHOP as { kind: BISHOP, colour: false }
+public define BLACK_ROOK as { kind: ROOK, colour: false }
+public define BLACK_QUEEN as { kind: QUEEN, colour: false }
+public define BLACK_KING as { kind: KING, colour: false }
 
 // =============================================================
 // Positions
 // =============================================================
 
-define RowCol as int // where 0 <= $ && $ <= 8
-define Pos as { RowCol col, RowCol row } 
+public define RowCol as int // where 0 <= $ && $ <= 8
+public define Pos as { RowCol col, RowCol row } 
 
-define A1 as { col: 0, row: 0 }
-define A2 as { col: 0, row: 1 }
-define A3 as { col: 0, row: 2 }
-define A4 as { col: 0, row: 3 }
-define A5 as { col: 0, row: 4 }
-define A6 as { col: 0, row: 5 }
-define A7 as { col: 0, row: 6 }
-define A8 as { col: 0, row: 7 }
+public define A1 as { col: 0, row: 0 }
+public define A2 as { col: 0, row: 1 }
+public define A3 as { col: 0, row: 2 }
+public define A4 as { col: 0, row: 3 }
+public define A5 as { col: 0, row: 4 }
+public define A6 as { col: 0, row: 5 }
+public define A7 as { col: 0, row: 6 }
+public define A8 as { col: 0, row: 7 }
 
-define B1 as { col: 1, row: 0 }
-define B2 as { col: 1, row: 1 }
-define B3 as { col: 1, row: 2 }
-define B4 as { col: 1, row: 3 }
-define B5 as { col: 1, row: 4 }
-define B6 as { col: 1, row: 5 }
-define B7 as { col: 1, row: 6 }
-define B8 as { col: 1, row: 7 }
+public define B1 as { col: 1, row: 0 }
+public define B2 as { col: 1, row: 1 }
+public define B3 as { col: 1, row: 2 }
+public define B4 as { col: 1, row: 3 }
+public define B5 as { col: 1, row: 4 }
+public define B6 as { col: 1, row: 5 }
+public define B7 as { col: 1, row: 6 }
+public define B8 as { col: 1, row: 7 }
 
-define C1 as { col: 2, row: 0 }
-define C2 as { col: 2, row: 1 }
-define C3 as { col: 2, row: 2 }
-define C4 as { col: 2, row: 3 }
-define C5 as { col: 2, row: 4 }
-define C6 as { col: 2, row: 5 }
-define C7 as { col: 2, row: 6 }
-define C8 as { col: 2, row: 7 }
+public define C1 as { col: 2, row: 0 }
+public define C2 as { col: 2, row: 1 }
+public define C3 as { col: 2, row: 2 }
+public define C4 as { col: 2, row: 3 }
+public define C5 as { col: 2, row: 4 }
+public define C6 as { col: 2, row: 5 }
+public define C7 as { col: 2, row: 6 }
+public define C8 as { col: 2, row: 7 }
 
 // =============================================================
 // board
 // =============================================================
 
-define Square as Piece | null
-define Row as [Square] // where |$| == 8
-define Board as {
+public define Square as Piece | null
+public define Row as [Square] // where |$| == 8
+public define Board as {
     [Row] rows, 
     bool whiteCastleKingSide,
     bool whiteCastleQueenSide,
@@ -88,7 +88,7 @@ define startingChessRows as [
     [ BLACK_ROOK,BLACK_KNIGHT,BLACK_BISHOP,BLACK_QUEEN,BLACK_KING,BLACK_BISHOP,BLACK_KNIGHT,BLACK_ROOK ]  // rank 8
 ]
 
-define startingChessBoard as {
+public define startingChessBoard as {
     rows: startingChessRows,
     whiteCastleKingSide: true,  // White can still castle king side
     whiteCastleQueenSide: true, // White can still castle queen side
