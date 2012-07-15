@@ -9,70 +9,70 @@ import * from Bytecodes
 // Definitions
 // ============================================================
 
-define Constant as string | int | real 
+public define Constant as string | int | real 
 
-define CONSTANT_Utf8 as 1
-define CONSTANT_Integer as 3
-define CONSTANT_Float as 4
-define CONSTANT_Long as 5
-define CONSTANT_Double as 6
-define CONSTANT_Class as 7
-define CONSTANT_String as 8
-define CONSTANT_FieldRef as 9
-define CONSTANT_MethodRef as 10
-define CONSTANT_InterfaceMethodRef as 11
-define CONSTANT_NameAndType as 12
+public define CONSTANT_Utf8 as 1
+public define CONSTANT_Integer as 3
+public define CONSTANT_Float as 4
+public define CONSTANT_Long as 5
+public define CONSTANT_Double as 6
+public define CONSTANT_Class as 7
+public define CONSTANT_String as 8
+public define CONSTANT_FieldRef as 9
+public define CONSTANT_MethodRef as 10
+public define CONSTANT_InterfaceMethodRef as 11
+public define CONSTANT_NameAndType as 12
 
-define StringInfo as {
+public define StringInfo as {
     Int.u8 tag,
     Int.u16 string_index
 }
 
-define ClassInfo as {
+public define ClassInfo as {
     Int.u8 tag,
     Int.u16 name_index
 }
 
-define Utf8Info as {
+public define Utf8Info as {
     Int.u8 tag,
     [byte] value        
 }
 
-define IntegerInfo as {
+public define IntegerInfo as {
     Int.u8 tag,
     Int.i32 value        
 }
 
-define LongInfo as {
+public define LongInfo as {
     Int.u8 tag,
     Int.i64 value        
 }
 
-define FieldRefInfo as { 
+public define FieldRefInfo as { 
     Int.u8 tag,
     Int.u16 class_index,
     Int.u16 name_and_type_index
 }
 
-define MethodRefInfo as { 
+public define MethodRefInfo as { 
     Int.u8 tag,
     Int.u16 class_index,
     Int.u16 name_and_type_index
 }
 
-define InterfaceMethodRefInfo as { 
+public define InterfaceMethodRefInfo as { 
     Int.u8 tag,
     Int.u16 class_index,
     Int.u16 name_and_type_index
 }
 
-define NameAndTypeInfo as {
+public define NameAndTypeInfo as {
     Int.u8 tag,
     Int.u16 name_index,
     Int.u16 descriptor_index    
 }
 
-define Item as FieldRefInfo | 
+public define Item as FieldRefInfo | 
         MethodRefInfo | 
         InterfaceMethodRefInfo | 
         StringInfo | 

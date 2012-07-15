@@ -3,7 +3,7 @@ import Error from whiley.lang.Errors
 import * from ConstantPool
 import Bytecode from Bytecode
 
-define CodeAttr as {
+public define CodeAttr as {
     string name,
     int maxStack,
     int maxLocals,

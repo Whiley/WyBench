@@ -47,31 +47,31 @@ public define UnknownAttr as {
     [byte] data
 }
 
-define AttributeInfo as {
+public define AttributeInfo as {
     string name,
     ...
 }
 
-define ACC_PUBLIC as 0x0001
-define ACC_PRIVATE as 0x0002
-define ACC_PROTECTED as 0x0004
-define ACC_STATIC as 0x0008
-define ACC_FINAL as  0x0010
-define ACC_SUPER as  0x0020
-define ACC_SYNCHRONIZED as  0x0020
-define ACC_VOLATILE as 0x0040
-define ACC_BRIDGE as 0x0040
-define ACC_TRANSIENT as 0x0080
-define ACC_VARARGS as 0x0080
-define ACC_NATIVE as 0x0100
-define ACC_INTERFACE as 0x0200
-define ACC_ABSTRACT as 0x0400
-define ACC_STRICT as 0x0800
-define ACC_SYNTHETIC as 0x1000
-define ACC_ANNOTATION as 0x2000
-define ACC_ENUM as 0x4000
+public define ACC_PUBLIC as 0x0001
+public define ACC_PRIVATE as 0x0002
+public define ACC_PROTECTED as 0x0004
+public define ACC_STATIC as 0x0008
+public define ACC_FINAL as  0x0010
+public define ACC_SUPER as  0x0020
+public define ACC_SYNCHRONIZED as  0x0020
+public define ACC_VOLATILE as 0x0040
+public define ACC_BRIDGE as 0x0040
+public define ACC_TRANSIENT as 0x0080
+public define ACC_VARARGS as 0x0080
+public define ACC_NATIVE as 0x0100
+public define ACC_INTERFACE as 0x0200
+public define ACC_ABSTRACT as 0x0400
+public define ACC_STRICT as 0x0800
+public define ACC_SYNTHETIC as 0x1000
+public define ACC_ANNOTATION as 0x2000
+public define ACC_ENUM as 0x4000
 
-define ClassModifier as {
+public define ClassModifier as {
     ACC_PUBLIC,
     ACC_FINAL,
     ACC_SUPER,
@@ -82,7 +82,7 @@ define ClassModifier as {
     ACC_ENUM
 }
 
-define FieldModifier as {
+public define FieldModifier as {
     ACC_PUBLIC, 
     ACC_PRIVATE,
     ACC_PROTECTED,
@@ -94,7 +94,7 @@ define FieldModifier as {
     ACC_ENUM
 }
 
-define MethodModifier as {
+public define MethodModifier as {
     ACC_PUBLIC, 
     ACC_PRIVATE,
     ACC_PROTECTED,
@@ -109,7 +109,7 @@ define MethodModifier as {
     ACC_SYNTHETIC
 }
 
-define Modifier as ClassModifier | FieldModifier | MethodModifier
+public define Modifier as ClassModifier | FieldModifier | MethodModifier
 
 // compute the constant pool for the given class
 public ([Item],Index) constantPool(ClassFile cf):

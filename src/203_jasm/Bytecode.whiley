@@ -4,32 +4,32 @@ import whiley.lang.*
 // Bytecode Structures
 // ===========================================
 
-define Void as 3
-define Boolean as 4
-define Char as 5
-define Float as 6
-define Double as 7
-define Byte as 8
-define Short as 9
-define Int as 10
-define Long as 11
+public define Void as 3
+public define Boolean as 4
+public define Char as 5
+public define Float as 6
+public define Double as 7
+public define Byte as 8
+public define Short as 9
+public define Int as 10
+public define Long as 11
 
-define Primitive as { Boolean, Char, Float, Double, Byte, Short, Int, Long }
-define Array as { Any element }
-define Class as { string pkg, [string] classes }
-define Ref as Array | Class
-define Fun as { Any ret, [Any] params }
-define Any as Primitive | Ref
+public define Primitive as { Boolean, Char, Float, Double, Byte, Short, Int, Long }
+public define Array as { Any element }
+public define Class as { string pkg, [string] classes }
+public define Ref as Array | Class
+public define Fun as { Any ret, [Any] params }
+public define Any as Primitive | Ref
 
-define Unit as { int offset, int op }
-define Branch as { int offset, int op, Int.i16 offset }
+public define Unit as { int offset, int op }
+public define Branch as { int offset, int op, Int.i16 offset }
 
-define VarIndex as { int offset, int op, int index }
-define MethodIndex as { int offset, int op, JvmType.Class owner, string name, JvmType.Fun type }
-define FieldIndex as { int offset, int op, JvmType.Class owner, string name, JvmType.Any type }
-define ConstIndex as { int offset, int op, ConstantPool.Constant constant }
+public define VarIndex as { int offset, int op, int index }
+public define MethodIndex as { int offset, int op, JvmType.Class owner, string name, JvmType.Fun type }
+public define FieldIndex as { int offset, int op, JvmType.Class owner, string name, JvmType.Any type }
+public define ConstIndex as { int offset, int op, ConstantPool.Constant constant }
 
-define Bytecode as Unit | VarIndex | Branch | MethodIndex | FieldIndex | ConstIndex
+public define Bytecode as Unit | VarIndex | Branch | MethodIndex | FieldIndex | ConstIndex
 
 // ===========================================
 // Bytecode Constructors
@@ -66,64 +66,64 @@ string toString(Bytecode b):
 // Bytecode Kinds
 // ===========================================
 
-define NOP as 0
-define LOADVAR as 1
-define STOREVAR as 2	
-define LOADCONST as 3
-define STORECONST as 4
-define ARRAYLOAD as 5
-define ARRAYSTORE as 6
-define ARRAYLENGTH as 7
-define IINC as 8
-define NEW as 9
-define THROW as 10
-define CHECKCAST as 11
-define INSTANCEOF as 12
-define MONITORENTER as 13
-define MONITOREXIT as 14
-define SWITCH as 15
-define CONVERT as 16	
-define WIDE_INSN as 18
-define POP as 19
-define DUP as 20
-define DUPX1 as 21
-define DUPX2 as 22
-define SWAP as 23
-define ADD as 24
-define SUB as 25
-define MUL as 26
-define DIV as 27
-define REM as 28
-define NEG as 29
-define SHL as 30
-define SHR as 31
-define USHR as 32
-define AND as 33
-define OR as 34
-define XOR as 35
-define CMP as 36
-define CMPL as 37
-define CMPG as 38
-define IF as 39
-define IFCMP as 40
-define GOTO as 41
-define JSR as 42
-define RET as 43	
-define RETURN as 44
-define FIELDLOAD as 45
-define FIELDSTORE as 46
-define INVOKE as 47
+public define NOP as 0
+public define LOADVAR as 1
+public define STOREVAR as 2	
+public define LOADCONST as 3
+public define STORECONST as 4
+public define ARRAYLOAD as 5
+public define ARRAYSTORE as 6
+public define ARRAYLENGTH as 7
+public define IINC as 8
+public define NEW as 9
+public define THROW as 10
+public define CHECKCAST as 11
+public define INSTANCEOF as 12
+public define MONITORENTER as 13
+public define MONITOREXIT as 14
+public define SWITCH as 15
+public define CONVERT as 16	
+public define WIDE_INSN as 18
+public define POP as 19
+public define DUP as 20
+public define DUPX1 as 21
+public define DUPX2 as 22
+public define SWAP as 23
+public define ADD as 24
+public define SUB as 25
+public define MUL as 26
+public define DIV as 27
+public define REM as 28
+public define NEG as 29
+public define SHL as 30
+public define SHR as 31
+public define USHR as 32
+public define AND as 33
+public define OR as 34
+public define XOR as 35
+public define CMP as 36
+public define CMPL as 37
+public define CMPG as 38
+public define IF as 39
+public define IFCMP as 40
+public define GOTO as 41
+public define JSR as 42
+public define RET as 43	
+public define RETURN as 44
+public define FIELDLOAD as 45
+public define FIELDSTORE as 46
+public define INVOKE as 47
 
-define T_VOID as 0     // no result type	
-define T_BYTE as 1     
-define T_CHAR as 2     
-define T_SHORT as 3    
-define T_INT as 4
-define T_LONG as 5
-define T_FLOAT as 6
-define T_DOUBLE as 7
-define T_REF as 8	
-define T_ARRAY as 9	
+public define T_VOID as 0     // no result type	
+public define T_BYTE as 1     
+public define T_CHAR as 2     
+public define T_SHORT as 3    
+public define T_INT as 4
+public define T_LONG as 5
+public define T_FLOAT as 6
+public define T_DOUBLE as 7
+public define T_REF as 8	
+public define T_ARRAY as 9	
 
 // INSTRUCTION FORMATS.  These determine the different instruction formats.
 define FMT_EMPTY as 0
