@@ -20,7 +20,7 @@
  <target name="clean">
   <delete includeEmptyDirs="true" failonerror="false">
    <fileset dir="." includes="zlib/**/*.class,imagelib/**/*.class,*.class"/>
-   <fileset dir="." includes="*.wyil"/>
+   <fileset dir="." includes="**/*.wyil"/>
   </delete>
  </target>
 
