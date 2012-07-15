@@ -1,7 +1,7 @@
 <!-- Build file for Tetris -->
 <!-- Requires environment WHILEY_HOME is set -->
 
-<project name="101_calculator" default="compile">  
+<project name="009_lz77" default="compile">  
   
   <property environment="env"/>
 
