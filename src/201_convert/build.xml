@@ -1,29 +1,18 @@
-<!-- Build file for Tetris -->
 <!-- Requires environment WHILEY_HOME is set -->
 
-<project name="tetris" default="benchmark">  
+<project name="201_convert" default="compile">  
   
   <property environment="env"/>
   <taskdef name="wyjc" classname="wyjc.util.AntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
 
-  <target name="zlib">
-    <echo message="======== Compiling ZLib ============"/>
+  <target name="compile">
+    <echo message="COMPILING: ${ant.project.name}"/>
+    <echo message="==================================="/>
+    <echo message="> Compiling ZLib"/>
     <wyjc verbose="false" srcdir="." includes="zlib/**/*.whiley"/>
-    <!-- <jar destfile="lib/zlib.jar"> -->
-    <!--   <fileset dir="src" includes="zlib/**/*.class"/> -->
-    <!-- </jar> -->
-  </target>
-
-  <target name="ilib" depends="zlib">
-    <echo message="======== Compiling ImageLib ========"/>
+    <echo message="> Compiling ImageLib"/>
     <wyjc verbose="false" srcdir="." includes="imagelib/**/*.whiley"/>
-    <!-- <jar destfile="lib/imagelib.jar"> -->
-    <!--   <fileset dir="src" includes="imagelib/**/*.class"/> -->
-    <!-- </jar> -->
-  </target>
-
-  <target name="benchmark" depends="ilib">
-    <echo message="======== Compiling Benchmark ========"/>
+    <echo message="> Compiling Benchmark"/>
     <!-- <wyjc verbose="false" srcdir="." includes="Main.whiley" whileypath="lib/zlib.jar:lib/imagelib.jar"/> -->
     <wyjc verbose="false" srcdir="." includes="Main.whiley" whileypath="."/>
   </target>
