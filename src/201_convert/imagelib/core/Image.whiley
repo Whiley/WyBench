@@ -2,7 +2,7 @@ package imagelib.core
 
 import imagelib.core.RGBA // should be unnecessary?
 
-define Image as {
+public define Image as {
     [RGBA] data,
     int width,
     int height

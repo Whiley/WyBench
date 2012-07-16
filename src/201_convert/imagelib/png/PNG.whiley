@@ -40,13 +40,13 @@ import zlib.util.BitBuffer
 import zlib.io.ZLib // for decompression.
 import * from imagelib.core.Image
 
-define PNG_MAGIC as 0x0A1A0A0D474E5089
+public define PNG_MAGIC as 0x0A1A0A0D474E5089
 
 // ==============================================================================
 // PNG
 // ==============================================================================
 
-define PNG as {
+public define PNG as {
     // from IHDR
     u32 width,
     u32 height,
@@ -279,7 +279,7 @@ public define RAW as {
 //
 // -- PNG ISO/IEC 15948:2003 (E)
 
-define IHDR_TYPE as 0x52444849
+public define IHDR_TYPE as 0x52444849
 
 public define GREYSCALE as 0
 public define TRUECOLOR as 2

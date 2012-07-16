@@ -2,7 +2,7 @@ package imagelib.gif
 
 import whiley.lang.*
 
-define Reader as {
+public define Reader as {
     int index,  // index of current byte in data
     int end,    // current end of block
     int boff,    // bit offset in current byte
@@ -60,9 +60,7 @@ public (int,Reader) readUnsignedInt(Reader reader, int nbits):
         base = base * 2
     return r,reader
 
-
-
-define Writer as {
+public define Writer as {
     int index,  // index of current byte in data
     int boff,    // bit offset in current byte
     [byte] data 

@@ -27,7 +27,7 @@ package zlib.util
 
 import whiley.lang.*
 
-define Reader as {
+public define Reader as {
     int index,  // index of current byte in data
     int boff,    // bit offset in current byte
     [byte] data 

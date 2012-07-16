@@ -16,7 +16,7 @@ public HSB HSB(real hue, real saturation, real brightness):
     }
 
 public RGBA toRGBA(HSB h):
-    n,d = h.hue
+    n/d = h.hue
     hi =  ((n/d)/60) % 6
     f = (h.hue/60.0) - ((n/d)/60)
     p = h.brightness*(1.0-(h.saturation))
