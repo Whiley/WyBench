@@ -65,7 +65,7 @@ bool validMove(Move move, Board board, Board nboard):
     // Now, identify what colour I am
     if move is CastleMove:
         isWhite = move.isWhite
-    else if move is SingleMove:
+    else if move is SingleMove: 
         isWhite = move.piece.colour
     else:
         isWhite = false // deadcode

@@ -55,7 +55,7 @@ Move inferMove(ShortMove m, Board b, bool isCheck) throws Invalid:
         catch(Invalid e):
             throw Invalid(e.board,{check: e.move})
     else if m is ShortSingleMove:
-        matches = findPiece(m.piece,b)
+        matches = Board.findPiece(m.piece,b)
         matches = narrowTarget(m,matches,b, isCheck)
         matches = narrowShortPos(m.from,matches)
         if |matches| == 1:
@@ -82,15 +82,15 @@ Move inferMove(ShortMove m, Board b, bool isCheck) throws Invalid:
             return []
         r = []
         for pos in matches:
-            move = { piece: sm.piece, from: pos, to: sm.to, taken: taken }
+            move = Move.SingleMove(sm.piece, pos, sm.to, taken)
             if isCheck:
-                move = {check: move}
+                move = Move.Check(move)
             if validMove(move,b):
                 r = r + [pos]
     else:
         r = []
         for pos in matches:
-            move = { piece: sm.piece, from: pos, to: sm.to }
+            move = Move.SingleMove(sm.piece, pos, sm.to)
             if isCheck:
                 move = {check: move}
             if validMove(move,b):
