@@ -7,8 +7,8 @@
   <target name="compile">
     <echo message="COMPILING: ${ant.project.name}"/>
     <echo message="==================================="/>
-    <taskdef name="wyjc" classname="wyjc.util.AntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
-    <wyjc verbose="false" srcdir="." includes="*.whiley"/>
+    <taskdef name="wyjc" classname="wyjc.util.WyjcAntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
+    <wyjc verbose="false" whileydir="." whileypath="${env.WHILEY_HOME}/lib/wyrt.jar" includes="*.whiley"/>
     <javac debug="true" srcdir="." includeantruntime="false" includes="*.java" classpath=".:${env.WHILEY_HOME}/lib/wyjc.jar"/> 
   </target>
 

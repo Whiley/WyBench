@@ -32,7 +32,7 @@ import rt.util.*
 // A Sphere is the simplest object to ray trace.  If we have a sphere
 // of radius r centered at position c, then any point p on the sphere
 // must satisfy |p-c|^2 - r^2 = 0
-define Sphere as {
+public define Sphere as {
     Vector origin,
     real radius,
     real radius2

@@ -3,18 +3,18 @@
 <project name="201_convert" default="compile">  
   
   <property environment="env"/>
-  <taskdef name="wyjc" classname="wyjc.util.AntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
+  <taskdef name="wyjc" classname="wyjc.util.WyjcAntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
 
   <target name="compile">
     <echo message="COMPILING: ${ant.project.name}"/>
     <echo message="==================================="/>
     <echo message="> Compiling ZLib"/>
-    <wyjc verbose="false" srcdir="." includes="zlib/**/*.whiley"/>
+    <wyjc verbose="false" whileydir="." whileypath="${env.WHILEY_HOME}/lib/wyrt.jar" includes="zlib/**/*.whiley"/>
     <echo message="> Compiling ImageLib"/>
-    <wyjc verbose="false" srcdir="." includes="imagelib/**/*.whiley"/>
+    <wyjc verbose="false" whileydir="." whileypath="${env.WHILEY_HOME}/lib/wyrt.jar" includes="imagelib/**/*.whiley"/>
     <echo message="> Compiling Benchmark"/>
     <!-- <wyjc verbose="false" srcdir="." includes="Main.whiley" whileypath="lib/zlib.jar:lib/imagelib.jar"/> -->
-    <wyjc verbose="false" srcdir="." includes="Main.whiley" whileypath="."/>
+    <wyjc verbose="false" whileydir="." whileypath="${env.WHILEY_HOME}/lib/wyrt.jar" includes="Main.whiley"/>
   </target>
 
  <target name="clean">

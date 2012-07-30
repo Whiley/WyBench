@@ -30,7 +30,7 @@ import rt.util.*
 
 // A ray is described by an origin point, and a 
 // directional (unit) vector.
-define Ray as { Vector origin, Vector direction }
+public define Ray as { Vector origin, Vector direction }
 
 public Ray Ray(Vector origin, Vector direction):
     return { 
