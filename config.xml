@@ -1,0 +1,5 @@
+<project name="BuildConfig">
+  <property environment="env"/>
+  <property name="wyjc.jar" value="${env.WHILEY_HOME}/lib/wyjc-v0.3.16.jar"/>
+  <property name="wyrt.jar" value="${env.WHILEY_HOME}/lib/wyrt-v0.3.16.jar"/>
+</project>
