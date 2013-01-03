@@ -7,7 +7,7 @@ import * from whiley.lang.Errors
 // Benchmark
 // ========================================================
 
-real average([real] data):
+real average([real] data) requires |data| > 0:
     sum = 0.0
     for r in data:
         sum = sum + r
