@@ -22,7 +22,7 @@ public define Fun as { Any ret, [Any] params }
 public define Any as Primitive | Ref
 
 public define Unit as { int offset, int op }
-public define Branch as { int offset, int op, Int.i16 offset }
+public define Branch as { int offset, int op, Int.i16 target }
 
 public define VarIndex as { int offset, int op, int index }
 public define MethodIndex as { int offset, int op, JvmType.Class owner, string name, JvmType.Fun type }
