@@ -36,6 +36,10 @@ benchmarks:
 011_codejam --- A solution to test A of the Google Code Jam
                 Qualificition round in May 2011.
 
+015_cashtill* --- A simple example implementing a cash till which
+                  computes the change to given to a customer after a
+                  purchase.
+
 (small)
 
 101_calculator --- A simple parser and evaluator for arithmetic
@@ -62,3 +66,5 @@ benchmarks:
 203_jasm --- A Java Bytecode assembler / disassembler.
 
 204_raytrace --- A simple ray tracer [BROKEN]
+
+(* = designed specifically to test verification)
