@@ -3,15 +3,62 @@ Wybench
 ===================================================================
 
 Wybench is a suite of benchmark programs used for testing and
-demonstrating the Whiley language.  The benchmarks are split into
-four categories:
+demonstrating the Whiley language.  Here are some details about the
+benchmarks:
 
-sequential/micro/ --- these are a collection of small sequential benchmarks,
-               primarily used for performance testing.
+(micro)
 
-sequential/macro/ --- these are a collection of larger sequential benchmarks.
+001_average --- Computes the average of a list of integers.
 
-concurrent/micro/ --- these are a collection of small parallel benchmarks,
-               primarily used for performance testing.
+002_fib --- Computes the first 41 numbers in the Fibonacci sequence.
 
-concurrent/macro/ --- these are a collection of larger parallel benchmarks.
+003_gcd --- Implements Euclid's algorithm for finding the Greatest
+            Common Divisor of two numbers.
+
+004_matrix --- Implements the classical Matrix multiplication
+               algorithm.
+
+005_paths --- Implements Dijkstra's algorithm for computing the
+              single-source shortest paths of a directed graph
+              [BROKEN]
+
+006_queens --- Implements a solution for the N-Queens problem.
+
+007_regex --- Implements a simple regular expression matcher.
+
+008_scc --- Implements a variant of Tarjan's algorithm for finding
+            strongly connected components.
+
+009_lz77 --- Implements LZ77 compression and decompression.
+
+010_sort --- Implements a simple merge sort.
+
+011_codejam --- A solution to test A of the Google Code Jam
+                Qualificition round in May 2011.
+
+(small)
+
+101_calculator --- A simple parser and evaluator for arithmetic
+                   expressions.
+
+102_conway --- An implementation of Conway's Game of Life.
+
+103_tetris --- A simple implementation of Tetris.
+
+104_tictactoe --- A simple implementation of Tic Tac Toe (a.k.a
+                  Noughts & Crosses).
+
+(large)
+
+201_convert --- An image convertor which allows files to be converted
+                to/from GIF and PNG.  To implement the PNG format, a
+                complete implementation of the ZLIB
+                compression/decompression standard is provided.
+
+202_chess --- A chess game validitor, which accepts chess games in
+              short algebraic notation and checks that they are valid
+              according to the rules of chess.
+
+203_jasm --- A Java Bytecode assembler / disassembler.
+
+204_raytrace --- A simple ray tracer [BROKEN]
