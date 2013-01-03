@@ -4,7 +4,6 @@
   <import file="../../config.xml"/>  
 
   <target name="compile">
-    <echo message="GOT: ${wyjc.jar}"/>
     <echo message="COMPILING: ${ant.project.name}"/>
     <echo message="==================================="/>
     <taskdef name="wyjc" classname="wyjc.util.WyjcAntTask" classpath="${wyjc.jar}"/>

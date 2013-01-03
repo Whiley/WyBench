@@ -1,15 +1,14 @@
 <!-- Requires environment WHILEY_HOME is set -->
 
 <project name="003_gcd" default="compile">  
-  
-  <property environment="env"/>
+  <import file="../../config.xml"/>  
 
   <target name="compile">
     <echo message="COMPILING: ${ant.project.name}"/>
     <echo message="==================================="/>
-    <taskdef name="wyjc" classname="wyjc.util.WyjcAntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
-    <wyjc verbose="false" whileydir="." whileypath="${env.WHILEY_HOME}/lib/wyrt.jar" includes="*.whiley"/>
-    <javac debug="true" srcdir="." includeantruntime="false" includes="*.java" classpath=".:${env.WHILEY_HOME}/lib/wyjc.jar"/> 
+    <taskdef name="wyjc" classname="wyjc.util.WyjcAntTask" classpath="${wyjc.jar}"/>
+    <wyjc verbose="false" whileydir="." whileypath="${wyrt.jar}" includes="*.whiley"/>
+    <javac debug="true" srcdir="." includeantruntime="false" includes="*.java" classpath=".:${wyjc.jar}"/> 
   </target>
 
  <target name="clean">
