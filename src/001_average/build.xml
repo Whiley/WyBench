@@ -1,23 +1,6 @@
-<!-- Requires environment WHILEY_HOME is set -->
-
 <project name="001_average" default="compile">  
-  <import file="../../config.xml"/>  
 
-  <target name="compile">
-    <echo message="COMPILING: ${ant.project.name}"/>
-    <echo message="==================================="/>
-    <taskdef name="wyjc" classname="wyjc.util.WyjcAntTask" classpath="${wyjc.jar}"/>
-    <wyjc verbose="false" whileydir="." whileypath="${wyrt.jar}" includes="*.whiley"/>
-    <javac debug="true" srcdir="." includeantruntime="false" includes="*.java" classpath=".:${wyjc.jar}"/> 
-  </target>
-
- <target name="clean">
-   <echo message="CLEANING: ${ant.project.name}"/>
-   <echo message="==================================="/>
-   <delete includeEmptyDirs="true" failonerror="false">
-     <fileset dir="." includes="*.class"/>
-     <fileset dir="." includes="*.wyil"/>
-   </delete>
- </target>
+  <import file="../../config.xml"/> 
+  <import file="../../util/build-template.xml"/>  
 
 </project>

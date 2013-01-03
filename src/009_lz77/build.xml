@@ -1,24 +1,6 @@
-<!-- Requires environment WHILEY_HOME is set -->
-
 <project name="009_lz77" default="compile">  
-  
-  <property environment="env"/>
 
-  <target name="compile">
-    <echo message="COMPILING: ${ant.project.name}"/>
-    <echo message="==================================="/>
-    <taskdef name="wyjc" classname="wyjc.util.WyjcAntTask" classpath="${env.WHILEY_HOME}/lib/wyjc.jar"/>
-    <wyjc verbose="false" whileydir="." whileypath="${env.WHILEY_HOME}/lib/wyrt.jar" includes="*.whiley"/>
-    <javac debug="true" srcdir="." includeantruntime="false" includes="*.java" classpath=".:${env.WHILEY_HOME}/lib/wyjc.jar"/> 
-  </target>
-
- <target name="clean">
-   <echo message="CLEANING: ${ant.project.name}"/>
-   <echo message="==================================="/>
-   <delete includeEmptyDirs="true" failonerror="false">
-     <fileset dir="." includes="*.class"/>
-     <fileset dir="." includes="*.wyil"/>
-   </delete>
- </target>
+  <import file="../../config.xml"/> 
+  <import file="../../util/build-template.xml"/>  
 
 </project>
