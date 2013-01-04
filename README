@@ -31,7 +31,7 @@ benchmarks:
 
 009_lz77 --- Implements LZ77 compression and decompression.
 
-010_sort --- Implements a simple merge sort.
+010_sort* --- Implements a simple merge sort.
 
 011_codejam --- A solution to test A of the Google Code Jam
                 Qualificition round in May 2011.
@@ -49,7 +49,7 @@ benchmarks:
 
 103_tetris --- A simple implementation of Tetris.
 
-104_tictactoe --- A simple implementation of Tic Tac Toe (a.k.a
+104_tictactoe* --- A simple implementation of Tic Tac Toe (a.k.a
                   Noughts & Crosses).
 
 (large)
