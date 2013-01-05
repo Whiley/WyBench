@@ -36,6 +36,9 @@ benchmarks:
 011_codejam --- A solution to test A of the Google Code Jam
                 Qualificition round in May 2011.
 
+014_lights* --- A simple implementation of the (British) traffic
+                lights sequence.
+
 015_cashtill* --- A simple example implementing a cash till which
                   computes the change to given to a customer after a
                   purchase.
