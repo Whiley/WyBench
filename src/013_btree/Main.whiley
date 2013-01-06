@@ -14,13 +14,17 @@ public define Node as {
     BTree left,
     BTree right,
     int item
-} where (left == null || left.item < item) &&
-        (right == null || item < right.item)
+} where (left == null  || left.item < item) &&
+        (right == null || right.item > item)
 
 public Node Node(int item):
     return {left: null, right: null, item: item}
 
-public Node Node(BTree left, BTree right, int item):
+
+public Node Node(BTree left, BTree right, int item) 
+    requires (left == null  || left.item < item) && 
+             (right == null || right.item > item):
+    //
     return {left: left, right: right, item: item}
 
 // =================================================
