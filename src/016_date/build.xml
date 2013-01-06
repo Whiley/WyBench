@@ -1,0 +1,6 @@
+<project name="016_date" default="compile">  
+
+  <import file="../../config.xml"/> 
+  <import file="../../util/build-template.xml"/>  
+
+</project>
