@@ -38,7 +38,7 @@ public BTree BTree():
     return null
 
 // Add an item into the tree
-public BTree add(BTree tree, int item) ensures (tree == null || tree.item == $.item):
+public BTree add(BTree tree, int item) ensures tree == null || ($ != null && tree.item == $.item):
     if tree == null:
         return Node(item)
     else if tree.item == item:
