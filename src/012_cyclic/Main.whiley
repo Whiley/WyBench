@@ -39,7 +39,7 @@ public Buffer Buffer(nat size):
         wpos: 0
     }
 
-// Write a 
+// Write an item into a buffer which is not full
 public Buffer write(NonFullBuffer buf, int item):
     buf.data[buf.wpos] = item
     buf.wpos = buf.wpos + 1
@@ -48,6 +48,7 @@ public Buffer write(NonFullBuffer buf, int item):
         buf.wpos = 0
     return buf
 
+// Read an item from a buffer which is not empty
 public (Buffer,int) read(NonEmptyBuffer buf):
     item = buf.data[buf.rpos]
     buf.rpos = buf.rpos + 1
