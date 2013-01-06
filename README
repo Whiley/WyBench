@@ -49,6 +49,8 @@ benchmarks:
 
 016_date* --- A simple Gregorian Calendar implementation.
 
+017_math* --- Some simple math functions.
+
 (small)
 
 101_calculator --- A simple parser and evaluator for arithmetic

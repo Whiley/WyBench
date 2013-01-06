@@ -60,10 +60,18 @@ nat sum_2([nat] items, nat index) requires index <= |items|:
 // Compute the sum of a list of naturals 
 // (implementation 3)
 nat sum_3([nat] items):
-    if items == []:
+    if |items| == 0:
         return 0
     else:
         return items[0] + sum_3(items[1..])
+
+// Compute the sum of a list of naturals 
+// (implementation 4)
+nat sum_4([nat] items):
+    if items == []:
+        return 0
+    else:
+        return items[0] + sum_4(items[1..])
 
 // Test harness
 void ::main(System.Console console):
@@ -92,6 +100,8 @@ void ::main(System.Console console):
     console.out.println("SUM_2(" + items + ") = " + sum_2(items))
     // test sum_3
     console.out.println("SUM_3(" + items + ") = " + sum_3(items))
+    // test sum_4
+    console.out.println("SUM_3(" + items + ") = " + sum_4(items))
 
     
     
