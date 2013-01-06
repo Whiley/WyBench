@@ -38,7 +38,7 @@ benchmarks:
 
 012_cyclic* --- A simple implementation of a fixed-size cyclic buffer.
 
-013_lights* --- A simple implementation of a binary search tree.
+013_btree* --- A simple implementation of a binary search tree.
 
 014_lights* --- A simple implementation of the (British) traffic
                 lights sequence.
