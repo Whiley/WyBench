@@ -47,7 +47,7 @@ benchmarks:
                   computes the change to given to a customer after a
                   purchase.
 
-016__date* --- A simple Gregorian Calendar implementation.
+016_date* --- A simple Gregorian Calendar implementation.
 
 (small)
 
