@@ -36,6 +36,8 @@ benchmarks:
 011_codejam --- A solution to test A of the Google Code Jam
                 Qualificition round in May 2011.
 
+013_lights* --- A simple implementation of a binary search tree.
+
 014_lights* --- A simple implementation of the (British) traffic
                 lights sequence.
 
