@@ -29,7 +29,7 @@ define FullBuffer as Buffer where ($.rpos == $.wpos + 1) || ($.wpos == |$.data|-
 define NonFullBuffer as Buffer where ($.rpos != $.wpos + 1) && ($.wpos != |$.data|-1 || $.rpos != 0)
 
 // Create a buffer with a given number of slots.
-public Buffer Buffer(nat size):
+public EmptyBuffer Buffer(nat size):
     data = []
     for i in 0..size:
         data = data + [0]
