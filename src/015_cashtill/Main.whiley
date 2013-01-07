@@ -33,7 +33,7 @@ define Cash as [nat] where |$| == |Value|
 Cash Cash():
     return [0,0,0,0,0,0,0,0]
 
-Cash Cash([nat] coins) requires no { c in coins | c > |Value| }:
+Cash Cash([nat] coins) requires no { c in coins | c >= |Value| }:
     cash = [0,0,0,0,0,0,0,0]
     for i in coins:
         cash[i] = cash[i] + 1
