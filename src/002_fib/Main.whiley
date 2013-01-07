@@ -1,9 +1,11 @@
 import whiley.lang.*
 import * from whiley.lang.System
 
-int fib(int x):
+define nat as int where $ >= 0
+
+nat fib(nat x):
     if x <= 1:
-        return 1
+        return x
     else:
         return fib(x-1) + fib(x-2)
 

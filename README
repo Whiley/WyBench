@@ -10,7 +10,7 @@ benchmarks:
 
 001_average --- Computes the average of a list of integers.
 
-002_fib --- Computes the first 41 numbers in the Fibonacci sequence.
+002_fib* --- Computes the first 41 numbers in the Fibonacci sequence.
 
 003_gcd --- Implements Euclid's algorithm for finding the Greatest
             Common Divisor of two numbers.
@@ -78,4 +78,4 @@ benchmarks:
 
 204_raytrace --- A simple ray tracer [BROKEN]
 
-(* = designed specifically to test verification)
+(* = these benchmarks test verification as well)
