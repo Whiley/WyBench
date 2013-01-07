@@ -2,6 +2,8 @@ import whiley.lang.*
 import * from whiley.lang.*
 import * from whiley.io.File
 
+define nat as int where $ >= 0
+
 (int,int) parseInt(int pos, string input) throws SyntaxError:
     start = pos
     while pos < |input| && Char.isDigit(input[pos]):
@@ -15,10 +17,10 @@ int skipWhiteSpace(int index, string input):
         index = index + 1
     return index
 
-int gcd(int a, int b):
+nat gcd(nat a, nat b):
     if(a == 0):
         return b		   
-    while(b != 0):
+    while(b != 0) where a >= 0:
         if(a > b):
             a = a - b
         else:
@@ -26,21 +28,24 @@ int gcd(int a, int b):
     return a
 
 void ::main(System.Console sys):
-    file = File.Reader(sys.args[0])
-    input = String.fromASCII(file.read())
-    try:
-        pos = 0
-        data = []
-        pos = skipWhiteSpace(pos,input)
-        // first, read data
-        while pos < |input|:
-            i,pos = parseInt(pos,input)
-            data = data + [i]
+    if |sys.args| == 0:
+        sys.out.println("usage: gcd <input-file>")
+    else:
+        file = File.Reader(sys.args[0])
+        input = String.fromASCII(file.read())
+        try:
+            pos = 0
+            data = []
             pos = skipWhiteSpace(pos,input)
-        // second, compute gcds
-        for i in 0..|data|:
-            for j in i+1..|data|:
-                sys.out.println(gcd(i,j))
-    catch(SyntaxError e):
-        sys.out.println("error - " + e.msg)
+            // first, read data
+            while pos < |input|:
+                i,pos = parseInt(pos,input)
+                data = data + [i]
+                pos = skipWhiteSpace(pos,input)
+            // second, compute gcds
+            for i in 0..|data|:
+                for j in i+1..|data|:
+                    sys.out.println(gcd(i,j))
+        catch(SyntaxError e):
+            sys.out.println("error - " + e.msg)
 
