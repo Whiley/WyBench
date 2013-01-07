@@ -67,7 +67,7 @@ class JavaMain {
 	    int[] data = readFile(args[0]);
 	    for(int i=0;i<data.length;++i) {
 		for(int j=i+1;j<data.length;++j) {
-		    System.out.println(gcd(i,j));
+		    System.out.println(gcd(data[i],data[j]));
 		}
 	    }
 	} catch(IOException e) {

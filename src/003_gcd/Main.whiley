@@ -45,7 +45,7 @@ void ::main(System.Console sys):
             // second, compute gcds
             for i in 0..|data|:
                 for j in i+1..|data|:
-                    sys.out.println(gcd(i,j))
+                    sys.out.println(gcd(data[i],data[j]))
         catch(SyntaxError e):
             sys.out.println("error - " + e.msg)
 
