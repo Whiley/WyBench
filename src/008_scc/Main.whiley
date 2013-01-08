@@ -3,16 +3,18 @@ import * from whiley.lang.System
 import whiley.lang.*
 import * from whiley.lang.Errors
 
+define nat as int where $ >= 0
+
 // ============================================
 // Adjacency List directed graph structure
 // ============================================
 
-define Digraph as [{int}]
+define Digraph as [{nat}] where no { v in $, w in v | w >= |$| }
 
-Digraph addEdge(Digraph g, int from, int to):
+Digraph addEdge(Digraph g, nat from, nat to) requires from < |g| && to < |g|:
     // first, ensure enough capacity
     mx = Math.max(from,to)
-    while |g| <= mx:
+    while |g| <= mx where from < |g|:
         g = g + [{}]
     // second, add the actual edge
     g[from] = g[from] + {to}        
