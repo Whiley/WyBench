@@ -18,14 +18,14 @@ bool conflict(Pos p, int row, int col):
     return colDiff == rowDiff
     
 
-[[Pos]] run([Pos] queens, int n, int dim):
+[[Pos]] run([Pos] queens, int n, int dim) requires n <= |queens| && dim == |queens|:
     if dim == n:
         return [queens]
     else:
         solutions = []
-        for col in 0..dim:
+        for col in 0 .. dim:
             solution = true
-            for i in 0..n:
+            for i in 0 .. n:
                 p = queens[i]
                 if conflict(p,n,col):
                     solution = false
