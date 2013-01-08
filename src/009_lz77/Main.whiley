@@ -8,11 +8,13 @@ import * from whiley.io.File
 import * from whiley.lang.System
 import whiley.lang.*
 
+define nat as int where $ >= 0
+
 [byte] compress([byte] data):
     pos = 0
     output = []
     // keep going until all data matched
-    while pos < |data|:
+    while pos < |data| where pos >= 0:
         (offset,len) = findLongestMatch(data,pos)
         output = write_u1(output,offset)
         if offset == 0:
@@ -25,21 +27,23 @@ import whiley.lang.*
     return output
 
 // pos is current position in input value
-(int,int) findLongestMatch([byte] data, int pos):
+(nat,nat) findLongestMatch([byte] data, nat pos):
     bestOffset = 0
     bestLen = 0
-    start = Math.max(pos-255,0)
-    for offset in start .. pos:
+    start = Math.max(pos - 255,0)
+    assert start >= 0
+    for offset in start .. pos where bestOffset >= 0 && bestLen >= 0:
         len = match(data,offset,pos)
         if len > bestLen:
-            bestOffset = pos-offset
+            bestOffset = pos - offset
             bestLen = len
+    //
     return bestOffset,bestLen
 
-int match([byte] data, int offset, int end):
+int match([byte] data, nat offset, nat end):
     pos = end
     len = 0
-    while offset < pos && pos < |data| && data[offset] == data[pos]:
+    while offset < pos && pos < |data| && data[offset] == data[pos] where pos >= 0 && offset >= 0:
         offset = offset + 1
         pos = pos + 1
         len = len + 1
