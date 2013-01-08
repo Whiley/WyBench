@@ -11,11 +11,13 @@ define nat as int where $ >= 0
 
 define Digraph as [{nat}] where no { v in $, w in v | w >= |$| }
 
-Digraph addEdge(Digraph g, nat from, nat to) requires from < |g| && to < |g|:
+Digraph addEdge(Digraph g, nat from, nat to):
     // first, ensure enough capacity
     mx = Math.max(from,to)
-    while |g| <= mx where from < |g|:
+    while |g| <= mx:
         g = g + [{}]
+    //
+    assume from < |g|
     // second, add the actual edge
     g[from] = g[from] + {to}        
     return g
