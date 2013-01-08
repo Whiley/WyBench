@@ -54,15 +54,18 @@ bool matchStar(char c, string regex, string text):
     return line,pos
 
 void ::main(System.Console sys):
-    file = File.Reader(sys.args[0])
-    input = String.fromASCII(file.read())
-    pos = 0
-    nmatches = 0
-    total = 0
-    while pos < |input|:
-        text,pos = readLine(pos,input)        
-        regex,pos = readLine(pos,input)
-        if match(regex,text):
-            nmatches = nmatches + 1
-        total = total + 1
-    sys.out.println("Matched " + nmatches + " / " + total + " inputs.")
+    if |sys.args| == 0:
+        sys.out.println("usage: regex <input-file>")
+    else:
+        file = File.Reader(sys.args[0])
+        input = String.fromASCII(file.read())
+        pos = 0
+        nmatches = 0
+        total = 0
+        while pos < |input|:
+            text,pos = readLine(pos,input)        
+            regex,pos = readLine(pos,input)
+            if match(regex,text):
+                nmatches = nmatches + 1
+            total = total + 1
+        sys.out.println("Matched " + nmatches + " / " + total + " inputs.")
