@@ -23,9 +23,9 @@ bool conflict(Pos p, int row, int col):
         return [queens]
     else:
         solutions = []
-        for col in 0 .. dim:
+        for col in 0 .. dim where n < |queens|:
             solution = true
-            for i in 0 .. n:
+            for i in 0 .. n where n < |queens|:
                 p = queens[i]
                 if conflict(p,n,col):
                     solution = false
