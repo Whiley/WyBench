@@ -12,10 +12,10 @@ benchmarks:
 
 002_fib* --- Computes the first 41 numbers in the Fibonacci sequence.
 
-003_gcd --- Implements Euclid's algorithm for finding the Greatest
+003_gcd* --- Implements Euclid's algorithm for finding the Greatest
             Common Divisor of two numbers.
 
-004_matrix --- Implements the classical Matrix multiplication
+004_matrix* --- Implements the classical Matrix multiplication
                algorithm.
 
 005_paths --- Implements Dijkstra's algorithm for computing the
