@@ -38,19 +38,25 @@ bool isWhiteSpace(char c):
 // ========================================================
 
 void ::main(System.Console sys):
-    try:
-        file = File.Reader(sys.args[0])
-        input = String.fromASCII(file.read())
-        pos = 0
-        data = []
-        pos = skipWhiteSpace(pos,input)
-        // first, read data
-        while pos < |input|:
-            i,pos = parseReal(pos,input)
-            data = data + [i]
+    if |sys.args| == 0:
+        sys.out.println("usage: average <file>")
+    else:
+        try:
+            file = File.Reader(sys.args[0])
+            input = String.fromASCII(file.read())
+            pos = 0
+            data = []
             pos = skipWhiteSpace(pos,input)
-        // second, run the benchmark
-        avg = average(data)
-        sys.out.println(avg)    
-    catch(SyntaxError e):
-        sys.out.println("syntax error")
+            // first, read data
+            while pos < |input|:
+                i,pos = parseReal(pos,input)
+                data = data + [i]
+                pos = skipWhiteSpace(pos,input)
+            // second, run the benchmark
+            if |data| == 0:
+                sys.out.println("no data provided!")
+            else:
+                avg = average(data)
+                sys.out.println(avg)    
+        catch(SyntaxError e):
+            sys.out.println("syntax error")
