@@ -12,10 +12,10 @@ define Job as { int button, bool orange }
 // Parser
 // ===============================================
 
-([Job],int) parseJobs(int pos, string input) throws SyntaxError:
+([Job],nat) parseJobs(nat pos, string input) throws SyntaxError:
     nitems,pos = parseInt(pos,input)
     jobs = []
-    while nitems > 0:
+    while nitems > 0 where pos >= 0:
         pos = skipWhiteSpace(pos,input)
         flag = (input[pos] == 'O')
         pos = skipWhiteSpace(pos+1,input)
@@ -24,16 +24,16 @@ define Job as { int button, bool orange }
         nitems = nitems - 1
     return jobs,pos
 
-(int,int) parseInt(int pos, string input) throws SyntaxError:
+(int,nat) parseInt(nat pos, string input) throws SyntaxError:
     pos = skipWhiteSpace(pos,input)
     start = pos
-    while pos < |input| && Char.isDigit(input[pos]):
+    while pos < |input| && Char.isDigit(input[pos]) where pos >= 0:
         pos = pos + 1
     if pos == start:
         throw SyntaxError("Missing number",pos,pos)
     return Int.parse(input[start..pos]),pos
 
-int skipWhiteSpace(int index, string input):
+nat skipWhiteSpace(nat index, string input):
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     return index
