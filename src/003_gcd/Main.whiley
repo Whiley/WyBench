@@ -4,13 +4,16 @@ import * from whiley.io.File
 
 define nat as int where $ >= 0
 
-(int,int) parseInt(int pos, string input) throws SyntaxError:
+(nat,int) parseInt(int pos, string input) throws SyntaxError:
     start = pos
     while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
         throw SyntaxError("Missing number",start,pos)
-    return Int.parse(input[start..pos]),pos
+    r = Int.parse(input[start..pos])
+    if r <= 0:
+        throw SyntaxError("Cannot accept negative integer",start,pos)
+    return r,pos
 
 int skipWhiteSpace(int index, string input):
     while index < |input| && isWhiteSpace(input[index]):
@@ -38,7 +41,7 @@ void ::main(System.Console sys):
             data = []
             pos = skipWhiteSpace(pos,input)
             // first, read data
-            while pos < |input|:
+            while pos < |input| where all { d in data | d >= 0 }:
                 i,pos = parseInt(pos,input)
                 data = data + [i]
                 pos = skipWhiteSpace(pos,input)
