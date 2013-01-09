@@ -4,7 +4,7 @@ import whiley.lang.*
 import * from whiley.lang.System
 import * from whiley.lang.Errors
 
-define sortedList as [int] where no { i in 0..|$|, j in 0..|$| | i < j && $[i] > $[j] }
+define sortedList as [int] where |$| <= 1 || all { i in 0 .. |$|-1 | $[i] <= $[i+1] }
 
 /**
  * Sort a given list of items into ascending order, producing a sorted
