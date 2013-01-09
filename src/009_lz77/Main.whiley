@@ -30,13 +30,18 @@ define nat as int where $ >= 0
 (nat,nat) findLongestMatch([byte] data, nat pos):
     bestOffset = 0
     bestLen = 0
-    start = Math.max(pos - 255,0)
+    start = pos - 255
+    if start < 0:
+        start = 0
+    //start = Math.max(pos - 255,0)
     assert start >= 0
-    for offset in start .. pos where bestOffset >= 0 && bestLen >= 0:
+    offset = start
+    while offset < pos where bestOffset >= 0 && bestLen >= 0 && offset >= 0:
         len = match(data,offset,pos)
         if len > bestLen:
             bestOffset = pos - offset
             bestLen = len
+        offset = offset + 1
     //
     return bestOffset,bestLen
 
@@ -52,7 +57,7 @@ int match([byte] data, nat offset, nat end):
 [byte] decompress([byte] data):
     output = []
     pos = 0
-    while pos < |data|:
+    while (pos+1) < |data| where pos >= 0:
         offset = data[pos]
         item = data[pos+1]
         pos = pos + 2
@@ -62,9 +67,14 @@ int match([byte] data, nat offset, nat end):
             offset = Byte.toUnsignedInt(offset)
             len = Byte.toUnsignedInt(item)
             start = |output| - offset
-            for i in start .. (start+len):
+            // How to avoid these assumptions?
+            assume offset <= |output|
+            assume (start+len) < |output|
+            i = start
+            while i < (start+len):
                 item = output[i]
-                output = output + [item]            
+                output = output + [item]       
+                i = i + 1     
     // all done!
     return output
             
