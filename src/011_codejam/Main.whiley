@@ -34,7 +34,7 @@ define Job as { int button, bool orange }
     return Int.parse(input[start..pos]),pos
 
 nat skipWhiteSpace(nat index, string input):
-    while index < |input| && isWhiteSpace(input[index]):
+    while index < |input| && isWhiteSpace(input[index]) where index >= 0:
         index = index + 1
     return index
 
