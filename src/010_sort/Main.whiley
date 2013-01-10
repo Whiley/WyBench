@@ -16,7 +16,7 @@ sortedList sort([int] items):
         lhs = sort(items[..pivot])
         rhs = sort(items[pivot..])
         l,r,i = (0,0,0)
-        while i < |items| && l < |lhs| && r < |rhs|:
+        while i < |items| && l < |lhs| && r < |rhs| where l >= 0 && r >= 0 && i >= 0:
             if lhs[l] <= rhs[r]:
                 items[i] = lhs[l] 
                 l=l+1
