@@ -68,17 +68,20 @@ int processJobs([Job] jobs):
     return time
             
 void ::main(System.Console sys):
-    // first, read the input file
-    file = File.Reader(sys.args[0])
-    input = String.fromASCII(file.read())
-    try:
-        ntests,pos = parseInt(0,input)
-        c = 1
-        while c <= ntests:
-            jobs,pos = parseJobs(pos,input)
-            pos = skipWhiteSpace(pos,input)
-            time = processJobs(jobs)
-            sys.out.println("Case #" + c + ": " + time)
-            c = c + 1
-    catch(SyntaxError e):
-        sys.out.println("error - " + e.msg)
+    if |sys.args| == 0:
+        sys.out.println("input file required!")
+    else:
+        // first, read the input file    
+        file = File.Reader(sys.args[0])
+        input = String.fromASCII(file.read())
+        try:
+            ntests,pos = parseInt(0,input)
+            c = 1
+            while c <= ntests:
+                jobs,pos = parseJobs(pos,input)
+                pos = skipWhiteSpace(pos,input)
+                time = processJobs(jobs)
+                sys.out.println("Case #" + c + ": " + time)
+                c = c + 1
+        catch(SyntaxError e):
+            sys.out.println("error - " + e.msg)
