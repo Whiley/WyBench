@@ -33,7 +33,7 @@ benchmarks:
 
 010_sort --- Implements a simple merge sort.
 
-011_codejam --- A solution to test A of the Google Code Jam
+011_codejam* --- A solution to test A of the Google Code Jam
                 Qualificition round in May 2011.
 
 012_cyclic --- A simple implementation of a fixed-size cyclic buffer.
