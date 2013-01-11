@@ -77,7 +77,7 @@ void ::main(System.Console sys):
         try:
             ntests,pos = parseInt(0,input)
             c = 1
-            while c <= ntests:
+            while c <= ntests where pos >= 0:
                 jobs,pos = parseJobs(pos,input)
                 pos = skipWhiteSpace(pos,input)
                 time = processJobs(jobs)
