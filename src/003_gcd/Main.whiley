@@ -4,21 +4,19 @@ import * from whiley.io.File
 
 define nat as int where $ >= 0
 
-(nat,int) parseInt(int pos, string input) throws SyntaxError:
+(nat,nat) parseInt(nat pos, string input) throws SyntaxError:
     start = pos
-    while pos < |input| && Char.isDigit(input[pos]):
+    while pos < |input| && Char.isDigit(input[pos]) where pos >= 0:
         pos = pos + 1
     if pos == start:
         throw SyntaxError("Missing number",start,pos)
-    r = Int.parse(input[start..pos])
-    if r <= 0:
-        throw SyntaxError("Cannot accept negative integer",start,pos)
+    r = Math.abs(Int.parse(input[start..pos]))
     return r,pos
 
-int skipWhiteSpace(int index, string input):
-    while index < |input| && isWhiteSpace(input[index]):
-        index = index + 1
-    return index
+nat skipWhiteSpace(nat pos, string input):
+    while pos < |input| && isWhiteSpace(input[pos]) where pos >= 0:
+        pos = pos + 1
+    return pos
 
 nat gcd(nat a, nat b):
     if(a == 0):
@@ -41,7 +39,7 @@ void ::main(System.Console sys):
             data = []
             pos = skipWhiteSpace(pos,input)
             // first, read data
-            while pos < |input| where all { d in data | d >= 0 }:
+            while pos < |input| where all { d in data | d >= 0 } && pos >= 0:
                 i,pos = parseInt(pos,input)
                 data = data + [i]
                 pos = skipWhiteSpace(pos,input)
