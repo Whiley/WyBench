@@ -8,7 +8,7 @@ benchmarks:
 
 (micro)
 
-<a href="https://github.com/DavePearce/wybench/tree/master/src/001_average">001_average</a>* --- Computes the average of a list of integers.
+[001_average](https://github.com/DavePearce/wybench/tree/master/src/001_average)* --- Computes the average of a list of integers.
 
 002_fib* --- Computes the first 41 numbers in the Fibonacci sequence.
 
