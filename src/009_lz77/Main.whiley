@@ -71,7 +71,7 @@ int match([byte] data, nat offset, nat end):
             assume offset <= |output|
             assume (start+len) < |output|
             i = start
-            while i < (start+len):
+            while i < (start+len) where i >= 0:
                 item = output[i]
                 output = output + [item]       
                 i = i + 1     
