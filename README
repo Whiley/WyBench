@@ -8,14 +8,14 @@ benchmarks:
 
 (micro)
 
-001_average --- Computes the average of a list of integers.
+001_average* --- Computes the average of a list of integers.
 
 002_fib* --- Computes the first 41 numbers in the Fibonacci sequence.
 
-003_gcd* --- Implements Euclid's algorithm for finding the Greatest
+003_gcd --- Implements Euclid's algorithm for finding the Greatest
             Common Divisor of two numbers.
 
-004_matrix* --- Implements the classical Matrix multiplication
+004_matrix --- Implements the classical Matrix multiplication
                algorithm.
 
 005_paths --- Implements Dijkstra's algorithm for computing the
@@ -31,25 +31,25 @@ benchmarks:
 
 009_lz77 --- Implements LZ77 compression and decompression.
 
-010_sort* --- Implements a simple merge sort.
+010_sort --- Implements a simple merge sort.
 
-011_codejam --- A solution to test A of the Google Code Jam
+011_codejam* --- A solution to test A of the Google Code Jam
                 Qualificition round in May 2011.
 
-012_cyclic* --- A simple implementation of a fixed-size cyclic buffer.
+012_cyclic --- A simple implementation of a fixed-size cyclic buffer.
 
-013_btree* --- A simple implementation of a binary search tree.
+013_btree --- A simple implementation of a binary search tree.
 
 014_lights* --- A simple implementation of the (British) traffic
                 lights sequence.
 
-015_cashtill* --- A simple example implementing a cash till which
+015_cashtill --- A simple example implementing a cash till which
                   computes the change to given to a customer after a
                   purchase.
 
-016_date* --- A simple Gregorian Calendar implementation.
+016_date --- A simple Gregorian Calendar implementation.
 
-017_math* --- Some simple math functions.
+017_math --- Some simple math functions.
 
 (small)
 
@@ -60,7 +60,7 @@ benchmarks:
 
 103_tetris --- A simple implementation of Tetris.
 
-104_tictactoe* --- A simple implementation of Tic Tac Toe (a.k.a
+104_tictactoe --- A simple implementation of Tic Tac Toe (a.k.a
                   Noughts & Crosses).
 
 (large)
@@ -78,4 +78,4 @@ benchmarks:
 
 204_raytrace --- A simple ray tracer [BROKEN]
 
-(* = these benchmarks test verification as well)
+(* = these benchmarks verify as well)

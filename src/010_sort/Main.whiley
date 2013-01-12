@@ -4,7 +4,7 @@ import whiley.lang.*
 import * from whiley.lang.System
 import * from whiley.lang.Errors
 
-define sortedList as [int] where no { i in 0..|$|, j in 0..|$| | i < j && $[i] > $[j] }
+define sortedList as [int] where |$| <= 1 || all { i in 0 .. |$|-1 | $[i] <= $[i+1] }
 
 /**
  * Sort a given list of items into ascending order, producing a sorted
@@ -16,7 +16,7 @@ sortedList sort([int] items):
         lhs = sort(items[..pivot])
         rhs = sort(items[pivot..])
         l,r,i = (0,0,0)
-        while i < |items| && l < |lhs| && r < |rhs|:
+        while i < |items| && l < |lhs| && r < |rhs| where l >= 0 && r >= 0 && i >= 0:
             if lhs[l] <= rhs[r]:
                 items[i] = lhs[l] 
                 l=l+1
