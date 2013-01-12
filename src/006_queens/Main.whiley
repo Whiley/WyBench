@@ -5,21 +5,14 @@ import nat from whiley.lang.Int
 
 define Pos as (int,int)
 
-int abs(int x):
-    if x < 0:
-        return -x
-    else:
-        return x
-
-bool conflict(Pos p, int row, int col):
+bool conflict(Pos p, nat row, nat col):
     r,c = p
     if r == row || c == col:
         return true
-    colDiff = abs(c - col)
-    rowDiff = abs(r - row)
+    colDiff = Math.abs(c - col)
+    rowDiff = Math.abs(r - row)
     return colDiff == rowDiff
     
-
 [[Pos]] run([Pos] queens, nat n, int dim) requires n <= |queens| && dim == |queens|:
     if dim == n:
         return [queens]
