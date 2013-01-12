@@ -24,7 +24,7 @@ benchmarks:
 
 006_queens --- Implements a solution for the N-Queens problem.
 
-007_regex --- Implements a simple regular expression matcher.
+007_regex* --- Implements a simple regular expression matcher.
 
 008_scc --- Implements a variant of Tarjan's algorithm for finding
             strongly connected components.
