@@ -6,7 +6,7 @@ import * from whiley.io.File
 // Definitions
 // ===============================================
 
-define Job as { int button, bool orange }
+define Job as { nat button, bool orange }
 
 // ===============================================
 // Parser
@@ -14,24 +14,29 @@ define Job as { int button, bool orange }
 
 ([Job],nat) parseJobs(nat pos, string input) throws SyntaxError:
     nitems,pos = parseInt(pos,input)
-    jobs = []
-    while nitems > 0 where pos >= 0:
+    return parseJobs(nitems,pos,input)
+
+([Job],nat) parseJobs(nat nitems, nat pos, string input) throws SyntaxError:
+    if nitems == 0:
+        return ([],pos)
+    else:
         pos = skipWhiteSpace(pos,input)
         flag = (input[pos] == 'O')
         pos = skipWhiteSpace(pos+1,input)
         target,pos = parseInt(pos,input)
-        jobs = jobs + [{button: target, orange: flag}]
-        nitems = nitems - 1
-    return jobs,pos
+        jobs,pos = parseJobs(nitems-1,pos,input)
+        jobs = [{button: target, orange: flag}] + jobs
+        return jobs,pos        
 
-(int,nat) parseInt(nat pos, string input) throws SyntaxError:
+(nat,nat) parseInt(nat pos, string input) throws SyntaxError:
     pos = skipWhiteSpace(pos,input)
     start = pos
     while pos < |input| && Char.isDigit(input[pos]) where pos >= 0:
         pos = pos + 1
     if pos == start:
         throw SyntaxError("Missing number",pos,pos)
-    return Int.parse(input[start..pos]),pos
+    val = Math.abs(Int.parse(input[start..pos]))
+    return val,pos
 
 nat skipWhiteSpace(nat index, string input):
     while index < |input| && isWhiteSpace(input[index]) where index >= 0:
@@ -42,14 +47,14 @@ nat skipWhiteSpace(nat index, string input):
 // Main Computation
 // ===============================================
 
-int processJobs([Job] jobs):
-    Opos = 1    // current oranage position
+nat processJobs([Job] jobs):
+    Opos = 1    // current orange position
     Bpos = 1    // current blue position 
     Osaved = 0  // spare time orange has saved
     Bsaved = 0  // spare time blue has saved
     time = 0    // total time accumulated thus far
     // now, do the work!
-    for j in jobs:
+    for j in jobs where time >= 0:
         if j.orange:
             diff = Math.abs(j.button - Opos)
             timediff = Math.max(0, diff - Osaved) + 1
