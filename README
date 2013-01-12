@@ -22,7 +22,7 @@ benchmarks:
               single-source shortest paths of a directed graph
               [BROKEN]
 
-006_queens --- Implements a solution for the N-Queens problem.
+006_queens* --- Implements a solution for the N-Queens problem.
 
 007_regex* --- Implements a simple regular expression matcher.
 
