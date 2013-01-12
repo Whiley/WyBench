@@ -2,6 +2,8 @@ import whiley.lang.*
 import * from whiley.lang.System
 import * from whiley.io.File
 
+import nat from whiley.lang.Int
+
 // match: search for regexp anywhere in text
 bool match(string regex,string text):
     if |regex| > 0 && regex[0] == '^':
@@ -43,9 +45,9 @@ bool matchStar(char c, string regex, string text):
         return true
     return false
 
-(string,int) readLine(int pos, string input):
+(string,nat) readLine(nat pos, string input):
     start = pos
-    while pos < |input| && input[pos] != '\n' && input[pos] != '\r':
+    while pos < |input| && input[pos] != '\n' && input[pos] != '\r' where pos >= 0:
         pos = pos + 1
     line = input[start..pos]
     pos = pos + 1
@@ -62,7 +64,7 @@ void ::main(System.Console sys):
         pos = 0
         nmatches = 0
         total = 0
-        while pos < |input|:
+        while pos < |input| where pos >= 0:
             text,pos = readLine(pos,input)        
             regex,pos = readLine(pos,input)
             if match(regex,text):
