@@ -3,19 +3,27 @@ import * from whiley.lang.System
 import whiley.lang.*
 import * from whiley.lang.Errors
 
+import nat from whiley.lang.Int
+
 // ============================================
 // Game Logic
 // ============================================
 
-define Board as [[bool]]
+define Board as [[bool]] where |$| > 0 
 
-Board Board(int nrows, int ncols):
+Board Board(int nrows, int ncols) requires nrows > 0 && ncols > 0:
     row = []
-    for i in 0..ncols:
+    i = 0
+    while i < ncols where i >= 0:
         row = row + [false]
+        i = i + 1
     board = []
-    for i in 0..nrows:
+    i = 0
+    while i < nrows where i >= 0:
         board = board + [row]
+        i = i + 1
+    // FIXME: would be nice to remove this
+    assume |board| > 0
     return board
 
 Board update(Board board):
