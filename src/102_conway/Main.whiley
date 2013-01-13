@@ -9,51 +9,65 @@ import nat from whiley.lang.Int
 // Game Logic
 // ============================================
 
-define Board as [[bool]] where |$| > 0 
+define Board as {
+    [[bool]] cells,
+    nat width,
+    nat height
+} where |cells| == height && all { row in cells | |row| == width }
 
-Board Board(int nrows, int ncols) requires nrows > 0 && ncols > 0:
+// Create an empty board of size width x height.  That is, where each
+// square is "off".
+Board Board(int height, int width):
     row = []
     i = 0
-    while i < ncols where i >= 0:
+    while i < width where i >= 0:
         row = row + [false]
         i = i + 1
     board = []
     i = 0
-    while i < nrows where i >= 0:
+    while i < height where i >= 0:
         board = board + [row]
         i = i + 1
-    // FIXME: would be nice to remove this
-    assume |board| > 0
-    return board
+    return { 
+        cells: board, 
+        height: height, 
+        width: width
+    }
 
+// Take the current board and determine the next state based on the
+// current state of all cells.
 Board update(Board board):
-    nboard = board
-    nrows = |board|
-    ncols = |board[0]|
-    for i in 0..nrows:
-        for j in 0..ncols:
+    ncells = board.cells
+    height = board.height
+    width = board.width
+    for i in 0..height:
+        for j in 0..width:
             c = countLiving(board,i,j)
-            alive = board[i][j]
+            alive = board.cells[i][j]
             if alive:        
                 switch c:
                     case 0,1:
                         // Any live cell with fewer than two live neighbours dies, 
                         // as if caused by under-population.
-                        nboard[i][j] = false
+                        ncells[i][j] = false
                     case 2,3:
                         // Any live cell with two or three live neighbours lives
                         // on to the next generation.
                     case 4,5,6,7,8:
                         // Any live cell with more than three live neighbours dies, 
                         // as if by overcrowding.
-                        nboard[i][j] = false
+                        ncells[i][j] = false
                 // end switch
             else if c == 3:
                 // Any dead cell with exactly three live neighbours 
                 // becomes a live cell, as if by reproduction.
-                nboard[i][j] = true
-    // done                    
-    return nboard
+                ncells[i][j] = true
+    // done
+    return { 
+        cells: ncells, 
+        height: height, 
+        width: width
+    }                    
 
 int countLiving(Board board, int row, int col):
     count = isAlive(board,row-1,col-1)
@@ -67,13 +81,11 @@ int countLiving(Board board, int row, int col):
     return count
 
 int isAlive(Board board, int row, int col):
-    nrows = |board|
-    if row < 0 || row >= nrows:
+    if row < 0 || row >= board.height:
         return 0
-    ncols = |board[0]|
-    if col < 0 || col >= ncols:
+    if col < 0 || col >= board.width:
         return 0
-    if board[row][col]:
+    if board.cells[row][col]:
         return 1
     else:
         return 0
@@ -90,7 +102,7 @@ int isAlive(Board board, int row, int col):
     board = Board(cols,rows)
     while pos < |input|:
         col,row,pos = parsePair(input,pos,',')
-        board[row][col]=true
+        board.cells[row][col]=true
     return board,niters
 
 (int,int,int) parsePair(string input, int pos, char sep) throws SyntaxError:
@@ -141,12 +153,12 @@ void ::main(System.Console sys):
         sys.out.println("error: " + e.msg)
 
 void ::printBoard(System.Console sys, Board board):
-    ncols = |board[0]|
+    ncols = board.width
     sys.out.print("+")
     for i in 0..ncols:
         sys.out.print("-")
     sys.out.println("+")
-    for row in board:
+    for row in board.cells:
         sys.out.print("|")
         for cell in row:
             if cell:
