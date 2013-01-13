@@ -17,19 +17,21 @@ define Board as {
 
 // Create an empty board of size width x height.  That is, where each
 // square is "off".
-Board Board(int height, int width):
+Board Board(nat height, nat width):
     row = []
     i = 0
     while i < width where i >= 0:
         row = row + [false]
         i = i + 1
-    board = []
+    assume |row| == width
+    cells = []
     i = 0
-    while i < height where i >= 0:
-        board = board + [row]
+    while i < height where i >= 0 && all { r in cells | |r| == width }:
+        cells = cells + [row]
         i = i + 1
+    assume |cells| == height
     return { 
-        cells: board, 
+        cells: cells, 
         height: height, 
         width: width
     }
@@ -40,9 +42,13 @@ Board update(Board board):
     ncells = board.cells
     height = board.height
     width = board.width
-    for i in 0..height:
-        for j in 0..width:
+    i = 0
+    while i < height where i >= 0 && |ncells| == height && all { row in ncells | |row| == width }:
+        j = 0
+        while j < width where j >= 0 && all { row in ncells | |row| == width }:
             c = countLiving(board,i,j)
+            assume i < |board.cells|    // FIXME
+            assume j < |board.cells[i]| // FIXME
             alive = board.cells[i][j]
             if alive:        
                 switch c:
@@ -62,6 +68,8 @@ Board update(Board board):
                 // Any dead cell with exactly three live neighbours 
                 // becomes a live cell, as if by reproduction.
                 ncells[i][j] = true
+            j = j + 1
+        i = i + 1
     // done
     return { 
         cells: ncells, 
