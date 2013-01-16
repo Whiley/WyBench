@@ -31,8 +31,10 @@ define NonFullBuffer as Buffer where ($.rpos != $.wpos + 1) && ($.wpos != |$.dat
 // Create a buffer with a given number of slots.
 public EmptyBuffer Buffer(int size) requires size > 0:
     data = []
-    for i in 0..size:
+    i = 0
+    while i < size:
         data = data + [0]
+        i = i + 1
     return {
         data: data,
         rpos: 0,
