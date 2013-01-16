@@ -21,12 +21,15 @@ define Job as { nat button, bool orange }
         return ([],pos)
     else:
         pos = skipWhiteSpace(pos,input)
-        flag = (input[pos] == 'O')
-        pos = skipWhiteSpace(pos+1,input)
-        target,pos = parseInt(pos,input)
-        jobs,pos = parseJobs(nitems-1,pos,input)
-        jobs = [{button: target, orange: flag}] + jobs
-        return jobs,pos        
+        if pos < |input|:
+            flag = (input[pos] == 'O')
+            pos = skipWhiteSpace(pos+1,input)
+            target,pos = parseInt(pos,input)
+            jobs,pos = parseJobs(nitems-1,pos,input)
+            jobs = [{button: target, orange: flag}] + jobs
+            return jobs,pos        
+        else:
+            throw SyntaxError("Missing flag",pos,pos)        
 
 (nat,nat) parseInt(nat pos, string input) throws SyntaxError:
     pos = skipWhiteSpace(pos,input)
