@@ -35,6 +35,7 @@ public EmptyBuffer Buffer(int size) requires size > 0:
     while i < size:
         data = data + [0]
         i = i + 1
+    assume |data| == size
     return {
         data: data,
         rpos: 0,
