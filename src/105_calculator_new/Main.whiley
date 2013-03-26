@@ -47,16 +47,6 @@ nat skipWhiteSpace(nat pos, string input) requires pos >= 0 && pos <= |input|, e
         pos = skipWhiteSpace(pos, line)
     return res
 
-([string], [string]) doInline([string] stack, [string] res, string ele) requires ele in ["+", "-"] && |stack| > 0 && stack[0] in ["*", "/", "("]:
-    res = res + [stack[0]]
-    stack = stack[1..]
-    if stack[0] == "(":
-        stack = [ele] + stack
-    else: //if stack[0] == "+" || stack[0] == "-":
-        res = res + [stack[0]]
-        stack = [ele] + stack[1..]
-    return (stack, res)
-
 [string] in2suf([string] inexp) throws RuntimeError:
     res = []
     stack = ["("] // heading "("
@@ -83,7 +73,15 @@ nat skipWhiteSpace(nat pos, string input) requires pos >= 0 && pos <= |input|, e
                 res = res + [stack[0]]
                 stack = [ele] + stack[1..]
             else if stack[0] == "*" || stack[0] == "/":
-                stack, res = doInline(stack, res, ele)
+                res = res + [stack[0]]
+                stack = stack[1..]
+                if stack[0] == "(":
+                    stack = [ele] + stack
+                else if stack[0] == "+" || stack[0] == "-":
+                    res = res + [stack[0]]
+                    stack = [ele] + stack[1..]
+                else:
+                    throw {msg: "bad element in expression"}
             else:
                 throw {msg: "bad element in expression"}
         else if ele == ")":
@@ -104,30 +102,12 @@ nat skipWhiteSpace(nat pos, string input) requires pos >= 0 && pos <= |input|, e
     assert |stack| == 0
 
     return res
- 
+
 real calc([string] sufexp) requires |sufexp| > 0 throws SyntaxError:
     stack = []
-
     for ele in sufexp:
         if Char.isDigit(ele[0]) || ele[0] == '.':
-            stack = [Real.parse(ele) * 1.0] + stack
-        //switch (ele):
-        //    case "+":
-        //        r = stack[1] + stack[0]
-        //        stack = [r] + stack[2..]
-        //        break
-        //    case "-":
-        //        r = stack[1] - stack[0]
-        //        stack = [r] + stack[2..]
-        //        break
-        //    case "*":
-        //        r = stack[1] * stack[0]
-        //        stack = [r] + stack[2..]
-        //        break
-        //    case "/":
-        //        r = stack[1] / stack[0]
-        //        stack = [r] + stack[2..]
-        //        break
+            stack = [Real.parse(ele)] + stack
         if ele == "+":
             assert |stack| >= 2
             r = stack[1] + stack[0]
@@ -144,7 +124,6 @@ real calc([string] sufexp) requires |sufexp| > 0 throws SyntaxError:
             assert |stack| >= 2
             r = stack[1] / stack[0]
             stack = [r] + stack[2..]
- 
     assert |stack| == 1
     return stack[0]
 
@@ -170,4 +149,3 @@ void ::main(System.Console con):
                 con.out.print(e.start)
                 con.out.print(" - ")
                 con.out.println(e.end)
-
