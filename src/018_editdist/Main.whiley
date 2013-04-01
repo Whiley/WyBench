@@ -77,7 +77,7 @@ define Node as {nat match, int px, int py}
         if i == 0 && j == 0:
             break
         else if i > 0 && j == 0:
-            w0 = sub(word0, 0, i) + w0
+            w0 = word0[0..i] + w0
             k = 0
             while k < i:
                 w1 = " " + w1
@@ -87,35 +87,21 @@ define Node as {nat match, int px, int py}
             while k < j:
                 w0 = " " + w0
                 k = k + 1
-            w1 = sub(word1, 0, j) + w1
+            w1 = word1[0..j] + w1
         else if ii == i && jj == j - 1:
             w0 = " " + w0
-            w1 = sub(word1, j - 1, j) + w1
+            w1 = word1[(j - 1)..j] + w1
         else if ii == i - 1 && jj == j:
-            w0 = sub(word0, i - 1, i) + w0
+            w0 = word0[(i - 1)..i] + w0
             w1 = " " + w1
         else if ii == i - 1 && jj == j - 1:
-            w0 = sub(word0, i - 1, i) + w0
-            w1 = sub(word1, j - 1, j) + w1
+            w0 = word0[(i - 1)..i] + w0
+            w1 = word1[(j - 1)..j] + w1
         i = ii
         j = jj
 
     return (w0, w1)
 
-string sub(string s, nat st, nat ed) requires st <= ed && st >= 0 && ed <= |s|:
-    return s[st..ed]
-
-void ::print_matrix([[Node]] matrix, System.Console sys):
-    for j in matrix:
-        sys.out.println("line:")
-        for i in j:
-            sys.out.print("  match: ")
-            sys.out.print(i.match)
-            sys.out.print(" px: ")
-            sys.out.print(i.px)
-            sys.out.print(" py: ")
-            sys.out.println(i.py)
- 
 void ::main(System.Console sys):
     if |sys.args| == 0:
         sys.out.println("usage: eddist <input-file>")
@@ -138,5 +124,5 @@ void ::main(System.Console sys):
                 sys.out.print(" and ")
                 sys.out.print(word1)
                 sys.out.println(":")
-                sys.out.println(w0)
-                sys.out.println(w1)
+                sys.out.println("\t" + w0)
+                sys.out.println("\t" + w1)
