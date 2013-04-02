@@ -1,10 +1,10 @@
 import java.util.*;
 
 public class Generator {
-    public static final int AMNT = 100;
-    public static final int SECLENSM = 8;
-    public static final int SECLENDF = 4;
-    public static final int SECS = 4;
+    public static final int AMNT = 200;
+    public static final int SECLENSM = 10;
+    public static final int SECLENDF = 5;
+    public static final int SECS = 8;
 
     public static String genStr(int l, Random rnd) {
         String res = "";
