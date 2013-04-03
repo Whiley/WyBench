@@ -45,6 +45,77 @@ define Stmt as Print | Set
 
 define RuntimeError as { string msg }
 
+int evaluate_low(Expr e, {string=>int} env) throws RuntimeError:
+    if e is int:
+        return e
+    else if e is Var:
+        return env[e.id]
+    else if e is BinOp:
+        lhs = evaluate_low(e.lhs, env)
+        cop = e.op
+        e = e.rhs
+        while e is BinOp:
+            if cop == MUL:
+                lhs = lhs * evaluate_low(e.lhs, env)
+            else: // if cop == DIV:
+                if evaluate_low(e.lhs, env) == 0:
+                    throw {msg: "divide-by-zero"}
+                else:
+                    lhs = lhs / evaluate_low(e.lhs, env)
+            cop = e.op
+            e = e.rhs
+        if e is Var:
+            e = env[e.id]
+        if !(e is int):
+            throw {msg: "bad operation"}
+        if cop == MUL:
+            return lhs * e
+        else: // if cop == DIV:
+            if e == 0:
+                throw {msg: "divide-by-zero"}
+            else:
+                return lhs / e
+    else:
+        throw {msg: "bad operation"}
+
+int evaluate_high(Expr e, {string=>int} env) throws RuntimeError:
+    if e is int:
+        return e
+    else if e is Var:
+        return env[e.id]
+    else if e is BinOp:
+        lhs = evaluate_low(e.lhs, env)
+        cop = e.op
+        e = e.rhs
+        while e is BinOp:
+            if (cop == ADD || cop == SUB) && (e.op == MUL || e.op == DIV):
+                break
+            if cop == ADD:
+                lhs = lhs + evaluate_low(e.lhs, env)
+            else: // if cop == SUB:
+                lhs = lhs - evaluate_low(e.lhs, env)
+            cop = e.op
+            e = e.rhs
+        if e is Var:
+            e = env[e.id]
+        else if e is BinOp:
+            e = evaluate_low(e, env)
+        if !(e is int):
+            throw {msg: "bad operation"}
+        if cop == ADD:
+            return lhs + e
+        else if cop == SUB:
+            return lhs - e
+        else if cop == MUL:
+            return lhs * e
+        else: // if cop == DIV:
+            if e == 0:
+                throw {msg: "divide-by-zero"}
+            else:
+                return lhs / e
+    else:
+        throw {msg: "bad operation"}
+
 Value evaluate(Expr e, {string=>Value} env) throws RuntimeError:
     if e is int:
         return e
@@ -66,12 +137,12 @@ Value evaluate(Expr e, {string=>Value} env) throws RuntimeError:
         else if rhs != 0:
             return lhs / rhs
         throw {msg: "divide-by-zero"}
-    else if e is [Expr]:
-        r = []
-        for i in e:
-            v = evaluate(i, env)
-            r = r + [v]
-        return r
+    //else if e is [Expr]:
+    //    r = []
+    //    for i in e:
+    //        v = evaluate(i, env)
+    //        r = r + [v]
+    //    return r
     else if e is ListAccess:
         src = evaluate(e.src, env)
         index = evaluate(e.index, env)
@@ -211,7 +282,7 @@ public void ::main(System.Console sys):
             st = {pos: 0, input: input}
             while st.pos < |st.input|:
                 s,st = parse(st)
-                r = evaluate(s.rhs,env)
+                r = evaluate_high(s.rhs,env)
                 if s is Set:
                     env[s.lhs] = r
                 else:
