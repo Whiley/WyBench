@@ -3,7 +3,9 @@ import * from whiley.lang.System
 import * from whiley.io.File
 import * from whiley.lang.Errors
 
-// Implementation of Fast Matrix Multiplication. 
+// Implementation of Fast Matrix Multiplication.  This uses
+
+// http://en.wikipedia.org/wiki/Matrix_chain_multiplication
 
 define nat as int where $ >= 0
 
