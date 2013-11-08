@@ -3,11 +3,27 @@ import * from whiley.lang.System
 import * from whiley.io.File
 import * from whiley.lang.Errors
 
-define nat as int where $ >= 0
+// Author: David J. Pearce
 
 // ========================================================
-// Benchmark
+// Description
 // ========================================================
+
+// This is a very naive implementation of matrix multiplication.  It does
+// not perform any optimisations, and does not represent matrices in any
+// special manner (e.g. sparse representations, etc).
+//
+// In the future, it would be interesting to consider chain
+// multiplication problem:
+//
+// http://en.wikipedia.org/wiki/Matrix_chain_multiplication
+//
+
+// ========================================================
+// Benchmark Code
+// ========================================================
+
+define nat as int where $ >= 0
 
 define Matrix as {
     int width,
@@ -53,7 +69,7 @@ Matrix multiply(Matrix A, Matrix B)
     return Matrix(B.width,A.height,C_data)
 
 // ========================================================
-// Parser
+// Parser Code
 // ========================================================
 
 (Matrix,Matrix) parseFile(string input) throws SyntaxError:
