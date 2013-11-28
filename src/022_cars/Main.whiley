@@ -35,8 +35,13 @@ requires st.carsOnBr > 0:
 // A car, either heading towards the island or towards the 
 // main land, enters the bridge.
 State carEntersBridge(State st, bool toIsland)
-requires toIsland || st.carsOnIl > 0,
-requires !toIsland || (st.carsOnBr + st.carsOnIl + 1) < maxCarsOnIsland:
+// We need cars on island for one to leave island
+requires toIsland || st.carsOnIl > 0,  
+// We need cars on the mainland for one to leave mainland
+requires !toIsland || st.carsOnMl > 0,
+// To allow a car onto the bridge heading towards the island, there must 
+// be at least one free space available.
+requires !toIsland || (st.carsOnBr + st.carsOnIl + 1) < maxCarsOnIsland: 
 	//
 	st.carsOnBr = st.carsOnBr + 1
 	if toIsland:

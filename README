@@ -51,7 +51,7 @@ benchmarks:
 
 017_math --- Some simple math functions.
 
-022_cars --- A simple model of cars on a bridge between an island and
+022_cars* --- A simple model of cars on a bridge between an island and
              the mainland, the aim of which is to ensure that only a
              certain number of cars get onto the island.
 
