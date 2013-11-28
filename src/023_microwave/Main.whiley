@@ -1,0 +1,66 @@
+// This is based on the classical "microwave" oven state 
+// machine problem.  The purpose is to ensure that the 
+// door is never open when the microwave is heating.
+//
+// By David J. Peace, 2013
+
+define nat as int where $ >= 0
+
+// First, define the state of the microwave.
+define Microwave as {
+	bool heatOn,   // if true, the oven is cooking
+	bool doorOpen, // if true, the door is open
+	nat timer      // timer setting (in seconds)
+} where !doorOpen || !heatOn 
+
+// The clock tick event is signaled by the internal clock
+// circuits of the microwave.  It is triggered every second 
+// in order to implement timed cooking.
+Microwave clockTick(Microwave m):
+	//
+	if m.heatOn && m.timer == 0:
+		// Timer has expired
+		m.heatOn = false
+	else if m.heatOn:
+		// Still time left
+		m.timer = m.timer - 1
+	// If heating is not on, then ignore this event 
+	return m
+		 
+// Set the timer on the microwave.  This can't be done if 
+// the microwave is cooking.
+Microwave setTimer(Microwave m, nat value)
+requires !m.heatOn:
+	//
+	m.timer = value
+	return m
+
+// Signals that the "start cooking" button has been
+// pressed.  Observe that, if the door is open, then
+// this event should have no effect.
+Microwave startCooking(Microwave m):
+	//	
+	// Here, we check the all important safety propery
+	// for the microwave.
+	if !m.doorOpen:
+		m.heatOn = true
+	return m
+
+// A door closed event is triggered when the sensor 
+// detects that the door is closed.
+Microwave doorClosed(Microwave m)
+requires m.doorOpen:
+	//
+	m.doorOpen = false
+	return m
+
+// A door opened event is triggered when the sensor 
+// detects that the door is opened.
+Microwave doorOpened(Microwave m)
+requires m.doorOpen:
+	//
+	m.doorOpen = true
+	return m
+
+
+
