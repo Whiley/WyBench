@@ -35,10 +35,14 @@ requires st.carsOnBr > 0:
 // A car, either heading towards the island or towards the 
 // main land, enters the bridge.
 State carEntersBridge(State st, bool toIsland)
-requires (st.carsOnBr + st.carsOnIl + 1) < maxCarsOnIsland:
+requires toIsland || st.carsOnIl > 0,
+requires !toIsland || (st.carsOnBr + st.carsOnIl + 1) < maxCarsOnIsland:
 	//
 	st.carsOnBr = st.carsOnBr + 1
-	st.carsOnIl = st.carsOnIl - 1
+	if toIsland:
+		st.carsOnMl = st.carsOnMl - 1
+	else:
+		st.carsOnIl = st.carsOnIl - 1
 	return st
 
 	
