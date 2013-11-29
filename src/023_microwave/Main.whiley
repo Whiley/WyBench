@@ -57,9 +57,10 @@ requires m.doorOpen:
 // A door opened event is triggered when the sensor 
 // detects that the door is opened.
 Microwave doorOpened(Microwave m)
-requires m.doorOpen:
+requires !m.doorOpen:
 	//
 	m.doorOpen = true
+	m.heatOn = false
 	return m
 
 
