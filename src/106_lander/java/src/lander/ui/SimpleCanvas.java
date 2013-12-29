@@ -6,7 +6,7 @@ import java.awt.image.BufferStrategy;
 
 public class SimpleCanvas extends Canvas implements KeyListener {
 	private BufferStrategy strategy;
-	private Graphics graphics;
+	private Graphics2D graphics;
 	
 	public SimpleCanvas() {
 		this.setPreferredSize(new Dimension(600,600));
@@ -18,13 +18,17 @@ public class SimpleCanvas extends Canvas implements KeyListener {
 	public void init() {
 		createBufferStrategy(2);
 		strategy = getBufferStrategy();
-		graphics = strategy.getDrawGraphics();
 	}
 		
 	public void paint(Graphics g) {
 			strategy.show();
+			graphics = (Graphics2D) strategy.getDrawGraphics();
+			LanderCanvas.paint();
 			graphics.dispose();
-			graphics = strategy.getDrawGraphics();
+			// flip/draw the backbuffer to the canvas component.
+			strategy.show();
+			// synchronize with the display refresh rate.
+			Toolkit.getDefaultToolkit().sync();
 	}
 
 	// ======================================================================

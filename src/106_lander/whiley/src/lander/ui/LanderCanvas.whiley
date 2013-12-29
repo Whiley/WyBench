@@ -5,5 +5,7 @@ package lander.ui
  */
 native void ::fillRectangle(int x, int y, int width, int height):
 
-export void ::dump(int x, int y, int width, int height):
-	fillRectangle(x,y,width,height)
+export void ::paint():
+	fillRectangle(0,0,10,10)
+	
+	
