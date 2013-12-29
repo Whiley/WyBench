@@ -6,6 +6,13 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
+/**
+ * A simple JFrame which forms the main window of the lander game. In
+ * particular, it contains the SimpleCanvas where the game graphics are drawn.
+ * 
+ * @author David J. Pearce
+ * 
+ */
 public class LanderFrame extends JFrame {
 	private final SimpleCanvas canvas;
 	

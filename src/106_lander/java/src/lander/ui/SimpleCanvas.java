@@ -4,6 +4,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferStrategy;
 
+/**
+ * The SimpleCanvas provides a simple canvas on which we can draw graphics and
+ * receive keyboard events. These are then hooked into the LanderCanvas on the
+ * Whiley side.
+ * 
+ * @author David J. Pearce
+ * 
+ */
 public class SimpleCanvas extends Canvas implements KeyListener {
 	private BufferStrategy strategy;
 	private Graphics2D graphics;
