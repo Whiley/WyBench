@@ -1,14 +1,14 @@
-package lander.swing;
+package lander.ui;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferStrategy;
 
-public class LanderCanvas extends Canvas implements KeyListener {
+public class SimpleCanvas extends Canvas implements KeyListener {
 	private BufferStrategy strategy;
 	private Graphics graphics;
 	
-	public LanderCanvas() {
+	public SimpleCanvas() {
 		this.setPreferredSize(new Dimension(600,600));
 		addKeyListener(this);		
 		// Add the hook for the native call back from whiley

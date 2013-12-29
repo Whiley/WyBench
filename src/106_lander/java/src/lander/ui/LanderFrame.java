@@ -1,4 +1,4 @@
-package lander.swing;
+package lander.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -7,12 +7,12 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 
 public class LanderFrame extends JFrame {
-	private final LanderCanvas canvas;
+	private final SimpleCanvas canvas;
 	
 	public LanderFrame() {
 		super("Moon Lander");		
 				
-		canvas = new LanderCanvas();				
+		canvas = new SimpleCanvas();				
 		setLayout(new BorderLayout());			
 		add(canvas, BorderLayout.CENTER);		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);						

@@ -1,7 +1,6 @@
 import java.math.BigInteger;
 
 import lander.ui.*;
-
 import lander.swing.*;
 
 public class Main {
