@@ -1,3 +1,4 @@
+package lander.ui;
 import java.awt.Color;
 import java.math.BigInteger;
 
@@ -13,9 +14,9 @@ public class LanderCanvas$native {
 	/**
 	 * A global hook to the canvas itself.
 	 */
-	public static LanderCanvas canvas;
+	public static lander.swing.LanderCanvas canvas;
 	
-	public void fillRectangle(BigInteger x, BigInteger y, BigInteger width, BigInteger height) {
+	public static void fillRectangle(BigInteger x, BigInteger y, BigInteger width, BigInteger height) {
 		canvas.fillRect(x.intValue(),y.intValue(),width.intValue(),height.intValue(), Color.BLACK);
 	}
 }
