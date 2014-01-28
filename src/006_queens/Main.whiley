@@ -3,17 +3,22 @@ import * from whiley.lang.System
 
 import nat from whiley.lang.Int
 
-define Pos as (int,int)
+type Pos is (int,int)
 
-bool conflict(Pos p, nat row, nat col):
+function conflict(Pos p, nat row, nat col) => bool:
     r,c = p
     if r == row || c == col:
         return true
     colDiff = Math.abs(c - col)
     rowDiff = Math.abs(r - row)
     return colDiff == rowDiff
-    
-[[Pos]] run([Pos] queens, nat n, int dim) requires n <= |queens| && dim == |queens|:
+
+function run([Pos] queens, nat n, int dim) => [[Pos]] 
+// The number of allocated queens is at most the number of queens
+requires n <= |queens|
+// Dim matches the size of the array
+requires dim == |queens|:
+    //
     if dim == n:
         return [queens]
     else:
@@ -32,11 +37,13 @@ bool conflict(Pos p, nat row, nat col):
                 solutions = solutions + run(queens,n+1,dim)                    
         return solutions
 
-void ::main(System.Console sys):
-    dim = 10
-    init = []
+method main(System.Console sys):
+    int dim = 10
+    [(int,int)] init = []
+    //
     for i in 0..dim:
         init = init + [(0,0)]
+    //
     assume |init| == dim
-    solutions = run(init,0,dim)
+    [[Pos]] solutions = run(init,0,dim)
     sys.out.println("Found " + |solutions| + " solutions.")
