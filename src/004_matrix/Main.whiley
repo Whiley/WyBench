@@ -23,17 +23,21 @@ import * from whiley.lang.Errors
 // Benchmark Code
 // ========================================================
 
-define nat as int where $ >= 0
+type nat is (int x) where x >= 0
 
-define Matrix as {
+type Matrix is {
     int width,
     int height,
     [[int]] data
 } where |data| == height && no { i in data | |i| != width }
 
-Matrix Matrix(nat width, nat height, [[int]] data)
-    requires |data| == height && no { i in data | |i| != width },
-    ensures $.width == width && $.height == height && $.data == data:
+function Matrix(nat width, nat height, [[int]] data) => (Matrix r)
+// Input array must match matrix height
+requires |data| == height
+// Elements of input array must match matrix width
+requires no { i in data | |i| != width }
+// 
+ensures r.width == width && r.height == height && r.data == data:
     //
     return {
         width: width,
@@ -41,29 +45,31 @@ Matrix Matrix(nat width, nat height, [[int]] data)
         data: data
     }
 
-Matrix multiply(Matrix A, Matrix B) 
-    requires A.width == B.height,
-    ensures $.width == B.width && $.height == A.height:
+function multiply(Matrix A, Matrix B) => (Matrix C) 
+// Must be possible to multiply matrices
+requires A.width == B.height
+// Specify dimensions of result
+ensures C.width == B.width && C.height == A.height:
     //
-    C_data = []
-    i = 0
+    [[int]] C_data = []
+    nat i = 0
     //
     // NOTE: the following loops can be more elegantly written using
     // "for" statements.  However, for the moment I use "while"
     // statements as these work better with verification.
     //
-    while i < A.height where i >= 0:
-        row = []
-        j = 0
-        while j < B.width where j >= 0:
-            r = 0
-            k = 0
-            while k < A.width where k >= 0:
+    while i < A.height:
+        [int] row = []
+        nat j = 0
+        while j < B.width:
+            int r = 0
+            nat k = 0
+            while k < A.width:
                 r = r + (A.data[i][k] * B.data[k][j])
                 k = k + 1
-            row = row + [r]
+            row = row ++ [r]
             j = j + 1
-        C_data = C_data + [row]
+        C_data = C_data ++ [row]
         i = i + 1
     //
     return Matrix(B.width,A.height,C_data)
@@ -72,36 +78,51 @@ Matrix multiply(Matrix A, Matrix B)
 // Parser Code
 // ========================================================
 
-(Matrix,Matrix) parseFile(string input) throws SyntaxError:
+function parseFile(string input) => (Matrix,Matrix)
+throws SyntaxError:
+    Matrix A // 1st result
+    Matrix B // 2nd result
     data,pos = parseLine(2,0,input)
-    nrows = data[0]
-    ncols = data[1]
+    int nrows = data[0]
+    int ncols = data[1]
     pos = skipBreak(pos,input)
     A,pos = parseMatrix(nrows,ncols,pos,input)
     pos = skipBreak(pos,input)
     B,pos = parseMatrix(nrows,ncols,pos,input)
     return A,B
 
-(Matrix,int) parseMatrix(nat height, nat width, int pos, string input) throws SyntaxError:
-    rows = []
+function parseMatrix(nat height, nat width, int pos, string input) => (Matrix,int)
+throws SyntaxError:
+    //
+    [[int]] rows = []
+    [int] row
+    //
     for i in 0 .. height:
         row,pos = parseLine(width,pos,input)
-        rows = rows + [row]
+        rows = rows ++ [row]
+    //
     return Matrix(width,height,rows),pos
 
-([int],int) parseLine(int count, int pos, string input) throws SyntaxError:
+function parseLine(int count, int pos, string input) => ([int],int) 
+throws SyntaxError:
+    //
     pos = skipWhiteSpace(pos,input)
-    ints = []
+    [int] ints = []
+    //
     while pos < |input| && |ints| != count:
         i,pos = parseInt(pos,input)
-        ints = ints + [i]
+        ints = ints ++ [i]
         pos = skipWhiteSpace(pos,input)
+    //
     if |ints| != count:
         throw SyntaxError("invalid input file",pos,pos)
+    //
     return ints,pos
 
-(int,int) parseInt(int pos, string input) throws SyntaxError:
-    start = pos
+function parseInt(int pos, string input) => (int,int)
+throws SyntaxError:
+    //
+    int start = pos
     // check for negative input
     if pos < |input| && input[pos] == '-':
         pos = pos + 1
@@ -114,44 +135,46 @@ Matrix multiply(Matrix A, Matrix B)
     // done
     return Int.parse(input[start..pos]),pos
 
-int skipBreak(int index, string input):
+function skipBreak(int index, string input) => int:
     while index < |input| && input[index] == '-':
         index = index + 1
+    //
     return skipWhiteSpace(index,input)
 
-int skipWhiteSpace(int index, string input):
+function skipWhiteSpace(int index, string input) => int:
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
+    //
     return index
 
-bool isWhiteSpace(char c):
+function isWhiteSpace(char c) => bool:
     return c == ' ' || c == '\t' || c == '\r' || c == '\n'
 
 // ========================================================
 // Main
 // ========================================================
 
-void ::printMat(System.Console sys, Matrix A):
+method printMat(System.Console sys, Matrix A):
     for i in 0 .. A.height:
         for j in 0 .. A.width:
             sys.out.print(A.data[i][j])
             sys.out.print(" ")
         sys.out.println("")
 
-void ::main(System.Console sys):
+method main(System.Console sys):
     if |sys.args| == 0:
         sys.out.println("usage: matrix <input-file>")
     else:
-        file = File.Reader(sys.args[0])
+        File.Reader file = File.Reader(sys.args[0])
         // first, read data
-        input = String.fromASCII(file.read())
+        string input = String.fromASCII(file.read())
         try:
             // second, build the matrices
             A,B = parseFile(input)
             // third, run the benchmark
-            C = multiply(A,B)
+            Matrix C = multiply(A,B)
             // finally, print the result!
             printMat(sys,C)
         catch(SyntaxError e):
-            sys.out.println("error - " + e.msg)
+            sys.out.println("error - " ++ e.msg)
 
