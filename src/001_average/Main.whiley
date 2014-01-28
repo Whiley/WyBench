@@ -9,8 +9,11 @@ import nat from whiley.lang.Int
 // Benchmark
 // ========================================================
 
-real average([real] data) requires |data| > 0:
-    sum = 0.0
+function average([real] data) => real
+// Input list cannot be empty
+requires |data| > 0:
+    //
+    real sum = 0.0
     for r in data:
         sum = sum + r
     return sum / |data|
@@ -19,46 +22,53 @@ real average([real] data) requires |data| > 0:
 // Parser
 // ========================================================
 
-(real,nat) parseReal(nat pos, string input) throws SyntaxError:
-    start = pos
-    while pos < |input| && (Char.isDigit(input[pos]) || input[pos] == '.') where pos >= 0:
+function parseReal(nat pos, string input) => (real,nat)
+throws SyntaxError:
+    //
+    int start = pos
+    while pos < |input| && (Char.isDigit(input[pos]) || input[pos] == '.'):
         pos = pos + 1
+    //
     if pos == start:
         throw SyntaxError("Missing number",pos,pos)
+    //
     return Real.parse(input[start..pos]),pos
 
-nat skipWhiteSpace(nat index, string input):
-    while index < |input| && isWhiteSpace(input[index]) where index >= 0:
+function skipWhiteSpace(nat index, string input) => nat:
+    //
+    while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
+    //
     return index
 
-bool isWhiteSpace(char c):
+function isWhiteSpace(char c) => bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
 // ========================================================
 // Main
 // ========================================================
 
-void ::main(System.Console sys):
+method main(System.Console sys):
     if |sys.args| == 0:
         sys.out.println("usage: average <file>")
     else:
         try:
-            file = File.Reader(sys.args[0])
-            input = String.fromASCII(file.read())
-            pos = 0
-            data = []
+            File.Reader file = File.Reader(sys.args[0])
+            string input = String.fromASCII(file.read())
+            int pos = 0
+            [int] data = []
             pos = skipWhiteSpace(pos,input)
             // first, read data
             while pos < |input| where pos >= 0:
+                int i
                 i,pos = parseReal(pos,input)
-                data = data + [i]
+                data = data ++ [i]
                 pos = skipWhiteSpace(pos,input)
             // second, run the benchmark
             if |data| == 0:
                 sys.out.println("no data provided!")
             else:
-                avg = average(data)
+                real avg = average(data)
                 sys.out.println(avg)    
         catch(SyntaxError e):
             sys.out.println("syntax error")

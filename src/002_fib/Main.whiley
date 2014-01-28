@@ -1,15 +1,14 @@
 import whiley.lang.*
-import * from whiley.lang.System
 
-define nat as int where $ >= 0
+type nat is (int x) where x >= 0
 
-nat fib(nat x):
+function fib(nat x) => nat:
     if x <= 1:
         return x
     else:
         return fib(x-1) + fib(x-2)
 
-void ::main(System.Console sys):
+method main(System.Console sys):
     for i in 1 .. 41:
-        r = fib(i)
+        nat r = fib(i)
         sys.out.println(r)
