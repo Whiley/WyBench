@@ -3,19 +3,20 @@ import * from whiley.lang.System
 import whiley.lang.*
 import * from whiley.lang.Errors
 
-define nat as int where $ >= 0
+type nat is (int x) where x >= 0
 
 // ============================================
 // Adjacency List directed graph structure
 // ============================================
 
-define Digraph as [{nat}] where no { v in $, w in v | w >= |$| }
+type Digraph is ([{nat}] edges)
+    where no { v in edges, w in v | w >= |edges| }
 
-Digraph addEdge(Digraph g, nat from, nat to):
+function addEdge(Digraph g, nat from, nat to) => Digraph:
     // first, ensure enough capacity
-    mx = Math.max(from,to)
+    nat mx = Math.max(from,to)
     while |g| <= mx:
-        g = g + [{}]
+        g = g ++ [{}]
     //
     assume from < |g|
     // second, add the actual edge
@@ -26,18 +27,24 @@ Digraph addEdge(Digraph g, nat from, nat to):
 // Parser
 // ============================================
 
-[Digraph] parseDigraphs(string input) throws SyntaxError:
-    graphs = []
-    pos = 0
+function parseDigraphs(string input) => [Digraph]
+// Throws syntax error if string is invalid
+throws SyntaxError:
+    //
+    [Digraph] graphs = []
+    int pos = 0
     while pos < |input|:
         graph,pos = parseDigraph(pos,input)
         graphs = graphs + [graph]
     return graphs
 
-(Digraph,int) parseDigraph(int pos, string input) throws SyntaxError:
-    graph = []
+function parseDigraph(int pos, string input) => (Digraph,int)
+throws SyntaxError:
+    //
+    Digraph graph = []
+    bool firstTime = true
+    //
     pos = match("{",pos,input)
-    firstTime = true
     while pos < |input| && input[pos] != '}':
         if !firstTime:
             pos = match(",",pos,input)
@@ -50,8 +57,11 @@ Digraph addEdge(Digraph g, nat from, nat to):
     pos = skipWhiteSpace(pos,input) // parse any newline junk
     return graph,pos
 
-int match(string match, int pos, string input) throws SyntaxError:
-    end = pos + |match|
+function match(string match, int pos, string input) => int 
+throws SyntaxError:
+    //
+    int end = pos + |match|
+    //
     if end < |input|:
         tmp = input[pos..end]
         if tmp == match:
@@ -61,20 +71,26 @@ int match(string match, int pos, string input) throws SyntaxError:
     else:
         throw SyntaxError("unexpected end-of-file",pos,end)
 
-(int,int) parseInt(int pos, string input) throws SyntaxError:
-    start = pos
+function parseInt(int pos, string input) => (int,int)
+throws SyntaxError:
+    //
+    int start = pos
+    //
     while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
+    //
     if pos == start:
         throw SyntaxError("Missing number",pos,pos)
+    //
     return Int.parse(input[start..pos]),pos
 
-int skipWhiteSpace(int index, string input):
+function skipWhiteSpace(int index, string input) => int:
+    //
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     return index
 
-bool isWhiteSpace(char c):
+function isWhiteSpace(char c) => bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
 // ============================================
@@ -84,7 +100,7 @@ bool isWhiteSpace(char c):
 // See: "An Improved Algorithm for Finding the Strongly Connected 
 // Components of a Directed Graph", David J. Pearce, 2005.
 
-define State as {
+type State is {
     Digraph graph,
     [bool] visited,
     [bool] inComponent,
@@ -94,7 +110,7 @@ define State as {
     int cindex
 }
 
-State State(Digraph g):
+function State(Digraph g) => State:
     return {
         graph: g,
         visited: List.create(|g|,false),
@@ -105,22 +121,26 @@ State State(Digraph g):
         cindex: 0
     }
 
-[{int}] find_components(Digraph g):
-    state = State(g)
+function find_components(Digraph g) => [{int}]:
+    State state = State(g)
+    
     for i in 0..|g|:
         if !state.visited[i]:
             state = visit(i,state)
+    
     // build componnent list
-    components = []
+    [{int}] components = []
     while |components| < state.cindex:
         components = components + [{}]
+    
     for i in 0..|g|:
-        cindex = state.rindex[i]
+        int cindex = state.rindex[i]
         components[cindex] = components[cindex] + {i}        
+    
     return components
 
-State visit(int v, State s):
-    root = true
+function visit(int v, State s) => State:
+    bool root = true
     s.visited[v] = true
     s.rindex[v] = s.index
     s.index = s.index + 1
@@ -148,26 +168,30 @@ State visit(int v, State s):
     // all done
     return s
 
-void ::main(System.Console sys):
-    file = File.Reader(sys.args[0])
-    input = String.fromASCII(file.read())
+method main(System.Console sys):
+    File.Reader file = File.Reader(sys.args[0])
+    string input = String.fromASCII(file.read())
+    
     try:
-        graphs = parseDigraphs(input)
+        [Digraph] graphs = parseDigraphs(input)
         // third, print output
-        count = 0
+        int count = 0
         for graph in graphs:
-            sys.out.println("=== Graph #" + count + " (" + |graph| + " nodes) ===")
+            sys.out.println("=== Graph #" 
+                + count + " (" + |graph| + " nodes) ===")
             count = count + 1
-            sccs = find_components(graph)
+            
+            [{int}] sccs = find_components(graph)
             for scc in sccs:
                 sys.out.print("{")
-                firstTime=true
+                bool firstTime=true
                 for v in scc:
                     if !firstTime:
                         sys.out.print(",")
                     firstTime=false
                     sys.out.print(v)
                 sys.out.print("}")
+            
             sys.out.println("")
     catch(SyntaxError e):
         sys.out.println("error: " + e.msg)
