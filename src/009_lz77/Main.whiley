@@ -8,17 +8,18 @@ import * from whiley.io.File
 import * from whiley.lang.System
 import whiley.lang.*
 
-define nat as int where $ >= 0
+type nat is (int x) where x >= 0
 
-[byte] compress([byte] data):
-    pos = 0
-    output = []
+function compress([byte] data) => [byte]:
+    nat pos = 0
+    [byte] output = []
+    //
     // keep going until all data matched
-    while pos < |data| where pos >= 0:
+    while pos < |data|:
         (offset,len) = findLongestMatch(data,pos)
         output = write_u1(output,offset)
         if offset == 0:
-            output = output + [data[pos]]
+            output = output ++ [data[pos]]
             pos = pos + 1
         else:
             output = write_u1(output,len)
@@ -27,16 +28,18 @@ define nat as int where $ >= 0
     return output
 
 // pos is current position in input value
-(nat,nat) findLongestMatch([byte] data, nat pos):
-    bestOffset = 0
-    bestLen = 0
-    start = pos - 255
+function findLongestMatch([byte] data, nat pos) => (nat,nat):
+    //
+    nat bestOffset = 0
+    nat bestLen = 0
+    int start = pos - 255
     if start < 0:
         start = 0
     //start = Math.max(pos - 255,0)
     assert start >= 0
-    offset = start
-    while offset < pos where bestOffset >= 0 && bestLen >= 0 && offset >= 0:
+    nat offset = start
+    while offset < pos:
+        //
         len = match(data,offset,pos)
         if len > bestLen:
             bestOffset = pos - offset
@@ -45,19 +48,23 @@ define nat as int where $ >= 0
     //
     return bestOffset,bestLen
 
-int match([byte] data, nat offset, nat end):
-    pos = end
-    len = 0
-    while offset < pos && pos < |data| && data[offset] == data[pos] where pos >= 0 && offset >= 0:
+function match([byte] data, nat offset, nat end) => int:
+    nat pos = end
+    nat len = 0
+    //
+    while offset < pos && pos < |data| && data[offset] == data[pos]:
+        //
         offset = offset + 1
         pos = pos + 1
         len = len + 1
+    //
     return len
 
-[byte] decompress([byte] data):
-    output = []
-    pos = 0
-    while (pos+1) < |data| where pos >= 0:
+function decompress([byte] data) => [byte]:
+    [byte] output = []
+    nat pos = 0
+    //
+    while (pos+1) < |data|:
         offset = data[pos]
         item = data[pos+1]
         pos = pos + 2
@@ -77,13 +84,13 @@ int match([byte] data, nat offset, nat end):
                 i = i + 1     
     // all done!
     return output
-            
-[byte] write_u1([byte] bytes, int u1):
+
+function write_u1([byte] bytes, int u1) => [byte]:
     return bytes + [Int.toUnsignedByte(u1)]
 
-void ::main(System.Console sys):
-    file = File.Reader(sys.args[0])
-    data = file.read()
+method main(System.Console sys):
+    File.Reader file = File.Reader(sys.args[0])
+    [byte] data = file.read()
     sys.out.println("READ:         " + |data| + " bytes")
     data = compress(data)
     sys.out.println("COMPRESSED:   " + |data| + " bytes.")
