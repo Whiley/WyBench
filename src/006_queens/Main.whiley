@@ -6,11 +6,11 @@ import nat from whiley.lang.Int
 type Pos is (int,int)
 
 function conflict(Pos p, nat row, nat col) => bool:
-    r,c = p
+    int r, int c = p
     if r == row || c == col:
         return true
-    colDiff = Math.abs(c - col)
-    rowDiff = Math.abs(r - row)
+    int colDiff = Math.abs(c - col)
+    int rowDiff = Math.abs(r - row)
     return colDiff == rowDiff
 
 function run([Pos] queens, nat n, int dim) => [[Pos]] 
@@ -22,19 +22,19 @@ requires dim == |queens|:
     if dim == n:
         return [queens]
     else:
-        solutions = []
+        [[Pos]] solutions = []
         for col in 0 .. dim where n < |queens| && dim == |queens|:
-            solution = true
-            i = 0
+            bool solution = true
+            int i = 0
             while i < n where n < |queens| && i >= 0 && dim == |queens|:
-                p = queens[i]
+                Pos p = queens[i]
                 if conflict(p,n,col):
                     solution = false
                     break
                 i = i + 1
             if solution:
                 queens[n] = (n,col)
-                solutions = solutions + run(queens,n+1,dim)                    
+                solutions = solutions ++ run(queens,n+1,dim)                    
         return solutions
 
 method main(System.Console sys):
@@ -42,8 +42,8 @@ method main(System.Console sys):
     [(int,int)] init = []
     //
     for i in 0..dim:
-        init = init + [(0,0)]
+        init = init ++ [(0,0)]
     //
     assume |init| == dim
     [[Pos]] solutions = run(init,0,dim)
-    sys.out.println("Found " + |solutions| + " solutions.")
+    sys.out.println("Found " ++ |solutions| ++ " solutions.")

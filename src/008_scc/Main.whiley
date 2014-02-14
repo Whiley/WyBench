@@ -32,10 +32,11 @@ function parseDigraphs(string input) => [Digraph]
 throws SyntaxError:
     //
     [Digraph] graphs = []
+    Digraph graph
     int pos = 0
     while pos < |input|:
         graph,pos = parseDigraph(pos,input)
-        graphs = graphs + [graph]
+        graphs = graphs ++ [graph]
     return graphs
 
 function parseDigraph(int pos, string input) => (Digraph,int)
@@ -49,8 +50,10 @@ throws SyntaxError:
         if !firstTime:
             pos = match(",",pos,input)
         firstTime=false
+        int from
         from,pos = parseInt(pos,input)
         pos = match(">",pos,input)
+        int to
         to,pos = parseInt(pos,input)
         graph = addEdge(graph,from,to)
     pos = match("}",pos,input)    
@@ -63,11 +66,11 @@ throws SyntaxError:
     int end = pos + |match|
     //
     if end < |input|:
-        tmp = input[pos..end]
+        string tmp = input[pos..end]
         if tmp == match:
             return end
         else:
-            throw SyntaxError("expected " + match + ",found " + tmp,pos,end)
+            throw SyntaxError("expected " ++ match ++ ",found " ++ tmp,pos,end)
     else:
         throw SyntaxError("unexpected end-of-file",pos,end)
 
@@ -131,7 +134,7 @@ function find_components(Digraph g) => [{int}]:
     // build componnent list
     [{int}] components = []
     while |components| < state.cindex:
-        components = components + [{}]
+        components = components ++ [{}]
     
     for i in 0..|g|:
         int cindex = state.rindex[i]
@@ -155,9 +158,9 @@ function visit(int v, State s) => State:
     // check to see if we're a component root
     if root:
         s.inComponent[v] = true
-        rindex_v = s.rindex[v]
+        int rindex_v = s.rindex[v]
         while |s.stack| > 0 && rindex_v <= s.rindex[Stack.top(s.stack)]:
-            w = Stack.top(s.stack)
+            int w = Stack.top(s.stack)
             s.stack = Stack.pop(s.stack)
             s.rindex[w] = s.cindex
             s.inComponent[w] = true
@@ -170,15 +173,14 @@ function visit(int v, State s) => State:
 
 method main(System.Console sys):
     File.Reader file = File.Reader(sys.args[0])
-    string input = String.fromASCII(file.read())
+    string input = String.fromASCII(file.readAll())
     
     try:
         [Digraph] graphs = parseDigraphs(input)
         // third, print output
         int count = 0
         for graph in graphs:
-            sys.out.println("=== Graph #" 
-                + count + " (" + |graph| + " nodes) ===")
+            sys.out.println("=== Graph #" ++ count ++ " (" ++ |graph| ++ " nodes) ===")
             count = count + 1
             
             [{int}] sccs = find_components(graph)
@@ -194,4 +196,4 @@ method main(System.Console sys):
             
             sys.out.println("")
     catch(SyntaxError e):
-        sys.out.println("error: " + e.msg)
+        sys.out.println("error: " ++ e.msg)

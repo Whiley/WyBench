@@ -49,25 +49,26 @@ function readLine(nat pos, string input) => (string,nat):
     int start = pos
     while pos < |input| && input[pos] != '\n' && input[pos] != '\r':
         pos = pos + 1
-    line = input[start..pos]
+    string line = input[start..pos]
     pos = pos + 1
     if pos < |input| && input[pos] == '\n':
         pos = pos + 1
     return line,pos
 
-void ::main(System.Console sys):
+public method main(System.Console sys):
     if |sys.args| == 0:
         sys.out.println("usage: regex <input-file>")
     else:
-        file = File.Reader(sys.args[0])
-        input = String.fromASCII(file.read())
-        pos = 0
-        nmatches = 0
-        total = 0
+        File.Reader file = File.Reader(sys.args[0])
+        string input = String.fromASCII(file.readAll())
+        string text, string regex
+        int pos = 0
+        int nmatches = 0
+        int total = 0
         while pos < |input| where pos >= 0:
             text,pos = readLine(pos,input)        
             regex,pos = readLine(pos,input)
             if match(regex,text):
                 nmatches = nmatches + 1
             total = total + 1
-        sys.out.println("Matched " + nmatches + " / " + total + " inputs.")
+        sys.out.println("Matched " ++ nmatches ++ " / " ++ total ++ " inputs.")

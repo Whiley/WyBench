@@ -54,15 +54,15 @@ method main(System.Console sys):
     else:
         try:
             File.Reader file = File.Reader(sys.args[0])
-            string input = String.fromASCII(file.read())
+            string input = String.fromASCII(file.readAll())
             int pos = 0
             [int] data = []
             pos = skipWhiteSpace(pos,input)
             // first, read data
             while pos < |input| where pos >= 0:
-                int i
-                i,pos = parseReal(pos,input)
-                data = data ++ [i]
+                real r
+                r,pos = parseReal(pos,input)
+                data = data ++ [r]
                 pos = skipWhiteSpace(pos,input)
             // second, run the benchmark
             if |data| == 0:

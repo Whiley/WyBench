@@ -82,7 +82,7 @@ function parseFile(string input) => (Matrix,Matrix)
 throws SyntaxError:
     Matrix A // 1st result
     Matrix B // 2nd result
-    data,pos = parseLine(2,0,input)
+    [int] data, int pos = parseLine(2,0,input)
     int nrows = data[0]
     int ncols = data[1]
     pos = skipBreak(pos,input)
@@ -110,6 +110,7 @@ throws SyntaxError:
     [int] ints = []
     //
     while pos < |input| && |ints| != count:
+        int i
         i,pos = parseInt(pos,input)
         ints = ints ++ [i]
         pos = skipWhiteSpace(pos,input)
@@ -167,10 +168,10 @@ method main(System.Console sys):
     else:
         File.Reader file = File.Reader(sys.args[0])
         // first, read data
-        string input = String.fromASCII(file.read())
+        string input = String.fromASCII(file.readAll())
         try:
             // second, build the matrices
-            A,B = parseFile(input)
+            Matrix A, Matrix B = parseFile(input)
             // third, run the benchmark
             Matrix C = multiply(A,B)
             // finally, print the result!

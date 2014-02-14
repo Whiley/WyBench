@@ -37,7 +37,7 @@ method main(System.Console sys):
         sys.out.println("usage: gcd <input-file>")
     else:
         File.Reader file = File.Reader(sys.args[0])
-        string input = String.fromASCII(file.read())
+        string input = String.fromASCII(file.readAll())
         try:
             int pos = 0
             [int] data = []
