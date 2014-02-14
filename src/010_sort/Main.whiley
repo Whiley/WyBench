@@ -4,18 +4,18 @@ import whiley.lang.*
 import * from whiley.lang.System
 import * from whiley.lang.Errors
 
-define sortedList as [int] where |$| <= 1 || all { i in 0 .. |$|-1 | $[i] <= $[i+1] }
+type sortedList is ([int] xs) where |xs| <= 1 || all { i in 0 .. |xs|-1 | xs[i] <= xs[i+1] }
 
 /**
  * Sort a given list of items into ascending order, producing a sorted
  * list.
  */
-sortedList sort([int] items):
+function sort([int] items) => sortedList:
     if |items| > 1:
-        pivot = |items| / 2
-        lhs = sort(items[..pivot])
-        rhs = sort(items[pivot..])
-        l,r,i = (0,0,0)
+        int pivot = |items| / 2
+        [int] lhs = sort(items[..pivot])
+        [int] rhs = sort(items[pivot..])
+        int l, int r, int i = (0,0,0)
         while i < |items| && l < |lhs| && r < |rhs| where l >= 0 && r >= 0 && i >= 0:
             if lhs[l] <= rhs[r]:
                 items[i] = lhs[l] 
@@ -38,12 +38,12 @@ sortedList sort([int] items):
  * Perform a classical binary search on a sorted list to determine the
  * index of a given item (if it is contained) or null (otherwise).
  */
-null|int search(sortedList list, int item):
-    lower = 0
-    upper = |list| // 1 past last element considered
+function search(sortedList list, int item) => null|int:
+    int lower = 0
+    int upper = |list| // 1 past last element considered
     while lower < upper:
-        pivot = (lower + upper) / 2
-        candidate = list[pivot]
+        int pivot = (lower + upper) / 2
+        int candidate = list[pivot]
         if candidate == item:
             return pivot
         else if candidate < item:
@@ -58,8 +58,10 @@ null|int search(sortedList list, int item):
  * returning a pair consisting of the integer and the first position
  * following it in the string.
  */
-(int,int) parseInt(int pos, string input) throws SyntaxError:
-    start = pos
+function parseInt(int pos, string input) => (int,int) 
+throws SyntaxError:
+    //
+    int start = pos
     while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
@@ -70,7 +72,7 @@ null|int search(sortedList list, int item):
  * Skip past any whitespace in the given string starting from the given
  * position, returning the position of the next non-whitespace character.
  */
-int skipWhiteSpace(int index, string input):
+function skipWhiteSpace(int index, string input) => int:
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     return index
@@ -78,35 +80,35 @@ int skipWhiteSpace(int index, string input):
 /**
  * Check whether a given character is a whitespace character or not.
  */
-bool isWhiteSpace(char c):
+function isWhiteSpace(char c) => bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
-void ::lookFor(System.Console console, sortedList list, int item):
-    index = search(list,item)
+method lookFor(System.Console console, sortedList list, int item):
+    int|null index = search(list,item)
     if index != null:
-        console.out.println("FOUND: " + item + " in " + list + " @ " + index)
+        console.out.println("FOUND: " ++ item ++ " in " ++ list ++ " @ " ++ index)
     else:
-        console.out.println("NOT FOUND: " + item + " in " + list)
+        console.out.println("NOT FOUND: " ++ item ++ " in " ++ list)
 
-define searchTerms as [1,2,3,4,5,6,7,8,9]
+constant searchTerms is [1,2,3,4,5,6,7,8,9]
 
-void ::main(System.Console sys):
-    file = File.Reader(sys.args[0])
-    input = String.fromASCII(file.read())
+method main(System.Console sys):
+    File.Reader file = File.Reader(sys.args[0])
+    string input = String.fromASCII(file.readAll())
     try:
-        pos = 0
-        data = []
-        pos = skipWhiteSpace(pos,input)
+        [int] data = []
+        int pos = skipWhiteSpace(0,input)
         // first, read data
         while pos < |input|:
+            int i
             i,pos = parseInt(pos,input)
-            data = data + [i]
+            data = data ++ [i]
             pos = skipWhiteSpace(pos,input)
         // second, sort data    
         data = sort(data)
         // third, print output
-        sys.out.print("SORTED: " + Any.toString(data))
+        sys.out.print("SORTED: " ++ Any.toString(data))
         for i in searchTerms:
             lookFor(sys,data,i)
     catch(SyntaxError e):
-        sys.out.println("Syntax error: " + e.msg)
+        sys.out.println("Syntax error: " ++ e.msg)

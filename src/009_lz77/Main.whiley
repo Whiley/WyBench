@@ -16,7 +16,7 @@ function compress([byte] data) => [byte]:
     //
     // keep going until all data matched
     while pos < |data|:
-        (offset,len) = findLongestMatch(data,pos)
+        int offset, int len = findLongestMatch(data,pos)
         output = write_u1(output,offset)
         if offset == 0:
             output = output ++ [data[pos]]
@@ -40,7 +40,7 @@ function findLongestMatch([byte] data, nat pos) => (nat,nat):
     nat offset = start
     while offset < pos:
         //
-        len = match(data,offset,pos)
+        int len = match(data,offset,pos)
         if len > bestLen:
             bestOffset = pos - offset
             bestLen = len
@@ -65,37 +65,37 @@ function decompress([byte] data) => [byte]:
     nat pos = 0
     //
     while (pos+1) < |data|:
-        offset = data[pos]
-        item = data[pos+1]
+        byte header = data[pos]
+        byte item = data[pos+1]
         pos = pos + 2
-        if offset == 00000000b:
-            output = output + [item]
+        if header == 00000000b:
+            output = output ++ [item]
         else:
-            offset = Byte.toUnsignedInt(offset)
-            len = Byte.toUnsignedInt(item)
-            start = |output| - offset
+            int offset = Byte.toUnsignedInt(header)
+            int len = Byte.toUnsignedInt(item)
+            int start = |output| - offset
             // How to avoid these assumptions?
             assume offset <= |output|
             assume (start+len) < |output|
-            i = start
+            int i = start
             while i < (start+len) where i >= 0:
                 item = output[i]
-                output = output + [item]       
+                output = output ++ [item]       
                 i = i + 1     
     // all done!
     return output
 
 function write_u1([byte] bytes, int u1) => [byte]:
-    return bytes + [Int.toUnsignedByte(u1)]
+    return bytes ++ [Int.toUnsignedByte(u1)]
 
 method main(System.Console sys):
     File.Reader file = File.Reader(sys.args[0])
-    [byte] data = file.read()
-    sys.out.println("READ:         " + |data| + " bytes")
+    [byte] data = file.readAll()
+    sys.out.println("READ:         " ++ |data| ++ " bytes")
     data = compress(data)
-    sys.out.println("COMPRESSED:   " + |data| + " bytes.")
+    sys.out.println("COMPRESSED:   " ++ |data| ++ " bytes.")
     data = decompress(data)
-    sys.out.println("UNCOMPRESSED: " + |data| + " bytes")
+    sys.out.println("UNCOMPRESSED: " ++ |data| ++ " bytes")
     sys.out.println("==================================")
     sys.out.print(String.fromASCII(data))
 
