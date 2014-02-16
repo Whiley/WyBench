@@ -38,7 +38,7 @@ requires pos <= |input|
 throws SyntaxError:
     //
     pos = skipWhiteSpace(pos, input)
-    start = pos
+    int start = pos
     while pos < |input| && (Char.isDigit(input[pos]) || input[pos] == '.') where pos >= 0 && pos <= |input|:
         pos = pos + 1
     if pos == start:
@@ -51,10 +51,10 @@ requires pos <= |input|
 throws SyntaxError:
     //
     pos = eat(pos, input, "\"")
-    start = pos
+    int start = pos
     while input[pos] != '"':
         pos = pos + 1
-    str = input[start..pos]
+    string str = input[start..pos]
     pos = eat(pos, input, "\"")
     return (pos, str)
 
@@ -76,10 +76,11 @@ requires pos <= |input|
 throws SyntaxError:
     //
     pos = eat(pos, input, "[")
-    res = []
+    [VALUE] res = []
+    VALUE val
     while input[pos] != ']' where pos >= 0 && pos <= |input|:
         pos, val = parseValue(pos, input)
-        res = res + [val]
+        res = res ++ [val]
         pos = skipWhiteSpace(pos, input)
         if input[pos] == ',':
             pos = eat(pos, input, ",")
@@ -117,10 +118,12 @@ throws SyntaxError:
     if input[pos] == '}':
         return (pos, {key: "", val: ""})
     // key
+    string key
     pos, key = parseStr(pos, input)
     // colon
     pos = eat(pos, input, ":")
     // value
+    VALUE val
     pos, val = parseValue(pos, input)
     // comma
     pos = skipWhiteSpace(pos, input)
@@ -133,10 +136,11 @@ requires pos >= 0 && pos <= |input|
 throws SyntaxError:
     //
     pos = eat(pos, input, "{")
-    res = []
+    JSON res = []
+    PAIR pair
     pos, pair = parsePAIR(pos, input)
     while pair.key != "" where pos >= 0 && pos <= |input|:
-        res = res + [pair]
+        res = res ++ [pair]
         pos, pair = parsePAIR(pos, input)
     pos = eat(pos, input, "}")
     return (pos, res)
@@ -146,12 +150,13 @@ method main(System.Console con):
         con.out.println("usage: json <input-file>")
     else:
         File.Reader file = File.Reader(con.args[0])
-        string input = String.fromASCII(file.read())
+        string input = String.fromASCII(file.readAll ())
         int fpos = 0
+        string line
         while fpos < |input| where fpos >= 0:
             line, fpos = readLine(fpos, input)
             try:
-                lpos, json = parseJSON(0, line)
+                int lpos, JSON json = parseJSON(0, line)
                 con.out.println(json)
             catch(SyntaxError e):
                 con.out.print(e.msg)
