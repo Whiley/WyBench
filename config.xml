@@ -2,8 +2,8 @@
 
 <project name="BuildConfig">
   <property environment="env"/>
-  <property name="wyjc.jar" value="${env.WYBENCH_HOME}/lib/wyjc-all-v0.3.20.jar"/>
-  <property name="wyrt.jar" value="${env.WYBENCH_HOME}/lib/wyrt-v0.3.20.jar"/>
+  <property name="wyjc.jar" value="${env.WYBENCH_HOME}/lib/wyjc-all-v0.3.22.jar"/>
+  <property name="wyrt.jar" value="${env.WYBENCH_HOME}/lib/wyrt-v0.3.22.jar"/>
 
   <taskdef name="wyjc" classname="wyjc.util.WyjcAntTask" classpath="${wyjc.jar}"/>
 
