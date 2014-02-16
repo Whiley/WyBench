@@ -1,21 +1,19 @@
-import println from whiley.lang.System
+constant JAN is 1
+constant FEB is 2
+constant MAR is 3
+constant APR is 4
+constant MAY is 5
+constant JUN is 6
+constant JUL is 7
+constant AUG is 8
+constant SEP is 9
+constant OCT is 10
+constant NOV is 11
+constant DEC is 12
 
-define JAN as 1
-define FEB as 2
-define MAR as 3
-define APR as 4
-define MAY as 5
-define JUN as 6
-define JUL as 7
-define AUG as 8
-define SEP as 9
-define OCT as 10
-define NOV as 11
-define DEC as 12
+type day is (int d) where d <= 1 && d <= 31
 
-define day as int where $ <= 1 && $ <= 31
-
-define month as {
+constant month is {
     JAN,FEB,MAR,APR,MAY,JUN,
     JUL,AUG,SEP,OCT,NOV,DEC
 }
@@ -24,7 +22,7 @@ define month as {
 // Date
 // =================================================
 
-define Date as {
+type Date is {
     day day,
     month month,
     int year
@@ -32,10 +30,12 @@ define Date as {
         (month != FEB || day <= 29 ) && // normal restriction
         (month != FEB || year % 4 != 0 || (year % 100 == 0 && year % 400 != 0) || day <= 28) // leap-year restriction
 
-Date Date(day day, month month, int year) 
-    requires (day <= 30 || !(month in {SEP,APR,JUN,NOV})) &&
-        (month != FEB || day <= 29 ) &&
-        (month != FEB || year % 4 != 0 || (year % 100 == 0 && year % 400 != 0) || day <= 28):
+function Date(day day, month month, int year) => Date
+// 30 days hath September, April, June and November.
+requires day <= 30 || !(month in {SEP,APR,JUN,NOV})
+requires month != FEB || day <= 29
+requires month != FEB || year % 4 != 0 || (year % 100 == 0 && year % 400 != 0) || day <= 28:
+    //
     return {
         day: day,
         month: month,
@@ -43,8 +43,9 @@ Date Date(day day, month month, int year)
     }
 
 // Compute the date of the next day.
-Date next(Date date):
+function next(Date date) => Date:
     // first, calculate last day of the month
+    int last
     if date.month == FEB:
         last = 29
     else if date.month in {SEP,APR,JUN,NOV}:
@@ -63,16 +64,16 @@ Date next(Date date):
     // done
     return date
 
-public string toString(Date date):
-    return date.day + "/" + date.month + "/" + date.year
+function toString(Date date) => string:
+    return date.day ++ "/" ++ date.month ++ "/" ++ date.year
 
 // =================================================
 // Test Harness
 // =================================================
 
-void ::main(System.Console console):
-    start = Date(1,JAN,2000)
-    end = Date(6,JAN,2013)
+method main(System.Console console):
+    Date start = Date(1,JAN,2000)
+    Date end = Date(6,JAN,2013)
     while start != end:
         console.out.println(toString(start))    
         start = next(start)
