@@ -1,20 +1,18 @@
-import println from whiley.lang.System
-
-define nat as int where $ >= 0
+type nat is (int n) where n >= 0
 
 /**
  * Define coins/notes and their values (in cents)
  */
-define ONE_CENT as 0
-define FIVE_CENTS as 1
-define TEN_CENTS as 2
-define TWENTY_CENTS as 3
-define FIFTY_CENTS as 4
-define ONE_DOLLAR as 5  // 1 dollar
-define FIVE_DOLLARS as 6  // 5 dollars
-define TEN_DOLLARS as 7 // 10 dollars
+constant ONE_CENT is 0
+constant FIVE_CENTS is 1
+constant TEN_CENTS is 2
+constant TWENTY_CENTS is 3
+constant FIFTY_CENTS is 4
+constant ONE_DOLLAR is 5  // 1 dollar
+constant FIVE_DOLLARS is 6  // 5 dollars
+constant TEN_DOLLARS is 7 // 10 dollars
 
-define Value as [
+constant Value is [
     1,
     5,
     10,
@@ -28,13 +26,15 @@ define Value as [
 /**
  * Define the notion of cash as an array of coins / notes
  */
-define Cash as [nat] where |$| == |Value|
+type Cash is ([nat] ns) where |ns| == |Value|
 
-Cash Cash():
+function Cash() => Cash:
     return [0,0,0,0,0,0,0,0]
 
-Cash Cash([nat] coins) requires no { c in coins | c >= |Value| }:
-    cash = [0,0,0,0,0,0,0,0]
+function Cash([nat] coins) => Cash
+// No coin in coins larger than permitted values
+requires no { c in coins | c >= |Value| }:
+    Cash cash = [0,0,0,0,0,0,0,0]
     for i in coins where |cash| == |Value| && no {c in cash | c < 0}:
         cash[i] = cash[i] + 1
     return cash
@@ -42,8 +42,8 @@ Cash Cash([nat] coins) requires no { c in coins | c >= |Value| }:
 /**
  * Given some cash, compute its total
  */ 
-int total(Cash c):
-    r = 0
+function total(Cash c) => int:
+    int r = 0
     for i in 0..|c|:
         r = r + (Value[i] * c[i])
     return r
@@ -53,7 +53,7 @@ int total(Cash c):
  * In other words, if we remove the second from the first then we do not
  * get any negative amounts.
  */
-bool contained(Cash first, Cash second):
+function contained(Cash first, Cash second) => bool:
     for i in 0..|first|:
         if first[i] < second[i]:
             return false
@@ -65,8 +65,9 @@ bool contained(Cash first, Cash second):
  * ENSURES: the total returned equals total of first plus
  *          the total of the second.
  */
-Cash add(Cash first, Cash second) 
-    ensures total($) == total(first) + total(second):
+function add(Cash first, Cash second) => (Cash r)
+// Result total must be sum of argument totals
+ensures total(r) == total(first) + total(second):
     //
     for i in 0..|first|:
         first[i] = first[i] + second[i]
@@ -81,9 +82,12 @@ Cash add(Cash first, Cash second)
  * ENSURES: the total returned equals total of first less
  *          the total of the second.
  */
-Cash subtract(Cash first, Cash second) 
-    requires contained(first,second), 
-    ensures total($) == total(first) - total(second):
+function subtract(Cash first, Cash second) => (Cash r)
+// First argument must contain second; for example, if we have 1
+// dollar coin and a 1 cent coin, we cannot subtract a 5 dollar note!
+requires contained(first,second)
+// Total returned must total of first argument less second
+ensures total(r) == total(first) - total(second):
     //
     for i in 0..|first|:
         first[i] = first[i] - second[i]
@@ -101,8 +105,10 @@ Cash subtract(Cash first, Cash second)
  * ENSURES:  if change returned, then it must be contained in till, and 
  *           the amount returned must equal the amount requested.
  */
-null|Cash calculateChange(Cash till, nat change) 
-    ensures $ == null || (contained(till,$) && total($) == change):
+function calculateChange(Cash till, nat change) => (null|Cash r)
+// If change is given, then it must have been in the till, and must
+// equal that requested.
+ensures r != null ==> (contained(till,r) && total(r) == change):
     //
     if change == 0:
         return Cash()
@@ -110,7 +116,7 @@ null|Cash calculateChange(Cash till, nat change)
         // exhaustive search through all possible coins
         for coin in 0 .. |till|:
             if till[coin] > 0 && Value[coin] <= change:
-                tmp = till
+                Cash tmp = till
                 // temporarily take coin out of till
                 tmp[coin] = tmp[coin] - 1 
                 tmp = calculateChange(tmp,change - Value[coin])
@@ -123,21 +129,21 @@ null|Cash calculateChange(Cash till, nat change)
 /**
  * Print out cash in a friendly format
  */
-string toString(Cash c):
-    r = ""
-    firstTime = true
+function toString(Cash c) => string:
+    string r = ""
+    bool firstTime = true
     for i in 0..|c|:
-        amt = c[i]
+        int amt = c[i]
         if amt != 0:
             if !firstTime:
-                r = r + ", "
+                r = r ++ ", "
             firstTime = false
-            r = r + amt + " x " + Descriptions[i]
+            r = r ++ amt ++ " x " ++ Descriptions[i]
     if r == "":
         r = "(nothing)"
     return r
     
-define Descriptions as [
+constant Descriptions is [
     "1c",
     "5c",
     "10c",
@@ -152,29 +158,29 @@ define Descriptions as [
  * Run through the sequence of a customer attempting to purchase an item
  * of a specified cost using a given amount of cash and a current till.
  */
-public Cash ::buy(System.Console console, Cash till, Cash given, int cost):
+public method buy(System.Console console, Cash till, Cash given, int cost) => Cash:
     console.out.println("--")
-    console.out.println("Customer wants to purchase item for " + cost + "c.")
-    console.out.println("Customer gives: " + toString(given))
+    console.out.println("Customer wants to purchase item for " ++ cost ++ "c.")
+    console.out.println("Customer gives: " ++ toString(given))
     if total(given) < cost:
         console.out.println("Customer has not given enough cash!")
     else:
-        change = calculateChange(till,total(given) - cost)
+        Cash|null change = calculateChange(till,total(given) - cost)
         if change == null:
             console.out.println("Cash till cannot given exact change!")
         else:
-            console.out.println("Change given: " + toString(change))
+            console.out.println("Change given: " ++ toString(change))
             till = add(till,given)
             till = subtract(till,change)
-            console.out.println("Till: " + toString(till))
+            console.out.println("Till: " ++ toString(till))
     return till
 
 /**
  * Test Harness
  */
-public void ::main(System.Console console):
-    till = [5,3,3,1,1,3,0,0]
-    console.out.println("Till: " + toString(till))
+public method main(System.Console console):
+    Cash till = [5,3,3,1,1,3,0,0]
+    console.out.println("Till: " ++ toString(till))
     // now, run through some sequences...
     till = buy(console,till,Cash([ONE_DOLLAR]),85)
     till = buy(console,till,Cash([ONE_DOLLAR]),105)
