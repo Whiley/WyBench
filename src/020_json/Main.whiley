@@ -5,26 +5,38 @@ import * from whiley.io.File
 import * from whiley.lang.Char
 import * from whiley.lang.Errors
 
-define PAIR as {string key, VALUE val}
-define VALUE as real | bool | string | JSON | [VALUE]
-define JSON as [PAIR]
+type PAIR is {string key, VALUE val}
+type VALUE is real | bool | string | JSON | [VALUE]
+type JSON is [PAIR]
 
-(string, nat) readLine(nat pos, string input) requires pos >= 0 && pos <= |input|:
-    start = pos
+function readLine(nat pos, string input) => (string, nat)
+// Index to read must be valid position within string
+requires pos <= |input|:
+    //
+    int start = pos
     while pos < |input| && input[pos] != '\n' && input[pos] != '\r' where pos >= 0:
         pos = pos + 1
-    line = input[start..pos]
+    string line = input[start..pos]
     pos = pos + 1
     if pos < |input| && (input[pos - 1] == '\r' && input[pos] == '\n'):
         pos = pos + 1
     return (line, pos)
 
-nat skipWhiteSpace(nat index, string input) requires index >= 0 && index <= |input|, ensures $ >= 0 && $ <= |input|:
+function skipWhiteSpace(nat index, string input) => (nat r)
+// Index must be valid position within input string
+requires index <= |input|
+// Returned position must be valud within input string
+ensures r <= |input|:
+    //
     while index < |input| && isWhiteSpace(input[index]) where index >= 0 && index <= |input|:
         index = index + 1
     return index
 
-(nat, real) parseReal(nat pos, string input) requires pos >= 0 && pos <= |input| throws SyntaxError:
+function parseReal(nat pos, string input) => (nat, real) 
+// Index to read must be valid position within string
+requires pos <= |input| 
+throws SyntaxError:
+    //
     pos = skipWhiteSpace(pos, input)
     start = pos
     while pos < |input| && (Char.isDigit(input[pos]) || input[pos] == '.') where pos >= 0 && pos <= |input|:
@@ -33,7 +45,11 @@ nat skipWhiteSpace(nat index, string input) requires index >= 0 && index <= |inp
         throw SyntaxError("Missing number", pos, pos)
     return (pos, Real.parse(input[start..pos]))
 
-(nat, string) parseStr(nat pos, string input) requires pos >= 0 && pos <= |input| throws SyntaxError:
+function parseStr(nat pos, string input) => (nat, string) 
+// Index to read must be valid position within string
+requires pos <= |input|
+throws SyntaxError:
+    //
     pos = eat(pos, input, "\"")
     start = pos
     while input[pos] != '"':
@@ -42,7 +58,11 @@ nat skipWhiteSpace(nat index, string input) requires index >= 0 && index <= |inp
     pos = eat(pos, input, "\"")
     return (pos, str)
 
-nat eat(nat pos, string input, string pattern) requires pos >= 0 && |pattern| <= |input| && pos + |pattern| <= |input|, ensures $ >=0 && $ <= |input| throws SyntaxError:
+function eat(nat pos, string input, string pattern) => (nat r)
+requires |pattern| <= |input| && pos + |pattern| <= |input|
+ensures r >=0 && r <= |input|
+throws SyntaxError:
+    //
     pos = skipWhiteSpace(pos, input)
     for c in pattern where pos >= 0 && pos <= |input|:
         if input[pos] == c:
@@ -51,7 +71,10 @@ nat eat(nat pos, string input, string pattern) requires pos >= 0 && |pattern| <=
             throw SyntaxError("bad JSON object", pos, pos + 1)
     return pos
 
-(nat, [VALUE]) parseArray(nat pos, string input) requires pos >= 0 && pos <= |input| throws SyntaxError:
+function parseArray(nat pos, string input) => (nat, [VALUE])
+requires pos <= |input| 
+throws SyntaxError:
+    //
     pos = eat(pos, input, "[")
     res = []
     while input[pos] != ']' where pos >= 0 && pos <= |input|:
@@ -63,7 +86,10 @@ nat eat(nat pos, string input, string pattern) requires pos >= 0 && |pattern| <=
     pos = eat(pos, input, "]")
     return (pos, res)
 
-(nat, VALUE) parseValue(nat pos, string input) requires pos >= 0 && pos <= |input| throws SyntaxError:
+function parseValue(nat pos, string input) => (nat, VALUE)
+requires pos <= |input| 
+throws SyntaxError:
+    //
     pos = skipWhiteSpace(pos, input)
     if input[pos] == 't' && input[pos + 1] == 'r' && input[pos + 2] == 'u' && input[pos + 3] == 'e':
         pos = pos + 4
@@ -82,7 +108,10 @@ nat eat(nat pos, string input, string pattern) requires pos >= 0 && |pattern| <=
     else:
         throw SyntaxError("bad value", pos, pos + 1)
 
-(nat, PAIR) parsePAIR(nat pos, string input) requires pos >= 0 && pos <= |input| throws SyntaxError:
+function parsePAIR(nat pos, string input) => (nat, PAIR)
+requires pos <= |input|
+throws SyntaxError:
+    //
     pos = skipWhiteSpace(pos, input)
     // empty JSON object
     if input[pos] == '}':
@@ -99,7 +128,10 @@ nat eat(nat pos, string input, string pattern) requires pos >= 0 && |pattern| <=
         pos = eat(pos, input, ",")
     return (pos, {key: key, val: val})
 
-(nat, JSON) parseJSON(nat pos, string input) requires pos >= 0 && pos <= |input| throws SyntaxError:
+function parseJSON(nat pos, string input) => (nat, JSON) 
+requires pos >= 0 && pos <= |input|
+throws SyntaxError:
+    //
     pos = eat(pos, input, "{")
     res = []
     pos, pair = parsePAIR(pos, input)
@@ -109,13 +141,13 @@ nat eat(nat pos, string input, string pattern) requires pos >= 0 && |pattern| <=
     pos = eat(pos, input, "}")
     return (pos, res)
 
-void ::main(System.Console con):
+method main(System.Console con):
     if |con.args| == 0:
         con.out.println("usage: json <input-file>")
     else:
-        file = File.Reader(con.args[0])
-        input = String.fromASCII(file.read())
-        fpos = 0
+        File.Reader file = File.Reader(con.args[0])
+        string input = String.fromASCII(file.read())
+        int fpos = 0
         while fpos < |input| where fpos >= 0:
             line, fpos = readLine(fpos, input)
             try:
