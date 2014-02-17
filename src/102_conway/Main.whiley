@@ -1,6 +1,5 @@
-import * from whiley.io.File
-import * from whiley.lang.System
 import whiley.lang.*
+import whiley.io.File
 import * from whiley.lang.Errors
 
 import nat from whiley.lang.Int
@@ -9,7 +8,7 @@ import nat from whiley.lang.Int
 // Game Logic
 // ============================================
 
-define Board as {
+type Board is {
     [[bool]] cells,
     nat width,
     nat height
@@ -17,17 +16,17 @@ define Board as {
 
 // Create an empty board of size width x height.  That is, where each
 // square is "off".
-Board Board(nat height, nat width):
-    row = []
-    i = 0
+function Board(nat height, nat width) => Board:
+    [bool] row = []
+    int i = 0
     while i < width where i >= 0:
-        row = row + [false]
+        row = row ++ [false]
         i = i + 1
     assume |row| == width
-    cells = []
+    [[bool]] cells = []
     i = 0
     while i < height where i >= 0 && all { r in cells | |r| == width }:
-        cells = cells + [row]
+        cells = cells ++ [row]
         i = i + 1
     assume |cells| == height
     return { 
@@ -38,18 +37,18 @@ Board Board(nat height, nat width):
 
 // Take the current board and determine the next state based on the
 // current state of all cells.
-Board update(Board board):
-    ncells = board.cells
-    height = board.height
-    width = board.width
-    i = 0
+function update(Board board) => Board:
+    [[bool]] ncells = board.cells
+    int height = board.height
+    int width = board.width
+    int i = 0
     while i < height where i >= 0 && |ncells| == height && all { row in ncells | |row| == width }:
-        j = 0
+        int j = 0
         while j < width where j >= 0 && all { row in ncells | |row| == width }:
-            c = countLiving(board,i,j)
+            int c = countLiving(board,i,j)
             assume i < |board.cells|    // FIXME
             assume j < |board.cells[i]| // FIXME
-            alive = board.cells[i][j]
+            bool alive = board.cells[i][j]
             if alive:        
                 switch c:
                     case 0,1:
@@ -77,8 +76,8 @@ Board update(Board board):
         width: width
     }                    
 
-int countLiving(Board board, int row, int col):
-    count = isAlive(board,row-1,col-1)
+function countLiving(Board board, int row, int col) => int:
+    int count = isAlive(board,row-1,col-1)
     count = count + isAlive(board,row-1,col)
     count = count + isAlive(board,row-1,col+1)
     count = count + isAlive(board,row,col-1)
@@ -88,7 +87,7 @@ int countLiving(Board board, int row, int col):
     count = count + isAlive(board,row+1,col+1)
     return count
 
-int isAlive(Board board, int row, int col):
+function isAlive(Board board, int row, int col) => int:
     if row < 0 || row >= board.height:
         return 0
     if col < 0 || col >= board.width:
@@ -103,17 +102,25 @@ int isAlive(Board board, int row, int col):
 // Parser
 // ============================================
 
-(Board,int) parseConfig(string input) throws SyntaxError:
-    niters,pos = parseInt(0,input)
+function parseConfig(string input) => (Board,int) 
+throws SyntaxError:
+    //
+    int niters, int pos = parseInt(0,input)
+    int cols, int rows, int col, int row
+    //
     pos = skipWhiteSpace(pos,input)
     cols,rows,pos = parsePair(input,pos,'x')
-    board = Board(cols,rows)
+    Board board = Board(cols,rows)
     while pos < |input|:
         col,row,pos = parsePair(input,pos,',')
         board.cells[row][col]=true
     return board,niters
 
-(int,int,int) parsePair(string input, int pos, char sep) throws SyntaxError:
+function parsePair(string input, int pos, char sep) => (int,int,int)
+throws SyntaxError:
+    //
+    int first, int second
+    //
     pos = skipWhiteSpace(pos,input)
     first,pos = parseInt(pos,input)
     pos = skipWhiteSpace(pos,input)
@@ -121,7 +128,7 @@ int isAlive(Board board, int row, int col):
         if input[pos] == sep:
             pos=pos+1
         else:
-            throw SyntaxError("expected '" + sep + "', found '" + input[pos] + "'",pos,pos+1)
+            throw SyntaxError("expected '" ++ sep ++ "', found '" ++ input[pos] ++ "'",pos,pos+1)
     else:
         throw SyntaxError("unexpected end of file",pos,pos+1)
     pos = skipWhiteSpace(pos,input)
@@ -129,39 +136,41 @@ int isAlive(Board board, int row, int col):
     pos = skipWhiteSpace(pos,input)
     return first,second,pos
 
-(int,int) parseInt(int pos, string input) throws SyntaxError:
-    start = pos
+function parseInt(int pos, string input) => (int,int) 
+throws SyntaxError:
+    //
+    int start = pos
     while pos < |input| && Char.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
         throw SyntaxError("Missing number",pos,pos)
     return Int.parse(input[start..pos]),pos
 
-int skipWhiteSpace(int index, string input):
+function skipWhiteSpace(int index, string input) => int:
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     return index
 
-bool isWhiteSpace(char c):
+function isWhiteSpace(char c) => bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
 // ============================================
 // Main
 // ============================================
 
-void ::main(System.Console sys):
-    file = File.Reader(sys.args[0])
-    input = String.fromASCII(file.read())
+method main(System.Console sys):
+    File.Reader file = File.Reader(sys.args[0])
+    string input = String.fromASCII(file.readAll())
     try:
-        board,niters = parseConfig(input)
+        Board board, int niters = parseConfig(input)
         for i in 0..niters:
             printBoard(sys,board)
             board = update(board)
     catch(SyntaxError e):
-        sys.out.println("error: " + e.msg)
+        sys.out.println("error: " ++ e.msg)
 
-void ::printBoard(System.Console sys, Board board):
-    ncols = board.width
+method printBoard(System.Console sys, Board board):
+    int ncols = board.width
     sys.out.print("+")
     for i in 0..ncols:
         sys.out.print("-")
