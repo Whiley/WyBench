@@ -3,4 +3,4 @@
  * @author LeeTrezise
  * 
  */
-public native int ::getRandomInt(int max):
+public native method getRandomInt(int max) => int

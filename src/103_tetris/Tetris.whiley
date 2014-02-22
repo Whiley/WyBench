@@ -8,33 +8,33 @@ import * from Game
  * @author LeeTrezise
  * 
  */
-public export void Global::move(int y):
+public export method move(&Global this, int y):
     this->game = Game.movePiece(this->game, 0, y)
 	
-public void Global::moveX(int x):
+public method moveX(&Global this, int x):
 	this->game = Game.movePiece(this->game, x, 0)
 	
-public export void Global::hardDrop():
+public export method hardDrop(&Global this):
 	this->game = Game.hardDrop(this->game)
 	
-public export void Global::rotate(bool clockwise):
+public export method rotate(&Global this, bool clockwise):
 	this->game = Game.rotate(this->game, clockwise)
 
-void ::main(System.Console sys):	
-	ui = UIFrame.Frame("Tetris")
-	global = Global()
+public method main(System.Console sys):	
+	&Frame ui = UIFrame.Frame("Tetris")
+	&Global global = Global()
 	UIFrame.setGlobal(global)
 	//Move Direction
-	x = -1 // -1 = Down
-	y = 0 // 1-> Right, -1 -> Left
-	sleepTime = 500
-	iterate = true
+	int x = -1 // -1 = Down
+	int y = 0 // 1-> Right, -1 -> Left
+	int sleepTime = 500
+	bool iterate = true
 	while iterate:
 		sleepTime = global->game.tickTime
-		ui.setNext(global->game.next.type)
-		ui.render(Game.getUIString(global->game))
-		global.moveX(-1)
-		ui.updateStats(global->game.filled, global->game.score, global->game.level)
+		setNext(ui,global->game.next.type)
+		render(ui,Game.getUIString(global->game))
+		moveX(global,-1)
+		updateStats(ui,global->game.filled, global->game.score, global->game.level)
 		Thread.sleep(sleepTime)
 		
 		

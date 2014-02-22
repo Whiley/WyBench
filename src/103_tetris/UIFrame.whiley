@@ -3,19 +3,19 @@
  * @author LeeTrezise
  * 
  */
-public define Frame as ref { string fileName }
+public type Frame is { string fileName }
 
-public native Frame ::Frame ( string title ):
+public native method Frame(string title) => &Frame
 
-public native void Frame::render(string str):
+public native method render(&Frame this, string str)
 
-public define Global as ref { Game.GameState game }
+public type Global is { Game.GameState game }
 
-public Global ::Global():
+public method Global() => &Global:
 	return new { game: Game.Initial }
 
-public native void ::setGlobal(Global g):
+public native method setGlobal(&Global g)
 
-public native void Frame::updateStats(int rows, int score, int lvl):
+public native method updateStats(&Frame this, int rows, int score, int lvl)
 
-public native void Frame::setNext(int i):
+public native method setNext(&Frame this, int i)

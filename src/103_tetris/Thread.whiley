@@ -3,4 +3,4 @@
  * @author LeeTrezise
  * 
  */
-public native void ::sleep(int msec): 
+public native method sleep(int msec)
