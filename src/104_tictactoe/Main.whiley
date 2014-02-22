@@ -38,7 +38,7 @@ public method printBoard(System.Console console, Board board):
 
 public method printRowTop(System.Console console, Board board, int row):
 	for col in 0 .. 3:
-		p = Board.get(board,row,col)
+		Piece p = Board.get(board,row,col)
 		if col != 0:
 			console.out.print(" | ")
 		switch p:
@@ -52,10 +52,10 @@ public method printRowTop(System.Console console, Board board, int row):
 
 public method printRowBottom(System.Console console, Board board, int row):
 	for col in 0 .. 3:
-		piece = Board.get(board,row,col)
+		Piece p = Board.get(board,row,col)
 		if col != 0:
 			console.out.print(" | ")
-		switch piece:
+		switch p:
 			case Board.BLANK:
 				console.out.print("    ")
 			case Board.CROSS:
@@ -66,10 +66,10 @@ public method printRowBottom(System.Console console, Board board, int row):
 
 public method printRowUpperMiddle(System.Console console, Board board, int row):
 	for col in 0 .. 3:
-		piece = Board.get(board,row,col)
+		Piece p = Board.get(board,row,col)
 		if col != 0:
 			console.out.print(" | ")
-		switch piece:
+		switch p:
 			case Board.BLANK:
 				console.out.print("    ")
 			case Board.CROSS:
@@ -80,10 +80,10 @@ public method printRowUpperMiddle(System.Console console, Board board, int row):
 
 public method printRowLowerMiddle(System.Console console, Board board, int row):
 	for col in 0 .. 3:
-		piece = Board.get(board,row,col)
+		Piece p = Board.get(board,row,col)
 		if col != 0:
 			console.out.print(" | ")
-		switch piece:
+		switch p:
 			case Board.BLANK:
 				console.out.print("    ")
 			case Board.CROSS:

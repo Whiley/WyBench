@@ -7,7 +7,9 @@ public constant CIRCLE is 2
 /**
  * A piece is either a blank, a cross or a circle.
  */
-public constant Piece is { BLANK, CROSS, CIRCLE }
+public constant PieceEnum is { BLANK, CROSS, CIRCLE }
+
+public type Piece is PieceEnum // THIS IS A HACK!
 
 /**
  * A Board is a 3x3 grid of pieces
