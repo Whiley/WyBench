@@ -1,7 +1,10 @@
 import * from whiley.lang.System
 import game.logic.*
 
-define GAME as [
+import * from game.logic.Game
+import * from game.logic.Board
+
+constant GAME is [
 	(0,0), // circle
 	(1,1), // cross
 	(0,1), // circle
@@ -10,19 +13,19 @@ define GAME as [
 	(2,2)  // should be impossible
 ]
 
-public void ::main(System.Console console):
-	game = Game()
+public method main(System.Console console):
+	Game game = Game()
 	for m in GAME:
-		r,c = m
+		int r, int c = m
 		game = Game.play(game,r,c)	
 		printBoard(console, game.board)
 		console.out.println("")
-		p = Board.isWinner(game.board)
+		Piece p = Board.isWinner(game.board)
 		if p != Board.BLANK:
 			console.out.println("we have a winner!")
 			break
 
-public void ::printBoard(System.Console console, Board board):
+public method printBoard(System.Console console, Board board):
 	for row in 0..3:
 		if row != 0:
 			console.out.println("---- | ---- | ----")
@@ -33,7 +36,7 @@ public void ::printBoard(System.Console console, Board board):
 	// done
 	console.out.println("")
 
-public void ::printRowTop(System.Console console, Board board, int row):
+public method printRowTop(System.Console console, Board board, int row):
 	for col in 0 .. 3:
 		p = Board.get(board,row,col)
 		if col != 0:
@@ -47,7 +50,7 @@ public void ::printRowTop(System.Console console, Board board, int row):
 				console.out.print(" -- ")
 	console.out.println("")
 
-public void ::printRowBottom(System.Console console, Board board, int row):
+public method printRowBottom(System.Console console, Board board, int row):
 	for col in 0 .. 3:
 		piece = Board.get(board,row,col)
 		if col != 0:
@@ -61,7 +64,7 @@ public void ::printRowBottom(System.Console console, Board board, int row):
 				console.out.print(" -- ")
 	console.out.println("")
 
-public void ::printRowUpperMiddle(System.Console console, Board board, int row):
+public method printRowUpperMiddle(System.Console console, Board board, int row):
 	for col in 0 .. 3:
 		piece = Board.get(board,row,col)
 		if col != 0:
@@ -75,7 +78,7 @@ public void ::printRowUpperMiddle(System.Console console, Board board, int row):
 				console.out.print("|  |")
 	console.out.println("")
 
-public void ::printRowLowerMiddle(System.Console console, Board board, int row):
+public method printRowLowerMiddle(System.Console console, Board board, int row):
 	for col in 0 .. 3:
 		piece = Board.get(board,row,col)
 		if col != 0:
