@@ -56,7 +56,7 @@ method main(System.Console sys):
             File.Reader file = File.Reader(sys.args[0])
             string input = String.fromASCII(file.readAll())
             int pos = 0
-            [int] data = []
+            [real] data = []
             pos = skipWhiteSpace(pos,input)
             // first, read data
             while pos < |input| where pos >= 0:

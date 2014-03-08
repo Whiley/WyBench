@@ -69,7 +69,7 @@ ensures |r| > 0:
             {int} t = {}
             int r = -1
             while k < i where k >= 0:
-                int hh, int tt
+                int hh, {int} tt
                 if seq[max_(res[k])] < seq[i]:
                     hh = |res[k]| + 1
                     tt = res[k] + {i}

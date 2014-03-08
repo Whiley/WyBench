@@ -116,7 +116,7 @@ ensures r != null ==> (contained(till,r) && total(r) == change):
         // exhaustive search through all possible coins
         for coin in 0 .. |till|:
             if till[coin] > 0 && Value[coin] <= change:
-                Cash tmp = till
+                null|Cash tmp = till
                 // temporarily take coin out of till
                 tmp[coin] = tmp[coin] - 1 
                 tmp = calculateChange(tmp,change - Value[coin])
