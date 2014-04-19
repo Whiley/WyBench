@@ -29,3 +29,42 @@ function ExposedSquare(int rank, bool bomb) => ExposedSquare:
 // HiddenSquare constructor
 function HiddenSquare(bool bomb, bool flag) => HiddenSquare:
     return { holdsBomb: bomb, flagged: flag }
+
+// =================================================================
+// Board
+// =================================================================
+
+type Board is {
+   [Square] squares,  // List of squares making up the board
+   int width,         // Width of the game board (in squares)
+   int height        // Height of the game board (in squares)
+}
+
+// Create a board of given dimensions which contains no bombs, and
+// where all squares are hidden.
+function Board(int width, int height) => Board:
+    [Square] squares = []
+    //
+    for i in 0 .. width * height:
+      squares = squares ++ [HiddenSquare(false,false)]
+    //
+    return {
+        squares: squares,
+        width: width,
+        height: height
+    }
+
+// Return the square on a given board at a given position
+function getSquare(Board b, int col, int row) => Square:
+    int rowOffset = b.width * row // calculate start of row
+    return b.squares[rowOffset + col]
+
+// Set the square on a given board at a given position
+function setSquare(Board b, int col, int row, Square sq) => Board:
+    int rowOffset = b.width * row // calculate start of row
+    b.squares[rowOffset + col] = sq
+    return b
+
+// =================================================================
+// Game Play
+// =================================================================
