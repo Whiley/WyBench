@@ -1,5 +1,7 @@
+import java.io.File;
 import java.io.IOException;
 import java.awt.*;
+
 import javax.imageio.ImageIO;
 
 /**
@@ -27,7 +29,7 @@ public class GameCanvas extends Canvas {
 	 * The image path simply determines where images are stored relative to this
 	 * class.
 	 */
-	private static final String IMAGE_PATH = "images/";
+	private static final String IMAGE_PATH = "images" + File.separator;
 
 	/**
 	 * The square width constant determines the width (in pixels) of a square in
@@ -46,10 +48,9 @@ public class GameCanvas extends Canvas {
 	private static final int SQUARE_HEIGHT = 24;
 
 	/**
-	 * Represents the image of a robot which is now dead. That is, where the
-	 * isDead flag is true.
+	 * Represents the image of an exposed blank square (i.e. with no rank).
 	 */
-	//private static Image deadBot = loadImage("DeadRobot.png");
+	private static Image exposedBlankSquare = loadImage("ExposedBlankSquare.png");
 
 	/**
 	 * Width of the board in squares
@@ -83,18 +84,15 @@ public class GameCanvas extends Canvas {
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(0, 0, width, height);
 
-		// Draw alternating boxes of light gray to give a checker-board display,
-		// making it easier to distinguish the individual squares of the board.
-		g2d.setColor(Color.LIGHT_GRAY);
+		// Draw the squares of the game
 		for (int x = 0; x < width; x = x + 1) {
 			for (int y = 0; y < height; y = y + 1) {
-				if ((x + y) % 2 == 0) {
-					int xp = x * SQUARE_WIDTH;
-					int yp = y * SQUARE_HEIGHT;
-					g2d.fillRect(xp, yp, SQUARE_WIDTH, SQUARE_HEIGHT);
-				}
+				int xp = x * SQUARE_WIDTH;
+				int yp = y * SQUARE_HEIGHT;
+				g.drawImage(exposedBlankSquare, xp, yp, SQUARE_WIDTH,
+						SQUARE_HEIGHT, null, null);
 			}
-		}		
+		}
 	}
 
 	/**
