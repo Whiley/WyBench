@@ -50,7 +50,7 @@ public class GameCanvas extends Canvas {
 	/**
 	 * Represents the image of an exposed blank square (i.e. with no rank).
 	 */
-	private static Image exposedBlankSquare = loadImage("ExposedBlankSquare.png");
+	private static Image exposedBlankSquare = loadImage("ExposedSquare1.png");
 
 	/**
 	 * Width of the board in squares
