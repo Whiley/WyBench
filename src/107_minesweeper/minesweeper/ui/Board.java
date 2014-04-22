@@ -61,6 +61,12 @@ public class Board {
 	this.state = GameLogic.exposeSquare(state,c,r);
     }
 
+    public void flagSquare(int col, int row) {
+	BigInteger c = BigInteger.valueOf(col);
+	BigInteger r = BigInteger.valueOf(row);
+	this.state = GameLogic.flagSquare(state,c,r);
+    }
+
     private void initialiseBoard(int nBombs) {
 	Random rand = new Random(System.currentTimeMillis());
 	int nSquares = getWidth() * getHeight();

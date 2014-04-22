@@ -52,6 +52,11 @@ public class GameCanvas extends Canvas implements MouseListener {
 	private static final int SQUARE_HEIGHT = 24;
 
 	/**
+	 * Represents the image of an exposed square containing a bomb
+	 */
+	private static Image exposedBomb = loadImage("ExposedBombSquare.png");
+
+	/**
 	 * Represents the image of an exposed blank square (i.e. with no rank).
 	 */
 	private static Image exposedBlankSquare = loadImage("ExposedBlankSquare.png");
@@ -137,37 +142,41 @@ public class GameCanvas extends Canvas implements MouseListener {
 		    for (int y = 0; y < board.getHeight(); y = y + 1) {
 			Image image;
 			if(board.isExposedSquare(x,y)) {
-			    int rank = board.getRank(x,y);
-			    switch(rank) {			    
-			    case 1:
-				image = exposedSquare1;
-				break;
-			    case 2:
-				image = exposedSquare2;
-				break;
-			    case 3:
-				image = exposedSquare3;
-				break;
-			    case 4:
-				image = exposedSquare4;
-				break;
-			    case 5:
-				image = exposedSquare5;
-				break;
-			    case 6:
-				image = exposedSquare6;
-				break;
-			    case 7:
-				image = exposedSquare7;
-				break;
-			    case 8:
-				image = exposedSquare8;
-				break;
-			    default:
-				image = exposedBlankSquare;
-				break;
+			    if(board.holdsBomb(x,y)) {
+				image = exposedBomb;
+			    } else {
+				int rank = board.getRank(x,y);
+				switch(rank) {			    
+				case 1:
+				    image = exposedSquare1;
+				    break;
+				case 2:
+				    image = exposedSquare2;
+				    break;
+				case 3:
+				    image = exposedSquare3;
+				    break;
+				case 4:
+				    image = exposedSquare4;
+				    break;
+				case 5:
+				    image = exposedSquare5;
+				    break;
+				case 6:
+				    image = exposedSquare6;
+				    break;
+				case 7:
+				    image = exposedSquare7;
+				    break;
+				case 8:
+				    image = exposedSquare8;
+				    break;
+				default:
+				    image = exposedBlankSquare;
+				    break;
+				}
 			    }
-			} else if(board.holdsBomb(x,y)) {
+			} else if(board.isFlagged(x,y)) {
 			    image = flaggedSquare;			    
 			} else {
 			    image = hiddenSquare;
@@ -228,10 +237,14 @@ public class GameCanvas extends Canvas implements MouseListener {
     public void mouseExited(MouseEvent e) {
     }
     
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(MouseEvent e) {	
 	int x = e.getX() / SQUARE_WIDTH;
 	int y = e.getY() / SQUARE_HEIGHT;
-	board.exposeSquare(x,y);
+	if(e.getButton() == MouseEvent.BUTTON1) {
+	    board.exposeSquare(x,y);
+	} else if(e.getButton() > MouseEvent.BUTTON1) {
+	    board.flagSquare(x,y);
+	}
 	repaint();
     }
 }
