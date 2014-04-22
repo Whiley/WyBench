@@ -96,8 +96,14 @@ function flagSquare(Board b, int col, int row) => Board:
 // containing a bomb signals the end of the game anyway.
 function determineRank(Board b, int col, int row) => int:
     int rank = 0
-    for r in (row-1) .. (row+2):
-        for c in (col-1) .. (col+2):
+    // Determine minimum and maximum rows/cols on the board
+    int min_row = Math.max(0,row-1)
+    int max_row = Math.min(b.height,row+2)
+    int min_col = Math.max(0,col-1)
+    int max_col = Math.min(b.width,col+2)
+    // Calculate the rank
+    for r in min_row .. max_row:
+        for c in min_col .. max_col:
             Square sq = getSquare(b,c,r)
             if sq.holdsBomb:
                 rank = rank + 1
