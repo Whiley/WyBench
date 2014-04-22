@@ -57,6 +57,46 @@ public class GameCanvas extends Canvas implements MouseListener {
 	private static Image exposedBlankSquare = loadImage("ExposedBlankSquare.png");
 
 	/**
+	 * Represents the image of an exposed square of rank 1
+	 */
+	private static Image exposedSquare1 = loadImage("ExposedSquare1.png");
+
+	/**
+	 * Represents the image of an exposed square of rank 2
+	 */
+	private static Image exposedSquare2 = loadImage("ExposedSquare2.png");
+
+	/**
+	 * Represents the image of an exposed square of rank 3
+	 */
+	private static Image exposedSquare3 = loadImage("ExposedSquare3.png");
+
+	/**
+	 * Represents the image of an exposed square of rank 4
+	 */
+	private static Image exposedSquare4 = loadImage("ExposedSquare4.png");
+
+	/**
+	 * Represents the image of an exposed square of rank 5
+	 */
+	private static Image exposedSquare5 = null;
+
+	/**
+	 * Represents the image of an exposed square of rank 6
+	 */
+	private static Image exposedSquare6 = null;
+
+	/**
+	 * Represents the image of an exposed square of rank 7
+	 */
+	private static Image exposedSquare7 = null;
+
+	/**
+	 * Represents the image of an exposed square of rank 8
+	 */
+	private static Image exposedSquare8 = null;
+
+	/**
 	 * Represents the image of a hidden square (i.e. not flagged).
 	 */
 	private static Image hiddenSquare = loadImage("HiddenSquare.png");
@@ -97,11 +137,8 @@ public class GameCanvas extends Canvas implements MouseListener {
 		    for (int y = 0; y < board.getHeight(); y = y + 1) {
 			Image image;
 			if(board.isExposedSquare(x,y)) {
-			    int rank = board.getRank();
-			    switch(rank) {
-			    case 0:
-				image = exposedBlankSquare;
-				break;
+			    int rank = board.getRank(x,y);
+			    switch(rank) {			    
 			    case 1:
 				image = exposedSquare1;
 				break;
@@ -125,6 +162,9 @@ public class GameCanvas extends Canvas implements MouseListener {
 				break;
 			    case 8:
 				image = exposedSquare8;
+				break;
+			    default:
+				image = exposedBlankSquare;
 				break;
 			    }
 			} else if(board.holdsBomb(x,y)) {
