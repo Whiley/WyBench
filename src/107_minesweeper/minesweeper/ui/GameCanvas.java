@@ -55,23 +55,28 @@ public class GameCanvas extends Canvas {
 	private static Image exposedBlankSquare = loadImage("ExposedSquare1.png");
 
 	/**
-	 * Width of the board in squares
+	 * Represents the image of a hidden square (i.e. not flagged).
 	 */
-	private int width;
-	
+	private static Image hiddenSquare = loadImage("HiddenSquare.png");
+
 	/**
-	 * Height of the board in squares
+	 * Represents the image of a hidden square (i.e. not flagged).
 	 */
-	private int height;
+	private static Image flaggedSquare = loadImage("HiddenSquareFlagged.png");
+
+	/**
+	 * The game board
+	 */
+        private Board board;
 	
 	/**
 	 * Construct a canvas to visually display a given robot battle.
 	 * 
 	 * @param battle
 	 */
-	public GameCanvas(int width, int height) {
-		
-		setBounds(0, 0, width * SQUARE_WIDTH, height * SQUARE_HEIGHT);
+	public GameCanvas(Board board) {
+	    this.board = board;
+	    setBounds(0, 0, board.getWidth() * SQUARE_WIDTH, board.getHeight() * SQUARE_HEIGHT);
 	}
 
 	/**
@@ -79,21 +84,27 @@ public class GameCanvas extends Canvas {
 	 */
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		int width = getWidth();
-		int height = getHeight();
 
 		// Draw the background of the display as a rectangle of all white.
 		g2d.setColor(Color.WHITE);
-		g2d.fillRect(0, 0, width, height);
+		g2d.fillRect(0, 0, board.getWidth(), board.getHeight());
 
 		// Draw the squares of the game
-		for (int x = 0; x < width; x = x + 1) {
-			for (int y = 0; y < height; y = y + 1) {
-				int xp = x * SQUARE_WIDTH;
-				int yp = y * SQUARE_HEIGHT;
-				g.drawImage(exposedBlankSquare, xp, yp, SQUARE_WIDTH,
-						SQUARE_HEIGHT, null, null);
+		for (int x = 0; x < board.getWidth(); x = x + 1) {
+		    for (int y = 0; y < board.getHeight(); y = y + 1) {
+			Image image;
+			if(board.isExposedSquare(x,y)) {
+			    image = exposedBlankSquare;
+			} else if(board.isFlagged(x,y)) {
+			    image = flaggedSquare;			    
+			} else {
+			    image = hiddenSquare;
 			}
+			int xp = x * SQUARE_WIDTH;
+			int yp = y * SQUARE_HEIGHT;
+			g.drawImage(image, xp, yp, SQUARE_WIDTH,
+				    SQUARE_HEIGHT, null, null);
+		    }
 		}
 	}
 

@@ -25,10 +25,12 @@ type HiddenSquare is {
 type Square is ExposedSquare | HiddenSquare
 
 // ExposedSquare constructor
+public export 
 function ExposedSquare(int rank, bool bomb) => ExposedSquare:
     return { rank: rank, holdsBomb: bomb }
 
 // HiddenSquare constructor
+public export 
 function HiddenSquare(bool bomb, bool flag) => HiddenSquare:
     return { holdsBomb: bomb, flagged: flag }
 
@@ -44,6 +46,7 @@ type Board is {
 
 // Create a board of given dimensions which contains no bombs, and
 // where all squares are hidden.
+public export 
 function Board(int width, int height) => Board:
     [Square] squares = []
     //
@@ -57,11 +60,13 @@ function Board(int width, int height) => Board:
     }
 
 // Return the square on a given board at a given position
+public export
 function getSquare(Board b, int col, int row) => Square:
     int rowOffset = b.width * row // calculate start of row
     return b.squares[rowOffset + col]
 
 // Set the square on a given board at a given position
+public export
 function setSquare(Board b, int col, int row, Square sq) => Board:
     int rowOffset = b.width * row // calculate start of row
     b.squares[rowOffset + col] = sq
@@ -73,6 +78,7 @@ function setSquare(Board b, int col, int row, Square sq) => Board:
 
 // Flag (or unflag) a given square on the board.  If this operation is not permitted, then do nothing
 // and return the board; otherwise, update the board accordingly.
+public export
 function flagSquare(Board b, int col, int row) => Board:
    Square sq = getSquare(b,col,row)
    // check whether permitted to flag
@@ -99,6 +105,8 @@ function determineRank(Board b, int col, int row) => int:
     return rank
 
 // Attempt to recursively expose blank hidden square, starting from a given position.
+/*
+public export
 function exposeSquare(Board b, int col, int row) => Board:
    // first, ensure square to expose is valid
    if col < 0 || row < 0 || col >= b.width || row >= b.height:
@@ -117,12 +125,14 @@ function exposeSquare(Board b, int col, int row) => Board:
                   b = exposeSquare(b,c,r)
    //
    return b
+*/
 
 // Determine whether the game is over or not and, if so, whether or
 // not the player has one.  The game is over and the player has lost 
 // if there is an exposed square on the board which contains a bomb.  
 // Likewise, the game is over and the player has one if there are no 
 // hidden squares which don't contain a bomb.
+public export
 function isGameOver(Board b) => (bool,bool):
     bool isOver = true
     bool hasWon = true

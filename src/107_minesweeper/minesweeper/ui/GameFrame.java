@@ -18,10 +18,10 @@ public class GameFrame extends JFrame implements ActionListener {
 	private JPanel centerPanel;
 	private GameCanvas canvas;
 
-	public GameFrame(int width, int height) {
+	public GameFrame(Board board) {
 		super("Minewseeper");
 
-		canvas = new GameCanvas(width,height);
+		canvas = new GameCanvas(board);
 		centerPanel = new JPanel();
 		centerPanel.setLayout(new BorderLayout());
 		Border cb = BorderFactory.createCompoundBorder(
@@ -43,9 +43,5 @@ public class GameFrame extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		
-	}
-	
-	public static void main(String[] args) {
-		new GameFrame(10,10);
 	}
 }

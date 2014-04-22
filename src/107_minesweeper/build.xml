@@ -1,0 +1,6 @@
+<project name="107_minesweeper" default="compile">  
+
+  <import file="../../config.xml"/> 
+  <import file="../../util/build-template.xml"/>  
+
+</project>

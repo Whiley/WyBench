@@ -4,7 +4,7 @@
     <echo message="COMPILING: ${ant.project.name}"/>
     <echo message="==================================="/>
     <wyjc verbose="false" whileydir="." whileypath="${wyrt.jar}" includes="**/*.whiley"/>
-    <javac debug="true" srcdir="." includeantruntime="false" includes="*.java" classpath=".:${wyjc.jar}"/> 
+    <javac debug="true" srcdir="." includeantruntime="false" includes="**/*.java" classpath=".:${wyjc.jar}"/> 
   </target>
 
   <target name="clean">
