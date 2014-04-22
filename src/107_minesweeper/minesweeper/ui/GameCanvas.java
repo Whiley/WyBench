@@ -3,6 +3,8 @@ package minesweeper.ui;
 import java.io.File;
 import java.io.IOException;
 import java.awt.*;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 
 import javax.imageio.ImageIO;
 
@@ -25,7 +27,7 @@ import javax.imageio.ImageIO;
  * @author David J. Pearce
  * 
  */
-public class GameCanvas extends Canvas {
+public class GameCanvas extends Canvas implements MouseListener {
 
 	/**
 	 * The image path simply determines where images are stored relative to this
@@ -77,6 +79,7 @@ public class GameCanvas extends Canvas {
 	public GameCanvas(Board board) {
 	    this.board = board;
 	    setBounds(0, 0, board.getWidth() * SQUARE_WIDTH, board.getHeight() * SQUARE_HEIGHT);
+	    addMouseListener(this);
 	}
 
 	/**
@@ -143,4 +146,23 @@ public class GameCanvas extends Canvas {
 			throw new RuntimeException("Unable to load image: " + filename);
 		}
 	}
+
+    public void mousePressed(MouseEvent e) {
+    }
+    
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+    
+    public void mouseExited(MouseEvent e) {
+    }
+    
+    public void mouseClicked(MouseEvent e) {
+	int x = e.getX() / SQUARE_WIDTH;
+	int y = e.getY() / SQUARE_HEIGHT;
+	board.exposeSquare(x,y);
+	repaint();
+    }
 }

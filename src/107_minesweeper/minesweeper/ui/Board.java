@@ -55,6 +55,12 @@ public class Board {
 	return (Boolean) square.get("flagged");
     }
 
+    public void exposeSquare(int col, int row) {
+	BigInteger c = BigInteger.valueOf(col);
+	BigInteger r = BigInteger.valueOf(row);
+	this.state = GameLogic.exposeSquare(state,c,r);
+    }
+
     private void initialiseBoard(int nBombs) {
 	Random rand = new Random(System.currentTimeMillis());
 	int nSquares = getWidth() * getHeight();

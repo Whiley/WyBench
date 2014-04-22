@@ -105,12 +105,11 @@ function determineRank(Board b, int col, int row) => int:
     return rank
 
 // Attempt to recursively expose blank hidden square, starting from a given position.
-/*
 public export
 function exposeSquare(Board b, int col, int row) => Board:
    // first, ensure square to expose is valid
    if col < 0 || row < 0 || col >= b.width || row >= b.height:
-       return
+       return b
    // second, check whether is blank hidden square
    Square sq = getSquare(b,col,row)
    int rank = determineRank(b,col,row)
@@ -125,7 +124,6 @@ function exposeSquare(Board b, int col, int row) => Board:
                   b = exposeSquare(b,c,r)
    //
    return b
-*/
 
 // Determine whether the game is over or not and, if so, whether or
 // not the player has one.  The game is over and the player has lost 
