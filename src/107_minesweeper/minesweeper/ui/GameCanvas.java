@@ -95,7 +95,7 @@ public class GameCanvas extends Canvas {
 			Image image;
 			if(board.isExposedSquare(x,y)) {
 			    image = exposedBlankSquare;
-			} else if(board.isFlagged(x,y)) {
+			} else if(board.holdsBomb(x,y)) {
 			    image = flaggedSquare;			    
 			} else {
 			    image = hiddenSquare;
