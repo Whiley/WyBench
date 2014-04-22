@@ -54,7 +54,7 @@ public class GameCanvas extends Canvas implements MouseListener {
 	/**
 	 * Represents the image of an exposed blank square (i.e. with no rank).
 	 */
-	private static Image exposedBlankSquare = loadImage("ExposedSquare1.png");
+	private static Image exposedBlankSquare = loadImage("ExposedBlankSquare.png");
 
 	/**
 	 * Represents the image of a hidden square (i.e. not flagged).
@@ -97,7 +97,36 @@ public class GameCanvas extends Canvas implements MouseListener {
 		    for (int y = 0; y < board.getHeight(); y = y + 1) {
 			Image image;
 			if(board.isExposedSquare(x,y)) {
-			    image = exposedBlankSquare;
+			    int rank = board.getRank();
+			    switch(rank) {
+			    case 0:
+				image = exposedBlankSquare;
+				break;
+			    case 1:
+				image = exposedSquare1;
+				break;
+			    case 2:
+				image = exposedSquare2;
+				break;
+			    case 3:
+				image = exposedSquare3;
+				break;
+			    case 4:
+				image = exposedSquare4;
+				break;
+			    case 5:
+				image = exposedSquare5;
+				break;
+			    case 6:
+				image = exposedSquare6;
+				break;
+			    case 7:
+				image = exposedSquare7;
+				break;
+			    case 8:
+				image = exposedSquare8;
+				break;
+			    }
 			} else if(board.holdsBomb(x,y)) {
 			    image = flaggedSquare;			    
 			} else {
