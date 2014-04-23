@@ -1,9 +1,6 @@
-package minesweeper.ui;
-
 import java.math.BigInteger;
 import java.util.*;
 import wyjc.runtime.*;
-import minesweeper.logic.*;
 
 /**
  * This is a Java wrapper for the Whiley Board type and associated functions.
@@ -15,7 +12,7 @@ public class Board {
     private WyRecord state;
 	
     public Board(int width, int height, int nBombs) {
-	this.state = GameLogic.Board(BigInteger.valueOf(width),BigInteger.valueOf(height));
+	this.state = Minesweeper.Board(BigInteger.valueOf(width),BigInteger.valueOf(height));
 	initialiseBoard(nBombs);
     }
 
@@ -30,41 +27,41 @@ public class Board {
     public boolean isExposedSquare(int col, int row) {
 	BigInteger c = BigInteger.valueOf(col);
 	BigInteger r = BigInteger.valueOf(row);
-	WyRecord square = GameLogic.getSquare(state,c,r);
+	WyRecord square = Minesweeper.getSquare(state,c,r);
 	return square.containsKey("rank");
     }
 
     public int getRank(int col, int row) {
 	BigInteger c = BigInteger.valueOf(col);
 	BigInteger r = BigInteger.valueOf(row);
-	WyRecord square = GameLogic.getSquare(state,c,r);
+	WyRecord square = Minesweeper.getSquare(state,c,r);
 	return ((BigInteger)square.get("rank")).intValue();
     }
 
     public boolean holdsBomb(int col, int row) {
 	BigInteger c = BigInteger.valueOf(col);
 	BigInteger r = BigInteger.valueOf(row);
-	WyRecord square = GameLogic.getSquare(state,c,r);
+	WyRecord square = Minesweeper.getSquare(state,c,r);
 	return (Boolean) square.get("holdsBomb");
     }
 
     public boolean isFlagged(int col, int row) {
 	BigInteger c = BigInteger.valueOf(col);
 	BigInteger r = BigInteger.valueOf(row);
-	WyRecord square = GameLogic.getSquare(state,c,r);
+	WyRecord square = Minesweeper.getSquare(state,c,r);
 	return (Boolean) square.get("flagged");
     }
 
     public void exposeSquare(int col, int row) {
 	BigInteger c = BigInteger.valueOf(col);
 	BigInteger r = BigInteger.valueOf(row);
-	this.state = GameLogic.exposeSquare(state,c,r);
+	this.state = Minesweeper.exposeSquare(state,c,r);
     }
 
     public void flagSquare(int col, int row) {
 	BigInteger c = BigInteger.valueOf(col);
 	BigInteger r = BigInteger.valueOf(row);
-	this.state = GameLogic.flagSquare(state,c,r);
+	this.state = Minesweeper.flagSquare(state,c,r);
     }
 
     private void initialiseBoard(int nBombs) {
@@ -82,8 +79,8 @@ public class Board {
 	    for(int y=0;y!=getWidth();++y) {
 		int i = x + (y * getWidth());
 		if(bombs.get(i)) {
-		    WyRecord sq = GameLogic.HiddenSquare(true,false);		    
-		    state = GameLogic.setSquare(state,BigInteger.valueOf(x),BigInteger.valueOf(y),sq);
+		    WyRecord sq = Minesweeper.HiddenSquare(true,false);		    
+		    state = Minesweeper.setSquare(state,BigInteger.valueOf(x),BigInteger.valueOf(y),sq);
 		}
 	    }
 	}
