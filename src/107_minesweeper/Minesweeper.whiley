@@ -40,7 +40,7 @@ type Board is {
    [Square] squares,  // List of squares making up the board
    int width,         // Width of the game board (in squares)
    int height        // Height of the game board (in squares)
-}
+} where |squares| == (width * height)
 
 // Create a board of given dimensions which contains no bombs, and
 // where all squares are hidden.
@@ -59,13 +59,19 @@ function Board(int width, int height) => Board:
 
 // Return the square on a given board at a given position
 public export
-function getSquare(Board b, int col, int row) => Square:
+function getSquare(Board b, int col, int row) => Square
+requires 0 <= col && col < b.width
+requires 0 <= row && row < b.height:
+    //
     int rowOffset = b.width * row // calculate start of row
     return b.squares[rowOffset + col]
 
 // Set the square on a given board at a given position
 public export
-function setSquare(Board b, int col, int row, Square sq) => Board:
+function setSquare(Board b, int col, int row, Square sq) => Board
+requires 0 <= col && col < b.width
+requires 0 <= row && row < b.height:
+    //
     int rowOffset = b.width * row // calculate start of row
     b.squares[rowOffset + col] = sq
     return b
@@ -77,7 +83,10 @@ function setSquare(Board b, int col, int row, Square sq) => Board:
 // Flag (or unflag) a given square on the board.  If this operation is not permitted, then do nothing
 // and return the board; otherwise, update the board accordingly.
 public export
-function flagSquare(Board b, int col, int row) => Board:
+function flagSquare(Board b, int col, int row) => Board
+requires 0 <= col && col < b.width
+requires 0 <= row && row < b.height:
+   //
    Square sq = getSquare(b,col,row)
    // check whether permitted to flag
    if sq is HiddenSquare:
@@ -110,24 +119,27 @@ function determineRank(Board b, int col, int row) => int:
 
 // Attempt to recursively expose blank hidden square, starting from a given position.
 public export
-function exposeSquare(Board b, int col, int row) => Board:
-   // first, ensure square to expose is valid
-   if col < 0 || row < 0 || col >= b.width || row >= b.height:
-       return b
-   // second, check whether is blank hidden square
-   Square sq = getSquare(b,col,row)
-   int rank = determineRank(b,col,row)
-   if sq is HiddenSquare:       
-      // yes, so expose square
-      sq = ExposedSquare(rank,sq.holdsBomb)
-      b = setSquare(b,col,row,sq)
-      if rank == 0:
-          // now expose neighbours
-          for r in (row-1) .. (row+2):
-              for c in (col-1) .. (col+2):
-                  b = exposeSquare(b,c,r)
-   //
-   return b
+function exposeSquare(Board b, int col, int row) => Board
+requires 0 <= col && col < b.width
+requires 0 <= row && row < b.height:
+    //
+    // first, ensure square to expose is valid
+    if col < 0 || row < 0 || col >= b.width || row >= b.height:
+        return b
+    // second, check whether is blank hidden square
+    Square sq = getSquare(b,col,row)
+    int rank = determineRank(b,col,row)
+    if sq is HiddenSquare:       
+        // yes, so expose square
+        sq = ExposedSquare(rank,sq.holdsBomb)
+        b = setSquare(b,col,row,sq)
+        if rank == 0:
+            // now expose neighbours
+            for r in (row-1) .. (row+2):
+                for c in (col-1) .. (col+2):
+                    b = exposeSquare(b,c,r)
+    //
+    return b
 
 // Determine whether the game is over or not and, if so, whether or
 // not the player has one.  The game is over and the player has lost 
