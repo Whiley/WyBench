@@ -22,7 +22,7 @@ public class GraphicalUserInterface extends JFrame {
 	private JPanel centerPanel;
 	private GameCanvas canvas;
 
-	public GraphicalUserInterface(Board board) {
+	public GraphicalUserInterface(BoardAdaptor board) {
 		super("Minewseeper");
 
 		canvas = new GameCanvas(board);
@@ -96,14 +96,14 @@ public class GraphicalUserInterface extends JFrame {
 	/**
 	 * The game board
 	 */
-        private Board board;
+        private BoardAdaptor board;
 	
 	/**
 	 * Construct a canvas to visually display the minesweeper game
 	 * 
 	 * @param battle
 	 */
-	public GameCanvas(Board board) {
+	public GameCanvas(BoardAdaptor board) {
 	    this.board = board;
 	    setBounds(0, 0, board.getWidth() * SQUARE_WIDTH, board.getHeight() * SQUARE_HEIGHT);
 	    addMouseListener(this);

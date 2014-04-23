@@ -8,10 +8,10 @@ import wyjc.runtime.*;
  * @author David J. Pearce
  * 
  */
-public class Board {
+public class BoardAdaptor {
     private WyRecord state;
 	
-    public Board(int width, int height, int nBombs) {
+    public BoardAdaptor(int width, int height, int nBombs) {
 	this.state = Minesweeper.Board(BigInteger.valueOf(width),BigInteger.valueOf(height));
 	initialiseBoard(nBombs);
     }
