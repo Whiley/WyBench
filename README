@@ -71,6 +71,9 @@ benchmarks:
 104_tictactoe --- A simple implementation of Tic Tac Toe (a.k.a
                   Noughts & Crosses).
 
+107_minesweeper --- An implementation of the classic Minesweeper game,
+                    including a Graphical User Interface.
+
 (large)
 
 201_convert --- An image convertor which allows files to be converted
