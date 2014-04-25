@@ -47,7 +47,7 @@ function matchStar(char c, string regex, string text) => bool:
 
 function readLine(nat pos, string input) => (string,nat):
     int start = pos
-    while pos < |input| && input[pos] != '\n' && input[pos] != '\r':
+    while pos < |input| && input[pos] != '\n' && input[pos] != '\r' where pos >= 0:
         pos = pos + 1
     string line = input[start..pos]
     pos = pos + 1
