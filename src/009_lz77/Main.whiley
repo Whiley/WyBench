@@ -15,7 +15,7 @@ function compress([byte] data) => [byte]:
     [byte] output = []
     //
     // keep going until all data matched
-    while pos < |data|:
+    while pos < |data| where pos >= 0:
         int offset, int len = findLongestMatch(data,pos)
         output = write_u1(output,offset)
         if offset == 0:
@@ -38,7 +38,7 @@ function findLongestMatch([byte] data, nat pos) => (nat,nat):
     //start = Math.max(pos - 255,0)
     assert start >= 0
     nat offset = start
-    while offset < pos:
+    while offset < pos where offset >= 0 && pos >= 0 && bestOffset >= 0 && bestLen >= 0:
         //
         int len = match(data,offset,pos)
         if len > bestLen:
@@ -52,7 +52,8 @@ function match([byte] data, nat offset, nat end) => int:
     nat pos = end
     nat len = 0
     //
-    while offset < pos && pos < |data| && data[offset] == data[pos]:
+    while offset < pos && pos < |data| && data[offset] == data[pos]
+        where offset >= 0 && pos >= 0:
         //
         offset = offset + 1
         pos = pos + 1
@@ -64,7 +65,7 @@ function decompress([byte] data) => [byte]:
     [byte] output = []
     nat pos = 0
     //
-    while (pos+1) < |data|:
+    while (pos+1) < |data| where pos >= 0:
         byte header = data[pos]
         byte item = data[pos+1]
         pos = pos + 2
