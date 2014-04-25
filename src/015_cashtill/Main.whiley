@@ -108,7 +108,7 @@ ensures total(r) == total(first) - total(second):
 function calculateChange(Cash till, nat change) => (null|Cash r)
 // If change is given, then it must have been in the till, and must
 // equal that requested.
-ensures r != null ==> (contained(till,r) && total(r) == change):
+ensures r is Cash ==> (contained(till,r) && total(r) == change):
     //
     if change == 0:
         return Cash()
