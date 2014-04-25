@@ -21,7 +21,7 @@ requires index >= 0:
         index = index + 1
     return index
 
-function parseInt(nat pos, string input) => (nat, int) 
+function parseInt(nat pos, string input) => (int, int) 
 throws SyntaxError:
     //
     int start = pos
@@ -43,8 +43,8 @@ requires |s| > 0
 // Return value must be one of argument set
 ensures r in s:
     //
-    int j = -1
-    for i in s:
+    int j = 0
+    for i in s where j >= 0:
         if i > j:
             j = i
     return j
