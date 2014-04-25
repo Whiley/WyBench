@@ -64,11 +64,15 @@ public function read(NonEmptyBuffer buf) => (Buffer,int):
         buf.rpos = 0
     return (buf,item)
 
-public function isFull(Buffer buf) => bool:
+public function isFull(Buffer buf) => (bool r)
+ensures buf is FullBuffer ==> r:
+    //
     return (buf.rpos == buf.wpos + 1) || 
             (buf.wpos == |buf.data|-1 && buf.rpos == 0)
 
-public function isEmpty(Buffer buf) => bool:
+public function isEmpty(Buffer buf) => (bool r)
+ensures buf is EmptyBuffer ==> r :
+    //
     return buf.rpos == buf.wpos
 
 public function toString(Buffer b) => string:
@@ -86,23 +90,43 @@ public function toString(Buffer b) => string:
 constant ITEMS is [5,4,6,3,7,2,8,1,9,10,0]
 
 method main(System.Console console):
-    int i
+    int i = 0
     Buffer buf = Buffer(10)
     //
     console.out.println("INIT: " ++ toString(buf))
-    for item in ITEMS:
+
+    // NOTE: following loop invariant should not be necessary!  It is
+    // needed because the verifier doesn't current enforce the
+    // variables declared invariants.
+    while i < |ITEMS| 
+        where i >= 0
+        where buf.rpos >= 0 && buf.rpos < |buf.data|
+        where buf.wpos >= 0 && buf.wpos < |buf.data|:
+        //
         if isFull(buf):
             console.out.println("BUFFER FULL")
             break
-        buf = write(buf,item)
-        console.out.println("WROTE: " ++ item ++ ", " ++ toString(buf))
-    for item in ITEMS:
+        buf = write(buf,ITEMS[i])
+        console.out.println("WROTE: " ++ ITEMS[i] ++ ", " ++ toString(buf))
+        i = i + 1
+    //
+    int item
+    //
+    // NOTE: following loop invariant should not be necessary!  It is
+    // needed because the verifier doesn't current enforce the
+    // variables declared invariants.
+    while i < |ITEMS| 
+        where i >= 0
+        where buf.rpos >= 0 && buf.rpos < |buf.data|
+        where buf.wpos >= 0 && buf.wpos < |buf.data|:
+        //
         if isEmpty(buf):
             console.out.println("BUFFER EMPTY")
             break
-        buf,i = read(buf)
-        if i == item:
-            console.out.println("READ: " ++ i ++ ", " ++ toString(buf))
+        buf,item = read(buf)
+        if item == ITEMS[i]:
+            console.out.println("READ: " ++ item ++ ", " ++ toString(buf))
         else:
-            console.out.println("ERROR: read " ++ i ++ ", expecting " ++ item)
+            console.out.println("ERROR: read " ++ item ++ ", expecting " ++ ITEMS[i])
+        i = i + 1
     
