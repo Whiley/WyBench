@@ -40,7 +40,7 @@ benchmarks:
 
 013_btree --- A simple implementation of a binary search tree.
 
-014_lights* --- A simple implementation of the (British) traffic
+014_lights --- A simple implementation of the (British) traffic
                 lights sequence.
 
 015_cashtill --- A simple example implementing a cash till which
