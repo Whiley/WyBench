@@ -13,9 +13,6 @@ constant MOVES is [
     {expose: true, col: 2, row: 0}
 ]
 
-constant BOMBS is [
-    (0,1), (2,3), (5,6), (4,2), (0,1), (6,6), (8,3), (8,5), (9,5), (9,6)
-]
 
 // Some simple test code for the Minesweeper game
 public method main(System.Console console):
@@ -38,12 +35,12 @@ public method main(System.Console console):
         // Print the board
         printBoard(board,console)
         // Check for game over
-        // bool isOver, bool hasWon = isGameOver(board)
-        // if isOver:
-        //     if hasWon:
-        //         console.out.println("Game Over --- Player has Won!")
-        //     else:
-        //         console.out.println("Game Over --- Player has Lost!")
+        bool isOver, bool hasWon = isGameOver(board)
+        if isOver:
+            if hasWon:
+                console.out.println("Game Over --- Player has Won!")
+            else:
+                console.out.println("Game Over --- Player has Lost!")
     // Done
     console.out.println("All moves completed")
 
