@@ -59,6 +59,8 @@ method printBoard(Board board, System.Console console):
                     console.out.print("X")
             else if sq.holdsBomb:
                 console.out.print("*")
+            else if sq.rank == 0:
+                console.out.print(" ")
             else:
                 console.out.print(sq.rank)
         // Print Side Wall
