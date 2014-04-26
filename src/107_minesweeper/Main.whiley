@@ -9,6 +9,7 @@ type Move is {
 constant MOVES is [
     // First move, expose square 0,0
     {expose: true, col: 0, row: 0},
+    {expose: false, col: 0, row: 1},
     {expose: true, col: 2, row: 0}
 ]
 
@@ -18,9 +19,9 @@ constant BOMBS is [
 
 // Some simple test code for the Minesweeper game
 public method main(System.Console console):
-    Board board = Board(10,10)
+    Board board = Board(10,5)
     // Place bombs along diaganol
-    for b in BOMBS:
+    for b in [ (0,1), (2,3), (3,3), (4,4), (4,2), (6,4) ]:
         int x, int y = b
         board = setSquare(board,x,y,HiddenSquare(true,false))
     // Print the starting board
@@ -37,12 +38,12 @@ public method main(System.Console console):
         // Print the board
         printBoard(board,console)
         // Check for game over
-        bool isOver, bool hasWon = isGameOver(board)
-        if isOver:
-            if hasWon:
-                console.out.println("Game Over --- Player has Won!")
-            else:
-                console.out.println("Game Over --- Player has Lost!")
+        // bool isOver, bool hasWon = isGameOver(board)
+        // if isOver:
+        //     if hasWon:
+        //         console.out.println("Game Over --- Player has Won!")
+        //     else:
+        //         console.out.println("Game Over --- Player has Lost!")
     // Done
     console.out.println("All moves completed")
 
