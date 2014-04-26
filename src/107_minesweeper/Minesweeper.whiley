@@ -39,7 +39,7 @@ function HiddenSquare(bool bomb, bool flag) => HiddenSquare:
 public type Board is {
    [Square] squares,  // List of squares making up the board
    int width,         // Width of the game board (in squares)
-   int height        // Height of the game board (in squares)
+   int height         // Height of the game board (in squares)
 } where |squares| == (width * height)
 
 // Create a board of given dimensions which contains no bombs, and
@@ -103,14 +103,9 @@ requires 0 <= row && row < b.height:
 // containing a bomb signals the end of the game anyway.
 function determineRank(Board b, int col, int row) => int:
     int rank = 0
-    // Determine minimum and maximum rows/cols on the board
-    int min_row = Math.max(0,row-1)
-    int max_row = Math.min(b.height,row+2)
-    int min_col = Math.max(0,col-1)
-    int max_col = Math.min(b.width,col+2)
     // Calculate the rank
-    for r in min_row .. max_row:
-        for c in min_col .. max_col:
+    for r in Math.max(0,row-1) .. Math.min(b.height,row+2):
+        for c in Math.max(0,col-1) .. Math.min(b.width,col+2):
             Square sq = getSquare(b,c,r)
             if sq.holdsBomb:
                 rank = rank + 1
@@ -119,14 +114,11 @@ function determineRank(Board b, int col, int row) => int:
 
 // Attempt to recursively expose blank hidden square, starting from a given position.
 public export
-function exposeSquare(Board b, int col, int row) => Board:
-//requires 0 <= col && col < b.width
-//requires 0 <= row && row < b.height:
+function exposeSquare(Board b, int col, int row) => Board
+requires 0 <= col && col < b.width
+requires 0 <= row && row < b.height:
     //
-    // first, ensure square to expose is valid
-    if col < 0 || row < 0 || col >= b.width || row >= b.height:
-        return b
-    // second, check whether is blank hidden square
+    // Check whether is blank hidden square
     Square sq = getSquare(b,col,row)
     int rank = determineRank(b,col,row)
     if sq is HiddenSquare:       
@@ -135,8 +127,8 @@ function exposeSquare(Board b, int col, int row) => Board:
         b = setSquare(b,col,row,sq)
         if rank == 0:
             // now expose neighbours
-            for r in (row-1) .. (row+2):
-                for c in (col-1) .. (col+2):
+            for r in Math.max(0,row-1) .. Math.min(b.height,row+2):
+                for c in Math.max(0,col-1) .. Math.min(b.width,col+2):
                     b = exposeSquare(b,c,r)
     //
     return b
