@@ -8,15 +8,21 @@ type Move is {
         
 constant MOVES is [
     // First move, expose square 0,0
-    {expose: true, col: 0, row: 0}
+    {expose: true, col: 0, row: 0},
+    {expose: true, col: 2, row: 0}
+]
+
+constant BOMBS is [
+    (0,1), (2,3), (5,6), (4,2), (0,1), (6,6), (8,3), (8,5), (9,5), (9,6)
 ]
 
 // Some simple test code for the Minesweeper game
 public method main(System.Console console):
     Board board = Board(10,10)
     // Place bombs along diaganol
-    for i in 0 .. 10:
-        board = setSquare(board,i,i,HiddenSquare(true,false))
+    for b in BOMBS:
+        int x, int y = b
+        board = setSquare(board,x,y,HiddenSquare(true,false))
     // Print the starting board
     printBoard(board,console)
     //
@@ -50,7 +56,7 @@ method printBoard(Board board, System.Console console):
                 if sq.flagged:
                     console.out.print("P")
                 else:
-                    console.out.print("O")
+                    console.out.print("X")
             else if sq.holdsBomb:
                 console.out.print("*")
             else:
