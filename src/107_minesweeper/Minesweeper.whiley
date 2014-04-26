@@ -5,7 +5,7 @@
 // An exposed square is one which has been exposed by the player, and 
 // displays its "rank".  The rank is the count of bombs in the eight 
 // directly adjacent squares.
-type ExposedSquare is { 
+public type ExposedSquare is { 
   int rank,       // Number of bombs in adjacent squares
   bool holdsBomb  // true if the square holds a bomb
 }
@@ -13,14 +13,14 @@ type ExposedSquare is {
 // A hidden square is one which has yet to be revealed by the player.  A
 // hidden square may contain a bomb and/or have been "flagged" by the
 // player.
-type HiddenSquare is { 
+public type HiddenSquare is { 
   bool holdsBomb,  // true if the square holds a bomb
   bool flagged     // true if the square is flagged
 }
 
 // Every square on the board is either an exposed square or a hidden
 // square.
-type Square is ExposedSquare | HiddenSquare
+public type Square is ExposedSquare | HiddenSquare
 
 // ExposedSquare constructor
 public export 
@@ -36,7 +36,7 @@ function HiddenSquare(bool bomb, bool flag) => HiddenSquare:
 // Board
 // =================================================================
 
-type Board is {
+public type Board is {
    [Square] squares,  // List of squares making up the board
    int width,         // Width of the game board (in squares)
    int height        // Height of the game board (in squares)
@@ -119,9 +119,9 @@ function determineRank(Board b, int col, int row) => int:
 
 // Attempt to recursively expose blank hidden square, starting from a given position.
 public export
-function exposeSquare(Board b, int col, int row) => Board
-requires 0 <= col && col < b.width
-requires 0 <= row && row < b.height:
+function exposeSquare(Board b, int col, int row) => Board:
+//requires 0 <= col && col < b.width
+//requires 0 <= row && row < b.height:
     //
     // first, ensure square to expose is valid
     if col < 0 || row < 0 || col >= b.width || row >= b.height:
