@@ -33,8 +33,12 @@ requires right != null ==> all { d in elts(right) | d > data }:
 
 // Return all data elements contained in the tree
 function elts(Tree t) => ({int} ret)
-// Data in tree should be in result
-ensures t != null ==> t.data in ret:
+// Data in this node should be in result
+ensures t != null ==> t.data in ret
+// All data reachable from left node should be in result
+ensures t != null ==> elts(t.left) ⊆ ret
+// All data reachable from right node should be in result
+ensures t != null ==> elts(t.right) ⊆ ret:
     //
     if t is null:
         return {}
@@ -49,8 +53,8 @@ ensures t != null ==> t.data in ret:
 function insert(Tree tree, int data) => (Tree r)
 // Return tree cannot be empty
 ensures r != null
-// Original tree item is retained
-ensures tree != null ==> tree.data == r.data:
+// Original tree data is retained
+ensures elts(tree) == elts(r) + {data}:
     //
     if tree is null:
         return Node(data,null,null)
