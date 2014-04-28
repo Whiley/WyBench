@@ -52,9 +52,9 @@ ensures t != null ==> elts(t.right) ⊆ ret:
 // Insert a given data element into a tree
 function insert(Tree tree, int data) => (Tree r)
 // Return tree cannot be empty
-ensures r != null
+ensures r != null:
 // Original tree data is retained
-ensures elts(tree) == elts(r) + {data}:
+// ensures elts(tree) == elts(r) + {data}:
     //
     if tree is null:
         return Node(data,null,null)
@@ -69,6 +69,62 @@ ensures elts(tree) == elts(r) + {data}:
     else:
         // Data item matches this, so do nothing
         return tree
+
+// =================================================
+// rotateClockwise
+// =================================================
+
+// Rotate a tree in the clockwise direction.  This can be used 
+// to adjust reduce the height of the tree on the left-side.
+//
+//     Q             P
+//    / \           / \
+//   P   C   ==>   A   Q
+//  / \               / \
+// A   B             B   C
+//
+function rotateClockwise(Tree tree) => (Tree r)
+// All data items in the tree are preserved
+ensures elts(tree) == elts(r):
+    //
+    if tree == null:
+        return tree
+    //
+    Tree left = tree.left 
+    //
+    if left == null:
+        return tree
+    else:
+        Tree right = Node(tree.data,left.right,tree.right)
+        return Node(left.data,left.left,right)
+
+// =================================================
+// rotateCounterClockwise
+// =================================================
+
+// Rotate a tree in the clockwise direction.  This can be used 
+// to adjust reduce the height of the tree on the left-side.
+//
+//     Q             P
+//    / \           / \
+//   P   C   <==   A   Q
+//  / \               / \
+// A   B             B   C
+//
+function rotateCounterClockwise(Tree tree) => (Tree r)
+// All data items in the tree are preserved
+ensures elts(tree) == elts(r):
+    //
+    if tree == null:
+        return tree
+    //
+    Tree right = tree.right
+    //
+    if right == null:
+        return tree
+    else:
+        Tree left = Node(tree.data,right.left,tree.left)
+        return Node(right.data,left,right.right)
 
 // =================================================
 // toString
@@ -90,8 +146,16 @@ constant ITEMS is [54,7,201,52,3,1,0,54,12,90,9,8,8,7,34,32,35,34]
 
 method main(System.Console console):
     Tree bt = null
+    Tree tmp
+    //
     console.out.println(bt)
+    //
     for item in ITEMS:
         bt = insert(bt,item)
         console.out.println(bt)
+        tmp = rotateClockwise(bt)
+        console.out.println(tmp)
+        tmp = rotateCounterClockwise(bt)
+        console.out.println(tmp)
+        
     
