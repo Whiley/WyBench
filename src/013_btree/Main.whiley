@@ -3,7 +3,7 @@ import println from whiley.lang.System
 // A Binary Search Tree where elements are stored in sorted order.
 // That is, given a node n then we have the following invariant:
 //
-//   n.left.item < n.item < n.right.item, etc.
+//   n.left.data < n.data < n.right.data, etc.
 //
 
 // =================================================
