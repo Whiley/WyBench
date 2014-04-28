@@ -7,63 +7,70 @@ import println from whiley.lang.System
 //
 
 // =================================================
-// BTree.Node
+// Tree
 // =================================================
 
-public type Node is {
-    BTree left,
-    BTree right,
-    int item
-} where (left == null  || left.item < item) &&
-        (right == null || right.item > item)
+type Tree is null | Node
 
-public function Node(int item) => Node:
-    return {left: null, right: null, item: item}
+type Node is { int data, Tree left, Tree right } where 
+	// Data in nodes reachable from left must be below this
+	(left != null ==> all { d in elts(left) | d < data }) &&
+	// Data in nodes reachable from right must be above this
+	(right != null ==> all { d in elts(right) | d > data })
 
-
-public function Node(BTree left, BTree right, int item) => Node
-// Any item in the left tree must be below this item
-requires left != null ==> left.item < item
-// Any item in the right tree must be above this item
-requires right != null ==> right.item > item:
+// Construct a given tree
+function Node(int data, Tree left, Tree right) => Node
+// Data in nodes reachable from left must be below this
+requires left != null ==> all { d in elts(left) | d < data }
+// Data in nodes reachable from right must be above this
+requires right != null ==> all { d in elts(right) | d > data }:
     //
-    return {left: left, right: right, item: item}
+    return {
+    	data: data,
+        left: left,
+        right: right
+    }
+
+// Return all data elements contained in the tree
+function elts(Tree t) => ({int} ret)
+// Data in tree should be in result
+ensures t != null ==> t.data in ret:
+    //
+    if t is null:
+        return {}
+    else:        
+        return elts(t.left) + {t.data} + elts(t.right)
 
 // =================================================
-// BTree
+// Insert
 // =================================================
 
-public type BTree is null | Node
-
-// Create an empty tree.
-public function BTree() => BTree:
-    return null
-
-// Add an item into the tree
-public function add(BTree tree, int item) => (BTree r)
+// Insert a given data element into a tree
+function insert(Tree tree, int data) => (Tree r)
 // Return tree cannot be empty
 ensures r != null
 // Original tree item is retained
-ensures tree != null ==> tree.item == r.item:
+ensures tree != null ==> tree.data == r.data:
     //
-    if tree == null:
-        return Node(item)
-    else if tree.item == item:
-        return tree // item alteady present
-    else if tree.item < item:
-        // add to right tree
-        BTree right = add(tree.right,item)
-        return Node(tree.left,right,tree.item)
+    if tree is null:
+        return Node(data,null,null)
+    else if tree.data < data:
+        // Data item is greater than this, so insert into right tree.
+        Tree right = insert(tree.right, data)
+        return Node(tree.data,tree.left,right)
+    else if tree.data > data:
+        // Data item is below this, so insert into left tree.
+        Tree left = insert(tree.left, data)
+        return Node(tree.data,left,tree.right)
     else:
-        // add to left tree
-        BTree left = add(tree.left,item)
-        return Node(left,tree.right,tree.item)
+        // Data item matches this, so do nothing
+        return tree
 
-public function toString(BTree tree) => string:
+public function toString(Tree tree) => string:
     if tree == null:
         return "null"
     else:
-        return "(" ++ tree.item ++ ", " ++
+        return "(" ++ tree.data ++ ", " ++
                  toString(tree.left) ++ ", " ++
                  toString(tree.right) ++ ")"
 
@@ -74,9 +81,9 @@ public function toString(BTree tree) => string:
 constant ITEMS is [54,7,201,52,3,1,0,54,12,90,9,8,8,7,34,32,35,34]
 
 method main(System.Console console):
-    BTree bt = BTree()
+    Tree bt = null
     console.out.println(bt)
     for item in ITEMS:
-        bt = add(bt,item)
+        bt = insert(bt,item)
         console.out.println(bt)
     
