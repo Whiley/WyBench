@@ -70,6 +70,10 @@ ensures elts(tree) == elts(r) + {data}:
         // Data item matches this, so do nothing
         return tree
 
+// =================================================
+// toString
+// =================================================
+
 public function toString(Tree tree) => string:
     if tree == null:
         return "null"
