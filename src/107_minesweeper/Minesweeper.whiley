@@ -127,9 +127,18 @@ requires 0 <= row && row < b.height:
         b = setSquare(b,col,row,sq)
         if rank == 0:
             // now expose neighbours
-            for r in Math.max(0,row-1) .. Math.min(b.height,row+2):
-                for c in Math.max(0,col-1) .. Math.min(b.width,col+2):
-                    b = exposeSquare(b,c,r)
+            return exposeNeighbours(b,col,row)
+    //
+    return b
+
+// Recursively expose all valid neighbouring squares on the board
+function exposeNeighbours(Board b, int col, int row) => Board
+requires 0 <= col && col < b.width
+requires 0 <= row && row < b.height:
+    //
+    for r in Math.max(0,row-1) .. Math.min(b.height,row+2):
+       for c in Math.max(0,col-1) .. Math.min(b.width,col+2):
+           b = exposeSquare(b,c,r)
     //
     return b
 
