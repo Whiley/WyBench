@@ -45,7 +45,9 @@ ensures result >= 0:
  *
  * (writing most significant bit first)
  */
-function increment([bool] bits) => [bool]:
+function increment([bool] bits) => ([bool] result)
+// This is the key property for this benchmark
+ensures value(result) == value(bits) + 1:
     //
     int i = 0
     //
