@@ -79,7 +79,10 @@ function toString([bool] bits, int n) => string:
        i = i + 1
     //
     return r
- 
+
+/**
+ * Print and enumerate first 15 bit patterns
+ */
 method main(System.Console console):
     [bool] bits = [ false ]
     int i = 0
