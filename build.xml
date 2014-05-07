@@ -1,5 +1,5 @@
 <project name="wybench" default="compile">  
-  <property name="version" value="0.1.6"/>
+  <property name="version" value="0.1.7"/>
 
   <target name="compile">
     <subant failonerror="false" target="compile">
@@ -20,14 +20,15 @@
     <mkdir dir="wybench-v${version}"/>
 
     <copy todir="wybench-v${version}">
-      <fileset dir="." includes="sequential/**/*.whiley,concurrent/**/*.whiley"/>
-      <fileset dir="." includes="sequential/**/*.java,concurrent/**/*.java"/>
-      <fileset dir="." includes="sequential/**/*.in,concurrent/**/*.in"/>
+      <fileset dir="." includes="src/**/*.whiley"/>
+      <fileset dir="." includes="src/**/*.java"/>
+      <fileset dir="." includes="src/**/*.in"/>
       <fileset dir="." includes="README,build.xml"/>
     </copy>
     <tar destfile="wybench-v${version}.tar" longfile="gnu">  
       <tarfileset dir="." includes="wybench-v${version}/**/*.whiley"/>
       <tarfileset dir="." includes="wybench-v${version}/**/*.java"/>
+      <tarfileset dir="." includes="wybench-v${version}/**/build.xml"/>
       <tarfileset dir="." includes="wybench-v${version}/**/*.in"/>
       <tarfileset dir="." includes="wybench-v${version}/README,wybench-v${version}/build.xml"/>
       <tarfileset dir="." includes="wdk-v${version}/lib/wyrt.jar,wdk-v${version}/lib/wyjc.jar"/>
