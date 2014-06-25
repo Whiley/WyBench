@@ -1,0 +1,39 @@
+Notes on which benchmarks fail verification and why
+===================================================
+
+001_average --- Fails because of problem typing generated VCs.
+                Specifically, dividing a real by an integer.  See #366
+
+002_fib
+
+003_gcd
+
+004_matrix
+
+006_queens
+
+007_regex
+
+008_scc --- Fails because large VC's generated.  see #365
+
+009_lz77
+
+010_sort
+
+011_codejam
+
+012_cyclic
+
+013_btree 
+
+014_lights
+
+015_cashtill
+
+016_date
+
+017_math
+
+022_cars
+
+023_microwave --- OK
