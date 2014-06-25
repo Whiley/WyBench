@@ -25,6 +25,10 @@ Failing (for known reason):
 
 008_scc --- Fails because large VC's generated.  see #365
 
+011_codejam --- Fails because of function overriding (see #347).
+                However, doesn't pass after manual workaround because
+                (I believe) of quantifier instantiation problem.
+
 ---------------------------------------------------
 Failing (for unknown reason):
 ---------------------------------------------------
@@ -33,15 +37,13 @@ Failing (for unknown reason):
 
 009_lz77 --- Possibly timeout exception?
 
+010_sort --- Possibly timeout exception?
+
+012_cyclic --- Possibly timeout exception?
+
 ---------------------------------------------------
 Untested:
 ---------------------------------------------------
-
-010_sort
-
-011_codejam
-
-012_cyclic
 
 013_btree 
 
