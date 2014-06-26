@@ -72,7 +72,7 @@ function sum_1([nat] items) => nat:
  * (implementation 2)
  */
 function sum_2([nat] items) => nat:
-    return sum_2(items,0)
+    return sum_2a(items,0)
 
 function sum_2([nat] items, nat index) => nat
 requires index <= |items|:

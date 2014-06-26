@@ -7,11 +7,13 @@ Passing:
 
 002_fib --- OK
 
-023_microwave --- OK
-
 006_queens --- OK
 
 007_regex --- OK
+
+022_cars --- OK
+
+023_microwave --- OK
 
 ---------------------------------------------------
 Failing (for known reason):
@@ -32,6 +34,15 @@ Failing (for known reason):
 013_btree --- Fails because lack of support for recursive types.  See
               #298.
 
+016_date --- Missing Remainder Operator.  See #337
+
+017_math --- Fails because of function overriding (see #347).
+	     However, doesn't pass after manual workaround because of
+	     problem with verifying foreach loops (see #228).
+
+101_calculator --- Fails because lack of support for recursive types.  See
+              #298.
+
 ---------------------------------------------------
 Failing (for unknown reason):
 ---------------------------------------------------
@@ -46,18 +57,24 @@ Failing (for unknown reason):
 
 014_lights --- Possibly too many paths for VC generator?
 
+015_cashtill --- mysterious typing error?
+
+102_conway --- mysterious generic binding error?
+
+104_tictactoe --- mysterious ArrayIndexOutOfBoundsException?
+
+107_minesweeper --- mysterious NullPointerException?
+
 ---------------------------------------------------
 Untested:
 ---------------------------------------------------
 
+103_tetris
 
+201_convert 
 
-015_cashtill
+202_chess 
 
-016_date
+203_jasm
 
-017_math
-
-022_cars
-
-
+204_raytrace
