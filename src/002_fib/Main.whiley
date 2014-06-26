@@ -9,6 +9,6 @@ function fib(nat x) => nat:
         return fib(x-1) + fib(x-2)
 
 method main(System.Console sys):
-    for i in 1 .. 41:
+    for i in 0 .. 41:
         nat r = fib(i)
         sys.out.println(r)

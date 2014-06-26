@@ -29,6 +29,9 @@ Failing (for known reason):
                 However, doesn't pass after manual workaround because
                 (I believe) of quantifier instantiation problem.
 
+013_btree --- Fails because lack of support for recursive types.  See
+              #298.
+
 ---------------------------------------------------
 Failing (for unknown reason):
 ---------------------------------------------------
@@ -41,13 +44,13 @@ Failing (for unknown reason):
 
 012_cyclic --- Possibly timeout exception?
 
+014_lights --- Possibly too many paths for VC generator?
+
 ---------------------------------------------------
 Untested:
 ---------------------------------------------------
 
-013_btree 
 
-014_lights
 
 015_cashtill
 
