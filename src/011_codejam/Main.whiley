@@ -17,9 +17,9 @@ throws SyntaxError:
     //
     int nitems
     nitems,pos = parseInt(pos,input)
-    return parseJobs(nitems,pos,input)
+    return parseNumJobs(nitems,pos,input)
 
-function parseJobs(nat nitems, nat pos, string input) => ([Job],nat) 
+function parseNumJobs(nat nitems, nat pos, string input) => ([Job],nat) 
 throws SyntaxError:
     //
     if nitems == 0:
@@ -31,7 +31,7 @@ throws SyntaxError:
             bool flag = (input[pos] == 'O')
             pos = skipWhiteSpace(pos+1,input)
             target,pos = parseInt(pos,input)
-            jobs,pos = parseJobs(nitems-1,pos,input)
+            jobs,pos = parseNumJobs(nitems-1,pos,input)
             jobs = [{button: target, orange: flag}] ++ jobs
             return jobs,pos        
         else:
