@@ -4,61 +4,44 @@ import whiley.lang.*
 // Bytecode Structures
 // ===========================================
 
-public define Void as 3
-public define Boolean as 4
-public define Char as 5
-public define Float as 6
-public define Double as 7
-public define Byte as 8
-public define Short as 9
-public define Int as 10
-public define Long as 11
+public type Unit is { int offset, int op }
+public type Branch is { int offset, int op, Int.i16 target }
 
-public define Primitive as { Boolean, Char, Float, Double, Byte, Short, Int, Long }
-public define Array as { Any element }
-public define Class as { string pkg, [string] classes }
-public define Ref as Array | Class
-public define Fun as { Any ret, [Any] params }
-public define Any as Primitive | Ref
+public type VarIndex is { int offset, int op, int index }
+public type MethodIndex is { int offset, int op, JvmType.Class owner, string name, JvmType.Fun type }
+public type FieldIndex is { int offset, int op, JvmType.Class owner, string name, JvmType.Any type }
+public type ConstIndex is { int offset, int op, ConstantPool.Constant constant }
 
-public define Unit as { int offset, int op }
-public define Branch as { int offset, int op, Int.i16 target }
-
-public define VarIndex as { int offset, int op, int index }
-public define MethodIndex as { int offset, int op, JvmType.Class owner, string name, JvmType.Fun type }
-public define FieldIndex as { int offset, int op, JvmType.Class owner, string name, JvmType.Any type }
-public define ConstIndex as { int offset, int op, ConstantPool.Constant constant }
-
-public define Bytecode as Unit | VarIndex | Branch | MethodIndex | FieldIndex | ConstIndex
+public type Bytecode is Unit | VarIndex | Branch | MethodIndex | FieldIndex | ConstIndex
 
 // ===========================================
 // Bytecode Constructors
 // ===========================================
 
-Unit Unit(int offset, int op):
+function Unit(int offset, int op) => Unit:
     return {offset: offset, op: op}
 
-VarIndex VarIndex(int offset, int op, int index):
+function VarIndex(int offset, int op, int index) => VarIndex:
     return {offset: offset, op: op, index: index}
 
-MethodIndex MethodIndex(int offset, int op, JvmType.Class owner, string name, JvmType.Fun type):
+function MethodIndex(int offset, int op, JvmType.Class owner, string name, JvmType.Fun type) => MethodIndex:
     return {offset: offset, op: op, owner: owner, name: name, type: type}
 
-FieldIndex FieldIndex(int offset, int op, JvmType.Class owner, string name, JvmType.Any type):
+function FieldIndex(int offset, int op, JvmType.Class owner, string name, JvmType.Any type) => FieldIndex:
     return {offset: offset, op: op, owner: owner, name: name, type: type}
 
-ConstIndex ConstIndex(int offset, int op, ConstantPool.Constant constant):
+function ConstIndex(int offset, int op, ConstantPool.Constant constant) => ConstIndex:
     return {offset: offset, op: op, constant: constant}
 
 // ===========================================
 // Bytecode to String Conversion
 // ===========================================
 
-string toString(Bytecode b):
+function toString(Bytecode b) => string:
     if b is ConstIndex:
-        return bytecodeStrings[b.op] + " " + b.constant
+        return bytecodeStrings[b.op] ++ " " ++ b.constant
     else if b is MethodIndex:
-        return bytecodeStrings[b.op] + " " + JvmType.toString(b.owner) + "." + b.name + ":" + JvmType.toString(b.type)
+        return bytecodeStrings[b.op] ++ " " ++ JvmType.toString(b.owner) ++ "." ++ b.name ++ ":" ++ JvmType.toString(b.type)
     else:
         return bytecodeStrings[b.op]
 
@@ -66,111 +49,113 @@ string toString(Bytecode b):
 // Bytecode Kinds
 // ===========================================
 
-public define NOP as 0
-public define LOADVAR as 1
-public define STOREVAR as 2	
-public define LOADCONST as 3
-public define STORECONST as 4
-public define ARRAYLOAD as 5
-public define ARRAYSTORE as 6
-public define ARRAYLENGTH as 7
-public define IINC as 8
-public define NEW as 9
-public define THROW as 10
-public define CHECKCAST as 11
-public define INSTANCEOF as 12
-public define MONITORENTER as 13
-public define MONITOREXIT as 14
-public define SWITCH as 15
-public define CONVERT as 16	
-public define WIDE_INSN as 18
-public define POP as 19
-public define DUP as 20
-public define DUPX1 as 21
-public define DUPX2 as 22
-public define SWAP as 23
-public define ADD as 24
-public define SUB as 25
-public define MUL as 26
-public define DIV as 27
-public define REM as 28
-public define NEG as 29
-public define SHL as 30
-public define SHR as 31
-public define USHR as 32
-public define AND as 33
-public define OR as 34
-public define XOR as 35
-public define CMP as 36
-public define CMPL as 37
-public define CMPG as 38
-public define IF as 39
-public define IFCMP as 40
-public define GOTO as 41
-public define JSR as 42
-public define RET as 43	
-public define RETURN as 44
-public define FIELDLOAD as 45
-public define FIELDSTORE as 46
-public define INVOKE as 47
+public constant NOP is 0
+public constant LOADVAR is 1
+public constant STOREVAR is 2	
+public constant LOADCONST is 3
+public constant STORECONST is 4
+public constant ARRAYLOAD is 5
+public constant ARRAYSTORE is 6
+public constant ARRAYLENGTH is 7
+public constant IINC is 8
+public constant NEW is 9
+public constant THROW is 10
+public constant CHECKCAST is 11
+public constant INSTANCEOF is 12
+public constant MONITORENTER is 13
+public constant MONITOREXIT is 14
+public constant SWITCH is 15
+public constant CONVERT is 16	
+public constant WIDE_INSN is 18
+public constant POP is 19
+public constant DUP is 20
+public constant DUPX1 is 21
+public constant DUPX2 is 22
+public constant SWAP is 23
+public constant ADD is 24
+public constant SUB is 25
+public constant MUL is 26
+public constant DIV is 27
+public constant REM is 28
+public constant NEG is 29
+public constant SHL is 30
+public constant SHR is 31
+public constant USHR is 32
+public constant AND is 33
+public constant OR is 34
+public constant XOR is 35
+public constant CMP is 36
+public constant CMPL is 37
+public constant CMPG is 38
+public constant IF is 39
+public constant IFCMP is 40
+public constant GOTO is 41
+public constant JSR is 42
+public constant RET is 43	
+public constant RETURN is 44
+public constant FIELDLOAD is 45
+public constant FIELDSTORE is 46
+public constant INVOKE is 47
 
-public define T_VOID as 0     // no result type	
-public define T_BYTE as 1     
-public define T_CHAR as 2     
-public define T_SHORT as 3    
-public define T_INT as 4
-public define T_LONG as 5
-public define T_FLOAT as 6
-public define T_DOUBLE as 7
-public define T_REF as 8	
-public define T_ARRAY as 9	
+public constant T_VOID is 0     // no result type	
+public constant T_BYTE is 1     
+public constant T_CHAR is 2     
+public constant T_SHORT is 3    
+public constant T_INT is 4
+public constant T_LONG is 5
+public constant T_FLOAT is 6
+public constant T_DOUBLE is 7
+public constant T_REF is 8	
+public constant T_ARRAY is 9	
 
 // INSTRUCTION FORMATS.  These determine the different instruction formats.
-define FMT_EMPTY as 0
-define FMT_I8 as 1
-define FMT_I16 as 2	
-define FMT_TYPEINDEX16 as 4         // INDEX into runtime pool for Type Descriptor
-define FMT_TYPEAINDEX16 as 5        // INDEX into runtime pool for Type Descriptor
-define FMT_TYPEINDEX16_U8 as 6      // INDEX into runtime pool for Type Descriptor
-define FMT_CONSTINDEX8 as 7         // INDEX into runtime pool for constant
-define FMT_CONSTINDEX16 as 8        // INDEX into runtime pool for constant
-define FMT_FIELDINDEX16 as 9        // INDEX into runtime pool for field
-define FMT_METHODINDEX16 as 10      // INDEX into runtime pool for method
-define FMT_METHODINDEX16_U8_0 as 11 // INDEX into runtime pool
-define FMT_VARIDX as 12             // INDEX into local var array (1 byte)
-define FMT_VARIDX_I8 as 13
-define FMT_ATYPE as 14              // USED ONLY FOR NEWARRAY
-define FMT_TABLESWITCH as 15
-define FMT_LOOKUPSWITCH as 16
-define FMT_TARGET16 as 17
-define FMT_TARGET32 as 18
-define FMT_INTM1 as 19
-define FMT_INT0 as 20
-define FMT_INT1 as 21
-define FMT_INT2 as 22
-define FMT_INT3 as 23
-define FMT_INT4 as 24
-define FMT_INT5 as 25
-define FMT_INTNULL as 26
+public constant FMT_EMPTY is 0
+public constant FMT_I8 is 1
+public constant FMT_I16 is 2	
+public constant FMT_TYPEINDEX16 is 4         // INDEX into runtime pool for Type Descriptor
+public constant FMT_TYPEAINDEX16 is 5        // INDEX into runtime pool for Type Descriptor
+public constant FMT_TYPEINDEX16_U8 is 6      // INDEX into runtime pool for Type Descriptor
+public constant FMT_CONSTINDEX8 is 7         // INDEX into runtime pool for constant
+public constant FMT_CONSTINDEX16 is 8        // INDEX into runtime pool for constant
+public constant FMT_FIELDINDEX16 is 9        // INDEX into runtime pool for field
+public constant FMT_METHODINDEX16 is 10      // INDEX into runtime pool for method
+public constant FMT_METHODINDEX16_U8_0 is 11 // INDEX into runtime pool
+public constant FMT_VARIDX is 12             // INDEX into local var array (1 byte)
+public constant FMT_VARIDX_I8 is 13
+public constant FMT_ATYPE is 14              // USED ONLY FOR NEWARRAY
+public constant FMT_TABLESWITCH is 15
+public constant FMT_LOOKUPSWITCH is 16
+public constant FMT_TARGET16 is 17
+public constant FMT_TARGET32 is 18
+public constant FMT_INTM1 is 19
+public constant FMT_INT0 is 20
+public constant FMT_INT1 is 21
+public constant FMT_INT2 is 22
+public constant FMT_INT3 is 23
+public constant FMT_INT4 is 24
+public constant FMT_INT5 is 25
+public constant FMT_INTNULL is 26
 
-define S_INT as 0
-define S_LONG as 1
-define S_FLOAT as 2
-define S_DOUBLE as 3
+public constant S_INT is 0
+public constant S_LONG is 1
+public constant S_FLOAT is 2
+public constant S_DOUBLE is 3
 
-define MOD_VIRTUAL as 0
-define MOD_STATIC as 1
-define MOD_SPECIAL as 2
-define MOD_INTERFACE as 3
+public constant MOD_VIRTUAL is 0
+public constant MOD_STATIC is 1
+public constant MOD_SPECIAL is 2
+public constant MOD_INTERFACE is 3
 
 // ===========================================
 // Decode Table
 // ===========================================
 
+public type Info is null|(int,int,int)|(int,int,int,int)
+
 // The following table is used to simplify decoding of bytecode
 // instructions.  Don't ask me where I got it from ... it was a lot of
 // hard work to build :)
-define decodeTable as [
+public constant decodeTable is [
     (NOP,FMT_EMPTY,T_VOID),                   // NOP = 0    
     (LOADCONST, FMT_INTNULL, T_REF),          // ACONST_NULL = 1;
     (LOADCONST, FMT_INTM1, T_INT),            // ICONST_M1 = 2;
@@ -379,7 +364,7 @@ define decodeTable as [
 // String Table
 // ===========================================
 
-define bytecodeStrings as [
+public constant bytecodeStrings is [
     "nop",
     "aconst_null",
     "iconst_m1",

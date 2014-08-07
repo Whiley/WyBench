@@ -9,70 +9,70 @@ import * from Bytecodes
 // Definitions
 // ============================================================
 
-public define Constant as string | int | real 
+public type Constant is string | int | real 
 
-public define CONSTANT_Utf8 as 1
-public define CONSTANT_Integer as 3
-public define CONSTANT_Float as 4
-public define CONSTANT_Long as 5
-public define CONSTANT_Double as 6
-public define CONSTANT_Class as 7
-public define CONSTANT_String as 8
-public define CONSTANT_FieldRef as 9
-public define CONSTANT_MethodRef as 10
-public define CONSTANT_InterfaceMethodRef as 11
-public define CONSTANT_NameAndType as 12
+public constant CONSTANT_Utf8 is 1
+public constant CONSTANT_Integer is 3
+public constant CONSTANT_Float is 4
+public constant CONSTANT_Long is 5
+public constant CONSTANT_Double is 6
+public constant CONSTANT_Class is 7
+public constant CONSTANT_String is 8
+public constant CONSTANT_FieldRef is 9
+public constant CONSTANT_MethodRef is 10
+public constant CONSTANT_InterfaceMethodRef is 11
+public constant CONSTANT_NameAndType is 12
 
-public define StringInfo as {
+public type StringInfo is {
     Int.u8 tag,
     Int.u16 string_index
 }
 
-public define ClassInfo as {
+public type ClassInfo is {
     Int.u8 tag,
     Int.u16 name_index
 }
 
-public define Utf8Info as {
+public type Utf8Info is {
     Int.u8 tag,
     [byte] value        
 }
 
-public define IntegerInfo as {
+public type IntegerInfo is {
     Int.u8 tag,
     Int.i32 value        
 }
 
-public define LongInfo as {
+public type LongInfo is {
     Int.u8 tag,
     Int.i64 value        
 }
 
-public define FieldRefInfo as { 
+public type FieldRefInfo is { 
     Int.u8 tag,
     Int.u16 class_index,
     Int.u16 name_and_type_index
 }
 
-public define MethodRefInfo as { 
+public type MethodRefInfo is { 
     Int.u8 tag,
     Int.u16 class_index,
     Int.u16 name_and_type_index
 }
 
-public define InterfaceMethodRefInfo as { 
+public type InterfaceMethodRefInfo is { 
     Int.u8 tag,
     Int.u16 class_index,
     Int.u16 name_and_type_index
 }
 
-public define NameAndTypeInfo as {
+public type NameAndTypeInfo is {
     Int.u8 tag,
     Int.u16 name_index,
     Int.u16 descriptor_index    
 }
 
-public define Item as FieldRefInfo | 
+public type Item is FieldRefInfo | 
         MethodRefInfo | 
         InterfaceMethodRefInfo | 
         StringInfo | 
@@ -86,81 +86,97 @@ public define Item as FieldRefInfo |
 // Decoding Functions
 // ============================================================
 
-int integerItem(int index, [Item] pool) throws Error:
-    item = pool[index]
+public function integerItem(int index, [Item] pool) => int
+throws Error:
+    Item item = pool[index]
     if item is IntegerInfo:
         return item.value
     else:
         throw {msg: "invalid integer item"}
 
-int longItem(int index, [Item] pool) throws Error:
-    item = pool[index]
+public function longItem(int index, [Item] pool) => int
+throws Error:
+    Item item = pool[index]
     if item is LongInfo:
         return item.value
     else:
         throw {msg: "invalid integer item"}
 
 // extract a utf8 string item
-string utf8Item(int index, [Item] pool) throws Error:
-    item = pool[index]
+public function utf8Item(int index, [Item] pool) => string 
+throws Error:
+    Item item = pool[index]
     if item is Utf8Info:
         return String.fromASCII(item.value)
     else:
         throw {msg: "invalid utf8 item"}
 
-string stringItem(int index, [Item] pool) throws Error:
-    item = pool[index]
+public function stringItem(int index, [Item] pool) => string
+throws Error:
+    Item item = pool[index]
     if item is StringInfo:
         return utf8Item(item.string_index,pool)
     else:
         throw {msg: "invalid string item"}
 
 // extract a class type item
-JvmType.Class classItem(int index, [Item] pool) throws Error:
-    item = pool[index]
+public function classItem(int index, [Item] pool) => JvmType.Class
+throws Error:
+    Item item = pool[index]
     if item is ClassInfo:
-        utf8 = utf8Item(item.name_index,pool)
+        string utf8 = utf8Item(item.name_index,pool)
         return parseClassDescriptor(utf8)
     else:
         throw {msg: "invalid class item"}
 
-JvmType.Any typeItem(int index, [Item] pool) throws Error:
-    desc = utf8Item(index,pool)
+public function typeItem(int index, [Item] pool) => JvmType.Any
+throws Error:
+    string desc = utf8Item(index,pool)
     return parseDescriptor(desc)
 
-JvmType.Fun methodTypeItem(int index, [Item] pool) throws Error:
-    desc = utf8Item(index,pool)
+public function methodTypeItem(int index, [Item] pool) => JvmType.Fun
+throws Error:
+    string desc = utf8Item(index,pool)
     return parseMethodDescriptor(desc)
 
-(string,string) nameAndTypeItem(int index, [Item] pool) throws Error:
-    item = pool[index]
+public function nameAndTypeItem(int index, [Item] pool) => (string,string)
+throws Error:
+    Item item = pool[index]
     if item is NameAndTypeInfo:
-        name = utf8Item(item.name_index,pool)
-        desc = utf8Item(item.descriptor_index,pool)
+        string name = utf8Item(item.name_index,pool)
+        string desc = utf8Item(item.descriptor_index,pool)
         return name,desc
     else:
         throw {msg: "invalid name and type item"}                
 
-(JvmType.Class,string,JvmType.Fun) methodRefItem(int index, [Item] pool) throws Error:
-    item = pool[index]
+public function methodRefItem(int index, [Item] pool) => (JvmType.Class,string,JvmType.Fun)
+throws Error:    
+    Item item = pool[index]
+    //
     if item is MethodRefInfo:
-        owner = classItem(item.class_index,pool)
-        name,desc = nameAndTypeItem(item.name_and_type_index,pool)
+        string name
+        string desc
+        JvmType.Class owner = classItem(item.class_index,pool)
+        name, desc = nameAndTypeItem(item.name_and_type_index,pool)
         return owner,name,parseMethodDescriptor(desc)
     else:
         throw {msg: "invalid method ref item"}
 
-(JvmType.Class,string,JvmType.Any) fieldRefItem(int index, [Item] pool) throws Error:
-    item = pool[index]
+public function fieldRefItem(int index, [Item] pool) => (JvmType.Class,string,JvmType.Any) 
+throws Error:
+    Item item = pool[index]
     if item is FieldRefInfo:
-        owner = classItem(item.class_index,pool)
+        string name
+        string desc
+        JvmType.Class owner = classItem(item.class_index,pool)
         name,desc = nameAndTypeItem(item.name_and_type_index,pool)
         return owner,name,parseDescriptor(desc)
     else:
         throw {msg: "invalid field ref item"}
 
-Constant numberOrStringItem(int index, [Item] pool) throws Error:
-    item = pool[index]
+public function numberOrStringItem(int index, [Item] pool) => Constant
+throws Error:
+    Item item = pool[index]
     if item is StringInfo:
         return stringItem(index,pool)
     else if item is IntegerInfo:
@@ -174,56 +190,56 @@ Constant numberOrStringItem(int index, [Item] pool) throws Error:
 // Encoding Functions
 // ============================================================
 
-define Utf8Tree as {
+type Utf8Tree is {
     Int.u8 tag,
     [byte] value        
 }
 
-define IntegerTree as {
+type IntegerTree is {
     Int.u8 tag,
     Int.i32 value        
 }
 
-define LongTree as {
+type LongTree is {
     Int.u8 tag,
     Int.i64 value        
 }
 
-define StringTree as {
+type StringTree is {
     Int.u8 tag,
     Utf8Tree string_index
 }
 
-define ClassTree as {
+type ClassTree is {
     Int.u8 tag,
     Utf8Tree name_index
 }
 
-define NameAndTypeTree as {
+type NameAndTypeTree is {
     Int.u8 tag,
     Utf8Tree name_index,
     Utf8Tree descriptor_index    
 }
 
-define FieldRefTree as { 
+type FieldRefTree is { 
     Int.u8 tag,
     ClassTree class_index,
     NameAndTypeTree name_and_type_index
 }
 
-define MethodRefTree as { 
+type MethodRefTree is { 
     Int.u8 tag,
     ClassTree class_index,
     NameAndTypeTree name_and_type_index
 }
 
-define InterfaceMethodRefTree as { 
+type InterfaceMethodRefTree is { 
     Int.u8 tag,
     ClassTree class_index,
     NameAndTypeTree name_and_type_index
 }
 
-define Tree as FieldRefTree | 
+type Tree is FieldRefTree | 
         MethodRefTree | 
         InterfaceMethodRefTree | 
         StringTree | 
@@ -233,49 +249,50 @@ define Tree as FieldRefTree |
         LongTree | 
         NameAndTypeTree
 
-public define Index as {Tree=>int}
+public type Index is {Tree=>int}
 
-public Utf8Tree Utf8Tree(string utf8):
-    bytes = String.toUTF8(utf8)
+public function Utf8Tree(string utf8) => Utf8Tree:
+    [byte] bytes = String.toUTF8(utf8)
     return {
         tag: CONSTANT_Utf8,
         value: bytes
     }
 
-public ClassTree ClassTree(JvmType.Class c):
+public function ClassTree(JvmType.Class c) => ClassTree:
     return {
         tag: CONSTANT_Class,
         name_index: Utf8Tree(classDescriptor(c))
     }
 
-public ([Item],Index) add([Item] pool, Index index, Tree item):
+public function add([Item] pool, Index index, Tree item) => ([Item],Index):
+    int i
     pool,index,i = addHelper(pool,index,item)
     return pool,index
 
-([Item],Index,int) addHelper([Item] pool, Index index, Tree item):
+function addHelper([Item] pool, Index index, Tree item) => ([Item],Index,int):
     // first, check if already allocated in pool
-    i = lookup(index,item)
+    int|null i = lookup(index,item)
     if i != null:
         return pool,index,i
     // second, recursively allocate item
     if item is Utf8Tree:
         index[item] = |pool|
-        pool = pool + [item]
+        pool = pool ++ [item]
     else if item is StringTree:        
         pool,index,i = addHelper(pool,index,item.string_index)
         index[item] = |pool|
-        item.string_index = i
-        pool = pool + [item]
+        StringInfo info = {tag: item.tag, string_index: i}
+        pool = pool ++ [info]
     else if item is ClassTree:
         pool,index,i = addHelper(pool,index,item.name_index)
         index[item] = |pool|
-        item.name_index = i
-        pool = pool + [item]
+        ClassInfo info = {tag: item.tag, name_index: i}
+        pool = pool ++ [info]
     // finally, done!
     return pool,index,|pool|-1
 
 // the following method is a temporary hack
-int|null lookup(Index index, Tree item):
+function lookup(Index index, Tree item) => int|null:
     for k,v in index:
         if k == item:
             return v
@@ -285,13 +302,18 @@ int|null lookup(Index index, Tree item):
 // Parse Descriptors
 // ============================================================
 
-JvmType.Any parseDescriptor(string desc) throws Error:
+function parseDescriptor(string desc) => JvmType.Any
+throws Error:
+    JvmType.Any type
+    int pos
     type,pos = parseDescriptor(0,desc)
     return type
 
-JvmType.Class parseClassDescriptor(string desc):    
+function parseClassDescriptor(string desc) => JvmType.Class:    
     desc = String.replace(desc,'/','.')
-    idx = String.lastIndexOf(desc,'.')
+    int|null idx = String.lastIndexOf(desc,'.')
+    string pkg
+    string name
     if idx is null:
         pkg = ""
         name = desc
@@ -301,10 +323,11 @@ JvmType.Class parseClassDescriptor(string desc):
     // FIXME: split out inner classes here.
     return {pkg: pkg, classes:[name]}
 
-(JvmType.Any,int) parseDescriptor(int pos, string desc) throws Error:
+function parseDescriptor(int pos, string desc) => (JvmType.Any,int)
+throws Error:
     if pos >= |desc|:
         throw {msg: "invalid descriptor"}
-    lookahead = desc[pos]
+    char lookahead = desc[pos]
     switch lookahead:
         case 'B':
             return JvmType.Boolean,pos+1
@@ -325,25 +348,30 @@ JvmType.Class parseClassDescriptor(string desc):
         case 'V':
             return JvmType.Void,pos+1
         case 'L':
-            end = String.indexOf(desc,';',pos+1)
+            int|null end = String.indexOf(desc,';',pos+1)
             if end is null:
                 throw {msg: "invalid descriptor"}
-            type = parseClassDescriptor(desc[pos+1..end])
+            JvmType.Class type = parseClassDescriptor(desc[pos+1..end])
             return type,end+1
         case '[':
+            JvmType.Any elem
             elem,pos = parseDescriptor(pos+1,desc)
             return JvmType.Array(elem),pos
     // unknown cases
     throw {msg: "invalid descriptor"}
 
-JvmType.Fun parseMethodDescriptor(string desc) throws Error:
+function parseMethodDescriptor(string desc) => JvmType.Fun
+throws Error:
     if desc[0] != '(':
         throw { msg: "invalid method descriptor" }
-    pos = 1
-    params = []
+    JvmType.Any param
+    JvmType.Any ret
+    int pos = 1
+    [JvmType.Any] params = []
     while desc[pos] != ')':
         param,pos = parseDescriptor(pos,desc)
-        params = params + [param]
+        params = params ++ [param]
+    //
     ret,pos = parseDescriptor(pos+1,desc)
     return { ret: ret, params: params }
 
@@ -351,7 +379,7 @@ JvmType.Fun parseMethodDescriptor(string desc) throws Error:
 // Write Descriptors
 // ============================================================
 
-string descriptor(JvmType.Any t):
+function descriptor(JvmType.Any t) => string:
     if t is JvmType.Primitive:
         switch t:
             case JvmType.Void:
@@ -373,30 +401,31 @@ string descriptor(JvmType.Any t):
             default:
                 return "D"
     else if t is JvmType.Array:
-        return "[" + descriptor(t.element)
+        return "[" ++ descriptor(t.element)
     else if t is JvmType.Class:
-        return "L" + classDescriptor(t) + ";"
+        return "L" ++ classDescriptor(t) ++ ";"
     else:
         return "" // deadcode
 
-string descriptor(JvmType.Fun t):
-    desc = "("
+function descriptor(JvmType.Fun t) => string:
+    string desc = "("
     for p in t.params:
-        desc = desc + descriptor(p)
-    return desc + ")" + descriptor(t.ret)
+        desc = desc ++ descriptor(p)
+    return desc ++ ")" ++ descriptor(t.ret)
 
-string classDescriptor(JvmType.Class ct):
-    pkg = String.replace(ct.pkg,'.','/')
+function classDescriptor(JvmType.Class ct) => string:
+    string pkg = String.replace(ct.pkg,'.','/')
+    bool firstTime
     if pkg == "":
         firstTime=true
     else:
         firstTime=false
-    classes = ""
+    string classes = ""
     // now add class components
     for class in ct.classes:
         if !firstTime:
-            classes = classes + "/"
+            classes = classes ++ "/"
         firstTime=false
-        classes = classes + class
+        classes = classes ++ class
     // done
-    return pkg + classes
+    return pkg ++ classes
