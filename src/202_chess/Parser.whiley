@@ -10,17 +10,22 @@ import * from whiley.lang.Errors
 import * from ShortMove
 import * from Board
 
-define state as {string input, int pos}
+type state is {string input, int pos}
 
-[ShortRound] parseChessGame(string input) throws Error:
-    pos = 0
-    moves = []
+public function parseChessGame(string input) => [ShortRound]
+throws Error:
+    int pos = 0
+    [ShortRound] moves = []
     while pos < |input|:        
+        ShortRound round
         round,pos = parseRound(pos,input)
-        moves = moves + [round]
+        moves = moves ++ [round]
     return moves
 
-(ShortRound,int) parseRound(int pos, string input) throws Error:
+function parseRound(int pos, string input) => (ShortRound,int)
+throws Error:
+    ShortMove white
+    ShortMove|null black
     pos = parseNumber(pos,input)
     pos = parseWhiteSpace(pos,input)
     white,pos = parseMove(pos,input,true)
@@ -32,14 +37,16 @@ define state as {string input, int pos}
         black = null
     return (white,black),pos
 
-int parseNumber(int pos, string input) throws Error:
+function parseNumber(int pos, string input) => int
+throws Error:
     while pos < |input| && input[pos] != '.':
         pos = pos + 1
     if pos == |input|:
         throw { msg: "unexpected end of file" }
     return pos+1
 
-(ShortMove,int) parseMove(int pos, string input, bool isWhite):
+function parseMove(int pos, string input, bool isWhite) => (ShortMove,int):
+    ShortMove move
     // first, we check for castling moves    
     if |input| >= (pos+5) && input[pos..(pos+5)] == "O-O-O":
         move = Move.Castle(isWhite, false)
@@ -48,6 +55,9 @@ int parseNumber(int pos, string input) throws Error:
         move = Move.Castle(isWhite, true)
         pos = pos + 3
     else:
+        Piece p
+        ShortPos f, ShortPos t
+        bool flag
         // not a castling move
         p,pos = parsePiece(pos,input,isWhite)
         f,pos = parseShortPos(pos,input)
@@ -64,8 +74,9 @@ int parseNumber(int pos, string input) throws Error:
         move = {check: move}     
     return move,pos
 
-(Piece,int) parsePiece(int index, string input, bool isWhite):
-    lookahead = input[index]
+function parsePiece(int index, string input, bool isWhite) => (Piece,int):
+    char lookahead = input[index]
+    int piece
     switch lookahead:
         case 'N':
             piece = KNIGHT
@@ -82,19 +93,19 @@ int parseNumber(int pos, string input) throws Error:
             piece = PAWN
     return {kind: piece, colour: isWhite}, index+1
     
-(Pos,int) parsePos(int pos, string input):
-    c = input[pos] - 'a'
-    r = input[pos+1] - '1'
+function parsePos(int pos, string input) => (Pos,int):
+    int c = input[pos] - 'a'
+    int r = input[pos+1] - '1'
     return { col: c, row: r },pos+2
 
-(ShortPos,int) parseShortPos(int index, string input):
-    c = input[index]
+function parseShortPos(int index, string input) => (ShortPos,int):
+    char c = input[index]
     if Char.isDigit(c):
         // signals rank only
         return { row: (c - '1') },index+1
     else if c != 'x' && Char.isLetter(c):
         // so, could be file only, file and rank, or empty
-        d = input[index+1]
+        char d = input[index+1]
         if Char.isLetter(d):
             // signals file only
             return { col: (c - 'a') },index+1         
@@ -104,11 +115,11 @@ int parseNumber(int pos, string input) throws Error:
     // no short move given
     return null,index
 
-int parseWhiteSpace(int index, string input):
+function parseWhiteSpace(int index, string input) => int:
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     return index
 
-bool isWhiteSpace(char c):
+function isWhiteSpace(char c) => bool:
     return c == ' ' || c == '\t' || c == '\n'
 

@@ -2,24 +2,27 @@ import whiley.lang.*
 import * from whiley.lang.Errors
 import * from whiley.lang.System
 import * from whiley.io.File
+import ShortRound from ShortMove
 
-void ::main(System.Console sys):
+public method main(System.Console sys):
     if |sys.args| == 0:
         usage(sys)
         return
-    file = File.Reader(sys.args[0])
-    contents = String.fromASCII(file.read())
+    File.Reader file = File.Reader(sys.args[0])
+    string contents = String.fromASCII(file.readAll())
     try:
-        game = Parser.parseChessGame(contents)
+        [ShortRound] game = Parser.parseChessGame(contents)
         sys.out.println("Moves taken:\n")
-        board = Board.startingChessBoard  
-        r = ""       
-        i = 0
-        invalid = false
-        sign = false
+        Board board = Board.startingChessBoard  
+        string r = ""       
+        int i = 0
+        bool invalid = false
+        bool sign = false
+        ShortMove white
+        ShortMove|null black 
         // process each move in turn, updating the board
         while i < |game|:
-            sys.out.print((i+1) + ". ")
+            sys.out.print((i+1) ++ ". ")
             white,black = game[i]
             // test white
             board = ShortMove.apply(white,board)        
@@ -36,15 +39,15 @@ void ::main(System.Console sys):
             sys.out.println("\nCurrent board:\n")
             sys.out.println(Board.toString(board))
     catch(Error e):
-        sys.out.println("syntax error: " + e.msg)
+        sys.out.println("syntax error: " ++ e.msg)
     catch(Move.Invalid im):
-        sys.out.println("invalid move: " + Move.toString(im.move))
+        sys.out.println("invalid move: " ++ Move.toString(im.move))
     catch(any x):
         // FYI, this is because of a compiler bug
         if x is ShortMove.Invalid:
-            sys.out.println("invalid move: " + ShortMove.toString(x.move))
+            sys.out.println("invalid move: " ++ ShortMove.toString(x.move))
         else:
-            sys.out.println("error: " + x)
+            sys.out.println("error: " ++ x)
 
-void ::usage(System.Console sys):
+method usage(System.Console sys):
     sys.out.println("usage: chess file")
