@@ -7,7 +7,7 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
-import wyjc.runtime.Actor;
+import wyjc.runtime.WyObject;
 
 
 /*
@@ -23,7 +23,7 @@ public class UIFrame$native {
 	static int score = 0;
 	static int level = 1;
 	static char[][] grid;
-	static Actor global;
+	static WyObject global;
 	
 	/*
 	 * 4*2 Grids to Render the next piece played.
@@ -37,11 +37,11 @@ public class UIFrame$native {
 	static final char[][] BLOCK_Z = {{'X', 'X', 'X', 'V'}, {'X', 'V', 'V', 'V'}}; 
 	static char[][] block = BLOCK_I; //First Block. Avoids NullPointers in Constructor
 	
-	public static void setGlobal(Actor g) {
+	public static void setGlobal(WyObject g) {
 		global = g;
 	}
 	
-	public static Actor Frame(String title) {
+	public static WyObject Frame(String title) {
 		JFrame frame = new JFrame(title);
 		c = new TetrisCanvas(name);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,14 +53,12 @@ public class UIFrame$native {
 		c.setFocusable(true);
 		frame.transferFocus(); // Moves Focus to the Canvas.
 		frame.setResizable(true);
-		Actor a = new Actor(frame);
-		a.start();
-		return a;
+		return new WyObject(frame);
     }
 	/*
 	 * Updates the Information to be rendered
 	 */
-	public static void updateStats(Actor a, BigInteger i, BigInteger sc, BigInteger lvl) {
+	public static void updateStats(WyObject a, BigInteger i, BigInteger sc, BigInteger lvl) {
 	filledRows=i.intValue();
 	score = sc.intValue();
 	level = lvl.intValue();
@@ -68,7 +66,7 @@ public class UIFrame$native {
 	/*
 	 * Renders the Grid
 	 */
-	public static void render(Actor a, String str) {
+	public static void render(WyObject a, String str) {
 		int x = 0;
 		int y = 20;
 		for(int i=0;i<str.length();i++) {
@@ -111,7 +109,7 @@ public class UIFrame$native {
 		return block;
 	}
 	
-	public static void setNext(Actor a, BigInteger i) {
+	public static void setNext(WyObject a, BigInteger i) {
 		switch(i.intValue()) {
 		case 1:
 			block = BLOCK_I;
