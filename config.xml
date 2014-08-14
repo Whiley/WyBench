@@ -3,8 +3,8 @@
 <project name="BuildConfig">
   <property environment="env"/>
   <property name="wyc.verification" value="false"/>
-  <property name="wyjc.jar" value="${env.WYBENCH_HOME}/lib/wyjc-all-v0.3.26pre.jar"/>
-  <property name="wyrt.jar" value="${env.WYBENCH_HOME}/lib/wyrt-v0.3.26pre.jar"/>
+  <property name="wyjc.jar" value="${env.WYBENCH_HOME}/lib/wyjc-all-v0.3.27.jar"/>
+  <property name="wyrt.jar" value="${env.WYBENCH_HOME}/lib/wyrt-v0.3.27.jar"/>
 
   <taskdef name="wyjc" classname="wyjc.util.WyjcAntTask" classpath="${wyjc.jar}"/>
 
