@@ -94,24 +94,24 @@ function parsePiece(int index, string input, bool isWhite) => (Piece,int):
     return {kind: piece, colour: isWhite}, index+1
     
 function parsePos(int pos, string input) => (Pos,int):
-    int c = input[pos] - 'a'
-    int r = input[pos+1] - '1'
+    int c = (int) input[pos] - 'a'
+    int r = (int) input[pos+1] - '1'
     return { col: c, row: r },pos+2
 
 function parseShortPos(int index, string input) => (ShortPos,int):
     char c = input[index]
     if Char.isDigit(c):
         // signals rank only
-        return { row: (c - '1') },index+1
+        return { row: (int) c - '1' },index+1
     else if c != 'x' && Char.isLetter(c):
         // so, could be file only, file and rank, or empty
         char d = input[index+1]
         if Char.isLetter(d):
             // signals file only
-            return { col: (c - 'a') },index+1         
+            return { col: (int) c - 'a' },index+1         
         else if (index+2) < |input| && Char.isLetter(input[index+2]):
             // signals file and rank
-            return { col: (c - 'a'), row: (d - '1') },index+2
+            return { col: ((int) c - 'a'), row: (int) d - '1' },index+2
     // no short move given
     return null,index
 

@@ -122,9 +122,9 @@ function shortPos2str(ShortPos p) => string:
     if p is null:
         return ""
     else if p is RankPos:
-        return "" ++ (char) ('1' + p.row)
+        return "" ++ ('1' + (char) p.row)
     else if p is FilePos:
-        return "" ++ (char) ('a' + p.col)
+        return "" ++ ('a' + (char) p.col)
     else: 
         return pos2str(p)
 

@@ -248,7 +248,7 @@ function applyCastleMove(CastleMove move, Board board) => Board:
     return board
 
 public function pos2str(Pos p) => string:
-    return ("" ++ (char) ('a' + p.col)) ++ (char) ('1' + p.row)
+    return ("" ++ ('a' + (char) p.col)) ++ ('1' + (char) p.row)
 
 public function toString(Move m) => string:
     if m is SingleMove:

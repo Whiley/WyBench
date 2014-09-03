@@ -16,7 +16,7 @@ requires |data| > 0:
     real sum = 0.0
     for r in data:
         sum = sum + r
-    return sum / |data|
+    return sum / (real) |data|
 
 // ========================================================
 // Parser
