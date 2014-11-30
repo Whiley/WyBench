@@ -1,0 +1,10 @@
+This benchmark is based on the well-known "coin counting" problem:
+
+http://rosettacode.org/wiki/Count_the_coins
+
+This benchmark aims to test verification to ensure that:
+
+a) all list accesses are in bounds.
+
+2) every solution produced adds up to the right amount.
+
