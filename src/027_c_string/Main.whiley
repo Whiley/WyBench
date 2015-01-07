@@ -27,7 +27,28 @@ ensures r >= 0:
     //
     return i
 
+// Copy string from src location into destination
+public method strcpy(&C_string dest, C_string src)
+requires |src| <= |(*dest)|:
+    //
+    int i=0
+    while src[i] != 0:
+        (*dest)[i] = src[i]
+        i = i + 1
+    //
+    return
+    
 // Print out hello world!
 public method main(System.Console console):
-    C_string hw = ([int]) ['H','e','l','l','o','W','o','r','l','d',0]
-    console.out.println(strlen(hw))
+    // ==============================================================
+    // TEST: strlen
+    // ==============================================================
+    C_string src = ([int]) ['H','e','l','l','o','W','o','r','l','d',0]
+    console.out.println(strlen(src))
+    
+    // ==============================================================
+    // TEST: strcpy
+    // ==============================================================
+    &C_string dest = new [1,2,3,4,5,6,7,8,9,10,11,12,13,14]
+    strcpy(dest,src)
+    console.out.println(src)
