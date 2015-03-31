@@ -17,7 +17,7 @@
  * Note that we're assuming unsigned sequences here only.
  */
 
-function value([bool] bits) => (int result)
+function value([bool] bits) -> (int result)
 // We are only consider unsigned integers
 ensures result >= 0:
     //
@@ -45,7 +45,7 @@ ensures result >= 0:
  *
  * (writing most significant bit first)
  */
-function increment([bool] bits) => ([bool] result)
+function increment([bool] bits) -> ([bool] result)
 // This is the key property for this benchmark
 ensures value(result) == value(bits) + 1:
     //
@@ -67,7 +67,7 @@ ensures value(result) == value(bits) + 1:
  * Print out a sequence of bits in the usual 
  * right-to-left format.
  */
-function toString([bool] bits, int n) => string:
+function toString([bool] bits, int n) -> string:
     int i = 0
     string r = ""
     //

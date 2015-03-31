@@ -12,7 +12,7 @@ type State is {
 } where (carsOnBr + carsOnIl) < maxCarsOnIsland
 
 // A car leaves the island and enters the bridge.
-function carLeavesIsland(State st) => State
+function carLeavesIsland(State st) -> State
 // For a car to leave the island, there must have been a car on the
 // island.
 requires st.carsOnIl > 0:
@@ -23,7 +23,7 @@ requires st.carsOnIl > 0:
 
 // A car, either heading towards the island or towards the 
 // main land, leaves the bridge.
-function carLeavesBridge(State st, bool toIsland) => State
+function carLeavesBridge(State st, bool toIsland) -> State
 // For a car to leave the bridge, there must have been a car on the
 // bridge.
 requires st.carsOnBr > 0:
@@ -37,7 +37,7 @@ requires st.carsOnBr > 0:
 
 // A car, either heading towards the island or towards the 
 // main land, enters the bridge.
-function carEntersBridge(State st, bool toIsland) => State
+function carEntersBridge(State st, bool toIsland) -> State
 // We need cars on island for one to leave island
 requires toIsland || st.carsOnIl > 0
 // We need cars on the mainland for one to leave mainland

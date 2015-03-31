@@ -29,7 +29,7 @@ type FullBuffer is (Buffer b) where (b.rpos == b.wpos + 1) || (b.wpos == |b.data
 type NonFullBuffer is (Buffer b) where (b.rpos != b.wpos + 1) && (b.wpos != |b.data|-1 || b.rpos != 0)
 
 // Create a buffer with a given number of slots.
-public function Buffer(int size) => EmptyBuffer
+public function Buffer(int size) -> EmptyBuffer
 // Cannot create buffer with zero size
 requires size > 0:
     //
@@ -46,7 +46,7 @@ requires size > 0:
     }
 
 // Write an item into a buffer which is not full
-public function write(NonFullBuffer buf, int item) => Buffer:
+public function write(NonFullBuffer buf, int item) -> Buffer:
     //
     buf.data[buf.wpos] = item
     buf.wpos = buf.wpos + 1
@@ -56,7 +56,7 @@ public function write(NonFullBuffer buf, int item) => Buffer:
     return buf
 
 // Read an item from a buffer which is not empty
-public function read(NonEmptyBuffer buf) => (Buffer,int):
+public function read(NonEmptyBuffer buf) -> (Buffer,int):
     int item = buf.data[buf.rpos]
     buf.rpos = buf.rpos + 1
     // NOTE: could use modulus operator here
@@ -64,18 +64,18 @@ public function read(NonEmptyBuffer buf) => (Buffer,int):
         buf.rpos = 0
     return (buf,item)
 
-public function isFull(Buffer buf) => (bool r)
+public function isFull(Buffer buf) -> (bool r)
 ensures buf is FullBuffer ==> r:
     //
     return (buf.rpos == buf.wpos + 1) || 
             (buf.wpos == |buf.data|-1 && buf.rpos == 0)
 
-public function isEmpty(Buffer buf) => (bool r)
+public function isEmpty(Buffer buf) -> (bool r)
 ensures buf is EmptyBuffer ==> r :
     //
     return buf.rpos == buf.wpos
 
-public function toString(Buffer b) => string:
+public function toString(Buffer b) -> string:
     string r = "["
     for i in 0..|b.data|:
         if i != 0:

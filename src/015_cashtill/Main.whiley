@@ -28,10 +28,10 @@ constant Value is [
  */
 type Cash is ([nat] ns) where |ns| == |Value|
 
-function Cash() => Cash:
+function Cash() -> Cash:
     return [0,0,0,0,0,0,0,0]
 
-function Cash([nat] coins) => Cash
+function Cash([nat] coins) -> Cash
 // No coin in coins larger than permitted values
 requires no { c in coins | c >= |Value| }:
     Cash cash = [0,0,0,0,0,0,0,0]
@@ -42,7 +42,7 @@ requires no { c in coins | c >= |Value| }:
 /**
  * Given some cash, compute its total
  */ 
-function total(Cash c) => int:
+function total(Cash c) -> int:
     int r = 0
     for i in 0..|c|:
         r = r + (Value[i] * c[i])
@@ -53,7 +53,7 @@ function total(Cash c) => int:
  * In other words, if we remove the second from the first then we do not
  * get any negative amounts.
  */
-function contained(Cash first, Cash second) => bool:
+function contained(Cash first, Cash second) -> bool:
     for i in 0..|first|:
         if first[i] < second[i]:
             return false
@@ -65,7 +65,7 @@ function contained(Cash first, Cash second) => bool:
  * ENSURES: the total returned equals total of first plus
  *          the total of the second.
  */
-function add(Cash first, Cash second) => (Cash r)
+function add(Cash first, Cash second) -> (Cash r)
 // Result total must be sum of argument totals
 ensures total(r) == total(first) + total(second):
     //
@@ -82,7 +82,7 @@ ensures total(r) == total(first) + total(second):
  * ENSURES: the total returned equals total of first less
  *          the total of the second.
  */
-function subtract(Cash first, Cash second) => (Cash r)
+function subtract(Cash first, Cash second) -> (Cash r)
 // First argument must contain second; for example, if we have 1
 // dollar coin and a 1 cent coin, we cannot subtract a 5 dollar note!
 requires contained(first,second)
@@ -105,7 +105,7 @@ ensures total(r) == total(first) - total(second):
  * ENSURES:  if change returned, then it must be contained in till, and 
  *           the amount returned must equal the amount requested.
  */
-function calculateChange(Cash till, nat change) => (null|Cash r)
+function calculateChange(Cash till, nat change) -> (null|Cash r)
 // If change is given, then it must have been in the till, and must
 // equal that requested.
 ensures r is Cash ==> (contained(till,r) && total(r) == change):
@@ -129,7 +129,7 @@ ensures r is Cash ==> (contained(till,r) && total(r) == change):
 /**
  * Print out cash in a friendly format
  */
-function toString(Cash c) => string:
+function toString(Cash c) -> string:
     string r = ""
     bool firstTime = true
     for i in 0..|c|:
@@ -158,7 +158,7 @@ constant Descriptions is [
  * Run through the sequence of a customer attempting to purchase an item
  * of a specified cost using a given amount of cash and a current till.
  */
-public method buy(System.Console console, Cash till, Cash given, int cost) => Cash:
+public method buy(System.Console console, Cash till, Cash given, int cost) -> Cash:
     console.out.println("--")
     console.out.println("Customer wants to purchase item for " ++ cost ++ "c.")
     console.out.println("Customer gives: " ++ toString(given))

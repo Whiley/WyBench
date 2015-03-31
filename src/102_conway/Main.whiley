@@ -16,7 +16,7 @@ type Board is {
 
 // Create an empty board of size width x height.  That is, where each
 // square is "off".
-function Board(nat height, nat width) => Board:
+function Board(nat height, nat width) -> Board:
     [bool] row = []
     int i = 0
     while i < width where i >= 0:
@@ -37,7 +37,7 @@ function Board(nat height, nat width) => Board:
 
 // Take the current board and determine the next state based on the
 // current state of all cells.
-function update(Board board) => Board:
+function update(Board board) -> Board:
     [[bool]] ncells = board.cells
     int height = board.height
     int width = board.width
@@ -76,7 +76,7 @@ function update(Board board) => Board:
         width: width
     }                    
 
-function countLiving(Board board, int row, int col) => int:
+function countLiving(Board board, int row, int col) -> int:
     int count = isAlive(board,row-1,col-1)
     count = count + isAlive(board,row-1,col)
     count = count + isAlive(board,row-1,col+1)
@@ -87,7 +87,7 @@ function countLiving(Board board, int row, int col) => int:
     count = count + isAlive(board,row+1,col+1)
     return count
 
-function isAlive(Board board, int row, int col) => int:
+function isAlive(Board board, int row, int col) -> int:
     if row < 0 || row >= board.height:
         return 0
     if col < 0 || col >= board.width:
@@ -102,7 +102,7 @@ function isAlive(Board board, int row, int col) => int:
 // Parser
 // ============================================
 
-function parseConfig(string input) => (Board,int) 
+function parseConfig(string input) -> (Board,int) 
 throws SyntaxError:
     //
     int niters, int pos = parseInt(0,input)
@@ -116,7 +116,7 @@ throws SyntaxError:
         board.cells[row][col]=true
     return board,niters
 
-function parsePair(string input, int pos, char sep) => (int,int,int)
+function parsePair(string input, int pos, char sep) -> (int,int,int)
 throws SyntaxError:
     //
     int first, int second
@@ -136,7 +136,7 @@ throws SyntaxError:
     pos = skipWhiteSpace(pos,input)
     return first,second,pos
 
-function parseInt(int pos, string input) => (int,int) 
+function parseInt(int pos, string input) -> (int,int) 
 throws SyntaxError:
     //
     int start = pos
@@ -146,12 +146,12 @@ throws SyntaxError:
         throw SyntaxError("Missing number",pos,pos)
     return Int.parse(input[start..pos]),pos
 
-function skipWhiteSpace(int index, string input) => int:
+function skipWhiteSpace(int index, string input) -> int:
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     return index
 
-function isWhiteSpace(char c) => bool:
+function isWhiteSpace(char c) -> bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
 // ============================================

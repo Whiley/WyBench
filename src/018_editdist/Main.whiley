@@ -3,7 +3,7 @@ import * from whiley.io.File
 import nat from whiley.lang.Int
 import * from whiley.lang.Char
 
-function readLine(nat pos, string input) => (string, nat):
+function readLine(nat pos, string input) -> (string, nat):
     int start = pos
     while pos < |input| && input[pos] != '\n' && input[pos] != '\r' where pos >= 0:
         pos = pos + 1
@@ -13,12 +13,12 @@ function readLine(nat pos, string input) => (string, nat):
         pos = pos + 1
     return (line, pos)
 
-function skipWhiteSpace(nat index, string input) => nat:
+function skipWhiteSpace(nat index, string input) -> nat:
     while index < |input| && isWhiteSpace(input[index]) where index >= 0:
         index = index + 1
     return index
 
-function getWord(nat pos, string line) => (string, nat):
+function getWord(nat pos, string line) -> (string, nat):
     int start = pos
     while pos < |line| && !isWhiteSpace(line[pos]) where pos >= 0:
         pos = pos + 1
@@ -27,7 +27,7 @@ function getWord(nat pos, string line) => (string, nat):
 
 type Node is {nat match, int px, int py}
 
-function editdist_calc(string word0, string word1) => ([[Node]] result)
+function editdist_calc(string word0, string word1) -> ([[Node]] result)
 requires |word0| > 0 && |word1| > 0
 ensures |result| == |word1| + 1 && all {ln in result | |ln| == |word0| + 1}:
     //
@@ -66,7 +66,7 @@ ensures |result| == |word1| + 1 && all {ln in result | |ln| == |word0| + 1}:
 
     return matrix
 
-function editdist_format([[Node]] matrix, string word0, string word1) => (string, string) 
+function editdist_format([[Node]] matrix, string word0, string word1) -> (string, string) 
 requires |word0| > 0 && |word1| > 0 && |matrix| == |word1| + 1 && all {ln in matrix | |ln| == |word0| + 1}:
     //
     int height = |matrix|

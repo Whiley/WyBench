@@ -5,13 +5,13 @@
  */
 public type Frame is { string fileName }
 
-public native method Frame(string title) => &Frame
+public native method Frame(string title) -> &Frame
 
 public native method render(&Frame this, string str)
 
 public type Global is { Game.GameState game }
 
-public method Global() => &Global:
+public method Global() -> &Global:
 	return new { game: Game.Initial }
 
 public native method setGlobal(&Global g)

@@ -30,7 +30,7 @@ type Date is {
         (month != FEB || day <= 29 ) && // normal restriction
         (month != FEB || year % 4 != 0 || (year % 100 == 0 && year % 400 != 0) || day <= 28) // leap-year restriction
 
-function Date(day day, month month, int year) => Date
+function Date(day day, month month, int year) -> Date
 // 30 days hath September, April, June and November.
 requires day <= 30 || !(month in {SEP,APR,JUN,NOV})
 requires month != FEB || day <= 29
@@ -43,7 +43,7 @@ requires month != FEB || year % 4 != 0 || (year % 100 == 0 && year % 400 != 0) |
     }
 
 // Compute the date of the next day.
-function next(Date date) => Date:
+function next(Date date) -> Date:
     // first, calculate last day of the month
     int last
     if date.month == FEB:
@@ -64,7 +64,7 @@ function next(Date date) => Date:
     // done
     return date
 
-function toString(Date date) => string:
+function toString(Date date) -> string:
     return date.day ++ "/" ++ date.month ++ "/" ++ date.year
 
 // =================================================

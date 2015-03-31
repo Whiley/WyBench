@@ -31,7 +31,7 @@ type Matrix is {
     [[int]] data
 } where |data| == height && no { i in data | |i| != width }
 
-function Matrix(nat width, nat height, [[int]] data) => (Matrix r)
+function Matrix(nat width, nat height, [[int]] data) -> (Matrix r)
 // Input array must match matrix height
 requires |data| == height
 // Elements of input array must match matrix width
@@ -45,7 +45,7 @@ ensures r.width == width && r.height == height && r.data == data:
         data: data
     }
 
-function multiply(Matrix A, Matrix B) => (Matrix C) 
+function multiply(Matrix A, Matrix B) -> (Matrix C) 
 // Must be possible to multiply matrices
 requires A.width == B.height
 // Specify dimensions of result
@@ -78,7 +78,7 @@ ensures C.width == B.width && C.height == A.height:
 // Parser Code
 // ========================================================
 
-function parseFile(string input) => (Matrix,Matrix)
+function parseFile(string input) -> (Matrix,Matrix)
 throws SyntaxError:
     Matrix A // 1st result
     Matrix B // 2nd result
@@ -91,7 +91,7 @@ throws SyntaxError:
     B,pos = parseMatrix(nrows,ncols,pos,input)
     return A,B
 
-function parseMatrix(nat height, nat width, int pos, string input) => (Matrix,int)
+function parseMatrix(nat height, nat width, int pos, string input) -> (Matrix,int)
 throws SyntaxError:
     //
     [[int]] rows = []
@@ -103,7 +103,7 @@ throws SyntaxError:
     //
     return Matrix(width,height,rows),pos
 
-function parseLine(int count, int pos, string input) => ([int],int) 
+function parseLine(int count, int pos, string input) -> ([int],int) 
 throws SyntaxError:
     //
     pos = skipWhiteSpace(pos,input)
@@ -120,7 +120,7 @@ throws SyntaxError:
     //
     return ints,pos
 
-function parseInt(int pos, string input) => (int,int)
+function parseInt(int pos, string input) -> (int,int)
 throws SyntaxError:
     //
     int start = pos
@@ -136,19 +136,19 @@ throws SyntaxError:
     // done
     return Int.parse(input[start..pos]),pos
 
-function skipBreak(int index, string input) => int:
+function skipBreak(int index, string input) -> int:
     while index < |input| && input[index] == '-':
         index = index + 1
     //
     return skipWhiteSpace(index,input)
 
-function skipWhiteSpace(int index, string input) => int:
+function skipWhiteSpace(int index, string input) -> int:
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     //
     return index
 
-function isWhiteSpace(char c) => bool:
+function isWhiteSpace(char c) -> bool:
     return c == ' ' || c == '\t' || c == '\r' || c == '\n'
 
 // ========================================================

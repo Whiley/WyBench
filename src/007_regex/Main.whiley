@@ -5,7 +5,7 @@ import * from whiley.io.File
 import nat from whiley.lang.Int
 
 // match: search for regexp anywhere in text
-function match(string regex,string text) => bool:
+function match(string regex,string text) -> bool:
     if |regex| > 0 && regex[0] == '^':
         return matchHere(regex[1..],text)
     if matchHere(regex,text):
@@ -18,7 +18,7 @@ function match(string regex,string text) => bool:
     return false
 
 // matchHere: search for regex at beginning of text
-function matchHere(string regex, string text) => bool:
+function matchHere(string regex, string text) -> bool:
     if |regex| == 0:
         return true
     else if |regex| > 1 && regex[1] == '*':
@@ -31,7 +31,7 @@ function matchHere(string regex, string text) => bool:
         return false
 
 // matchstar: search for c*regex at beginning of text
-function matchStar(char c, string regex, string text) => bool:
+function matchStar(char c, string regex, string text) -> bool:
     // first, check for zero matches
     if matchHere(regex,text):
         return true
@@ -45,7 +45,7 @@ function matchStar(char c, string regex, string text) => bool:
         return true
     return false
 
-function readLine(nat pos, string input) => (string,nat):
+function readLine(nat pos, string input) -> (string,nat):
     int start = pos
     while pos < |input| && input[pos] != '\n' && input[pos] != '\r' where pos >= 0:
         pos = pos + 1

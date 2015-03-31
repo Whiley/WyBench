@@ -12,7 +12,7 @@ public type Game is {
 /**
  * Return the initial board state
  */
-public function Game() => Game:
+public function Game() -> Game:
 	return {
 		board: Board(),
 		circlesTurn: true // circle always goes first
@@ -22,7 +22,7 @@ public function Game() => Game:
  * Place a piece on the board at a given row and column 
  * by the next player. 
  */
-public function play(Game state, Board.Index row, Board.Index col) => Game
+public function play(Game state, Board.Index row, Board.Index col) -> Game
 // There cannot be a piece already at the position to play on
 requires Board.get(state.board,row,col) == Board.BLANK:
 	// Place a CIRCLE if its circle's turn

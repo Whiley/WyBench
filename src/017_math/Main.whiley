@@ -6,19 +6,19 @@ type pos is (int x) where x > 0
 /**
  * Increment a natural number
  */
-function inc(nat x) => pos:
+function inc(nat x) -> pos:
     return x + 1
 
 /**
  * Decrement a positive number
  */
-function dec(pos x) => nat:
+function dec(pos x) -> nat:
     return x - 1
 
 /**
  * Return absolute value of integer variable.
  */
-public function abs(int x) => (int r)
+public function abs(int x) -> (int r)
 // if input positive, then result equals input
 ensures x >= 0 ==> r == x
 // if input negative, then result equals negated input
@@ -32,7 +32,7 @@ ensures x < 0 ==> r == -x:
 /**
  * Return maximum of two integer variables
  */
-public function max(int a, int b) => (int r)
+public function max(int a, int b) -> (int r)
 // Return cannot be smaller than either parameter
 ensures r >= a && r >= b
 // Return value must equal one parameter
@@ -46,7 +46,7 @@ ensures r == a || r == b:
 /**
  * Return minimum of two integer variables
  */
-public function min(int a, int b) => (int r)
+public function min(int a, int b) -> (int r)
 // Return cannot be greater than either parameter
 ensures r <= a && r <= b
 // Return value must equal one parameter
@@ -61,7 +61,7 @@ ensures r == a || r == b:
  * Compute the sum of a list of naturals 
  * (implementation 1)
  */
-function sum_1([nat] items) => nat:
+function sum_1([nat] items) -> nat:
     int r = 0
     for i in items where r >= 0:
         r = r + i
@@ -71,10 +71,10 @@ function sum_1([nat] items) => nat:
  * Compute the sum of a list of naturals 
  * (implementation 2)
  */
-function sum_2([nat] items) => nat:
+function sum_2([nat] items) -> nat:
     return sum_2(items,0)
 
-function sum_2([nat] items, nat index) => nat
+function sum_2([nat] items, nat index) -> nat
 requires index <= |items|:
     //
     if index == |items|:
@@ -86,7 +86,7 @@ requires index <= |items|:
  * Compute the sum of a list of naturals 
  * (implementation 3)
  */
-function sum_3([nat] items) => nat:
+function sum_3([nat] items) -> nat:
     if |items| == 0:
         return 0
     else:
@@ -96,7 +96,7 @@ function sum_3([nat] items) => nat:
  * Compute the sum of a list of naturals 
  * (implementation 4)
  */
-function sum_4([nat] items) => nat:
+function sum_4([nat] items) -> nat:
     if items == []:
         return 0
     else:

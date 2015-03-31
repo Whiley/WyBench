@@ -4,7 +4,7 @@ import * from whiley.io.File
 import * from whiley.lang.Char
 import * from whiley.lang.Errors
 
-function readLine(nat pos, string input) => (string, nat):
+function readLine(nat pos, string input) -> (string, nat):
     int start = pos
     while pos < |input| && input[pos] != '\n' && input[pos] != '\r' where pos >= 0:
         pos = pos + 1
@@ -14,14 +14,14 @@ function readLine(nat pos, string input) => (string, nat):
         pos = pos + 1
     return (line, pos)
 
-function skipWhiteSpace(nat index, string input) => nat
+function skipWhiteSpace(nat index, string input) -> nat
 requires index >= 0:
     //
     while index < |input| && isWhiteSpace(input[index]) where index >= 0:
         index = index + 1
     return index
 
-function parseInt(nat pos, string input) => (int, int) 
+function parseInt(nat pos, string input) -> (int, int) 
 throws SyntaxError:
     //
     int start = pos
@@ -37,7 +37,7 @@ throws SyntaxError:
     // done
     return (Int.parse(input[start..pos]), pos)
 
-function max_({nat} s) => (nat r)
+function max_({nat} s) -> (nat r)
 // Argument set cannot be empty
 requires |s| > 0
 // Return value must be one of argument set
@@ -49,7 +49,7 @@ ensures r in s:
             j = i
     return j
 
-function subseq([int] seq) => ({nat} r)
+function subseq([int] seq) -> ({nat} r)
 requires |seq| > 0
 ensures |r| > 0:
     //

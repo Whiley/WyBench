@@ -19,7 +19,7 @@ type Node is { int data, Tree left, Tree right } where
 	(right != null ==> all { d in elts(right) | d > data })
 
 // Construct a given tree
-function Node(int data, Tree left, Tree right) => Node
+function Node(int data, Tree left, Tree right) -> Node
 // Data in nodes reachable from left must be below this
 requires left != null ==> all { d in elts(left) | d < data }
 // Data in nodes reachable from right must be above this
@@ -32,7 +32,7 @@ requires right != null ==> all { d in elts(right) | d > data }:
     }
 
 // Return all data elements contained in the tree
-function elts(Tree t) => ({int} ret)
+function elts(Tree t) -> ({int} ret)
 // Data in this node should be in result
 ensures t != null ==> t.data in ret
 // All data reachable from left node should be in result
@@ -50,7 +50,7 @@ ensures t != null ==> elts(t.right) ⊆ ret:
 // =================================================
 
 // Insert a given data element into a tree
-function insert(Tree tree, int data) => (Tree r)
+function insert(Tree tree, int data) -> (Tree r)
 // Return tree cannot be empty
 ensures r != null:
 // Original tree data is retained
@@ -83,7 +83,7 @@ ensures r != null:
 //  / \               / \
 // A   B             B   C
 //
-function rotateClockwise(Tree tree) => (Tree r)
+function rotateClockwise(Tree tree) -> (Tree r)
 // All data items in the tree are preserved
 ensures elts(tree) == elts(r):
     //
@@ -111,7 +111,7 @@ ensures elts(tree) == elts(r):
 //  / \               / \
 // A   B             B   C
 //
-function rotateCounterClockwise(Tree tree) => (Tree r)
+function rotateCounterClockwise(Tree tree) -> (Tree r)
 // All data items in the tree are preserved
 ensures elts(tree) == elts(r):
     //
@@ -130,7 +130,7 @@ ensures elts(tree) == elts(r):
 // toString
 // =================================================
 
-public function toString(Tree tree) => string:
+public function toString(Tree tree) -> string:
     if tree == null:
         return "null"
     else:

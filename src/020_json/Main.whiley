@@ -9,7 +9,7 @@ type PAIR is {string key, VALUE val}
 type VALUE is real | bool | string | JSON | [VALUE]
 type JSON is [PAIR]
 
-function readLine(nat pos, string input) => (string, nat)
+function readLine(nat pos, string input) -> (string, nat)
 // Index to read must be valid position within string
 requires pos <= |input|:
     //
@@ -22,7 +22,7 @@ requires pos <= |input|:
         pos = pos + 1
     return (line, pos)
 
-function skipWhiteSpace(nat index, string input) => (nat r)
+function skipWhiteSpace(nat index, string input) -> (nat r)
 // Index must be valid position within input string
 requires index <= |input|
 // Returned position must be valud within input string
@@ -32,7 +32,7 @@ ensures r <= |input|:
         index = index + 1
     return index
 
-function parseReal(nat pos, string input) => (nat, real) 
+function parseReal(nat pos, string input) -> (nat, real) 
 // Index to read must be valid position within string
 requires pos <= |input| 
 throws SyntaxError:
@@ -45,7 +45,7 @@ throws SyntaxError:
         throw SyntaxError("Missing number", pos, pos)
     return (pos, Real.parse(input[start..pos]))
 
-function parseStr(nat pos, string input) => (nat, string) 
+function parseStr(nat pos, string input) -> (nat, string) 
 // Index to read must be valid position within string
 requires pos <= |input|
 throws SyntaxError:
@@ -58,7 +58,7 @@ throws SyntaxError:
     pos = eat(pos, input, "\"")
     return (pos, str)
 
-function eat(nat pos, string input, string pattern) => (nat r)
+function eat(nat pos, string input, string pattern) -> (nat r)
 requires |pattern| <= |input| && pos + |pattern| <= |input|
 ensures r >=0 && r <= |input|
 throws SyntaxError:
@@ -71,7 +71,7 @@ throws SyntaxError:
             throw SyntaxError("bad JSON object", pos, pos + 1)
     return pos
 
-function parseArray(nat pos, string input) => (nat, [VALUE])
+function parseArray(nat pos, string input) -> (nat, [VALUE])
 requires pos <= |input| 
 throws SyntaxError:
     //
@@ -87,7 +87,7 @@ throws SyntaxError:
     pos = eat(pos, input, "]")
     return (pos, res)
 
-function parseValue(nat pos, string input) => (nat, VALUE)
+function parseValue(nat pos, string input) -> (nat, VALUE)
 requires pos <= |input| 
 throws SyntaxError:
     //
@@ -109,7 +109,7 @@ throws SyntaxError:
     else:
         throw SyntaxError("bad value", pos, pos + 1)
 
-function parsePAIR(nat pos, string input) => (nat, PAIR)
+function parsePAIR(nat pos, string input) -> (nat, PAIR)
 requires pos <= |input|
 throws SyntaxError:
     //
@@ -131,7 +131,7 @@ throws SyntaxError:
         pos = eat(pos, input, ",")
     return (pos, {key: key, val: val})
 
-function parseJSON(nat pos, string input) => (nat, JSON) 
+function parseJSON(nat pos, string input) -> (nat, JSON) 
 requires pos >= 0 && pos <= |input|
 throws SyntaxError:
     //

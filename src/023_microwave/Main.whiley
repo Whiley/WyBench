@@ -16,7 +16,7 @@ type Microwave is {
 // The clock tick event is signaled by the internal clock
 // circuits of the microwave. It is triggered every second
 // in order to implement timed cooking.
-function clockTick(Microwave m) => Microwave:
+function clockTick(Microwave m) -> Microwave:
         //
         if m.heatOn && m.timer == 0:
                 // Timer has expired
@@ -29,7 +29,7 @@ function clockTick(Microwave m) => Microwave:
 
 // Set the timer on the microwave. This can't be done if
 // the microwave is cooking.
-function setTimer(Microwave m, nat value) => Microwave
+function setTimer(Microwave m, nat value) -> Microwave
 requires !m.heatOn:
         //
         m.timer = value
@@ -38,7 +38,7 @@ requires !m.heatOn:
 // Signals that the "start cooking" button has been
 // pressed. Observe that, if the door is open, then
 // this event should have no effect.
-function startCooking(Microwave m) => Microwave:
+function startCooking(Microwave m) -> Microwave:
         //        
         // Here, we check the all important safety propery
         // for the microwave.
@@ -48,7 +48,7 @@ function startCooking(Microwave m) => Microwave:
 
 // A door closed event is triggered when the sensor
 // detects that the door is closed.
-function doorClosed(Microwave m) => Microwave
+function doorClosed(Microwave m) -> Microwave
 requires m.doorOpen:
         //
         m.doorOpen = false
@@ -56,7 +56,7 @@ requires m.doorOpen:
 
 // A door opened event is triggered when the sensor
 // detects that the door is opened.
-function doorOpened(Microwave m) => Microwave
+function doorOpened(Microwave m) -> Microwave
 requires !m.doorOpen:
         //
         m.doorOpen = true

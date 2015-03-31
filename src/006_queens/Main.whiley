@@ -5,7 +5,7 @@ import nat from whiley.lang.Int
 
 type Pos is (int,int)
 
-function conflict(Pos p, nat row, nat col) => bool:
+function conflict(Pos p, nat row, nat col) -> bool:
     int r, int c = p
     if r == row || c == col:
         return true
@@ -13,7 +13,7 @@ function conflict(Pos p, nat row, nat col) => bool:
     int rowDiff = Math.abs(r - row)
     return colDiff == rowDiff
 
-function run([Pos] queens, nat n, int dim) => [[Pos]] 
+function run([Pos] queens, nat n, int dim) -> [[Pos]] 
 // The number of allocated queens is at most the number of queens
 requires n <= |queens|
 // Dim matches the size of the array

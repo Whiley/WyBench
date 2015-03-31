@@ -24,12 +24,12 @@ public type Square is ExposedSquare | HiddenSquare
 
 // ExposedSquare constructor
 public export 
-function ExposedSquare(int rank, bool bomb) => ExposedSquare:
+function ExposedSquare(int rank, bool bomb) -> ExposedSquare:
     return { rank: rank, holdsBomb: bomb }
 
 // HiddenSquare constructor
 public export 
-function HiddenSquare(bool bomb, bool flag) => HiddenSquare:
+function HiddenSquare(bool bomb, bool flag) -> HiddenSquare:
     return { holdsBomb: bomb, flagged: flag }
 
 // =================================================================
@@ -45,7 +45,7 @@ public type Board is {
 // Create a board of given dimensions which contains no bombs, and
 // where all squares are hidden.
 public export 
-function Board(int width, int height) => Board:
+function Board(int width, int height) -> Board:
     [Square] squares = []
     //
     for i in 0 .. width * height:
@@ -59,7 +59,7 @@ function Board(int width, int height) => Board:
 
 // Return the square on a given board at a given position
 public export
-function getSquare(Board b, int col, int row) => Square
+function getSquare(Board b, int col, int row) -> Square
 requires 0 <= col && col < b.width
 requires 0 <= row && row < b.height:
     //
@@ -68,7 +68,7 @@ requires 0 <= row && row < b.height:
 
 // Set the square on a given board at a given position
 public export
-function setSquare(Board b, int col, int row, Square sq) => Board
+function setSquare(Board b, int col, int row, Square sq) -> Board
 requires 0 <= col && col < b.width
 requires 0 <= row && row < b.height:
     //
@@ -83,7 +83,7 @@ requires 0 <= row && row < b.height:
 // Flag (or unflag) a given square on the board.  If this operation is not permitted, then do nothing
 // and return the board; otherwise, update the board accordingly.
 public export
-function flagSquare(Board b, int col, int row) => Board
+function flagSquare(Board b, int col, int row) -> Board
 requires 0 <= col && col < b.width
 requires 0 <= row && row < b.height:
    //
@@ -101,7 +101,7 @@ requires 0 <= row && row < b.height:
 // implementation, we also count any bomb on the central square itself.
 // This does not course any specific problem since an exposed square
 // containing a bomb signals the end of the game anyway.
-function determineRank(Board b, int col, int row) => int:
+function determineRank(Board b, int col, int row) -> int:
     int rank = 0
     // Calculate the rank
     for r in Math.max(0,row-1) .. Math.min(b.height,row+2):
@@ -114,7 +114,7 @@ function determineRank(Board b, int col, int row) => int:
 
 // Attempt to recursively expose blank hidden square, starting from a given position.
 public export
-function exposeSquare(Board b, int col, int row) => Board
+function exposeSquare(Board b, int col, int row) -> Board
 requires 0 <= col && col < b.width
 requires 0 <= row && row < b.height:
     //
@@ -132,7 +132,7 @@ requires 0 <= row && row < b.height:
     return b
 
 // Recursively expose all valid neighbouring squares on the board
-function exposeNeighbours(Board b, int col, int row) => Board
+function exposeNeighbours(Board b, int col, int row) -> Board
 requires 0 <= col && col < b.width
 requires 0 <= row && row < b.height:
     //
@@ -148,7 +148,7 @@ requires 0 <= row && row < b.height:
 // Likewise, the game is over and the player has one if there are no 
 // hidden squares which don't contain a bomb.
 public export
-function isGameOver(Board b) => (bool,bool):
+function isGameOver(Board b) -> (bool,bool):
     bool isOver = true
     bool hasWon = true
     for i in 0 .. |b.squares|:

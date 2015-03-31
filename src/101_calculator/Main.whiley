@@ -44,7 +44,7 @@ type Stmt is Print | Set
 
 type RuntimeError is { string msg }
 
-function evaluate(Expr e, {string=>Value} env) => Value
+function evaluate(Expr e, {string=>Value} env) -> Value
 // Runtime error thrown if evaluation gets "stuck" (e.g. expression is
 // not well-formed)
 throws RuntimeError:
@@ -93,7 +93,7 @@ throws RuntimeError:
 type State is { string input, int pos }
 
 // Top-level parse method
-function parse(State st) => (Stmt,State) 
+function parse(State st) -> (Stmt,State) 
 throws SyntaxError:
     //
     Var keyword, Var v
@@ -113,7 +113,7 @@ throws SyntaxError:
         default:
             throw SyntaxError("unknown statement",start,st.pos-1)
 
-function parseAddSubExpr(State st) => (Expr, State) 
+function parseAddSubExpr(State st) -> (Expr, State) 
 throws SyntaxError:    
     //
     Expr lhs, Expr rhs      
@@ -136,7 +136,7 @@ throws SyntaxError:
     // No right-hand side
     return (lhs,st)
 
-function parseMulDivExpr(State st) => (Expr, State) 
+function parseMulDivExpr(State st) -> (Expr, State) 
 throws SyntaxError:    
     Expr lhs, Expr rhs
     // First, pass left-hand side
@@ -158,7 +158,7 @@ throws SyntaxError:
     // No right-hand side
     return (lhs,st)
 
-function parseTerm(State st) => (Expr, State) 
+function parseTerm(State st) -> (Expr, State) 
 throws SyntaxError:
     //
     st = parseWhiteSpace(st)        
@@ -171,7 +171,7 @@ throws SyntaxError:
             return parseList(st)
     throw SyntaxError("expecting number or variable",st.pos,st.pos)
 
-function parseIdentifier(State st) => (Var, State):
+function parseIdentifier(State st) -> (Var, State):
     //
     string txt = ""
     // inch forward until end of identifier reached
@@ -180,7 +180,7 @@ function parseIdentifier(State st) => (Var, State):
         st.pos = st.pos + 1
     return ({id:txt}, st)
 
-function parseNumber(State st) => (Expr, State) 
+function parseNumber(State st) -> (Expr, State) 
 throws SyntaxError:    
     // inch forward until end of identifier reached
     int start = st.pos
@@ -188,7 +188,7 @@ throws SyntaxError:
         st.pos = st.pos + 1    
     return Int.parse(st.input[start..st.pos]), st
 
-function parseList(State st) => (Expr, State) 
+function parseList(State st) -> (Expr, State) 
 throws SyntaxError:    
     //
     st.pos = st.pos + 1 // skip '['
@@ -210,7 +210,7 @@ throws SyntaxError:
     return l,st
  
 // Parse all whitespace upto end-of-file
-function parseWhiteSpace(State st) => State:
+function parseWhiteSpace(State st) -> State:
     while st.pos < |st.input| && Char.isWhiteSpace(st.input[st.pos]):
         st.pos = st.pos + 1
     return st

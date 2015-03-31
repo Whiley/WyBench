@@ -12,7 +12,7 @@ type nat is (int x) where x >= 0
 type Digraph is ([{nat}] edges)
     where no { v in edges, w in v | w >= |edges| }
 
-function addEdge(Digraph g, nat from, nat to) => Digraph:
+function addEdge(Digraph g, nat from, nat to) -> Digraph:
     // first, ensure enough capacity
     nat mx = Math.max(from,to)
     while |g| <= mx:
@@ -27,7 +27,7 @@ function addEdge(Digraph g, nat from, nat to) => Digraph:
 // Parser
 // ============================================
 
-function parseDigraphs(string input) => [Digraph]
+function parseDigraphs(string input) -> [Digraph]
 // Throws syntax error if string is invalid
 throws SyntaxError:
     //
@@ -39,7 +39,7 @@ throws SyntaxError:
         graphs = graphs ++ [graph]
     return graphs
 
-function parseDigraph(int pos, string input) => (Digraph,int)
+function parseDigraph(int pos, string input) -> (Digraph,int)
 throws SyntaxError:
     //
     Digraph graph = []
@@ -60,7 +60,7 @@ throws SyntaxError:
     pos = skipWhiteSpace(pos,input) // parse any newline junk
     return graph,pos
 
-function match(string match, int pos, string input) => int 
+function match(string match, int pos, string input) -> int 
 throws SyntaxError:
     //
     int end = pos + |match|
@@ -74,7 +74,7 @@ throws SyntaxError:
     else:
         throw SyntaxError("unexpected end-of-file",pos,end)
 
-function parseInt(int pos, string input) => (int,int)
+function parseInt(int pos, string input) -> (int,int)
 throws SyntaxError:
     //
     int start = pos
@@ -87,13 +87,13 @@ throws SyntaxError:
     //
     return Int.parse(input[start..pos]),pos
 
-function skipWhiteSpace(int index, string input) => int:
+function skipWhiteSpace(int index, string input) -> int:
     //
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     return index
 
-function isWhiteSpace(char c) => bool:
+function isWhiteSpace(char c) -> bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
 // ============================================
@@ -113,7 +113,7 @@ type State is {
     int cindex
 }
 
-function State(Digraph g) => State:
+function State(Digraph g) -> State:
     return {
         graph: g,
         visited: List.create(|g|,false),
@@ -124,7 +124,7 @@ function State(Digraph g) => State:
         cindex: 0
     }
 
-function find_components(Digraph g) => [{int}]:
+function find_components(Digraph g) -> [{int}]:
     State state = State(g)
     
     for i in 0..|g|:
@@ -142,7 +142,7 @@ function find_components(Digraph g) => [{int}]:
     
     return components
 
-function visit(int v, State s) => State:
+function visit(int v, State s) -> State:
     bool root = true
     s.visited[v] = true
     s.rindex[v] = s.index

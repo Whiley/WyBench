@@ -3,4 +3,4 @@
  * @author LeeTrezise
  * 
  */
-public native method getRandomInt(int max) => int
+public native method getRandomInt(int max) -> int

@@ -10,7 +10,7 @@ type sortedList is ([int] xs) where |xs| <= 1 || all { i in 0 .. |xs|-1 | xs[i] 
  * Sort a given list of items into ascending order, producing a sorted
  * list.
  */
-function sort([int] items) => sortedList:
+function sort([int] items) -> sortedList:
     if |items| > 1:
         int pivot = |items| / 2
         [int] lhs = sort(items[..pivot])
@@ -38,7 +38,7 @@ function sort([int] items) => sortedList:
  * Perform a classical binary search on a sorted list to determine the
  * index of a given item (if it is contained) or null (otherwise).
  */
-function search(sortedList list, int item) => null|int:
+function search(sortedList list, int item) -> null|int:
     int lower = 0
     int upper = |list| // 1 past last element considered
     while lower < upper:
@@ -58,7 +58,7 @@ function search(sortedList list, int item) => null|int:
  * returning a pair consisting of the integer and the first position
  * following it in the string.
  */
-function parseInt(int pos, string input) => (int,int) 
+function parseInt(int pos, string input) -> (int,int) 
 throws SyntaxError:
     //
     int start = pos
@@ -72,7 +72,7 @@ throws SyntaxError:
  * Skip past any whitespace in the given string starting from the given
  * position, returning the position of the next non-whitespace character.
  */
-function skipWhiteSpace(int index, string input) => int:
+function skipWhiteSpace(int index, string input) -> int:
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     return index
@@ -80,7 +80,7 @@ function skipWhiteSpace(int index, string input) => int:
 /**
  * Check whether a given character is a whitespace character or not.
  */
-function isWhiteSpace(char c) => bool:
+function isWhiteSpace(char c) -> bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
 method lookFor(System.Console console, sortedList list, int item):

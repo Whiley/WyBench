@@ -12,14 +12,14 @@ type Job is { nat button, bool orange }
 // Parser
 // ===============================================
 
-function parseJobs(nat pos, string input) => ([Job],nat) 
+function parseJobs(nat pos, string input) -> ([Job],nat) 
 throws SyntaxError:
     //
     int nitems
     nitems,pos = parseInt(pos,input)
     return parseNumJobs(nitems,pos,input)
 
-function parseNumJobs(nat nitems, nat pos, string input) => ([Job],nat) 
+function parseNumJobs(nat nitems, nat pos, string input) -> ([Job],nat) 
 throws SyntaxError:
     //
     if nitems == 0:
@@ -37,7 +37,7 @@ throws SyntaxError:
         else:
             throw SyntaxError("Missing flag",pos,pos)        
 
-function parseInt(nat pos, string input) => (nat,nat)
+function parseInt(nat pos, string input) -> (nat,nat)
 throws SyntaxError:
     //
     pos = skipWhiteSpace(pos,input)
@@ -49,7 +49,7 @@ throws SyntaxError:
     int val = Math.abs(Int.parse(input[start..pos]))
     return val,pos
 
-function skipWhiteSpace(nat index, string input) => nat:
+function skipWhiteSpace(nat index, string input) -> nat:
     //
     while index < |input| && isWhiteSpace(input[index]) where index >= 0:
         index = index + 1
@@ -59,7 +59,7 @@ function skipWhiteSpace(nat index, string input) => nat:
 // Main Computation
 // ===============================================
 
-function processJobs([Job] jobs) => nat:
+function processJobs([Job] jobs) -> nat:
     //
     int Opos = 1    // current orange position
     int Bpos = 1    // current blue position 

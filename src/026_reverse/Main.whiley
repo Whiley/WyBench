@@ -1,5 +1,5 @@
 // Sum over the elements of a list
-function sum([int] xs) => (int r)
+function sum([int] xs) -> (int r)
 requires |xs| > 0
 // Base case: list of size 1
 ensures |xs| == 1 ==> r == xs[0]
@@ -12,7 +12,7 @@ ensures |xs| > 1 ==> r == xs[0] + sum(xs[1..]):
         return xs[0] + sum(xs[1..])
         
 // Reverse the elements of a list
-function reverse([int] xs) => ([int] rs)
+function reverse([int] xs) -> ([int] rs)
 // Ensure that the sum of the list is preserved
 ensures |xs| > 0 ==> sum(xs) == sum(rs):
     //

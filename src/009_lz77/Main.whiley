@@ -10,7 +10,7 @@ import whiley.lang.*
 
 type nat is (int x) where x >= 0
 
-function compress([byte] data) => [byte]:
+function compress([byte] data) -> [byte]:
     nat pos = 0
     [byte] output = []
     //
@@ -28,7 +28,7 @@ function compress([byte] data) => [byte]:
     return output
 
 // pos is current position in input value
-function findLongestMatch([byte] data, nat pos) => (nat,nat):
+function findLongestMatch([byte] data, nat pos) -> (nat,nat):
     //
     nat bestOffset = 0
     nat bestLen = 0
@@ -48,7 +48,7 @@ function findLongestMatch([byte] data, nat pos) => (nat,nat):
     //
     return bestOffset,bestLen
 
-function match([byte] data, nat offset, nat end) => int:
+function match([byte] data, nat offset, nat end) -> int:
     nat pos = end
     nat len = 0
     //
@@ -61,7 +61,7 @@ function match([byte] data, nat offset, nat end) => int:
     //
     return len
 
-function decompress([byte] data) => [byte]:
+function decompress([byte] data) -> [byte]:
     [byte] output = []
     nat pos = 0
     //
@@ -86,7 +86,7 @@ function decompress([byte] data) => [byte]:
     // all done!
     return output
 
-function write_u1([byte] bytes, int u1) => [byte]:
+function write_u1([byte] bytes, int u1) -> [byte]:
     return bytes ++ [Int.toUnsignedByte(u1)]
 
 method main(System.Console sys):

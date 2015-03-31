@@ -114,7 +114,7 @@ public constant Initial is {
 *
 * Rotate the current Piece and return the updated Game State
 */
-public method rotate(GameState a, bool clockwise) => GameState:
+public method rotate(GameState a, bool clockwise) -> GameState:
 	//Temporary Piece buffer. Used to check colissions
 	bufferGrid temp = [[null,null,null,null],[null,null,null,null],[null,null,null,null],[null,null,null,null]]
 	if(a.current.type == 2):
@@ -149,7 +149,7 @@ public method rotate(GameState a, bool clockwise) => GameState:
 * Uses Java - Random.nextInt(int)	
 *
 */
-method generate() => Piece:
+method generate() -> Piece:
 	int b = Random.getRandomInt(7)
 	Piece a = BLOCK_L
 	if b == 0:
@@ -175,7 +175,7 @@ method generate() => Piece:
 * Delete all full rows. Returns the updated Gamestate
 *
 */	
-method deleteRows(GameState a) => GameState:
+method deleteRows(GameState a) -> GameState:
 	int filledRows = 0 //Number of rows filled
 	int i = 0
 	int j = 0
@@ -225,7 +225,7 @@ method deleteRows(GameState a) => GameState:
 /*
 * Hard Drop the current Piece. 
 */				
-public method hardDrop(GameState a) => GameState:
+public method hardDrop(GameState a) -> GameState:
 	while(!checkCollision(-1,0,movePiece(a, -1, 0))):
 		a = movePiece(a, -1, 0)
 	a = movePiece(a, -1, 0)
@@ -236,7 +236,7 @@ public method hardDrop(GameState a) => GameState:
 * and generating the new Piece. 
 */
 
-public method movePiece(GameState a, int x, int y) => GameState:
+public method movePiece(GameState a, int x, int y) -> GameState:
 	if(checkCollision(0, y, a)):
 		//Piece moves laterally.
 		skip
@@ -268,7 +268,7 @@ public method movePiece(GameState a, int x, int y) => GameState:
 /*
 * Check to see if the movement will cause a collision.
 */
-function checkCollision(int dx, int dy,GameState a) => bool:
+function checkCollision(int dx, int dy,GameState a) -> bool:
 	int newx = a.current.x + dx
 	int newy = a.current.y + dy
 	// Check For Collisions
@@ -287,7 +287,7 @@ function checkCollision(int dx, int dy,GameState a) => bool:
 		j = 0
 	return false
 
-public function getUIString(GameState a) => string:
+public function getUIString(GameState a) -> string:
 	string str = ""
 	int j = 0
 	int i = 0

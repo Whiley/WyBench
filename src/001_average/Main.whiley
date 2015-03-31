@@ -9,7 +9,7 @@ import nat from whiley.lang.Int
 // Benchmark
 // ========================================================
 
-function average([real] data) => real
+function average([real] data) -> real
 // Input list cannot be empty
 requires |data| > 0:
     //
@@ -22,7 +22,7 @@ requires |data| > 0:
 // Parser
 // ========================================================
 
-function parseReal(nat pos, string input) => (real,nat)
+function parseReal(nat pos, string input) -> (real,nat)
 throws SyntaxError:
     //
     int start = pos
@@ -34,14 +34,14 @@ throws SyntaxError:
     //
     return Real.parse(input[start..pos]),pos
 
-function skipWhiteSpace(nat index, string input) => nat:
+function skipWhiteSpace(nat index, string input) -> nat:
     //
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     //
     return index
 
-function isWhiteSpace(char c) => bool:
+function isWhiteSpace(char c) -> bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
 // ========================================================
