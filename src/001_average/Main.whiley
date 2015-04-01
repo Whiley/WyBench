@@ -1,7 +1,7 @@
 import whiley.lang.*
-import * from whiley.lang.System
-import * from whiley.io.File
-import * from whiley.lang.Errors
+import whiley.lang.System
+import whiley.io.File
+import wybench.Parser
 
 import char from whiley.lang.ASCII
 import string from whiley.lang.ASCII
@@ -21,31 +21,6 @@ requires |data| > 0:
     return sum / (real) |data|
 
 // ========================================================
-// Parser
-// ========================================================
-
-function parseReal(nat pos, string input) -> (null|real,int):
-    //
-    int start = pos
-    while pos < |input| && (ASCII.isDigit(input[pos]) || input[pos] == '.'):
-        pos = pos + 1
-    //
-    if pos == start:
-        return null,pos
-    //
-    return Real.parse(input[start..pos]),pos
-
-function skipWhiteSpace(nat index, string input) -> nat:
-    //
-    while index < |input| && isWhiteSpace(input[index]):
-        index = index + 1
-    //
-    return index
-
-function isWhiteSpace(char c) -> bool:
-    return c == ' ' || c == '\t' || c == '\n' || c == '\r'
-
-// ========================================================
 // Main
 // ========================================================
 
@@ -57,17 +32,17 @@ method main(System.Console sys):
         string input = ASCII.fromBytes(file.readAll())
         int pos = 0
         [real] data = []
-        pos = skipWhiteSpace(pos,input)
+        pos = Parser.skipWhiteSpace(pos,input)
         // first, read data
         while pos < |input| where pos >= 0:
             real|null r
-            r,pos = parseReal(pos,input)
+            r,pos = Parser.parseReal(pos,input)
             if(r is null):
                 sys.out.println("Syntax Error")
                 break
             else:
                 data = data ++ [r]
-                pos = skipWhiteSpace(pos,input)
+                pos = Parser.skipWhiteSpace(pos,input)
         // second, run the benchmark
         if |data| == 0:
             sys.out.println("no data provided!")

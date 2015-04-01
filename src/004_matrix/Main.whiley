@@ -1,8 +1,7 @@
 import whiley.lang.*
-import * from whiley.lang.System
-import * from whiley.io.File
-import * from whiley.lang.Errors
-
+import whiley.lang.System
+import whiley.io.File
+import wybench.Parser
 
 import char from whiley.lang.ASCII
 import string from whiley.lang.ASCII
@@ -113,46 +112,25 @@ function parseMatrix(nat height, nat width, int pos, string input) -> (Matrix|nu
 
 function parseLine(int count, int pos, string input) -> ([int]|null,int):
     //
-    pos = skipWhiteSpace(pos,input)
+    pos = Parser.skipWhiteSpace(pos,input)
     [int] ints = []
     int|null i
     //
     while pos < |input| && |ints| != count:
-        i,pos = parseInt(pos,input)
+        i,pos = Parser.parseInt(pos,input)
         if i is null:
             return null,pos
         else:
             ints = ints ++ [i]
-            pos = skipWhiteSpace(pos,input)
+            pos = Parser.skipWhiteSpace(pos,input)
     //
     return ints,pos
-
-function parseInt(int pos, string input) -> (int|null,int):
-    //
-    int start = pos
-    // check for negative input
-    if pos < |input| && input[pos] == '-':
-        pos = pos + 1
-    // match remainder
-    while pos < |input| && ASCII.isDigit(input[pos]):
-        pos = pos + 1
-    // done
-    return Int.parse(input[start..pos]),pos
 
 function skipBreak(int index, string input) -> int:
     while index < |input| && input[index] == '-':
         index = index + 1
     //
-    return skipWhiteSpace(index,input)
-
-function skipWhiteSpace(int index, string input) -> int:
-    while index < |input| && isWhiteSpace(input[index]):
-        index = index + 1
-    //
-    return index
-
-function isWhiteSpace(char c) -> bool:
-    return c == ' ' || c == '\t' || c == '\r' || c == '\n'
+    return Parser.skipWhiteSpace(index,input)
 
 // ========================================================
 // Main

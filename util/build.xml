@@ -1,0 +1,13 @@
+<project name="WyBench Library" default="build">  
+
+  <import file="../config.xml"/> 
+  <import file="build-template.xml"/>  
+  
+  <target name="build" depends="compile">
+    <jar destfile="../lib/wybench.jar">
+      <fileset dir="." includes="*/**/*.class"/>
+      <fileset dir="." includes="*/**/*.wyil"/>
+    </jar>    
+  </target>
+
+</project>
