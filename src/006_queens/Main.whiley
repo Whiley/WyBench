@@ -46,4 +46,4 @@ method main(System.Console sys):
     //
     assume |init| == dim
     [[Pos]] solutions = run(init,0,dim)
-    sys.out.println("Found " ++ |solutions| ++ " solutions.")
+    sys.out.println_s("Found " ++ Int.toString(|solutions|) ++ " solutions.")

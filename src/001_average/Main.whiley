@@ -3,6 +3,7 @@ import * from whiley.lang.System
 import * from whiley.io.File
 import * from whiley.lang.Errors
 
+import char from whiley.lang.ASCII
 import string from whiley.lang.ASCII
 import nat from whiley.lang.Int
 
@@ -23,14 +24,14 @@ requires |data| > 0:
 // Parser
 // ========================================================
 
-function parseReal(nat pos, string input) -> (real,int):
+function parseReal(nat pos, string input) -> (null|real,int):
     //
     int start = pos
     while pos < |input| && (ASCII.isDigit(input[pos]) || input[pos] == '.'):
         pos = pos + 1
     //
     if pos == start:
-        return 0.0,-1
+        return null,pos
     //
     return Real.parse(input[start..pos]),pos
 
@@ -53,19 +54,20 @@ method main(System.Console sys):
         sys.out.println("usage: average <file>")
     else:
         File.Reader file = File.Reader(sys.args[0])
-        string input = String.fromASCII(file.readAll())
+        string input = ASCII.fromBytes(file.readAll())
         int pos = 0
         [real] data = []
         pos = skipWhiteSpace(pos,input)
         // first, read data
         while pos < |input| where pos >= 0:
-            real r
+            real|null r
             r,pos = parseReal(pos,input)
-            if(pos < 0):
+            if(r is null):
                 sys.out.println("Syntax Error")
                 break
-            data = data ++ [r]
-            pos = skipWhiteSpace(pos,input)
+            else:
+                data = data ++ [r]
+                pos = skipWhiteSpace(pos,input)
         // second, run the benchmark
         if |data| == 0:
             sys.out.println("no data provided!")

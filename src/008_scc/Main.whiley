@@ -3,6 +3,8 @@ import * from whiley.lang.System
 import whiley.lang.*
 import * from whiley.lang.Errors
 
+import char from whiley.lang.ASCII
+import string from whiley.lang.ASCII
 type nat is (int x) where x >= 0
 
 // ============================================
@@ -27,9 +29,7 @@ function addEdge(Digraph g, nat from, nat to) -> Digraph:
 // Parser
 // ============================================
 
-function parseDigraphs(string input) -> [Digraph]
-// Throws syntax error if string is invalid
-throws SyntaxError:
+function parseDigraphs(string input) -> [Digraph]:
     //
     [Digraph] graphs = []
     Digraph graph
@@ -39,8 +39,7 @@ throws SyntaxError:
         graphs = graphs ++ [graph]
     return graphs
 
-function parseDigraph(int pos, string input) -> (Digraph,int)
-throws SyntaxError:
+function parseDigraph(int pos, string input) -> (Digraph,int):
     //
     Digraph graph = []
     bool firstTime = true
@@ -50,18 +49,19 @@ throws SyntaxError:
         if !firstTime:
             pos = match(",",pos,input)
         firstTime=false
-        int from
+        int|null from
         from,pos = parseInt(pos,input)
         pos = match(">",pos,input)
-        int to
+        int|null to
         to,pos = parseInt(pos,input)
-        graph = addEdge(graph,from,to)
+        if from != null && to != null:
+            graph = addEdge(graph,from,to)
+    //        
     pos = match("}",pos,input)    
     pos = skipWhiteSpace(pos,input) // parse any newline junk
     return graph,pos
 
-function match(string match, int pos, string input) -> int 
-throws SyntaxError:
+function match(string match, int pos, string input) -> int:
     //
     int end = pos + |match|
     //
@@ -69,23 +69,20 @@ throws SyntaxError:
         string tmp = input[pos..end]
         if tmp == match:
             return end
-        else:
-            throw SyntaxError("expected " ++ match ++ ",found " ++ tmp,pos,end)
-    else:
-        throw SyntaxError("unexpected end-of-file",pos,end)
+    //
+    return |input|
 
-function parseInt(int pos, string input) -> (int,int)
-throws SyntaxError:
+function parseInt(int pos, string input) -> (int|null,int):
     //
     int start = pos
     //
-    while pos < |input| && Char.isDigit(input[pos]):
+    while pos < |input| && ASCII.isDigit(input[pos]):
         pos = pos + 1
     //
     if pos == start:
-        throw SyntaxError("Missing number",pos,pos)
-    //
-    return Int.parse(input[start..pos]),pos
+        return null,pos
+    else:
+        return Int.parse(input[start..pos]),pos
 
 function skipWhiteSpace(int index, string input) -> int:
     //
@@ -173,27 +170,24 @@ function visit(int v, State s) -> State:
 
 method main(System.Console sys):
     File.Reader file = File.Reader(sys.args[0])
-    string input = String.fromASCII(file.readAll())
+    string input = ASCII.fromBytes(file.readAll())
     
-    try:
-        [Digraph] graphs = parseDigraphs(input)
-        // third, print output
-        int count = 0
-        for graph in graphs:
-            sys.out.println("=== Graph #" ++ count ++ " (" ++ |graph| ++ " nodes) ===")
-            count = count + 1
-            
-            [{int}] sccs = find_components(graph)
-            for scc in sccs:
-                sys.out.print("{")
-                bool firstTime=true
-                for v in scc:
-                    if !firstTime:
-                        sys.out.print(",")
-                    firstTime=false
-                    sys.out.print(v)
-                sys.out.print("}")
-            
-            sys.out.println("")
-    catch(SyntaxError e):
-        sys.out.println("error: " ++ e.msg)
+    [Digraph] graphs = parseDigraphs(input)
+    // third, print output
+    int count = 0
+    for graph in graphs:
+        sys.out.println("=== Graph #" ++ count ++ " (" ++ |graph| ++ " nodes) ===")
+        count = count + 1
+        
+        [{int}] sccs = find_components(graph)
+        for scc in sccs:
+            sys.out.print("{")
+            bool firstTime=true
+            for v in scc:
+                if !firstTime:
+                    sys.out.print(",")
+                firstTime=false
+                sys.out.print(v)
+            sys.out.print("}")
+        //        
+        sys.out.println("")

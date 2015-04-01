@@ -3,6 +3,10 @@ import * from whiley.lang.System
 import * from whiley.io.File
 import * from whiley.lang.Errors
 
+
+import char from whiley.lang.ASCII
+import string from whiley.lang.ASCII
+
 // Author: David J. Pearce
 
 // ========================================================
@@ -78,61 +82,60 @@ ensures C.width == B.width && C.height == A.height:
 // Parser Code
 // ========================================================
 
-function parseFile(string input) -> (Matrix,Matrix)
-throws SyntaxError:
-    Matrix A // 1st result
-    Matrix B // 2nd result
-    [int] data, int pos = parseLine(2,0,input)
-    int nrows = data[0]
-    int ncols = data[1]
-    pos = skipBreak(pos,input)
-    A,pos = parseMatrix(nrows,ncols,pos,input)
-    pos = skipBreak(pos,input)
-    B,pos = parseMatrix(nrows,ncols,pos,input)
-    return A,B
+function parseFile(string input) -> (Matrix|null,Matrix|null):
+    Matrix|null A // 1st result
+    Matrix|null B // 2nd result
+    [int]|null data, int pos = parseLine(2,0,input)
+    if data != null:
+        int nrows = data[0]
+        int ncols = data[1]
+        pos = skipBreak(pos,input)
+        A,pos = parseMatrix(nrows,ncols,pos,input)
+        pos = skipBreak(pos,input)
+        B,pos = parseMatrix(nrows,ncols,pos,input)
+        return A,B
+    else:
+        return null,null
 
-function parseMatrix(nat height, nat width, int pos, string input) -> (Matrix,int)
-throws SyntaxError:
+function parseMatrix(nat height, nat width, int pos, string input) -> (Matrix|null,int):
     //
     [[int]] rows = []
-    [int] row
+    [int]|null row
     //
     for i in 0 .. height:
         row,pos = parseLine(width,pos,input)
-        rows = rows ++ [row]
+        if row != null:
+            rows = rows ++ [row]
+        else:
+            return null,pos
     //
     return Matrix(width,height,rows),pos
 
-function parseLine(int count, int pos, string input) -> ([int],int) 
-throws SyntaxError:
+function parseLine(int count, int pos, string input) -> ([int]|null,int):
     //
     pos = skipWhiteSpace(pos,input)
     [int] ints = []
-    int i
+    int|null i
     //
     while pos < |input| && |ints| != count:
         i,pos = parseInt(pos,input)
-        ints = ints ++ [i]
-        pos = skipWhiteSpace(pos,input)
-    //
-    if |ints| != count:
-        throw SyntaxError("invalid input file",pos,pos)
+        if i is null:
+            return null,pos
+        else:
+            ints = ints ++ [i]
+            pos = skipWhiteSpace(pos,input)
     //
     return ints,pos
 
-function parseInt(int pos, string input) -> (int,int)
-throws SyntaxError:
+function parseInt(int pos, string input) -> (int|null,int):
     //
     int start = pos
     // check for negative input
     if pos < |input| && input[pos] == '-':
         pos = pos + 1
     // match remainder
-    while pos < |input| && Char.isDigit(input[pos]):
+    while pos < |input| && ASCII.isDigit(input[pos]):
         pos = pos + 1
-    // check for error
-    if pos == start:
-        throw SyntaxError("Missing number",start,pos)
     // done
     return Int.parse(input[start..pos]),pos
 
@@ -168,14 +171,14 @@ method main(System.Console sys):
     else:
         File.Reader file = File.Reader(sys.args[0])
         // first, read data
-        string input = String.fromASCII(file.readAll())
-        try:
-            // second, build the matrices
-            Matrix A, Matrix B = parseFile(input)
+        string input = ASCII.fromBytes(file.readAll())
+        // second, build the matrices
+        Matrix|null A, Matrix|null B = parseFile(input)
+        if A != null && B != null:            
             // third, run the benchmark
             Matrix C = multiply(A,B)
             // finally, print the result!
             printMat(sys,C)
-        catch(SyntaxError e):
-            sys.out.println("error - " ++ e.msg)
+        else:
+            sys.out.println("Error reading file")
 

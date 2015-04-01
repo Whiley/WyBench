@@ -3,6 +3,8 @@ import * from whiley.lang.System
 import * from whiley.io.File
 
 import nat from whiley.lang.Int
+import char from whiley.lang.ASCII
+import string from whiley.lang.ASCII
 
 // match: search for regexp anywhere in text
 function match(string regex,string text) -> bool:
@@ -57,10 +59,10 @@ function readLine(nat pos, string input) -> (string,nat):
 
 public method main(System.Console sys):
     if |sys.args| == 0:
-        sys.out.println("usage: regex <input-file>")
+        sys.out.println_s("usage: regex <input-file>")
     else:
         File.Reader file = File.Reader(sys.args[0])
-        string input = String.fromASCII(file.readAll())
+        string input = ASCII.fromBytes(file.readAll())
         string text, string regex
         int pos = 0
         int nmatches = 0
@@ -71,4 +73,4 @@ public method main(System.Console sys):
             if match(regex,text):
                 nmatches = nmatches + 1
             total = total + 1
-        sys.out.println("Matched " ++ nmatches ++ " / " ++ total ++ " inputs.")
+        sys.out.println_s("Matched " ++ Int.toString(nmatches) ++ " / " ++ Int.toString(total) ++ " inputs.")
