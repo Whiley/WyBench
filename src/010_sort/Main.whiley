@@ -1,8 +1,9 @@
-import whiley.io.*
-import * from whiley.io.File
 import whiley.lang.*
-import * from whiley.lang.System
-import * from whiley.lang.Errors
+import whiley.io.*
+import whiley.io.File
+import whiley.lang.System
+
+import wybench.Parser
 
 type sortedList is ([int] xs) where |xs| <= 1 || all { i in 0 .. |xs|-1 | xs[i] <= xs[i+1] }
 
@@ -53,62 +54,33 @@ function search(sortedList list, int item) -> null|int:
     // failed to find it
     return null
 
-/**
- * Parse an integer from a given string starting at a given point,
- * returning a pair consisting of the integer and the first position
- * following it in the string.
- */
-function parseInt(int pos, string input) -> (int,int) 
-throws SyntaxError:
-    //
-    int start = pos
-    while pos < |input| && Char.isDigit(input[pos]):
-        pos = pos + 1
-    if pos == start:
-        throw SyntaxError("Missing number",pos,pos)
-    return Int.parse(input[start..pos]),pos
-
-/**
- * Skip past any whitespace in the given string starting from the given
- * position, returning the position of the next non-whitespace character.
- */
-function skipWhiteSpace(int index, string input) -> int:
-    while index < |input| && isWhiteSpace(input[index]):
-        index = index + 1
-    return index
-
-/**
- * Check whether a given character is a whitespace character or not.
- */
-function isWhiteSpace(char c) -> bool:
-    return c == ' ' || c == '\t' || c == '\n' || c == '\r'
-
 method lookFor(System.Console console, sortedList list, int item):
     int|null index = search(list,item)
     if index != null:
-        console.out.println("FOUND: " ++ item ++ " in " ++ list ++ " @ " ++ index)
+        console.out.println_s("FOUND: " ++ Int.toString(item) ++ " in " ++ Any.toString(list) ++ " @ " ++ Int.toString(index))
     else:
-        console.out.println("NOT FOUND: " ++ item ++ " in " ++ list)
+        console.out.println_s("NOT FOUND: " ++ Int.toString(item) ++ " in " ++ Any.toString(list))
 
 constant searchTerms is [1,2,3,4,5,6,7,8,9]
 
 method main(System.Console sys):
     File.Reader file = File.Reader(sys.args[0])
-    string input = String.fromASCII(file.readAll())
-    try:
-        [int] data = []
-        int pos = skipWhiteSpace(0,input)
-        // first, read data
-        while pos < |input|:
-            int i
-            i,pos = parseInt(pos,input)
+    ASCII.string input = ASCII.fromBytes(file.readAll())
+    [int] data = []
+    int pos = Parser.skipWhiteSpace(0,input)
+    // first, read data
+    while pos < |input|:
+        int|null i
+        i,pos = Parser.parseInt(pos,input)
+        if i != null:
             data = data ++ [i]
-            pos = skipWhiteSpace(pos,input)
-        // second, sort data    
-        data = sort(data)
-        // third, print output
-        sys.out.print("SORTED: " ++ Any.toString(data))
-        for i in searchTerms:
-            lookFor(sys,data,i)
-    catch(SyntaxError e):
-        sys.out.println("Syntax error: " ++ e.msg)
+            pos = Parser.skipWhiteSpace(pos,input)
+        else:
+            sys.out.println_s("Error parsing input")
+            return
+    // second, sort data    
+    data = sort(data)
+    // third, print output
+    sys.out.print_s("SORTED: " ++ Any.toString(data))
+    for i in searchTerms:
+        lookFor(sys,data,i)

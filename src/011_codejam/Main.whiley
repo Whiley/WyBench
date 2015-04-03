@@ -1,6 +1,9 @@
 import whiley.lang.*
-import * from whiley.lang.*
-import * from whiley.io.File
+import whiley.io.File
+import nat from whiley.lang.Int
+import string from whiley.lang.ASCII
+
+import wybench.Parser
 
 // ===============================================
 // Definitions
@@ -12,48 +15,32 @@ type Job is { nat button, bool orange }
 // Parser
 // ===============================================
 
-function parseJobs(nat pos, string input) -> ([Job],nat) 
-throws SyntaxError:
+function parseJobs(nat pos, string input) -> ([Job],nat):
     //
-    int nitems
-    nitems,pos = parseInt(pos,input)
-    return parseNumJobs(nitems,pos,input)
+    int|null nitems
+    nitems,pos = Parser.parseInt(pos,input)
+    if nitems != null:
+        return parseNumJobs(nitems,pos,input)
+    else:
+        return ([],pos)
 
-function parseNumJobs(nat nitems, nat pos, string input) -> ([Job],nat) 
-throws SyntaxError:
+function parseNumJobs(nat nitems, nat pos, string input) -> ([Job],nat):
     //
     if nitems == 0:
         return ([],pos)
     else:
-        pos = skipWhiteSpace(pos,input)
+        pos = Parser.skipWhiteSpace(pos,input)
         if pos < |input|:
-            int target, [Job] jobs
+            int|null target, [Job] jobs
             bool flag = (input[pos] == 'O')
-            pos = skipWhiteSpace(pos+1,input)
-            target,pos = parseInt(pos,input)
-            jobs,pos = parseNumJobs(nitems-1,pos,input)
-            jobs = [{button: target, orange: flag}] ++ jobs
-            return jobs,pos        
-        else:
-            throw SyntaxError("Missing flag",pos,pos)        
-
-function parseInt(nat pos, string input) -> (nat,nat)
-throws SyntaxError:
-    //
-    pos = skipWhiteSpace(pos,input)
-    int start = pos
-    while pos < |input| && Char.isDigit(input[pos]) where pos >= 0:
-        pos = pos + 1
-    if pos == start:
-        throw SyntaxError("Missing number",pos,pos)
-    int val = Math.abs(Int.parse(input[start..pos]))
-    return val,pos
-
-function skipWhiteSpace(nat index, string input) -> nat:
-    //
-    while index < |input| && isWhiteSpace(input[index]) where index >= 0:
-        index = index + 1
-    return index
+            pos = Parser.skipWhiteSpace(pos+1,input)
+            target,pos = Parser.parseInt(pos,input)
+            if target != null:
+                jobs,pos = parseNumJobs(nitems-1,pos,input)
+                jobs = [{button: target, orange: flag}] ++ jobs
+                return jobs,pos        
+        // default
+        return ([],pos)
 
 // ===============================================
 // Main Computation
@@ -91,16 +78,14 @@ method main(System.Console sys):
     else:
         // first, read the input file    
         File.Reader file = File.Reader(sys.args[0])
-        string input = String.fromASCII(file.readAll())
-        try:
-            int ntests, int pos = parseInt(0,input)
+        string input = ASCII.fromBytes(file.readAll())
+        int|null ntests, int pos = Parser.parseInt(0,input)
+        if ntests != null:
             int c = 1
             [Job] jobs
             while c <= ntests where pos >= 0:
                 jobs,pos = parseJobs(pos,input)
-                pos = skipWhiteSpace(pos,input)
+                pos = Parser.skipWhiteSpace(pos,input)
                 int time = processJobs(jobs)
-                sys.out.println("Case #" ++ c ++ ": " ++ time)
+                sys.out.println_s("Case #" ++ Int.toString(c) ++ ": " ++ Int.toString(time))
                 c = c + 1
-        catch(SyntaxError e):
-            sys.out.println("error - " ++ e.msg)

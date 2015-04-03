@@ -19,6 +19,27 @@ public function parseInt(nat pos, string input) -> (null|int,nat):
     return Int.parse(input[start..pos]), pos
 
 // ========================================================
+// Parse Ints
+// ========================================================
+
+// Parse list of integers whilst ignoring whitespace
+public function parseInts(string input) -> [int]|null:
+    //    
+    [int] data = []
+    nat pos = skipWhiteSpace(0,input)
+    // first, read data
+    while pos < |input|:
+        int|null i
+        i,pos = parseInt(pos,input)
+        if i != null:
+            data = data ++ [i]
+            pos = skipWhiteSpace(pos,input)
+        else:
+            return null
+    //
+    return data
+
+// ========================================================
 // Parse Real
 // ========================================================
 
@@ -32,6 +53,27 @@ public function parseReal(nat pos, string input) -> (null|real,int):
         return null,pos
     //
     return Real.parse(input[start..pos]),pos
+
+// ========================================================
+// Parse Reals
+// ========================================================
+
+// Parse list of reals whilst ignoring whitespace
+public function parseReals(string input) -> [real]|null:
+    //
+    [real] data = []
+    nat pos = skipWhiteSpace(0,input)
+    // first, read data
+    while pos < |input|:
+        real|null i
+        i,pos = parseReal(pos,input)
+        if i != null:
+            data = data ++ [i]
+            pos = skipWhiteSpace(pos,input)
+        else:
+            return null
+    //
+    return data
 
 // ========================================================
 // SkipWhiteSpace

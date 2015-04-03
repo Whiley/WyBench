@@ -1,7 +1,7 @@
 import * from whiley.io.File
 import * from whiley.lang.System
 import whiley.lang.*
-import * from whiley.lang.Errors
+import * from whiley.lang.Errorsx
 
 import char from whiley.lang.ASCII
 import string from whiley.lang.ASCII
@@ -176,7 +176,7 @@ method main(System.Console sys):
     // third, print output
     int count = 0
     for graph in graphs:
-        sys.out.println("=== Graph #" ++ count ++ " (" ++ |graph| ++ " nodes) ===")
+        sys.out.println_s("=== Graph #" ++ Int.toString(count) ++ " (" ++ Int.toString(|graph|) ++ " nodes) ===")
         count = count + 1
         
         [{int}] sccs = find_components(graph)

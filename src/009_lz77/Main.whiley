@@ -92,13 +92,13 @@ function write_u1([byte] bytes, int u1) -> [byte]:
 method main(System.Console sys):
     File.Reader file = File.Reader(sys.args[0])
     [byte] data = file.readAll()
-    sys.out.println("READ:         " ++ |data| ++ " bytes")
+    sys.out.println_s("READ:         " ++ Int.toString(|data|) ++ " bytes")
     data = compress(data)
-    sys.out.println("COMPRESSED:   " ++ |data| ++ " bytes.")
+    sys.out.println_s("COMPRESSED:   " ++ Int.toString(|data|) ++ " bytes.")
     data = decompress(data)
-    sys.out.println("UNCOMPRESSED: " ++ |data| ++ " bytes")
+    sys.out.println_s("UNCOMPRESSED: " ++ Int.toString(|data|) ++ " bytes")
     sys.out.println("==================================")
-    sys.out.print(String.fromASCII(data))
+    sys.out.print(ASCII.fromBytes(data))
 
 
 
