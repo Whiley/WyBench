@@ -1,7 +1,7 @@
-import * from whiley.io.File
-import * from whiley.lang.System
-import whiley.lang.*
-import * from whiley.lang.Errorsx
+import whiley.io.File
+import whiley.lang.System
+
+import wybench.Parser
 
 import char from whiley.lang.ASCII
 import string from whiley.lang.ASCII
@@ -29,7 +29,7 @@ function addEdge(Digraph g, nat from, nat to) -> Digraph:
 // Parser
 // ============================================
 
-function parseDigraphs(string input) -> [Digraph]:
+function buildDigraphs([int] input) -> [Digraph]:
     //
     [Digraph] graphs = []
     Digraph graph
@@ -39,59 +39,21 @@ function parseDigraphs(string input) -> [Digraph]:
         graphs = graphs ++ [graph]
     return graphs
 
-function parseDigraph(int pos, string input) -> (Digraph,int):
+function parseDigraph(int pos, [int] input) -> (Digraph,int):
     //
     Digraph graph = []
-    bool firstTime = true
+    int numEdges = input[pos]
+    int i = 0
+    pos = pos + 1
     //
-    pos = match("{",pos,input)
-    while pos < |input| && input[pos] != '}':
-        if !firstTime:
-            pos = match(",",pos,input)
-        firstTime=false
-        int|null from
-        from,pos = parseInt(pos,input)
-        pos = match(">",pos,input)
-        int|null to
-        to,pos = parseInt(pos,input)
-        if from != null && to != null:
-            graph = addEdge(graph,from,to)
-    //        
-    pos = match("}",pos,input)    
-    pos = skipWhiteSpace(pos,input) // parse any newline junk
-    return graph,pos
-
-function match(string match, int pos, string input) -> int:
-    //
-    int end = pos + |match|
-    //
-    if end < |input|:
-        string tmp = input[pos..end]
-        if tmp == match:
-            return end
-    //
-    return |input|
-
-function parseInt(int pos, string input) -> (int|null,int):
-    //
-    int start = pos
-    //
-    while pos < |input| && ASCII.isDigit(input[pos]):
+    while i != numEdges:
+        int from = input[pos]
+        int to = input[pos + 1]
+        graph = addEdge(graph,from,to)
         pos = pos + 1
-    //
-    if pos == start:
-        return null,pos
-    else:
-        return Int.parse(input[start..pos]),pos
-
-function skipWhiteSpace(int index, string input) -> int:
-    //
-    while index < |input| && isWhiteSpace(input[index]):
-        index = index + 1
-    return index
-
-function isWhiteSpace(char c) -> bool:
-    return c == ' ' || c == '\t' || c == '\n' || c == '\r'
+        i = i + 1
+    //        
+    return graph,pos
 
 // ============================================
 // PEA_FIND_SCC1
@@ -171,23 +133,26 @@ function visit(int v, State s) -> State:
 method main(System.Console sys):
     File.Reader file = File.Reader(sys.args[0])
     string input = ASCII.fromBytes(file.readAll())
-    
-    [Digraph] graphs = parseDigraphs(input)
-    // third, print output
-    int count = 0
-    for graph in graphs:
-        sys.out.println_s("=== Graph #" ++ Int.toString(count) ++ " (" ++ Int.toString(|graph|) ++ " nodes) ===")
-        count = count + 1
-        
-        [{int}] sccs = find_components(graph)
-        for scc in sccs:
-            sys.out.print("{")
-            bool firstTime=true
-            for v in scc:
-                if !firstTime:
-                    sys.out.print(",")
-                firstTime=false
-                sys.out.print(v)
-            sys.out.print("}")
-        //        
-        sys.out.println("")
+    [int]|null data = Parser.parseInts(input)
+    if data == null:
+        sys.out.println_s("error parsing input")
+    else:
+        [Digraph] graphs = buildDigraphs(data)
+        // third, print output
+        int count = 0
+        for graph in graphs:
+            sys.out.println_s("=== Graph #" ++ Int.toString(count) ++ " (" ++ Int.toString(|graph|) ++ " nodes) ===")
+            count = count + 1
+            
+            [{int}] sccs = find_components(graph)
+            for scc in sccs:
+                sys.out.print("{")
+                bool firstTime=true
+                for v in scc:
+                    if !firstTime:
+                        sys.out.print(",")
+                    firstTime=false
+                    sys.out.print(v)
+                sys.out.print("}")
+            //        
+            sys.out.println("")
