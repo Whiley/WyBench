@@ -77,60 +77,18 @@ ensures C.width == B.width && C.height == A.height:
     //
     return Matrix(B.width,A.height,C_data)
 
-// ========================================================
-// Parser Code
-// ========================================================
-
-function parseFile(string input) -> (Matrix|null,Matrix|null):
-    Matrix|null A // 1st result
-    Matrix|null B // 2nd result
-    [int]|null data, int pos = parseLine(2,0,input)
-    if data != null:
-        int nrows = data[0]
-        int ncols = data[1]
-        pos = skipBreak(pos,input)
-        A,pos = parseMatrix(nrows,ncols,pos,input)
-        pos = skipBreak(pos,input)
-        B,pos = parseMatrix(nrows,ncols,pos,input)
-        return A,B
-    else:
-        return null,null
-
-function parseMatrix(nat height, nat width, int pos, string input) -> (Matrix|null,int):
+function buildMatrix(nat width, nat height, [int] data, int pos) -> Matrix
+requires |data| > pos + (width * height):
     //
     [[int]] rows = []
-    [int]|null row
     //
-    for i in 0 .. height:
-        row,pos = parseLine(width,pos,input)
-        if row != null:
-            rows = rows ++ [row]
-        else:
-            return null,pos
+    int i = 0
+    while i < height:
+        rows = rows ++ [data[pos .. (pos+width)]] 
+        i = i + 1
+        pos = pos + width
     //
-    return Matrix(width,height,rows),pos
-
-function parseLine(int count, int pos, string input) -> ([int]|null,int):
-    //
-    pos = Parser.skipWhiteSpace(pos,input)
-    [int] ints = []
-    int|null i
-    //
-    while pos < |input| && |ints| != count:
-        i,pos = Parser.parseInt(pos,input)
-        if i is null:
-            return null,pos
-        else:
-            ints = ints ++ [i]
-            pos = Parser.skipWhiteSpace(pos,input)
-    //
-    return ints,pos
-
-function skipBreak(int index, string input) -> int:
-    while index < |input| && input[index] == '-':
-        index = index + 1
-    //
-    return Parser.skipWhiteSpace(index,input)
+    return Matrix(width,height,rows)
 
 // ========================================================
 // Main
@@ -140,23 +98,31 @@ method printMat(System.Console sys, Matrix A):
     for i in 0 .. A.height:
         for j in 0 .. A.width:
             sys.out.print(A.data[i][j])
-            sys.out.print(" ")
-        sys.out.println("")
+            sys.out.print_s(" ")
+        sys.out.println_s("")
 
 method main(System.Console sys):
     if |sys.args| == 0:
-        sys.out.println("usage: matrix <input-file>")
+        sys.out.println_s("usage: matrix <input-file>")
     else:
         File.Reader file = File.Reader(sys.args[0])
         // first, read data
         string input = ASCII.fromBytes(file.readAll())
-        // second, build the matrices
-        Matrix|null A, Matrix|null B = parseFile(input)
-        if A != null && B != null:            
-            // third, run the benchmark
-            Matrix C = multiply(A,B)
-            // finally, print the result!
-            printMat(sys,C)
+        [int]|null data = Parser.parseInts(input)
+        if data == null || |data| < 2:
+            sys.out.println_s("error reading file")
         else:
-            sys.out.println("Error reading file")
-
+            int width = data[0]
+            int height = data[1]
+            int size = width*height
+            if(|data| != 2+(size * 2)): 
+                sys.out.println_s("file geometry incorrect")           
+            else:
+                // second, build the matrices
+                Matrix A = buildMatrix(width,height,data,2)
+                Matrix B = buildMatrix(width,height,data,2+(width*height))
+                // third, run the benchmark
+                Matrix C = multiply(A,B)
+                // finally, print the result!
+                printMat(sys,C)
+          
