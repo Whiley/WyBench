@@ -1,4 +1,4 @@
-
+b
 a
 a
 b
@@ -6,9 +6,9 @@ b
 a
 1
 d
-abc xyz
-abc xyx
-
+abcxyz
+abcxyx
+b
 .
 aa
 .
@@ -16,20 +16,20 @@ abc
 ....
 abc
 ..
-abc xyz
-acb..yz
+abcxyz
+acb.yz
 a
 b*
 abc
 ab*
 abc
 a*c
-abc xyz
+abcxyz
 a.*yx
-abc xyz
-.*ab xyz
-abc xyz
-abc z*
+abcxyz
+.*abxyz
+abcxyz
+abcz*
 ba
 ^a
 ab
@@ -38,23 +38,23 @@ ba
 ^a$
 ab
 ^a$
-aabc xyz
-^abc xyz
-abc xyzz
-abc xyz$
-aabc xyz
-^abc xyz$
-abc xyzz
-^abc xyz$
-aabc xyz
+aabcxyz
+^abcxyz
+abcxyzz
+abcxyz$
+aabcxyz
+^abcxyz$
+abcxyzz
+^abcxyz$
+aabcxyz
 ^abc
-abc xyzz
+abcxyzz
 xyz$
-
+x
 ^.
-
+x
 .$
-
+x
 ^.$
 b
 ^a*$
@@ -64,79 +64,79 @@ ab
 aa*$
 ab
 ^aa*$
-aabc xyz
+aabcxyz
 ^ab.*
-abc xyz
+abcxyz
 ab.*c$
-aabc xyz
+aabcxyz
 ^ab.*$
-abc xyzz
+abcxyzz
 ^ab.*$
-abc xyz
+abcxyz
 .*xy$
-abc xyz
+abcxyz
 ^.*xy$
-
+x
 a
-
+x
 a
 abc
 abc
-abc xyz
-abc xyz
+abcxyz
+abcxyz
 a
 .
 z
 .
 abc
 ...
-abc xyz
-.......
-
+abcxyz
+......
+x
 .*
 a
 .*
 abc
 .*
-abc xyz
+abcxyz
 .*
-
+x
 .*.*
 a
 .*.*
 abc
 .*.*
-abc xyz
+abcxyz
 .*.*
-
+x
 .*.*.*.*.*.*.*.*
 a
 .*.*.*.*.*.*.*.*
 abc
 .*.*.*.*.*.*.*.*
-abc xyz
+abcxyz
 .*.*.*.*.*.*.*.*
 abc
 .*..
-abc xyz
+abcxyz
 .*.
 abc
 .*.
-abc xyz
+abcxyz
 .*..
 abc
 .*...
-abc xyz
+abcxyz
 .*...
-abc xyz
+abcxyz
 .*..*..
-abc xyz
+abcxyz
 .*..*..*
-
+x
 ^
-
+x
 $
-
+x
 ^$
 a
 ^a
@@ -144,15 +144,15 @@ a
 a$
 a
 ^a$
-abc xyz
-^abc xyz
-abc xyz
-abc xyz$
-abc xyz
-^abc xyz$
-abc xyz
+abcxyz
+^abcxyz
+abcxyz
+abcxyz$
+abcxyz
+^abcxyz$
+abcxyz
 ^abc
-abc xyz
+abcxyz
 xyz$
 a
 ^.
@@ -160,13 +160,13 @@ a
 .$
 a
 ^.$
-
+x
 ^.*
-
+x
 .*$
-
+x
 ^.*$
-
+x
 ^a*$
 a
 ^.*
@@ -188,15 +188,15 @@ a
 a*a$
 a
 ^a*a$
-abc xyz
+abcxyz
 ^ab.*
-abc xyz
+abcxyz
 ab.*$
-abc xyz
+abcxyz
 ^ab.*$
-abc xyz
+abcxyz
 ^.*xy
-abc xyz
+abcxyz
 .*xyz$
-abc xyz
+abcxyz
 ^.*xyz$

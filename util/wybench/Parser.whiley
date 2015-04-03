@@ -6,7 +6,7 @@ import string from whiley.lang.ASCII
 public type nat is (int x) where x >= 0
 
 // ========================================================
-// Parse Int
+// Parse Ints
 // ========================================================
 
 public function parseInt(nat pos, string input) -> (null|int,nat):
@@ -17,10 +17,6 @@ public function parseInt(nat pos, string input) -> (null|int,nat):
     if pos == start:
         return null,pos
     return Int.parse(input[start..pos]), pos
-
-// ========================================================
-// Parse Ints
-// ========================================================
 
 // Parse list of integers whilst ignoring whitespace
 public function parseInts(string input) -> [int]|null:
@@ -40,7 +36,7 @@ public function parseInts(string input) -> [int]|null:
     return data
 
 // ========================================================
-// Parse Real
+// Parse Reals
 // ========================================================
 
 public function parseReal(nat pos, string input) -> (null|real,int):
@@ -53,10 +49,6 @@ public function parseReal(nat pos, string input) -> (null|real,int):
         return null,pos
     //
     return Real.parse(input[start..pos]),pos
-
-// ========================================================
-// Parse Reals
-// ========================================================
 
 // Parse list of reals whilst ignoring whitespace
 public function parseReals(string input) -> [real]|null:
@@ -72,6 +64,30 @@ public function parseReals(string input) -> [real]|null:
             pos = skipWhiteSpace(pos,input)
         else:
             return null
+    //
+    return data
+
+// ========================================================
+// Parse Strings
+// ========================================================
+
+public function parseString(nat pos, string input) -> (string,nat):
+    nat start = pos
+    while pos < |input| && !isWhiteSpace(input[pos]):
+        pos = pos + 1
+    return input[start..pos],pos
+
+// Parse list of reals whilst ignoring whitespace
+public function parseStrings(string input) -> [string]:
+    //
+    [string] data = []
+    nat pos = skipWhiteSpace(0,input)
+    // first, read data
+    while pos < |input|:
+        string s
+        s,pos = parseString(pos,input)
+        data = data ++ [s]
+        pos = skipWhiteSpace(pos,input)
     //
     return data
 

@@ -1,8 +1,9 @@
 import whiley.lang.*
-import * from whiley.lang.System
-import * from whiley.io.File
+import whiley.lang.System
+import whiley.io.File
 
-import nat from whiley.lang.Int
+import wybench.Parser
+
 import char from whiley.lang.ASCII
 import string from whiley.lang.ASCII
 
@@ -47,30 +48,22 @@ function matchStar(char c, string regex, string text) -> bool:
         return true
     return false
 
-function readLine(nat pos, string input) -> (string,nat):
-    int start = pos
-    while pos < |input| && input[pos] != '\n' && input[pos] != '\r' where pos >= 0:
-        pos = pos + 1
-    string line = input[start..pos]
-    pos = pos + 1
-    if pos < |input| && input[pos] == '\n':
-        pos = pos + 1
-    return line,pos
-
 public method main(System.Console sys):
     if |sys.args| == 0:
         sys.out.println_s("usage: regex <input-file>")
     else:
         File.Reader file = File.Reader(sys.args[0])
         string input = ASCII.fromBytes(file.readAll())
-        string text, string regex
-        int pos = 0
+        [string] data = Parser.parseStrings(input)
+        int i = 0
         int nmatches = 0
         int total = 0
-        while pos < |input| where pos >= 0:
-            text,pos = readLine(pos,input)        
-            regex,pos = readLine(pos,input)
+        while (i+1) < |data| where i >= 0:
+            string text = data[i]
+            string regex = data[i+1]
             if match(regex,text):
                 nmatches = nmatches + 1
             total = total + 1
+            i = i + 2
+        //
         sys.out.println_s("Matched " ++ Int.toString(nmatches) ++ " / " ++ Int.toString(total) ++ " inputs.")
