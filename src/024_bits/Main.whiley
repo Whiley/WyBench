@@ -3,6 +3,7 @@
 // http://www.youtube.com/watch?v=P2durYFsJSA
 //
 
+import string from whiley.lang.ASCII
 
 /**
  * Convert a bit sequence into a integer in the usual manner.  
@@ -88,7 +89,7 @@ method main(System.Console console):
     int i = 0
     //
     while i < 16:
-        console.out.println(toString(bits,4) ++ " = " ++ value(bits))
+        console.out.println_s(toString(bits,4) ++ " = " ++ Int.toString(value(bits)))
         bits = increment(bits)
         i = i + 1
     //
