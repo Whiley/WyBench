@@ -3,6 +3,9 @@
 <project name="BuildConfig">
   <property environment="env"/>
   <property name="wyc.verification" value="false"/>
+  <property name="input" value=""/>
+  <property name="main" value="Main"/>
+
   <property name="wyjc.jar" value="${env.WYBENCH_HOME}/lib/wyjc-all-v0.3.33.jar"/>
   <property name="wyrt.jar" value="${env.WYBENCH_HOME}/lib/wyrt-v0.3.33.jar"/>
   <property name="wybench.jar" value="${env.WYBENCH_HOME}/lib/wybench.jar"/>

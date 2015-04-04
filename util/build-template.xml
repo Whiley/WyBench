@@ -7,6 +7,14 @@
     <javac debug="true" srcdir="." includeantruntime="false" includes="**/*.java" classpath=".:${wyjc.jar}"/> 
   </target>
 
+  <target name="run">
+    <echo message="RUNNING: ${ant.project.name}"/>
+    <echo message="==================================="/>
+    <java classpath="${wybench.jar}:${wyjc.jar}:." classname="${main}">
+      <arg value="${input}"/>
+    </java>
+  </target>
+
   <target name="clean">
     <echo message="CLEANING: ${ant.project.name}"/>
     <echo message="==================================="/>
