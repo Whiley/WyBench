@@ -1,3 +1,5 @@
+import string from whiley.lang.ASCII
+
 constant JAN is 1
 constant FEB is 2
 constant MAR is 3
@@ -17,6 +19,8 @@ constant month is {
     JAN,FEB,MAR,APR,MAY,JUN,
     JUL,AUG,SEP,OCT,NOV,DEC
 }
+
+type month is (int x) where JAN <= x && x <= DEC
 
 // =================================================
 // Date
@@ -65,7 +69,7 @@ function next(Date date) -> Date:
     return date
 
 function toString(Date date) -> string:
-    return date.day ++ "/" ++ date.month ++ "/" ++ date.year
+    return Int.toString(date.day) ++ "/" ++ Int.toString(date.month) ++ "/" ++ Int.toString(date.year)
 
 // =================================================
 // Test Harness
@@ -75,5 +79,5 @@ method main(System.Console console):
     Date start = Date(1,JAN,2000)
     Date end = Date(6,JAN,2013)
     while start != end:
-        console.out.println(toString(start))    
+        console.out.println_s(toString(start))    
         start = next(start)
