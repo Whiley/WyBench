@@ -64,23 +64,19 @@ method lookFor(System.Console console, sortedList list, int item):
 constant searchTerms is [1,2,3,4,5,6,7,8,9]
 
 method main(System.Console sys):
+    // first, read data
     File.Reader file = File.Reader(sys.args[0])
     ASCII.string input = ASCII.fromBytes(file.readAll())
-    [int] data = []
-    int pos = Parser.skipWhiteSpace(0,input)
-    // first, read data
-    while pos < |input|:
-        int|null i
-        i,pos = Parser.parseInt(pos,input)
-        if i != null:
-            data = data ++ [i]
-            pos = Parser.skipWhiteSpace(pos,input)
-        else:
-            sys.out.println_s("Error parsing input")
-            return
-    // second, sort data    
-    data = sort(data)
-    // third, print output
-    sys.out.print_s("SORTED: " ++ Any.toString(data))
-    for i in searchTerms:
-        lookFor(sys,data,i)
+    [int]|null data = Parser.parseInts(input)
+    // second, sort data
+    if data != null:
+        data = sort(data)
+        // third, print output
+        sys.out.print_s("SORTED: " ++ Any.toString(data))
+        int i = 0
+        while i < |searchTerms|:
+            lookFor(sys,data,i)
+            i = i + 1
+    else:
+        sys.out.println_s("Error parsing input")
+
