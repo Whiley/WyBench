@@ -1,3 +1,5 @@
+import string from whiley.lang.ASCII
+
 // the British interpretation of traffic lights!
 type TrafficLights is {
     bool red,
@@ -49,12 +51,12 @@ function toString(TrafficLights ls) -> string:
 
 public method main(System.Console console):
     TrafficLights lights = TrafficLights()
-    console.out.println(toString(lights))
+    console.out.println_s(toString(lights))
     lights = change(lights)
-    console.out.println(toString(lights))
+    console.out.println_s(toString(lights))
     lights = change(lights)
-    console.out.println(toString(lights))
+    console.out.println_s(toString(lights))
     lights = change(lights)
-    console.out.println(toString(lights))
+    console.out.println_s(toString(lights))
     lights = change(lights)
-    console.out.println(toString(lights))
+    console.out.println_s(toString(lights))
