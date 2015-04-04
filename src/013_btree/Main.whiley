@@ -1,4 +1,4 @@
-import println from whiley.lang.System
+import string from whiley.lang.ASCII
 
 // A Binary Search Tree where elements are stored in sorted order.
 // That is, given a node n then we have the following invariant:
@@ -134,7 +134,7 @@ public function toString(Tree tree) -> string:
     if tree == null:
         return "null"
     else:
-        return "(" ++ tree.data ++ ", " ++
+        return "(" ++ Int.toString(tree.data) ++ ", " ++
                  toString(tree.left) ++ ", " ++
                  toString(tree.right) ++ ")"
 
