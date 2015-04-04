@@ -1,4 +1,4 @@
-import println from whiley.lang.System
+import string from whiley.lang.ASCII
 
 // A simple fixed-size cyclic buffer supporting read and write
 // operations.
@@ -84,7 +84,7 @@ public function toString(Buffer b) -> string:
             r = r ++ "<"
         if i == b.wpos:
             r = r ++ ">"
-        r = r ++ b.data[i]
+        r = r ++ Int.toString(b.data[i])
     return r ++ "]"
 
 constant ITEMS is [5,4,6,3,7,2,8,1,9,10,0]
@@ -93,8 +93,8 @@ method main(System.Console console):
     int i = 0
     Buffer buf = Buffer(10)
     //
-    console.out.println("INIT: " ++ toString(buf))
-
+    console.out.println_s("INIT: " ++ toString(buf))
+    
     // NOTE: following loop invariant should not be necessary!  It is
     // needed because the verifier doesn't current enforce the
     // variables declared invariants.
@@ -104,13 +104,14 @@ method main(System.Console console):
         where buf.wpos >= 0 && buf.wpos < |buf.data|:
         //
         if isFull(buf):
-            console.out.println("BUFFER FULL")
+            console.out.println_s("BUFFER FULL")
             break
         buf = write(buf,ITEMS[i])
-        console.out.println("WROTE: " ++ ITEMS[i] ++ ", " ++ toString(buf))
+        console.out.println_s("WROTE: " ++ Int.toString(ITEMS[i]) ++ ", " ++ toString(buf))
         i = i + 1
     //
     int item
+    i = 0
     //
     // NOTE: following loop invariant should not be necessary!  It is
     // needed because the verifier doesn't current enforce the
@@ -121,12 +122,12 @@ method main(System.Console console):
         where buf.wpos >= 0 && buf.wpos < |buf.data|:
         //
         if isEmpty(buf):
-            console.out.println("BUFFER EMPTY")
+            console.out.println_s("BUFFER EMPTY")
             break
         buf,item = read(buf)
         if item == ITEMS[i]:
-            console.out.println("READ: " ++ item ++ ", " ++ toString(buf))
+            console.out.println_s("READ: " ++ Int.toString(item) ++ ", " ++ toString(buf))
         else:
-            console.out.println("ERROR: read " ++ item ++ ", expecting " ++ ITEMS[i])
+            console.out.println_s("ERROR: read " ++ Int.toString(item) ++ ", expecting " ++ Int.toString(ITEMS[i]))
         i = i + 1
     
