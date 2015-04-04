@@ -1,6 +1,0 @@
-<project name="019_subseq" default="compile">  
-
-  <import file="../../config.xml"/> 
-  <import file="../../util/build-template.xml"/>  
-
-</project>
