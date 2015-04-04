@@ -50,20 +50,15 @@ public class JavaMain {
 	}
 
 	public Digraph parse() {
-	    match("{");
 	    Digraph g = new Digraph();
-	    boolean firstTime=true;
-	    while(pos < input.length() && input.charAt(pos) != '}') {
-		if(!firstTime) {
-		    match(",");
-		}
-		firstTime=false;
+	    skipWhiteSpace();
+	    while(pos < input.length() && !isWhiteSpace(input.charAt(pos))) {
 		int from = parseInt();
-		match(">");
+		skipLineSpace();
 		int to = parseInt();
+		skipLineSpace();
 		g.add(from,to);
 	    }
-	    match("}");
 	    return g;
 	}
 
@@ -86,6 +81,26 @@ public class JavaMain {
 	    }
 	    return Integer.parseInt(input.substring(start, pos));
 	}	
+
+	public void skipWhiteSpace() {
+	    while(pos < input.length() && isWhiteSpace(input.charAt(pos))) {
+		pos = pos + 1;
+	    }
+	}
+
+	public void skipLineSpace() {
+	    while(pos < input.length() && isLineSpace(input.charAt(pos))) {
+		pos = pos + 1;
+	    }
+	}
+
+	public boolean isWhiteSpace(char c) {
+	    return c == ' ' || c == '\t' || c == '\n' || c == '\n';
+	}
+
+	public boolean isLineSpace(char c) {
+	    return c == ' ' || c == '\t';
+	}
     }
 
     /**

@@ -29,31 +29,30 @@ function addEdge(Digraph g, nat from, nat to) -> Digraph:
 // Parser
 // ============================================
 
-function buildDigraphs([int] input) -> [Digraph]:
+function buildDigraphs([[int]] input) -> [Digraph]:
     //
     [Digraph] graphs = []
     Digraph graph
-    int pos = 0
-    while pos < |input|:
-        graph,pos = parseDigraph(pos,input)
+    int i = 0
+    while i < |input|:
+        graph = parseDigraph(input[i])
         graphs = graphs ++ [graph]
+        i = i + 1
+    //
     return graphs
 
-function parseDigraph(int pos, [int] input) -> (Digraph,int):
+function parseDigraph([int] input) -> Digraph:
     //
     Digraph graph = []
-    int numEdges = input[pos]
     int i = 0
-    pos = pos + 1
     //
-    while i != numEdges:
-        int from = input[pos]
-        int to = input[pos + 1]
+    while (i+1) < |input|:
+        int from = input[i]
+        int to = input[i + 1]
         graph = addEdge(graph,from,to)
-        pos = pos + 1
-        i = i + 1
+        i = i + 2
     //        
-    return graph,pos
+    return graph
 
 // ============================================
 // PEA_FIND_SCC1
@@ -133,7 +132,7 @@ function visit(int v, State s) -> State:
 method main(System.Console sys):
     File.Reader file = File.Reader(sys.args[0])
     string input = ASCII.fromBytes(file.readAll())
-    [int]|null data = Parser.parseInts(input)
+    [[int]]|null data = Parser.parseIntLines(input)
     if data == null:
         sys.out.println_s("error parsing input")
     else:
@@ -146,13 +145,13 @@ method main(System.Console sys):
             
             [{int}] sccs = find_components(graph)
             for scc in sccs:
-                sys.out.print("{")
+                sys.out.print_s("{")
                 bool firstTime=true
                 for v in scc:
                     if !firstTime:
-                        sys.out.print(",")
+                        sys.out.print_s(",")
                     firstTime=false
                     sys.out.print(v)
-                sys.out.print("}")
+                sys.out.print_s("}")
             //        
-            sys.out.println("")
+            sys.out.println_s("")

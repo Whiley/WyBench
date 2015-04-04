@@ -35,6 +35,28 @@ public function parseInts(string input) -> [int]|null:
     //
     return data
 
+// Parse lines of integers
+public function parseIntLines(string input) -> [[int]]|null:
+    //    
+    [[int]] data = []
+    nat pos = skipWhiteSpace(0,input)
+    // first, read data
+    while pos < |input|:
+        [int] line = []
+        while !isWhiteSpace(input[pos]):
+            int|null i
+            i,pos = parseInt(pos,input)
+            if i != null:
+                line = line ++ [i]
+                pos = skipLineSpace(pos,input)
+            else:
+                return null
+        //
+        data = data ++ [line]
+        pos = skipWhiteSpace(pos,input)
+    //
+    return data
+
 // ========================================================
 // Parse Reals
 // ========================================================
@@ -108,3 +130,21 @@ public function skipWhiteSpace(nat index, string input) -> nat:
 
 public function isWhiteSpace(char c) -> bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
+
+// ========================================================
+// SkipLineSpace
+// ========================================================
+
+public function skipLineSpace(nat index, string input) -> nat:
+    //
+    while index < |input| && isLineSpace(input[index]):
+        index = index + 1
+    //
+    return index
+
+// ========================================================
+// IsLineSpace
+// ========================================================
+
+public function isLineSpace(char c) -> bool:
+    return c == ' ' || c == '\t'
