@@ -1,7 +1,9 @@
 import whiley.lang.*
-import * from whiley.io.File
+import whiley.io.File
 import nat from whiley.lang.Int
-import * from whiley.lang.Char
+import string from whiley.lang.ASCII
+
+import wybench.Parser
 
 function readLine(nat pos, string input) -> (string, nat):
     int start = pos
@@ -13,14 +15,9 @@ function readLine(nat pos, string input) -> (string, nat):
         pos = pos + 1
     return (line, pos)
 
-function skipWhiteSpace(nat index, string input) -> nat:
-    while index < |input| && isWhiteSpace(input[index]) where index >= 0:
-        index = index + 1
-    return index
-
 function getWord(nat pos, string line) -> (string, nat):
     int start = pos
-    while pos < |line| && !isWhiteSpace(line[pos]) where pos >= 0:
+    while pos < |line| && !Parser.isWhiteSpace(line[pos]) where pos >= 0:
         pos = pos + 1
     string word = line[start..pos]
     return (word, pos)
@@ -108,25 +105,25 @@ requires |word0| > 0 && |word1| > 0 && |matrix| == |word1| + 1 && all {ln in mat
 
 method main(System.Console sys):
     if |sys.args| == 0:
-        sys.out.println("usage: eddist <input-file>")
+        sys.out.println_s("usage: eddist <input-file>")
     else:
         File.Reader file = File.Reader(sys.args[0])
-        string input = String.fromASCII(file.readAll())
+        string input = ASCII.fromBytes(file.readAll())
         string line, string word0, string word1
         int fpos = 0
         while fpos < |input| where fpos >= 0:
             line, fpos = readLine(fpos, input)
-            int lpos = skipWhiteSpace(0, line)
+            int lpos = Parser.skipWhiteSpace(0, line)
             word0, lpos = getWord(lpos, line)
-            lpos = skipWhiteSpace(lpos, line)
+            lpos = Parser.skipWhiteSpace(lpos, line)
             word1, lpos = getWord(lpos, line)
             if |word0| > 0 && |word1| > 0:
                 [[Node]] matrix = editdist_calc(word0, word1)
                 string w0, string w1 = editdist_format(matrix, word0, word1)
-                sys.out.print("best match for ")
-                sys.out.print(word0)
-                sys.out.print(" and ")
-                sys.out.print(word1)
-                sys.out.println(":")
-                sys.out.println("\t" ++ w0)
-                sys.out.println("\t" ++ w1)
+                sys.out.print_s("best match for ")
+                sys.out.print_s(word0)
+                sys.out.print_s(" and ")
+                sys.out.print_s(word1)
+                sys.out.println_s(":")
+                sys.out.println_s("\t" ++ w0)
+                sys.out.println_s("\t" ++ w1)
