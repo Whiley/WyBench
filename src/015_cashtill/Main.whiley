@@ -1,3 +1,5 @@
+import string from whiley.lang.ASCII
+
 type nat is (int n) where n >= 0
 
 /**
@@ -138,7 +140,7 @@ function toString(Cash c) -> string:
             if !firstTime:
                 r = r ++ ", "
             firstTime = false
-            r = r ++ amt ++ " x " ++ Descriptions[i]
+            r = r ++ Int.toString(amt) ++ " x " ++ Descriptions[i]
     if r == "":
         r = "(nothing)"
     return r
@@ -159,20 +161,20 @@ constant Descriptions is [
  * of a specified cost using a given amount of cash and a current till.
  */
 public method buy(System.Console console, Cash till, Cash given, int cost) -> Cash:
-    console.out.println("--")
-    console.out.println("Customer wants to purchase item for " ++ cost ++ "c.")
-    console.out.println("Customer gives: " ++ toString(given))
+    console.out.println_s("--")
+    console.out.println_s("Customer wants to purchase item for " ++ Int.toString(cost) ++ "c.")
+    console.out.println_s("Customer gives: " ++ toString(given))
     if total(given) < cost:
-        console.out.println("Customer has not given enough cash!")
+        console.out.println_s("Customer has not given enough cash!")
     else:
         Cash|null change = calculateChange(till,total(given) - cost)
         if change == null:
-            console.out.println("Cash till cannot given exact change!")
+            console.out.println_s("Cash till cannot given exact change!")
         else:
-            console.out.println("Change given: " ++ toString(change))
+            console.out.println_s("Change given: " ++ toString(change))
             till = add(till,given)
             till = subtract(till,change)
-            console.out.println("Till: " ++ toString(till))
+            console.out.println_s("Till: " ++ toString(till))
     return till
 
 /**
@@ -180,7 +182,7 @@ public method buy(System.Console console, Cash till, Cash given, int cost) -> Ca
  */
 public method main(System.Console console):
     Cash till = [5,3,3,1,1,3,0,0]
-    console.out.println("Till: " ++ toString(till))
+    console.out.println_s("Till: " ++ toString(till))
     // now, run through some sequences...
     till = buy(console,till,Cash([ONE_DOLLAR]),85)
     till = buy(console,till,Cash([ONE_DOLLAR]),105)
