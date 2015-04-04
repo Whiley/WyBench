@@ -97,8 +97,8 @@ method main(System.Console sys):
     sys.out.println_s("COMPRESSED:   " ++ Int.toString(|data|) ++ " bytes.")
     data = decompress(data)
     sys.out.println_s("UNCOMPRESSED: " ++ Int.toString(|data|) ++ " bytes")
-    sys.out.println("==================================")
-    sys.out.print(ASCII.fromBytes(data))
+    sys.out.println_s("==================================")
+    sys.out.print_s(ASCII.fromBytes(data))
 
 
 
