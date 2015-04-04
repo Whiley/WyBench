@@ -109,25 +109,25 @@ method main(System.Console console):
     // test inc/dec 
     for i in items:
         if i >= 0:
-            console.out.println("INC(DEC(" ++ i ++ ")) = " ++ inc(dec(i)))
+            console.out.println_s("INC(DEC(" ++ Int.toString(i) ++ ")) = " ++ Int.toString(inc(dec(i))))
     // test abs
     for i in items:
-        console.out.println("ABS(" ++ i ++ ") = " ++ abs(i))
+        console.out.println_s("ABS(" ++ Int.toString(i) ++ ") = " ++ Int.toString(abs(i)))
     // test max
     for i in items:
         for j in items:
-            console.out.println("MAX(" ++ i ++ ", " ++ j ++ ") = " ++ max(i,j))
+            console.out.println_s("MAX(" ++ Int.toString(i) ++ ", " ++ Int.toString(j) ++ ") = " ++ Int.toString(max(i,j)))
     // test min
     for i in items:
         for j in items:
-            console.out.println("MIN(" ++ i ++ ", " ++ j ++ ") = " ++ min(i,j))
+            console.out.println_s("MIN(" ++ Int.toString(i) ++ ", " ++ Int.toString(j) ++ ") = " ++ Int.toString(min(i,j)))
     
     // test sum_1
     items = [90,4,324,23,12,93,73,56872]
-    console.out.println("SUM_1(" ++ items ++ ") = " ++ sum_1(items))
+    console.out.println_s("SUM_1(" ++ Any.toString(items) ++ ") = " ++ Int.toString(sum_1(items)))
     // test sum_2
-    console.out.println("SUM_2(" ++ items ++ ") = " ++ sum_2(items))
+    console.out.println_s("SUM_2(" ++ Any.toString(items) ++ ") = " ++ Int.toString(sum_2(items)))
     // test sum_3
-    console.out.println("SUM_3(" ++ items ++ ") = " ++ sum_3(items))
+    console.out.println_s("SUM_3(" ++ Any.toString(items) ++ ") = " ++ Int.toString(sum_3(items)))
     // test sum_4
-    console.out.println("SUM_3(" ++ items ++ ") = " ++ sum_4(items))
+    console.out.println_s("SUM_3(" ++ Any.toString(items) ++ ") = " ++ Int.toString(sum_4(items)))
