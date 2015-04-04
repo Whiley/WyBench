@@ -1,3 +1,6 @@
+import string from whiley.lang.ASCII
+import char from whiley.lang.ASCII
+
 // Represents a transition from one 
 // state to another for a given character.
 type Transition is {
@@ -78,10 +81,10 @@ method main(System.Console console):
     Trie t = EmptyTrie
     // First, initialise trie    
     for s in ["hello","world","help"]:
-        console.out.println("ADDING: " ++ s)
+        console.out.println_s("ADDING: " ++ s)
         t = add(t,s)   
     // Second, check containment
     for s in ["hello","blah","hel","dave"]:
         bool r = contains(t,s)
-        console.out.println("CONTAINS: " ++ s ++ " = " ++ r)
+        console.out.println_s("CONTAINS: " ++ s ++ " = " ++ Any.toString(r))
     
