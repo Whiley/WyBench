@@ -36,7 +36,7 @@ ensures |xs| > 0 ==> sum(xs) == sum(rs):
 method main(System.Console console):
     [int] l1 = [1,2,3,4]
     [int] l2 = reverse(l1)
-    console.out.println("L1 = " ++ Any.toString(l1))
-    console.out.println("L2 = " ++ Any.toString(l2))
-    console.out.println("SUM(L1) = " ++ Any.toString(sum(l1)))
-    console.out.println("SUM(L2) = " ++ Any.toString(sum(l2)))
+    console.out.println_s("L1 = " ++ Any.toString(l1))
+    console.out.println_s("L2 = " ++ Any.toString(l2))
+    console.out.println_s("SUM(L1) = " ++ Any.toString(sum(l1)))
+    console.out.println_s("SUM(L2) = " ++ Any.toString(sum(l2)))
