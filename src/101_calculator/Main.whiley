@@ -1,5 +1,6 @@
-import * from whiley.io.File
-import SyntaxError from whiley.lang.Errors
+import whiley.io.File
+import string from whiley.lang.ASCII
+import char from whiley.lang.ASCII
 
 // ====================================================
 // A simple calculator for expressions
@@ -11,7 +12,7 @@ constant MUL is 2
 constant DIV is 3
 
 // binary operation
-constant BOp is { ADD, SUB, MUL, DIV }
+type BOp is (int x) where ADD <= x && x <= DIV
 type BinOp is { BOp op, Expr lhs, Expr rhs } 
 
 // variables
@@ -44,21 +45,21 @@ type Stmt is Print | Set
 
 type RuntimeError is { string msg }
 
-function evaluate(Expr e, {string=>Value} env) -> Value
-// Runtime error thrown if evaluation gets "stuck" (e.g. expression is
-// not well-formed)
-throws RuntimeError:
+// Evaluate an expression in a given environment reducing either to a
+// value, or a runtime error.  The latter occurs if evaluation gets
+// "stuck" (e.g. expression is // not well-formed)
+function evaluate(Expr e, {string=>Value} env) -> Value | RuntimeError:
     //
     if e is int:
         return e
     else if e is Var:
         return env[e.id]
     else if e is BinOp:
-        Value lhs = evaluate(e.lhs, env)
-        Value rhs = evaluate(e.rhs, env)
+        Value|RuntimeError lhs = evaluate(e.lhs, env)
+        Value|RuntimeError rhs = evaluate(e.rhs, env)
         // check if stuck
         if !(lhs is int && rhs is int):
-            throw {msg: "arithmetic attempted on non-numeric value"}
+            return {msg: "arithmetic attempted on non-numeric value"}
         // switch statement would be good
         if e.op == ADD:
             return lhs + rhs
@@ -68,21 +69,24 @@ throws RuntimeError:
             return lhs * rhs
         else if rhs != 0:
             return lhs / rhs
-        throw {msg: "divide-by-zero"}
+        return {msg: "divide-by-zero"}
     else if e is [Expr]:
         [Value] r = []
         for i in e:
-            Value v = evaluate(i, env)
-            r = r ++ [v]
+            Value|RuntimeError v = evaluate(i, env)
+            if v is RuntimeError:
+                return v
+            else:
+                r = r ++ [v]
         return r
     else if e is ListAccess:
-        Value src = evaluate(e.src, env)
-        Value index = evaluate(e.index, env)
+        Value|RuntimeError src = evaluate(e.src, env)
+        Value|RuntimeError index = evaluate(e.index, env)
         // santity checks
         if src is [Value] && index is int && index >= 0 && index < |src|:
             return src[index]
         else:
-            throw {msg: "invalid list access"}
+            return {msg: "invalid list access"}
     else:
         return 0 // dead-code
 
@@ -91,10 +95,13 @@ throws RuntimeError:
 // ====================================================
 
 type State is { string input, int pos }
+type SyntaxError is { string msg, int start, int end }
+
+function SyntaxError(string msg, int start, int end) -> SyntaxError:
+    return { msg: msg, start: start, end: end }
 
 // Top-level parse method
-function parse(State st) -> (Stmt,State) 
-throws SyntaxError:
+function parse(State st) -> (Stmt,State)|SyntaxError:
     //
     Var keyword, Var v
     Expr e
@@ -103,93 +110,123 @@ throws SyntaxError:
     keyword,st = parseIdentifier(st)
     switch keyword.id:
         case "print":
-            e,st = parseAddSubExpr(st)
-            return {rhs: e},st
+            any r = parseAddSubExpr(st)
+            if !(r is SyntaxError):
+                e,st = r
+                return {rhs: e},st
+            else:
+                return r // error case
         case "set":
             st = parseWhiteSpace(st)
             v,st = parseIdentifier(st)
-            e,st = parseAddSubExpr(st)
-            return {lhs: v.id, rhs: e},st
+            any r = parseAddSubExpr(st)
+            if !(r is SyntaxError):
+                e,st = r
+                return {lhs: v.id, rhs: e},st
+            else:
+                return r // error case
         default:
-            throw SyntaxError("unknown statement",start,st.pos-1)
+            return SyntaxError("unknown statement",start,st.pos-1)
 
-function parseAddSubExpr(State st) -> (Expr, State) 
-throws SyntaxError:    
+function parseAddSubExpr(State st) -> (Expr, State)|SyntaxError:    
     //
     Expr lhs, Expr rhs      
     // First, pass left-hand side 
-    lhs,st = parseMulDivExpr(st)
-    
+    any r  = parseMulDivExpr(st)
+    //
+    if r is SyntaxError:
+        return r
+    //    
+    lhs,st = r
     st = parseWhiteSpace(st)
     // Second, see if there is a right-hand side
     if st.pos < |st.input| && st.input[st.pos] == '+':
         // add expression
         st.pos = st.pos + 1
-        rhs,st = parseAddSubExpr(st)        
-        return {op: ADD, lhs: lhs, rhs: rhs},st
+        r = parseAddSubExpr(st)        
+        if !(r is SyntaxError):
+            rhs,st = r
+            return {op: ADD, lhs: lhs, rhs: rhs},st
+        else:
+            return r
     else if st.pos < |st.input| && st.input[st.pos] == '-':
         // subtract expression
         st.pos = st.pos + 1
-        (rhs,st) = parseAddSubExpr(st)        
-        return {op: SUB, lhs: lhs, rhs: rhs},st
-    
+        r = parseAddSubExpr(st)        
+        if !(r is SyntaxError):
+            rhs,st = r
+            return {op: SUB, lhs: lhs, rhs: rhs},st
+        else:
+            return r    
     // No right-hand side
     return (lhs,st)
 
-function parseMulDivExpr(State st) -> (Expr, State) 
-throws SyntaxError:    
+function parseMulDivExpr(State st) -> (Expr, State)|SyntaxError:    
+    // First, parse left-hand side
     Expr lhs, Expr rhs
-    // First, pass left-hand side
-    (lhs,st) = parseTerm(st)
-    
+    any r  = parseTerm(st)
+    if r is SyntaxError:
+        return r
+    //
+    lhs,st = r
     st = parseWhiteSpace(st)
     // Second, see if there is a right-hand side
     if st.pos < |st.input| && st.input[st.pos] == '*':
         // add expression
         st.pos = st.pos + 1
-        (rhs,st) = parseMulDivExpr(st)                
-        return {op: MUL, lhs: lhs, rhs: rhs}, st
+        r = parseMulDivExpr(st)   
+        if !(r is SyntaxError):
+            rhs,st = r
+            return {op: MUL, lhs: lhs, rhs: rhs}, st
+        else:
+            return r
     else if st.pos < |st.input| && st.input[st.pos] == '/':
         // subtract expression
         st.pos = st.pos + 1
-        (rhs,st) = parseMulDivExpr(st)        
-        return {op: DIV, lhs: lhs, rhs: rhs}, st
-    
+        r = parseMulDivExpr(st)        
+        if !(r is SyntaxError):
+            rhs,st = r
+            return {op: DIV, lhs: lhs, rhs: rhs}, st
+        else:
+            return r
     // No right-hand side
     return (lhs,st)
 
-function parseTerm(State st) -> (Expr, State) 
-throws SyntaxError:
+function parseTerm(State st) -> (Expr, State)|SyntaxError:
     //
     st = parseWhiteSpace(st)        
     if st.pos < |st.input|:
-        if Char.isLetter(st.input[st.pos]):
+        if ASCII.isLetter(st.input[st.pos]):
             return parseIdentifier(st)
-        else if Char.isDigit(st.input[st.pos]):
+        else if ASCII.isDigit(st.input[st.pos]):
             return parseNumber(st)
         else if st.input[st.pos] == '[':
             return parseList(st)
-    throw SyntaxError("expecting number or variable",st.pos,st.pos)
+    //
+    return SyntaxError("expecting number or variable",st.pos,st.pos)
 
 function parseIdentifier(State st) -> (Var, State):
     //
     string txt = ""
     // inch forward until end of identifier reached
-    while st.pos < |st.input| && Char.isLetter(st.input[st.pos]):
-        txt = txt ++ st.input[st.pos]
+    while st.pos < |st.input| && ASCII.isLetter(st.input[st.pos]):
+        txt = txt ++ [st.input[st.pos]]
         st.pos = st.pos + 1
     return ({id:txt}, st)
 
-function parseNumber(State st) -> (Expr, State) 
-throws SyntaxError:    
+function parseNumber(State st) -> (Expr, State)|SyntaxError:    
     // inch forward until end of identifier reached
     int start = st.pos
-    while st.pos < |st.input| && Char.isDigit(st.input[st.pos]):
+    while st.pos < |st.input| && ASCII.isDigit(st.input[st.pos]):
         st.pos = st.pos + 1    
-    return Int.parse(st.input[start..st.pos]), st
+    //
+    int|null iv = Int.parse(st.input[start..st.pos])
+    if iv == null:
+        return SyntaxError("Error parsing number",start,st.pos)
+    else:
+        return iv, st
 
-function parseList(State st) -> (Expr, State) 
-throws SyntaxError:    
+function parseList(State st) -> (Expr, State)|SyntaxError:    
     //
     st.pos = st.pos + 1 // skip '['
     st = parseWhiteSpace(st)
@@ -197,21 +234,25 @@ throws SyntaxError:
     bool firstTime = true
     while st.pos < |st.input| && st.input[st.pos] != ']':
         if !firstTime && st.input[st.pos] != ',':
-            throw SyntaxError("expecting comma",st.pos,st.pos)
+            return SyntaxError("expecting comma",st.pos,st.pos)
         else if !firstTime:
             st.pos = st.pos + 1 // skip ','
         firstTime = false
-        Expr e
-        e,st = parseAddSubExpr(st)
-        // perform annoying error check    
-        l = l ++ [e]
-        st = parseWhiteSpace(st)
+        any r = parseAddSubExpr(st)
+        if r is SyntaxError:
+            return r
+        else:
+            Expr e
+            e,st = r
+            // perform annoying error check    
+            l = l ++ [e]
+            st = parseWhiteSpace(st)
     st.pos = st.pos + 1
     return l,st
  
 // Parse all whitespace upto end-of-file
 function parseWhiteSpace(State st) -> State:
-    while st.pos < |st.input| && Char.isWhiteSpace(st.input[st.pos]):
+    while st.pos < |st.input| && ASCII.isWhiteSpace(st.input[st.pos]):
         st.pos = st.pos + 1
     return st
 
@@ -224,22 +265,24 @@ public method main(System.Console sys):
         sys.out.println("no parameter provided!")
     else:
         File.Reader file = File.Reader(sys.args[0])
-        string input = String.fromASCII(file.readAll())
+        string input = ASCII.fromBytes(file.readAll())
         
-        try:
-            {string=>Value} env = {"$"=>0} 
-            State st = {pos: 0, input: input}
-            while st.pos < |st.input|:
-                Stmt s
-                Value r
-                s,st = parse(st)
-                r = evaluate(s.rhs,env)
-                if s is Set:
-                    env[s.lhs] = r
-                else:
-                    sys.out.println(r)
-                st = parseWhiteSpace(st)
-        catch(RuntimeError e1):
-            sys.out.println("runtime error: " ++ e1.msg)
-        catch(SyntaxError e2):
-            sys.out.println("syntax error: " ++ e2.msg)
+        {string=>Value} env = {"$"=>0} 
+        State st = {pos: 0, input: input}
+        while st.pos < |st.input|:
+            Stmt s
+            any r = parse(st)
+            if r is SyntaxError:
+                sys.out.println("syntax error: " ++ r.msg)  
+                return
+            s,st = r
+            Value|RuntimeError v = evaluate(s.rhs,env)
+            if v is RuntimeError:
+                sys.out.println("runtime error: " ++ v.msg) 
+                return
+            if s is Set:
+                env[s.lhs] = v
+            else:
+                sys.out.println(r)
+            st = parseWhiteSpace(st)
+            
