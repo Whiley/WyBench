@@ -42,14 +42,14 @@ public class BoardAdaptor {
 	BigInteger c = BigInteger.valueOf(col);
 	BigInteger r = BigInteger.valueOf(row);
 	WyRecord square = Minesweeper.getSquare(state,c,r);
-	return (Boolean) square.get("holdsBomb");
+	return ((WyBool) square.get("holdsBomb")) == WyBool.TRUE;
     }
 
     public boolean isFlagged(int col, int row) {
 	BigInteger c = BigInteger.valueOf(col);
 	BigInteger r = BigInteger.valueOf(row);
 	WyRecord square = Minesweeper.getSquare(state,c,r);
-	return (Boolean) square.get("flagged");
+	return ((WyBool) square.get("flagged")) == WyBool.TRUE;
     }
 
     public void exposeSquare(int col, int row) {
@@ -79,7 +79,7 @@ public class BoardAdaptor {
 	    for(int y=0;y!=getWidth();++y) {
 		int i = x + (y * getWidth());
 		if(bombs.get(i)) {
-		    WyRecord sq = Minesweeper.HiddenSquare(true,false);		    
+		    WyRecord sq = Minesweeper.HiddenSquare(WyBool.TRUE,WyBool.FALSE);		    
 		    state = Minesweeper.setSquare(state,BigInteger.valueOf(x),BigInteger.valueOf(y),sq);
 		}
 	    }
