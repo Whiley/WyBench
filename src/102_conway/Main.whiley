@@ -1,8 +1,9 @@
 import whiley.lang.*
 import whiley.io.File
-import * from whiley.lang.Errors
-
+import string from whiley.lang.ASCII
 import nat from whiley.lang.Int
+
+import wybench.Parser
 
 // ============================================
 // Game Logic
@@ -102,88 +103,57 @@ function isAlive(Board board, int row, int col) -> int:
 // Parser
 // ============================================
 
-function parseConfig(string input) -> (Board,int) 
-throws SyntaxError:
+function parseConfig([int] data) -> (Board,int):
     //
-    int niters, int pos = parseInt(0,input)
-    int cols, int rows, int col, int row
-    //
-    pos = skipWhiteSpace(pos,input)
-    cols,rows,pos = parsePair(input,pos,'x')
+    int niters = data[0]
+    int cols = data[1]
+    int rows = data[2]
     Board board = Board(cols,rows)
-    while pos < |input|:
-        col,row,pos = parsePair(input,pos,',')
-        board.cells[row][col]=true
+    int i = 3
+    while i < |data|:
+        int col = data[i]
+        int row = data[i+1]
+        board.cells[row][col] = true
+        i = i + 2
+    //
     return board,niters
-
-function parsePair(string input, int pos, char sep) -> (int,int,int)
-throws SyntaxError:
-    //
-    int first, int second
-    //
-    pos = skipWhiteSpace(pos,input)
-    first,pos = parseInt(pos,input)
-    pos = skipWhiteSpace(pos,input)
-    if pos < |input|:
-        if input[pos] == sep:
-            pos=pos+1
-        else:
-            throw SyntaxError("expected '" ++ sep ++ "', found '" ++ input[pos] ++ "'",pos,pos+1)
-    else:
-        throw SyntaxError("unexpected end of file",pos,pos+1)
-    pos = skipWhiteSpace(pos,input)
-    second,pos = parseInt(pos,input)
-    pos = skipWhiteSpace(pos,input)
-    return first,second,pos
-
-function parseInt(int pos, string input) -> (int,int) 
-throws SyntaxError:
-    //
-    int start = pos
-    while pos < |input| && Char.isDigit(input[pos]):
-        pos = pos + 1
-    if pos == start:
-        throw SyntaxError("Missing number",pos,pos)
-    return Int.parse(input[start..pos]),pos
-
-function skipWhiteSpace(int index, string input) -> int:
-    while index < |input| && isWhiteSpace(input[index]):
-        index = index + 1
-    return index
-
-function isWhiteSpace(char c) -> bool:
-    return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
 // ============================================
 // Main
 // ============================================
 
 method main(System.Console sys):
+    // First, parse input file
     File.Reader file = File.Reader(sys.args[0])
-    string input = String.fromASCII(file.readAll())
-    try:
-        Board board, int niters = parseConfig(input)
-        for i in 0..niters:
+    string input = ASCII.fromBytes(file.readAll())
+    [int]|null data = Parser.parseInts(input)
+    // Second, construct and iterate board
+    if data != null:
+        Board board, int niters = parseConfig(data)
+        int i = 0
+        while i < niters:
             printBoard(sys,board)
             board = update(board)
-    catch(SyntaxError e):
-        sys.out.println("error: " ++ e.msg)
+            i = i + 1
+        //
+    else:
+        sys.out.println_s("error parsing file")
 
 method printBoard(System.Console sys, Board board):
     int ncols = board.width
-    sys.out.print("+")
+    sys.out.print_s("+")
     for i in 0..ncols:
-        sys.out.print("-")
-    sys.out.println("+")
+        sys.out.print_s("-")
+    sys.out.println_s("+")
     for row in board.cells:
-        sys.out.print("|")
+        sys.out.print_s("|")
         for cell in row:
             if cell:
-                sys.out.print("#")
+                sys.out.print_s("#")
             else:
-                sys.out.print(" ")
-        sys.out.println("|")
-    sys.out.print("+")
+                sys.out.print_s(" ")
+        sys.out.println_s("|")
+    sys.out.print_s("+")
     for i in 0..ncols:
-        sys.out.print("-")
-    sys.out.println("+")
+        sys.out.print_s("-")
+    sys.out.println_s("+")
