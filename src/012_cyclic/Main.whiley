@@ -1,3 +1,5 @@
+import whiley.lang.Int
+import whiley.lang.System
 import string from whiley.lang.ASCII
 
 // A simple fixed-size cyclic buffer supporting read and write

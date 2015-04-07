@@ -1,3 +1,7 @@
+import whiley.lang.System
+import whiley.lang.Int
+import whiley.lang.Any
+
 // Some simple mathematical functions
 
 type nat is (int x) where x >= 0

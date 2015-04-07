@@ -1,3 +1,4 @@
+import whiley.lang.System
 import string from whiley.lang.ASCII
 
 // the British interpretation of traffic lights!

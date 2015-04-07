@@ -1,5 +1,7 @@
 package wybench
 
+import whiley.lang.Int
+import whiley.lang.Real
 import char from whiley.lang.ASCII
 import string from whiley.lang.ASCII
 

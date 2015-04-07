@@ -3,6 +3,8 @@
 // http://www.youtube.com/watch?v=P2durYFsJSA
 //
 
+import whiley.lang.System
+import whiley.lang.Int
 import string from whiley.lang.ASCII
 
 /**

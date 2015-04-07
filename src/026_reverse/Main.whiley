@@ -1,3 +1,6 @@
+import whiley.lang.System
+import whiley.lang.Any
+
 // Sum over the elements of a list
 function sum([int] xs) -> (int r)
 requires |xs| > 0

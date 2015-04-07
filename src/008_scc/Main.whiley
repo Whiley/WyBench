@@ -1,10 +1,14 @@
-import whiley.io.File
 import whiley.lang.System
+import whiley.lang.Math
+import whiley.lang.List
+import whiley.lang.Stack
+import whiley.lang.Int
+import whiley.io.File
+import char from whiley.lang.ASCII
+import string from whiley.lang.ASCII
 
 import wybench.Parser
 
-import char from whiley.lang.ASCII
-import string from whiley.lang.ASCII
 type nat is (int x) where x >= 0
 
 // ============================================

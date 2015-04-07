@@ -1,3 +1,5 @@
+import whiley.lang.System
+import whiley.lang.Any
 import string from whiley.lang.ASCII
 import char from whiley.lang.ASCII
 

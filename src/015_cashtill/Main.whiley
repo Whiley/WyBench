@@ -1,3 +1,5 @@
+import whiley.lang.System
+import whiley.lang.Int
 import string from whiley.lang.ASCII
 
 type nat is (int n) where n >= 0

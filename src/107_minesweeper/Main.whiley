@@ -1,3 +1,6 @@
+import whiley.lang.System
+import whiley.lang.Int
+
 import * from Minesweeper
 
 type Move is {

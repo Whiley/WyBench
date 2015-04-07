@@ -1,3 +1,5 @@
+import whiley.lang.System
+import whiley.lang.Int
 import string from whiley.lang.ASCII
 
 // A Binary Search Tree where elements are stored in sorted order.

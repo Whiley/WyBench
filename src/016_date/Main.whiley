@@ -1,3 +1,5 @@
+import whiley.lang.System
+import whiley.lang.Int
 import string from whiley.lang.ASCII
 
 constant JAN is 1
