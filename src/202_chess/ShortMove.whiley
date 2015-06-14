@@ -16,10 +16,10 @@ public type ShortCheckMove is { ShortMove check }
 public type ShortMove is ShortSingleMove | ShortCheckMove | CastleMove
 public type ShortRound is (ShortMove,ShortMove|null)
 
-public function Simple(Piece piece, ShortPos from, Pos to, bool isTake) => ShortSingleMove:
+public function Simple(Piece piece, ShortPos from, Pos to, bool isTake) -> ShortSingleMove:
     return {piece: piece, from: from, to: to, isTake: isTake}
 
-public function Check(ShortMove move) => ShortCheckMove:
+public function Check(ShortMove move) -> ShortCheckMove:
     return {check: move}
 
 // =============================================================
@@ -27,39 +27,39 @@ public function Check(ShortMove move) => ShortCheckMove:
 // =============================================================
 
 public type Invalid is { ShortMove move, Board board }
-public function Invalid(Board b, ShortMove m) => Invalid:
+public function Invalid(Board b, ShortMove m) -> Invalid:
     return { board: b, move: m }
 
 // =============================================================
 // Move dispatch
 // =============================================================
 
-public function apply(ShortMove move, Board board) => Board
-throws Move.Invalid|Invalid:
+public function apply(ShortMove move, Board board) -> Board|null:
     //
-    Move m = inferMove(move,board)
-    return applyMove(m,board)
+    Move|null m = inferMove(move,board)
+    if m != null:
+        return applyMove(m,board)
+    else:
+        return null
 
 // =============================================================
 // Move inference
 // =============================================================
 
-public function inferMove(ShortMove m, Board b) => Move
-throws Invalid:
+public function inferMove(ShortMove m, Board b) -> Move|null:
     //
     return inferMove(m, b, false)
 
-public function inferMove(ShortMove move, Board b, bool isCheck) => Move 
-throws Invalid:
+public function inferMove(ShortMove move, Board b, bool isCheck) -> Move|null:
     //
     if move is CastleMove:
         return move
     else if move is ShortCheckMove:
-        try:
-            Move m = inferMove(move.check,b,true)
+        Move|null m = inferMove(move.check,b,true)
+        if m is Move:
             return {check: m}
-        catch(Invalid e):
-            throw Invalid(e.board,{check: e.move})
+        else:
+            return null
     else if move is ShortSingleMove:
         [Pos] matches = Board.findPiece(move.piece,b)
         matches = narrowTarget(move,matches,b, isCheck)
@@ -76,59 +76,68 @@ throws Invalid:
             else:
                 return { piece: move.piece, from: matches[0], to: move.to }
         else:
-            throw Invalid(b,move)
+            return null
     else:
-        throw Invalid(b,move)
+        return null
 
 // nawwor based on move destination
-function narrowTarget(ShortSingleMove sm, [Pos] matches, Board b, bool isCheck) => [Pos]:
+function narrowTarget(ShortSingleMove sm, [Pos] matches, Board b, bool isCheck) -> [Pos]:
     [Pos] r = []
     if sm.isTake:
         Square taken = squareAt(sm.to,b)
         if taken is null:
             return r
-        for pos in matches:
+        int i = 0
+        while i < |matches|:
+            Pos pos = matches[i]
             Move move = Move.SingleMove(sm.piece, pos, sm.to, taken)
             if isCheck:
                 move = Move.Check(move)
             if validMove(move,b):
                 r = r ++ [pos]
+            i = i + 1
     else:
-        for pos in matches:
+        int i = 0
+        while i < |matches|:
+            Pos pos = matches[i]
             Move move = Move.SingleMove(sm.piece, pos, sm.to)
             if isCheck:
                 move = {check: move}
             if validMove(move,b):
                 r = r ++ [pos]
+            i = i + 1
     return r
 
 
 // narrow matches based on short position
-function narrowShortPos(ShortPos pos, [Pos] matches) => [Pos]:
+function narrowShortPos(ShortPos pos, [Pos] matches) -> [Pos]:
     if pos is null:
         return matches
     else:
         [Pos] r = []
-        for p in matches:
+        int i = 0
+        while i < |matches|:
+            Pos p = matches[i]
             if pos is RankPos && p.row == pos.row:
                 r = r ++ [p]
             else if pos is FilePos && p.col == pos.col:
                 r = r ++ [p]                
             else if p == pos:
                 r = r ++ [p]
+            i = i + 1
         return r
 
-function shortPos2str(ShortPos p) => string:
+function shortPos2str(ShortPos p) -> ASCII.string:
     if p is null:
         return ""
     else if p is RankPos:
-        return "" ++ ('1' + (char) p.row)
+        return ['1' + p.row]
     else if p is FilePos:
-        return "" ++ ('a' + (char) p.col)
+        return ['a' + p.col]
     else: 
         return pos2str(p)
 
-public function toString(ShortMove m) => string:
+public function toString(ShortMove m) -> ASCII.string:
     if m is ShortSingleMove: 
         if m.isTake:
             return piece2str(m.piece) ++ shortPos2str(m.from) ++ "x" ++ pos2str(m.to)

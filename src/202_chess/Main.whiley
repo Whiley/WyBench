@@ -9,12 +9,17 @@ public method main(System.Console sys):
         usage(sys)
         return
     File.Reader file = File.Reader(sys.args[0])
-    string contents = String.fromASCII(file.readAll())
-    try:
-        [ShortRound] game = Parser.parseChessGame(contents)
-        sys.out.println("Moves taken:\n")
+    ASCII.string contents = ASCII.fromBytes(file.readAll())
+
+    [ShortRound]|null game = Parser.parseChessGame(contents)
+    if game is null:
+        // error
+        sys.out.println_s("error")
+    else:
+        //
+        sys.out.println_s("Moves taken:\n")
         Board board = Board.startingChessBoard  
-        string r = ""       
+        ASCII.string r = ""       
         int i = 0
         bool invalid = false
         bool sign = false
@@ -22,32 +27,30 @@ public method main(System.Console sys):
         ShortMove|null black 
         // process each move in turn, updating the board
         while i < |game|:
-            sys.out.print((i+1) ++ ". ")
+            sys.out.print_s([i+1] ++ ". ")
             white,black = game[i]
             // test white
-            board = ShortMove.apply(white,board)        
+            Board|null tmp = ShortMove.apply(white,board)
+            if tmp is null:
+                sys.out.println_s("error")
+            else:
+                board = tmp
             sys.out.print(ShortMove.toString(white))
             // test black
             if black != null:
-                board = ShortMove.apply(black,board)        
+                tmp = ShortMove.apply(black,board)
+                if tmp is null:
+                    sys.out.println_s("error")
+                else:
+                    board = tmp
                 sys.out.print(" ")
-                sys.out.println(ShortMove.toString(black))
+                sys.out.println_s(ShortMove.toString(black))
             else:
-                sys.out.println("")
+                sys.out.println_s("")
             i = i + 1
             // print out board
-            sys.out.println("\nCurrent board:\n")
-            sys.out.println(Board.toString(board))
-    catch(Error e):
-        sys.out.println("syntax error: " ++ e.msg)
-    catch(Move.Invalid im):
-        sys.out.println("invalid move: " ++ Move.toString(im.move))
-    catch(any x):
-        // FYI, this is because of a compiler bug
-        if x is ShortMove.Invalid:
-            sys.out.println("invalid move: " ++ ShortMove.toString(x.move))
-        else:
-            sys.out.println("error: " ++ x)
+            sys.out.println_s("\nCurrent board:\n")
+            sys.out.println_s(Board.toString(board))
 
 method usage(System.Console sys):
-    sys.out.println("usage: chess file")
+    sys.out.println_s("usage: chess file")

@@ -12,7 +12,7 @@ public constant QUEEN is 4
 public constant KING is 5
 public constant PIECE_CHARS is [ 'P', 'N', 'B', 'R', 'Q', 'K' ]
 
-public constant PieceKind is { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING }
+public type PieceKind is (int x) where PAWN <= x && x <= KING
 public type Piece is { PieceKind kind, bool colour }
 
 public constant WHITE_PAWN is { kind: PAWN, colour: true }
@@ -100,14 +100,14 @@ public constant startingChessBoard is {
 // Helper Functions
 // =============================================================
 
-public function squareAt(Pos p, Board b) => Square:
+public function squareAt(Pos p, Board b) -> Square:
     return b.rows[p.row][p.col]
 
 // The following method checks whether a given row is completely
 // clear, excluding the end points. Observe that this doesn't
 // guarantee a given diaganol move is valid, since this function does not
 // ensure anything about the relative positions of the given pieces.
-public function clearRowExcept(Pos from, Pos to, Board board) => bool:
+public function clearRowExcept(Pos from, Pos to, Board board) -> bool:
     // check this is really a row
     if from.row != to.row || from.col == to.col:
         return false
@@ -125,7 +125,7 @@ public function clearRowExcept(Pos from, Pos to, Board board) => bool:
 // clear, excluding the end points. Observe that this doesn't
 // guarantee a given diaganol move is valid, since this function does not
 // ensure anything about the relative positions of the given pieces.
-public function clearColumnExcept(Pos from, Pos to, Board board) => bool:
+public function clearColumnExcept(Pos from, Pos to, Board board) -> bool:
     if from.col != to.col || from.row == to.row:
         return false
     int inc = sign(from.row,to.row)
@@ -142,7 +142,7 @@ public function clearColumnExcept(Pos from, Pos to, Board board) => bool:
 // clear, excluding the end points. Observe that this doesn't
 // guarantee a given diaganol move is valid, since this function does not
 // ensure anything about the relative positions of the given pieces.
-public function clearDiaganolExcept(Pos from, Pos to, Board board) => bool:
+public function clearDiaganolExcept(Pos from, Pos to, Board board) -> bool:
     // check this is really a diaganol
     int diffcol = Math.max(from.col,to.col) - Math.min(from.col,to.col)
     int diffrow = Math.max(from.row,to.row) - Math.min(from.row,to.row)
@@ -163,7 +163,7 @@ public function clearDiaganolExcept(Pos from, Pos to, Board board) => bool:
     // ok, looks like we're clear
     return true 
 
-function sign(int x, int y) => int:
+function sign(int x, int y) -> int:
     if x < y:
         return 1
     else:
@@ -171,13 +171,17 @@ function sign(int x, int y) => int:
     
 // This method finds a given piece.  It's used primarily to locate
 // kings on the board to check if they are in check.
-public function findPiece(Piece p, Board b) => [Pos]:
+public function findPiece(Piece p, Board b) -> [Pos]:
     [Pos] matches = []
-    for r in 0 .. 8:
-        for c in 0 .. 8:
+    int r = 0
+    while r < 8:
+        int c = 0
+        while c < 8:
             if b.rows[r][c] == p:
                 // ok, we've located the piece
                 matches = matches ++ [{ row: r, col: c }]
+            c = c + 1
+        r = r + 1
     // couldn't find the piece
     return matches
 
@@ -187,30 +191,32 @@ public function findPiece(Piece p, Board b) => [Pos]:
 
 constant BLACK_PIECE_CHARS is [ 'p', 'n', 'b', 'r', 'q', 'k' ]
 
-public function toString(Board b) => string:
-    string r = ""
+public function toString(Board b) -> ASCII.string:
+    ASCII.string r = ""
     int i = 8
     while i >= 1:
-        r = r ++ i ++ row2str(b.rows[i-1])
+        r = r ++ [i] ++ row2str(b.rows[i-1])
         i = i - 1
     return r ++ "  a b c d e f g h\n"
 
-public function row2str(Row row) => string:
-    string r = ""
-    for square in row:
-        r = r ++ "|" ++ square2str(square)
+public function row2str(Row row) -> ASCII.string:
+    ASCII.string r = ""
+    int i = 0
+    while i < |row|:
+        r = r ++ "|" ++ square2str(row[i])
+        i = i + 1
     return r ++ "|\n"
 
-public function square2str(Square p) => string:
+public function square2str(Square p) -> ASCII.string:
     if p is null:
         return "_"
     else if p.colour:
-        return "" ++ PIECE_CHARS[p.kind]
+        return [PIECE_CHARS[p.kind]]
     else:
-        return "" ++ BLACK_PIECE_CHARS[p.kind]
+        return [BLACK_PIECE_CHARS[p.kind]]
 
-public function piece2str(Piece p) => string:
+public function piece2str(Piece p) -> ASCII.string:
     if p.kind == PAWN:
         return ""
     else:
-        return "" ++ PIECE_CHARS[p.kind]
+        return [PIECE_CHARS[p.kind]]

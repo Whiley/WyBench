@@ -1,3 +1,4 @@
+import * from whiley.lang.ASCII
 /*
  * This File is part of the Tetris Benchmark for Whiley
  * @author LeeTrezise

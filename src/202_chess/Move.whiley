@@ -20,16 +20,16 @@ public type Move is CheckMove | CastleMove | SimpleMove
 
 // constructors
 
-public function SingleMove(Piece piece, Pos from, Pos to) => SingleMove:
+public function SingleMove(Piece piece, Pos from, Pos to) -> SingleMove:
     return {piece: piece, from: from, to: to}
 
-public function SingleMove(Piece piece, Pos from, Pos to, Piece taken) => SingleTake:
+public function SingleMove(Piece piece, Pos from, Pos to, Piece taken) -> SingleTake:
     return {piece: piece, from: from, to: to, taken: taken}
 
-public function Check(Move move) => CheckMove:
+public function Check(Move move) -> CheckMove:
     return {check: move}
 
-public function Castle(bool isWhite, bool kingSide) => CastleMove:
+public function Castle(bool isWhite, bool kingSide) -> CastleMove:
     return {isWhite: isWhite, kingSide: kingSide}
 
 // =============================================================
@@ -38,7 +38,7 @@ public function Castle(bool isWhite, bool kingSide) => CastleMove:
 
 public type Invalid is { Move move, Board board }
 
-public function Invalid(Board b, Move m) => Invalid:
+public function Invalid(Board b, Move m) -> Invalid:
     return { board: b, move: m }
 
 // en passant
@@ -49,11 +49,11 @@ public function Invalid(Board b, Move m) => Invalid:
 
 // The purpose of the validMove method is to check whether or not a
 // move is valid on a given board.
-public function validMove(Move move, Board board) => bool:
+public function validMove(Move move, Board board) -> bool:
     Board nboard = applyMoveDispatch(move,board)
     return validMove(move,board,nboard)
 
-function validMove(Move move, Board board, Board nboard) => bool:
+function validMove(Move move, Board board, Board nboard) -> bool:
     bool oppCheck
     bool isWhite
     // first, test the check status of this side, and the opposition
@@ -76,7 +76,7 @@ function validMove(Move move, Board board, Board nboard) => bool:
         oppCheck == inCheck(!isWhite,nboard) && // oppo in check?
         internalValidMove(move, board) // move otherwise ok?
 
-function internalValidMove(Move move, Board board) => bool:
+function internalValidMove(Move move, Board board) -> bool:
     if move is SingleTake:
         return validPieceMove(move.piece,move.from,move.to,true,board) &&
             validPiece(move.taken,move.to,board)
@@ -89,7 +89,7 @@ function internalValidMove(Move move, Board board) => bool:
     // more structuring of CheckMoves
     return false
 
-function validPieceMove(Piece piece, Pos from, Pos to, bool isTake, Board board) => bool:
+function validPieceMove(Piece piece, Pos from, Pos to, bool isTake, Board board) -> bool:
     if validPiece(piece,from,board):
         if piece.kind == PAWN:
             return validPawnMove(piece.colour,from,to,isTake,board)        
@@ -107,7 +107,7 @@ function validPieceMove(Piece piece, Pos from, Pos to, bool isTake, Board board)
 
 // Check whether a given piece is actually at a given position in the
 // board.
-function validPiece(Piece piece, Pos pos, Board board) => bool:
+function validPiece(Piece piece, Pos pos, Board board) -> bool:
     Square sq = squareAt(pos,board)
     if sq is null:
         return false
@@ -116,7 +116,7 @@ function validPiece(Piece piece, Pos pos, Board board) => bool:
 
 // Determine whether the board is in check after the given move, with
 // respect to the opposite colour of the move.
-function inCheck(bool isWhite, Board board) => bool:
+function inCheck(bool isWhite, Board board) -> bool:
     Pos kpos
     //
     if isWhite:
@@ -124,16 +124,20 @@ function inCheck(bool isWhite, Board board) => bool:
     else:
         kpos = findPiece(BLACK_KING,board)[0]     
     // check every possible piece cannot take king
-    for r in 0 .. 8:
-        for c in 0 .. 8:
+    int r = 0
+    while r < 8:
+        int c = 0
+        while c < 8:
             Square tmp = board.rows[r][c]
             if !(tmp is null) && tmp.colour == !isWhite && 
                 validPieceMove(tmp,{row: r, col: c},kpos,true,board):
                 return true
+            c = c + 1
+        r = r + 1
     // no checks found
     return false
 
-function validCastle(CastleMove move, Board board) => bool:
+function validCastle(CastleMove move, Board board) -> bool:
     // FIXME: this functionis still broken, since we have to check
     // that we're not castling through check :(
     if move.isWhite:
@@ -155,7 +159,7 @@ function validCastle(CastleMove move, Board board) => bool:
 // Individual Piece Moves
 // =============================================================
 
-function validPawnMove(bool isWhite, Pos from, Pos to, bool isTake, Board board) => bool:
+function validPawnMove(bool isWhite, Pos from, Pos to, bool isTake, Board board) -> bool:
     int rowdiff
     // calculate row difference
     if (isWhite):
@@ -177,22 +181,22 @@ function validPawnMove(bool isWhite, Pos from, Pos to, bool isTake, Board board)
     // looks like we're all good
     return true    
 
-function validKnightMove(bool isWhite, Pos from, Pos to, bool isTake, Board board) => bool:
+function validKnightMove(bool isWhite, Pos from, Pos to, bool isTake, Board board) -> bool:
     int diffCol = Math.max(from.col,to.col) - Math.min(from.col,to.col)
     int diffRow = Math.max(from.row,to.row) - Math.min(from.row,to.row)
     return (diffCol == 2 && diffRow == 1) || (diffCol == 1 && diffRow == 2)
 
-function validBishopMove(bool isWhite, Pos from, Pos to, bool isTake, Board board) => bool:
+function validBishopMove(bool isWhite, Pos from, Pos to, bool isTake, Board board) -> bool:
     return clearDiaganolExcept(from,to,board)
 
-function validRookMove(bool isWhite, Pos from, Pos to, bool isTake, Board board) => bool:
+function validRookMove(bool isWhite, Pos from, Pos to, bool isTake, Board board) -> bool:
     return clearRowExcept(from,to,board) || clearColumnExcept(from,to,board)
 
-function validQueenMove(bool isWhite, Pos from, Pos to, bool isTake, Board board) => bool:
+function validQueenMove(bool isWhite, Pos from, Pos to, bool isTake, Board board) -> bool:
     return clearRowExcept(from,to,board) || clearColumnExcept(from,to,board) ||
         clearDiaganolExcept(from,to,board)
 
-function validKingMove(bool isWhite, Pos from, Pos to, bool isTake, Board board) => bool:
+function validKingMove(bool isWhite, Pos from, Pos to, bool isTake, Board board) -> bool:
     int diffCol = Math.max(from.col,to.col) - Math.min(from.col,to.col)
     int diffRow = Math.max(from.row,to.row) - Math.min(from.row,to.row)
     int total = diffCol + diffRow
@@ -202,16 +206,15 @@ function validKingMove(bool isWhite, Pos from, Pos to, bool isTake, Board board)
 // Apply Move
 // =============================================================
 
-public function applyMove(Move move, Board board) => Board
-throws Invalid:
+public function applyMove(Move move, Board board) -> Board|null:
     //
     Board nboard = applyMoveDispatch(move,board)
     if !validMove(move,board,nboard):
-        throw Invalid(board,move)
+        return null // error
     else:
         return nboard
 
-function applyMoveDispatch(Move move, Board board) => Board:
+function applyMoveDispatch(Move move, Board board) -> Board:
     //
     if move is SingleMove|SingleTake:
         // SingleTake is processed in the same way
@@ -222,14 +225,14 @@ function applyMoveDispatch(Move move, Board board) => Board:
         return applyCastleMove(move,board)
     return board
 
-function applySingleMove(SingleMove|SingleTake move, Board board) => Board:
+function applySingleMove(SingleMove|SingleTake move, Board board) -> Board:
     Pos from = move.from
     Pos to = move.to
     board.rows[from.row][from.col] = null
     board.rows[to.row][to.col] = move.piece
     return board
 
-function applyCastleMove(CastleMove move, Board board) => Board:
+function applyCastleMove(CastleMove move, Board board) -> Board:
     int row = 7
     if move.isWhite:
         row = 0
@@ -247,10 +250,10 @@ function applyCastleMove(CastleMove move, Board board) => Board:
         board.rows[row][3] = rook
     return board
 
-public function pos2str(Pos p) => string:
-    return ("" ++ ('a' + (char) p.col)) ++ ('1' + (char) p.row)
+public function pos2str(Pos p) -> ASCII.string:
+    return ['a' + p.col, '1' + p.row]
 
-public function toString(Move m) => string:
+public function toString(Move m) -> ASCII.string:
     if m is SingleMove:
         return piece2str(m.piece) ++ pos2str(m.from) ++ "x" ++ pos2str(m.to)
     else if m is SingleTake:

@@ -10,24 +10,27 @@ import * from whiley.lang.Errors
 import * from ShortMove
 import * from Board
 
-type state is {string input, int pos}
+type state is {ASCII.string input, int pos}
 
-public function parseChessGame(string input) => [ShortRound]
-throws Error:
+public function parseChessGame(ASCII.string input) -> [ShortRound]|null:
     int pos = 0
     [ShortRound] moves = []
     while pos < |input|:        
-        ShortRound round
+        ShortRound|null round
         round,pos = parseRound(pos,input)
-        moves = moves ++ [round]
+        if round is null:
+            return null
+        else:
+            moves = moves ++ [round]
     return moves
 
-function parseRound(int pos, string input) => (ShortRound,int)
-throws Error:
+function parseRound(int pos, ASCII.string input) -> (ShortRound|null,int):
     ShortMove white
     ShortMove|null black
-    pos = parseNumber(pos,input)
-    pos = parseWhiteSpace(pos,input)
+    int|null npos = parseNumber(pos,input)
+    if npos == null:
+        return null,pos
+    pos = parseWhiteSpace(npos,input)
     white,pos = parseMove(pos,input,true)
     pos = parseWhiteSpace(pos,input)
     if pos < |input|:
@@ -37,15 +40,15 @@ throws Error:
         black = null
     return (white,black),pos
 
-function parseNumber(int pos, string input) => int
-throws Error:
+function parseNumber(int pos, ASCII.string input) -> int|null:
     while pos < |input| && input[pos] != '.':
         pos = pos + 1
     if pos == |input|:
-        throw { msg: "unexpected end of file" }
-    return pos+1
+        return null
+    else:
+        return pos+1
 
-function parseMove(int pos, string input, bool isWhite) => (ShortMove,int):
+function parseMove(int pos, ASCII.string input, bool isWhite) -> (ShortMove,int):
     ShortMove move
     // first, we check for castling moves    
     if |input| >= (pos+5) && input[pos..(pos+5)] == "O-O-O":
@@ -74,8 +77,8 @@ function parseMove(int pos, string input, bool isWhite) => (ShortMove,int):
         move = {check: move}     
     return move,pos
 
-function parsePiece(int index, string input, bool isWhite) => (Piece,int):
-    char lookahead = input[index]
+function parsePiece(int index, ASCII.string input, bool isWhite) -> (Piece,int):
+    ASCII.char lookahead = input[index]
     int piece
     switch lookahead:
         case 'N':
@@ -93,33 +96,33 @@ function parsePiece(int index, string input, bool isWhite) => (Piece,int):
             piece = PAWN
     return {kind: piece, colour: isWhite}, index+1
     
-function parsePos(int pos, string input) => (Pos,int):
+function parsePos(int pos, ASCII.string input) -> (Pos,int):
     int c = (int) input[pos] - 'a'
     int r = (int) input[pos+1] - '1'
     return { col: c, row: r },pos+2
 
-function parseShortPos(int index, string input) => (ShortPos,int):
-    char c = input[index]
-    if Char.isDigit(c):
+function parseShortPos(int index, ASCII.string input) -> (ShortPos,int):
+    ASCII.char c = input[index]
+    if ASCII.isDigit(c):
         // signals rank only
         return { row: (int) c - '1' },index+1
-    else if c != 'x' && Char.isLetter(c):
+    else if c != 'x' && ASCII.isLetter(c):
         // so, could be file only, file and rank, or empty
-        char d = input[index+1]
-        if Char.isLetter(d):
+        ASCII.char d = input[index+1]
+        if ASCII.isLetter(d):
             // signals file only
             return { col: (int) c - 'a' },index+1         
-        else if (index+2) < |input| && Char.isLetter(input[index+2]):
+        else if (index+2) < |input| && ASCII.isLetter(input[index+2]):
             // signals file and rank
             return { col: ((int) c - 'a'), row: (int) d - '1' },index+2
     // no short move given
     return null,index
 
-function parseWhiteSpace(int index, string input) => int:
+function parseWhiteSpace(int index, ASCII.string input) -> int:
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     return index
 
-function isWhiteSpace(char c) => bool:
+function isWhiteSpace(ASCII.char c) -> bool:
     return c == ' ' || c == '\t' || c == '\n'
 

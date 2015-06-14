@@ -1,6 +1,7 @@
 import whiley.lang.*
 import * from whiley.lang.Errors
 import * from whiley.lang.System
+import * from whiley.lang.ASCII
 
 /*
  * This File is part of the Tetris Benchmark for Whiley
@@ -288,27 +289,28 @@ function checkCollision(int dx, int dy,GameState a) -> bool:
 	return false
 
 public function getUIString(GameState a) -> string:
-	string str = ""
-	int j = 0
-	int i = 0
-        
-	while i <= 3:
-		j = 0
-		while j <= 3:
-			if a.current.buff[i][j] != null:
-				a.rows[a.current.x+i][a.current.y+j] = a.current.buff[i][j]
-			j=j+1
-		i = i + 1
-	i = 0
-	j = 0
-	while i<10:
-		j = 0
-		while j<=20:
-			if(a.rows[j][i] == null):
-				str = str ++ 'X'
-			else:
-				str = str ++ a.rows[j][i]
-			j = j+1
-		i = i+1
-	
-	return str
+    string str = ""
+    int j = 0
+    int i = 0
+    
+    while i <= 3:
+        j = 0
+        while j <= 3:
+            if a.current.buff[i][j] != null:
+                a.rows[a.current.x+i][a.current.y+j] = a.current.buff[i][j]
+            j=j+1
+        i = i + 1
+    i = 0
+    j = 0
+    while i<10:
+        j = 0
+        while j<=20:
+            char|null c = a.rows[i][j]
+            if(c == null):
+                str = str ++ ['X']
+            else:
+                str = str ++ [c]
+            j = j+1
+        i = i+ 1
+    
+    return str
