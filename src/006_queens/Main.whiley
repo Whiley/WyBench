@@ -23,7 +23,8 @@ requires dim == |queens|:
         return [queens]
     else:
         [[Pos]] solutions = []
-        for col in 0 .. dim where n < |queens| && dim == |queens|:
+        int col = 0
+        while col < dim where n < |queens| && dim == |queens|:
             bool solution = true
             int i = 0
             while i < n where n < |queens| && i >= 0 && dim == |queens|:
@@ -35,14 +36,17 @@ requires dim == |queens|:
             if solution:
                 queens[n] = (n,col)
                 solutions = solutions ++ run(queens,n+1,dim)                    
+            col = col + 1
         return solutions
 
 method main(System.Console sys):
     int dim = 10
     [(int,int)] init = []
     //
-    for i in 0..dim:
+    int i = 0
+    while i < dim:
         init = init ++ [(0,0)]
+        i = i + 1
     //
     assume |init| == dim
     [[Pos]] solutions = run(init,0,dim)

@@ -1,5 +1,6 @@
 import whiley.lang.System
 import whiley.lang.Any
+import nat from whiley.lang.Int
 import string from whiley.lang.ASCII
 import char from whiley.lang.ASCII
 
@@ -81,12 +82,18 @@ requires state >= 0:
     
 method main(System.Console console):
     Trie t = EmptyTrie
+    [string] inputs = ["hello","world","help"]
     // First, initialise trie    
-    for s in ["hello","world","help"]:
-        console.out.println_s("ADDING: " ++ s)
-        t = add(t,s)   
+    nat i = 0
+    while i < |inputs|:
+        console.out.println_s("ADDING: " ++ inputs[i])
+        t = add(t,inputs[i])   
+        i = i + 1
     // Second, check containment
-    for s in ["hello","blah","hel","dave"]:
-        bool r = contains(t,s)
-        console.out.println_s("CONTAINS: " ++ s ++ " = " ++ Any.toString(r))
+    [string] checks = ["hello","blah","hel","dave"]
+    i = 0 
+    while i < |checks|:
+        bool r = contains(t,checks[i])
+        console.out.println_s("CONTAINS: " ++ checks[i] ++ " = " ++ Any.toString(r))
+        i = i + 1
     

@@ -54,21 +54,24 @@ function processJobs([Job] jobs) -> nat:
     int Bsaved = 0  // spare time blue has saved
     int time = 0    // total time accumulated thus far
     // now, do the work!
-    for j in jobs where time >= 0:
-        if j.orange:
-            int diff = Math.abs(j.button - Opos)
+    nat i = 0
+    while i < |jobs| where time >= 0:
+        Job job = jobs[i]
+        if job.orange:
+            int diff = Math.abs(job.button - Opos)
             int timediff = Math.max(0, diff - Osaved) + 1
             time = time + timediff
             Bsaved = Bsaved + timediff
             Osaved = 0
-            Opos = j.button
+            Opos = job.button
         else:
-            int diff = Math.abs(j.button - Bpos)
+            int diff = Math.abs(job.button - Bpos)
             int timediff = Math.max(0, diff - Bsaved) + 1
             time = time + timediff
             Osaved = Osaved + timediff
             Bsaved = 0
-            Bpos = j.button
+            Bpos = job.button
+        i = i + 1
     // finally, return total time accumulated
     return time
             

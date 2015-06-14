@@ -95,10 +95,14 @@ requires |data| > pos + (width * height):
 // ========================================================
 
 method printMat(System.Console sys, Matrix A):
-    for i in 0 .. A.height:
-        for j in 0 .. A.width:
+    int i = 0 
+    while i < A.height:
+        int j = 0
+        while j < A.width:
             sys.out.print(A.data[i][j])
             sys.out.print_s(" ")
+            j = j + 1
+        i = i + 1
         sys.out.println_s("")
 
 method main(System.Console sys):

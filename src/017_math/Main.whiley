@@ -67,8 +67,10 @@ ensures r == a || r == b:
  */
 function sum_1([nat] items) -> nat:
     int r = 0
-    for i in items where r >= 0:
-        r = r + i
+    nat i = 0
+    while i < |items| where r >= 0:
+        r = r + items[i]
+        i = i + 1
     return r
 
 /**
@@ -111,20 +113,32 @@ method main(System.Console console):
     // test data
     [int] items = [90,-1,4,-54,324,-2319,-23498,23,12,93,73,56872]
     // test inc/dec 
-    for i in items:
+    nat i = 0
+    while i < |items|:
         if i >= 0:
-            console.out.println_s("INC(DEC(" ++ Int.toString(i) ++ ")) = " ++ Int.toString(inc(dec(i))))
+            console.out.println_s("INC(DEC(" ++ Int.toString(items[i]) ++ ")) = " ++ Int.toString(inc(dec(items[i]))))
+        i = i + 1
     // test abs
-    for i in items:
-        console.out.println_s("ABS(" ++ Int.toString(i) ++ ") = " ++ Int.toString(abs(i)))
+    i = 0
+    while i < |items|:
+        console.out.println_s("ABS(" ++ Int.toString(items[i]) ++ ") = " ++ Int.toString(abs(items[i])))
+        i = i + 1
     // test max
-    for i in items:
-        for j in items:
-            console.out.println_s("MAX(" ++ Int.toString(i) ++ ", " ++ Int.toString(j) ++ ") = " ++ Int.toString(max(i,j)))
+    i = 0
+    while i < |items|:
+        nat j = 0
+        while j < |items|:
+            console.out.println_s("MAX(" ++ Int.toString(items[i]) ++ ", " ++ Int.toString(items[j]) ++ ") = " ++ Int.toString(max(items[i],items[j])))
+            j = j + 1
+        i = i + 1
     // test min
-    for i in items:
-        for j in items:
-            console.out.println_s("MIN(" ++ Int.toString(i) ++ ", " ++ Int.toString(j) ++ ") = " ++ Int.toString(min(i,j)))
+    i = 0
+    while i < |items|:
+        nat j = 0
+        while j < |items|:
+            console.out.println_s("MIN(" ++ Int.toString(items[i]) ++ ", " ++ Int.toString(items[j]) ++ ") = " ++ Int.toString(min(items[i],items[j])))
+            j = j + 1
+        i = i + 1
     
     // test sum_1
     items = [90,4,324,23,12,93,73,56872]

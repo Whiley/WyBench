@@ -152,12 +152,14 @@ method main(System.Console console):
     //
     console.out.println(bt)
     //
-    for item in ITEMS:
-        bt = insert(bt,item)
+    int i = 0
+    while i < |ITEMS|:
+        bt = insert(bt,ITEMS[i])
         console.out.println(bt)
         tmp = rotateClockwise(bt)
         console.out.println(tmp)
         tmp = rotateCounterClockwise(bt)
         console.out.println(tmp)
+        i = i + 1
         
     

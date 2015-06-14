@@ -39,8 +39,12 @@ function Cash([nat] coins) -> Cash
 // No coin in coins larger than permitted values
 requires no { c in coins | c >= |Value| }:
     Cash cash = [0,0,0,0,0,0,0,0]
-    for i in coins where |cash| == |Value| && no {c in cash | c < 0}:
-        cash[i] = cash[i] + 1
+    int i = 0
+    while i < |coins| 
+        where |cash| == |Value| && no {c in cash | c < 0}:
+        nat coin = coins[i]
+        cash[coin] = cash[coin] + 1
+        i = i + 1
     return cash
 
 /**
@@ -48,8 +52,10 @@ requires no { c in coins | c >= |Value| }:
  */ 
 function total(Cash c) -> int:
     int r = 0
-    for i in 0..|c|:
+    int i = 0
+    while i < |c|:
         r = r + (Value[i] * c[i])
+        i = i + 1
     return r
 
 /**
@@ -58,9 +64,11 @@ function total(Cash c) -> int:
  * get any negative amounts.
  */
 function contained(Cash first, Cash second) -> bool:
-    for i in 0..|first|:
+    int i = 0
+    while i < |first|:
         if first[i] < second[i]:
             return false
+        i = i + 1
     return true
 
 /**
@@ -73,8 +81,10 @@ function add(Cash first, Cash second) -> (Cash r)
 // Result total must be sum of argument totals
 ensures total(r) == total(first) + total(second):
     //
-    for i in 0..|first|:
+    int i = 0
+    while i < |first|:
         first[i] = first[i] + second[i]
+        i = i + 1
     //
     return first
 
@@ -93,8 +103,10 @@ requires contained(first,second)
 // Total returned must total of first argument less second
 ensures total(r) == total(first) - total(second):
     //
-    for i in 0..|first|:
+    int i = 0
+    while i < |first|:
         first[i] = first[i] - second[i]
+        i = i + 1
     //
     return first
 
@@ -118,16 +130,18 @@ ensures r is Cash ==> (contained(till,r) && total(r) == change):
         return Cash()
     else:
         // exhaustive search through all possible coins
-        for coin in 0 .. |till|:
-            if till[coin] > 0 && Value[coin] <= change:
+        nat i = 0
+        while i < |till|:
+            if till[i] > 0 && Value[i] <= change:
                 null|Cash tmp = till
                 // temporarily take coin out of till
-                tmp[coin] = tmp[coin] - 1 
-                tmp = calculateChange(tmp,change - Value[coin])
+                tmp[i] = tmp[i] - 1 
+                tmp = calculateChange(tmp,change - Value[i])
                 if tmp != null:
                     // we have enough change
-                    tmp[coin] = tmp[coin] + 1
+                    tmp[i] = tmp[i] + 1
                     return tmp 
+            i = i + 1
         // cannot give exact change :( 
         return null
 /**
@@ -136,13 +150,15 @@ ensures r is Cash ==> (contained(till,r) && total(r) == change):
 function toString(Cash c) -> string:
     string r = ""
     bool firstTime = true
-    for i in 0..|c|:
+    int i = 0
+    while i < |c|:
         int amt = c[i]
         if amt != 0:
             if !firstTime:
                 r = r ++ ", "
             firstTime = false
             r = r ++ Int.toString(amt) ++ " x " ++ Descriptions[i]
+        i = i + 1
     if r == "":
         r = "(nothing)"
     return r

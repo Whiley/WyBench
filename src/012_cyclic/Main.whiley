@@ -79,7 +79,8 @@ ensures buf is EmptyBuffer ==> r :
 
 public function toString(Buffer b) -> string:
     string r = "["
-    for i in 0..|b.data|:
+    int i = 0
+    while i < |b.data|:
         if i != 0:
             r = r ++ ", "
         if i == b.rpos:
@@ -87,6 +88,7 @@ public function toString(Buffer b) -> string:
         if i == b.wpos:
             r = r ++ ">"
         r = r ++ Int.toString(b.data[i])
+        i = i + 1
     return r ++ "]"
 
 constant ITEMS is [5,4,6,3,7,2,8,1,9,10,0]

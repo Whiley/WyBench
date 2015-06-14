@@ -17,11 +17,6 @@ constant DEC is 12
 
 type day is (int d) where d <= 1 && d <= 31
 
-constant month is {
-    JAN,FEB,MAR,APR,MAY,JUN,
-    JUL,AUG,SEP,OCT,NOV,DEC
-}
-
 type month is (int x) where JAN <= x && x <= DEC
 
 // =================================================
@@ -32,13 +27,13 @@ type Date is {
     day day,
     month month,
     int year
-} where (day <= 30 || !(month in {SEP,APR,JUN,NOV})) &&
+} where (day <= 30 || !(month in [SEP,APR,JUN,NOV])) &&
         (month != FEB || day <= 29 ) && // normal restriction
         (month != FEB || year % 4 != 0 || (year % 100 == 0 && year % 400 != 0) || day <= 28) // leap-year restriction
 
 function Date(day day, month month, int year) -> Date
 // 30 days hath September, April, June and November.
-requires day <= 30 || !(month in {SEP,APR,JUN,NOV})
+requires day <= 30 || !(month in [SEP,APR,JUN,NOV])
 requires month != FEB || day <= 29
 requires month != FEB || year % 4 != 0 || (year % 100 == 0 && year % 400 != 0) || day <= 28:
     //
@@ -54,7 +49,7 @@ function next(Date date) -> Date:
     int last
     if date.month == FEB:
         last = 29
-    else if date.month in {SEP,APR,JUN,NOV}:
+    else if date.month in [SEP,APR,JUN,NOV]:
         last = 30
     else:
         last = 31

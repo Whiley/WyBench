@@ -16,8 +16,10 @@ function average([real] data) -> real
 requires |data| > 0:
     //
     real sum = 0.0
-    for r in data:
-        sum = sum + r
+    int i = 0
+    while i < |data|:
+        sum = sum + data[i]
+        i = i + 1
     return sum / (real) |data|
 
 // ========================================================
