@@ -50,8 +50,10 @@ public export
 function Board(int width, int height) -> Board:
     [Square] squares = []
     //
-    for i in 0 .. width * height:
-      squares = squares ++ [HiddenSquare(false,false)]
+    int i = 0
+    while i < width * height:
+        squares = squares ++ [HiddenSquare(false,false)]
+        i = i + 1
     //
     return {
         squares: squares,
@@ -106,11 +108,15 @@ requires 0 <= row && row < b.height:
 function determineRank(Board b, int col, int row) -> int:
     int rank = 0
     // Calculate the rank
-    for r in Math.max(0,row-1) .. Math.min(b.height,row+2):
-        for c in Math.max(0,col-1) .. Math.min(b.width,col+2):
+    int r = Math.max(0,row-1)
+    while r < Math.min(b.height,row+2):
+        int c = Math.max(0,col-1)
+        while c < Math.min(b.width,col+2):
             Square sq = getSquare(b,c,r)
             if sq.holdsBomb:
                 rank = rank + 1
+            c = c + 1
+        r = r + 1
     //
     return rank
 
@@ -138,9 +144,13 @@ function exposeNeighbours(Board b, int col, int row) -> Board
 requires 0 <= col && col < b.width
 requires 0 <= row && row < b.height:
     //
-    for r in Math.max(0,row-1) .. Math.min(b.height,row+2):
-       for c in Math.max(0,col-1) .. Math.min(b.width,col+2):
-           b = exposeSquare(b,c,r)
+    int r = Math.max(0,row-1)
+    while r < Math.min(b.height,row+2):
+        int c = Math.max(0,col-1)
+        while c < Math.min(b.width,col+2):
+            b = exposeSquare(b,c,r)
+            c = c + 1
+        r = r + 1
     //
     return b
 
@@ -153,7 +163,8 @@ public export
 function isGameOver(Board b) -> (bool,bool):
     bool isOver = true
     bool hasWon = true
-    for i in 0 .. |b.squares|:
+    int i = 0
+    while i < |b.squares|:
         Square sq = b.squares[i]
         if sq is HiddenSquare && !sq.holdsBomb:
             // Hidden square which doesn't hold a bomb so game may not be over
@@ -163,5 +174,6 @@ function isGameOver(Board b) -> (bool,bool):
             isOver = true
             hasWon = false
             break
+        i = i + 1
     //
     return isOver, hasWon
