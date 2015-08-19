@@ -1,8 +1,5 @@
-import whiley.lang.System
-import whiley.lang.Math
-import whiley.lang.List
+import whiley.lang.*
 import whiley.lang.Stack
-import whiley.lang.Int
 import whiley.io.File
 import char from whiley.lang.ASCII
 import string from whiley.lang.ASCII
@@ -11,43 +8,62 @@ import wybench.Parser
 
 type nat is (int x) where x >= 0
 
+public type Stack is { // should be unnecessary
+    int[] items,
+    int length
+}
+
 // ============================================
 // Adjacency List directed graph structure
 // ============================================
 
-type Digraph is ([{nat}] edges)
-    where no { v in edges, w in v | w >= |edges| }
+type Digraph is (nat[][] edges)
+    where all { i in 0..|edges|, j in 0..|edges[i]| | edges[i][j] < |edges| }
+
+constant EMPTY_DIGRAPH is [[0;0];0]
 
 function addEdge(Digraph g, nat from, nat to) -> Digraph:
-    // first, ensure enough capacity
-    nat mx = Math.max(from,to)
-    while |g| <= mx:
-        g = g ++ [{}]
-    //
-    assume from < |g|
-    // second, add the actual edge
-    g[from] = g[from] + {to}        
+    // First, ensure enough capacity
+    int max = Math.max(from,to)
+    g = resize(g,max+1)
+    // Second, add the actual edge
+    g[from] = Array.append(g[from],to)
+    // Done
     return g
+
+// Ensure graph has sufficient capacity
+function resize(Digraph g, int size) -> (Digraph r)
+ensures |r| == size:
+    //
+    if size >= |g|:
+        // Graph smaller than required
+        Digraph ng = [[0;0]; size]
+        nat i = 0
+        while i < |g|:
+            ng[i] = g[i]
+            i = i + 1
+        return ng
+    else:
+        // Graph already big enough
+        return g
 
 // ============================================
 // Parser
 // ============================================
 
-function buildDigraphs([[int]] input) -> [Digraph]:
+function buildDigraphs(int[][] input) -> Digraph[]:
     //
-    [Digraph] graphs = []
-    Digraph graph
+    Digraph[] graphs = [EMPTY_DIGRAPH; |input|]
     int i = 0
     while i < |input|:
-        graph = parseDigraph(input[i])
-        graphs = graphs ++ [graph]
+        graphs[i] = parseDigraph(input[i])
         i = i + 1
     //
     return graphs
 
-function parseDigraph([int] input) -> Digraph:
+function parseDigraph(int[] input) -> Digraph:
     //
-    Digraph graph = []
+    Digraph graph = EMPTY_DIGRAPH
     int i = 0
     //
     while (i+1) < |input|:
@@ -63,14 +79,15 @@ function parseDigraph([int] input) -> Digraph:
 // ============================================
 
 // See: "An Improved Algorithm for Finding the Strongly Connected 
-// Components of a Directed Graph", David J. Pearce, 2005.
+// Components of a Directed Graph", Information Processing Letters, 
+// David J. Pearce, 2015.
 
 type State is {
     Digraph graph,
-    [bool] visited,
-    [bool] inComponent,
-    [int] rindex,
-    [int] stack,
+    bool[] visited,
+    bool[] inComponent,
+    int[] rindex,
+    Stack stack,
     int index,
     int cindex
 }
@@ -78,30 +95,32 @@ type State is {
 function State(Digraph g) -> State:
     return {
         graph: g,
-        visited: List.create(|g|,false),
-        inComponent: List.create(|g|,false),
-        rindex: List.create(|g|,0),    
-        stack: [],
+        visited: [false; |g|],
+        inComponent: [false; |g|],
+        rindex: [0; |g|],    
+        stack: Stack.create(|g|),
         index: 0,
         cindex: 0
     }
 
-function find_components(Digraph g) -> [{int}]:
+function find_components(Digraph g) -> int[][]:
     State state = State(g)
     
-    for i in 0..|g|:
+    int i = 0
+    while i < |g|:
         if !state.visited[i]:
             state = visit(i,state)
+        i = i + 1
     
     // build componnent list
-    [{int}] components = []
-    while |components| < state.cindex:
-        components = components ++ [{}]
-    
-    for i in 0..|g|:
+    int[][] components = [[0;0]; state.cindex]
+    i = 0 
+    //
+    while i < |g|:
         int cindex = state.rindex[i]
-        components[cindex] = components[cindex] + {i}        
-    
+        components[cindex] = Array.append(components[cindex],i)
+        i = i + 1
+    //
     return components
 
 function visit(int v, State s) -> State:
@@ -111,17 +130,20 @@ function visit(int v, State s) -> State:
     s.index = s.index + 1
     s.inComponent[v] = false
     // process edges
-    for w in s.graph[v]:
+    int i = 0
+    while i < |s.graph[v]|:
+        int w = s.graph[v][i]
         if !s.visited[w]:
             s = visit(w,s)
         if !s.inComponent[w] && s.rindex[w] < s.rindex[v]:
             s.rindex[v] = s.rindex[w]
             root = false
+        i = i + 1
     // check to see if we're a component root
     if root:
         s.inComponent[v] = true
         int rindex_v = s.rindex[v]
-        while |s.stack| > 0 && rindex_v <= s.rindex[Stack.top(s.stack)]:
+        while Stack.size(s.stack) > 0 && rindex_v <= s.rindex[Stack.top(s.stack)]:
             int w = Stack.top(s.stack)
             s.stack = Stack.pop(s.stack)
             s.rindex[w] = s.cindex
@@ -136,26 +158,34 @@ function visit(int v, State s) -> State:
 method main(System.Console sys):
     File.Reader file = File.Reader(sys.args[0])
     string input = ASCII.fromBytes(file.readAll())
-    [[int]]|null data = Parser.parseIntLines(input)
+    int[][]|null data = Parser.parseIntLines(input)
     if data == null:
         sys.out.println_s("error parsing input")
     else:
-        [Digraph] graphs = buildDigraphs(data)
+        Digraph[] graphs = buildDigraphs(data)
         // third, print output
         int count = 0
-        for graph in graphs:
-            sys.out.println_s("=== Graph #" ++ Int.toString(count) ++ " (" ++ Int.toString(|graph|) ++ " nodes) ===")
-            count = count + 1
-            
-            [{int}] sccs = find_components(graph)
-            for scc in sccs:
+        int i = 0 
+        while i < |graphs|:
+            Digraph graph = graphs[i]
+            sys.out.print_s("=== Graph #")
+            sys.out.print_s(Int.toString(i))
+            sys.out.println_s(" ===")
+            i = i + 1
+            int[][] sccs = find_components(graph)
+            int j = 0 
+            while j < |sccs|:
                 sys.out.print_s("{")
                 bool firstTime=true
-                for v in scc:
+                int[] scc = sccs[j]
+                int k = 0
+                while k < |scc|:
                     if !firstTime:
                         sys.out.print_s(",")
                     firstTime=false
-                    sys.out.print(v)
+                    sys.out.print(scc[k])
+                    k = k + 1
                 sys.out.print_s("}")
+                j = j + 1
             //        
             sys.out.println_s("")
