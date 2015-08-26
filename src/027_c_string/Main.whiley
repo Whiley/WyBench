@@ -13,7 +13,7 @@ type ASCII_char is (int n) where 0 <= n && n <= 255
 
 type C_string is ([ASCII_char] chars) 
 // Must have at least one character (i.e. null terminator)
-where |chars| > 0 && chars[|chars|-1] == 0
+where |chars| > 0 && some { i in 0 .. |str| | str[i] == NULL }
 
 // Determine the length of a C string.
 public function strlen(C_string str) -> (int r)
@@ -23,7 +23,7 @@ ensures r >= 0:
     //
     while str[i] != 0 
         where i >= 0 && i < |str|
-        where str[i] != 0 ==> (i+1) < |str|:
+        where all { k in 0 .. i | str[k] != NULL}:
         //
         i = i + 1
     //
