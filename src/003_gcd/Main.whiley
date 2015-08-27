@@ -23,7 +23,7 @@ method main(System.Console sys):
         // First, parse input
         File.Reader file = File.Reader(sys.args[0])
         string input = ASCII.fromBytes(file.readAll())
-        [int]|null data = Parser.parseInts(input)
+        int[]|null data = Parser.parseInts(input)
         // Second, compute gcds
         if data == null:
             sys.out.println_s("error parsing input")

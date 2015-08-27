@@ -31,14 +31,14 @@ type nat is (int x) where x >= 0
 type Matrix is {
     int width,
     int height,
-    [[int]] data
-} where |data| == height && no { i in data | |i| != width }
+    int[][] data
+} where |data| == height && no { i in 0..|data| | |data[i]| != width }
 
-function Matrix(nat width, nat height, [[int]] data) -> (Matrix r)
+function Matrix(nat width, nat height, int[][] data) -> (Matrix r)
 // Input array must match matrix height
 requires |data| == height
 // Elements of input array must match matrix width
-requires no { i in data | |i| != width }
+requires no { i in 0..|data| | |data[i]| != width }
 // 
 ensures r.width == width && r.height == height && r.data == data:
     //
@@ -54,7 +54,7 @@ requires A.width == B.height
 // Specify dimensions of result
 ensures C.width == B.width && C.height == A.height:
     //
-    [[int]] C_data = []
+    int[][] C_data = [[0;B.width];A.height]
     nat i = 0
     //
     // NOTE: the following loops can be more elegantly written using
@@ -62,7 +62,6 @@ ensures C.width == B.width && C.height == A.height:
     // statements as these work better with verification.
     //
     while i < A.height where i >= 0:
-        [int] row = []
         nat j = 0
         while j < B.width where j >= 0:
             int r = 0
@@ -70,21 +69,23 @@ ensures C.width == B.width && C.height == A.height:
             while k < A.width where k >= 0:
                 r = r + (A.data[i][k] * B.data[k][j])
                 k = k + 1
-            row = row ++ [r]
+            C_data[i][j] = r
             j = j + 1
-        C_data = C_data ++ [row]
         i = i + 1
     //
     return Matrix(B.width,A.height,C_data)
 
-function buildMatrix(nat width, nat height, [int] data, int pos) -> Matrix
+function buildMatrix(nat width, nat height, int[] data, int pos) -> Matrix
 requires |data| > pos + (width * height):
     //
-    [[int]] rows = []
+    int[][] rows = [[0; width]; height]
     //
     int i = 0
     while i < height:
-        rows = rows ++ [data[pos .. (pos+width)]] 
+        int j = 0
+        while j < width:
+            rows[i][j] = data[pos+j]
+            j = j + 1   
         i = i + 1
         pos = pos + width
     //
@@ -112,7 +113,7 @@ method main(System.Console sys):
         File.Reader file = File.Reader(sys.args[0])
         // first, read data
         string input = ASCII.fromBytes(file.readAll())
-        [int]|null data = Parser.parseInts(input)
+        int[]|null data = Parser.parseInts(input)
         if data == null || |data| < 2:
             sys.out.println_s("error reading file")
         else:

@@ -11,7 +11,7 @@ import nat from whiley.lang.Int
 // Benchmark
 // ========================================================
 
-function average([real] data) -> real
+function average(real[] data) -> real
 // Input list cannot be empty
 requires |data| > 0:
     //
@@ -33,7 +33,7 @@ method main(System.Console sys):
         // first, read the input data
         File.Reader file = File.Reader(sys.args[0])
         string input = ASCII.fromBytes(file.readAll())
-        [real]|null data = Parser.parseReals(input)
+        real[]|null data = Parser.parseReals(input)
         // second, run the benchmark
         if data == null:
             sys.out.println_s("error parsing input")
