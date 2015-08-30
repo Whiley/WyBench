@@ -10,16 +10,16 @@ import whiley.lang.*
 
 type nat is (int x) where x >= 0
 
-function compress([byte] data) -> [byte]:
+function compress(byte[] data) -> byte[]:
     nat pos = 0
-    [byte] output = []
+    byte[] output = [0b; 0]
     //
     // keep going until all data matched
     while pos < |data| where pos >= 0:
         int offset, int len = findLongestMatch(data,pos)
         output = write_u1(output,offset)
         if offset == 0:
-            output = output ++ [data[pos]]
+            output = append(output,data[pos])
             pos = pos + 1
         else:
             output = write_u1(output,len)
@@ -28,14 +28,11 @@ function compress([byte] data) -> [byte]:
     return output
 
 // pos is current position in input value
-function findLongestMatch([byte] data, nat pos) -> (nat,nat):
+function findLongestMatch(byte[] data, nat pos) -> (nat,nat):
     //
     nat bestOffset = 0
     nat bestLen = 0
-    int start = pos - 255
-    if start < 0:
-        start = 0
-    //start = Math.max(pos - 255,0)
+    int start = Math.max(pos - 255,0)
     assert start >= 0
     nat offset = start
     while offset < pos where offset >= 0 && pos >= 0 && bestOffset >= 0 && bestLen >= 0:
@@ -48,7 +45,7 @@ function findLongestMatch([byte] data, nat pos) -> (nat,nat):
     //
     return bestOffset,bestLen
 
-function match([byte] data, nat offset, nat end) -> int:
+function match(byte[] data, nat offset, nat end) -> int:
     nat pos = end
     nat len = 0
     //
@@ -61,44 +58,61 @@ function match([byte] data, nat offset, nat end) -> int:
     //
     return len
 
-function decompress([byte] data) -> [byte]:
-    [byte] output = []
+function decompress(byte[] data) -> byte[]:
+    byte[] output = [0b;0]
     nat pos = 0
     //
     while (pos+1) < |data| where pos >= 0:
         byte header = data[pos]
         byte item = data[pos+1]
-        pos = pos + 2
+        pos = pos + 2 
         if header == 00000000b:
-            output = output ++ [item]
+            output = append(output,item)
         else:
             int offset = Byte.toUnsignedInt(header)
             int len = Byte.toUnsignedInt(item)
             int start = |output| - offset
             // How to avoid these assumptions?
-            assume offset <= |output|
-            assume (start+len) < |output|
+            //assume offset <= |data|
+            //assume (start+len) < |data|
             int i = start
             while i < (start+len) where i >= 0:
                 item = output[i]
-                output = output ++ [item]       
+                output = append(output,item)
                 i = i + 1     
     // all done!
     return output
 
-function write_u1([byte] bytes, int u1) -> [byte]:
-    return bytes ++ [Int.toUnsignedByte(u1)]
+function write_u1(byte[] bytes, int u1) -> byte[]:
+    return append(bytes,Int.toUnsignedByte(u1))
 
 method main(System.Console sys):
     File.Reader file = File.Reader(sys.args[0])
-    [byte] data = file.readAll()
-    sys.out.println_s("READ:         " ++ Int.toString(|data|) ++ " bytes")
+    byte[] data = file.readAll()
+    sys.out.print_s("READ:         ")
+    sys.out.print_s(Int.toString(|data|))
+    sys.out.println_s(" bytes")
     data = compress(data)
-    sys.out.println_s("COMPRESSED:   " ++ Int.toString(|data|) ++ " bytes.")
+    sys.out.print_s("COMPRESSED:   ")
+    sys.out.print_s(Int.toString(|data|))
+    sys.out.println_s(" bytes")
     data = decompress(data)
-    sys.out.println_s("UNCOMPRESSED: " ++ Int.toString(|data|) ++ " bytes")
+    sys.out.print_s("UNCOMPRESSED:   ")
+    sys.out.print_s(Int.toString(|data|))
+    sys.out.println_s(" bytes")
     sys.out.println_s("==================================")
     sys.out.print_s(ASCII.fromBytes(data))
 
-
+// This is temporary and should be removed
+public function append(byte[] items, byte item) -> byte[]:
+    byte[] nitems = [0b; |items| + 1]
+    int i = 0
+    //
+    while i < |items|:
+        nitems[i] = items[i]
+        i = i + 1
+    //
+    nitems[i] = item    
+    //
+    return nitems
 
