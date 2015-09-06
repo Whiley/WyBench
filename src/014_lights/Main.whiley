@@ -1,5 +1,4 @@
-import whiley.lang.System
-import string from whiley.lang.ASCII
+import whiley.lang.*
 
 // the British interpretation of traffic lights!
 type TrafficLights is {
@@ -33,21 +32,21 @@ function change(TrafficLights ls) -> TrafficLights:
         // -> !red && amber && !green
         return { red: true, amber: false, green: false }
 
-function toString(TrafficLights ls) -> string:
-    string r
+function toString(TrafficLights ls) -> ASCII.string:
+    ASCII.string r
     //
     if ls.red:
         r = "RED "
     else:
         r = "    "
     if ls.amber:
-        r = r ++ "AMBER "
+        r = Array.append(r,"AMBER ")
     else:
-        r = r ++ "       "
+        r = Array.append(r,"       ")
     if ls.green:
-        r = r ++ "GREEN "
+        r = Array.append(r,"GREEN ")
     else:
-        r = r ++ "      "
+        r = Array.append(r,"      ")
     return r
 
 public method main(System.Console console):
