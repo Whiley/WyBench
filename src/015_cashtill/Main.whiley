@@ -1,6 +1,4 @@
-import whiley.lang.System
-import whiley.lang.Int
-import string from whiley.lang.ASCII
+import whiley.lang.*
 
 type nat is (int n) where n >= 0
 
@@ -30,18 +28,18 @@ constant Value is [
 /**
  * Define the notion of cash as an array of coins / notes
  */
-type Cash is ([nat] ns) where |ns| == |Value|
+type Cash is (nat[] ns) where |ns| == |Value|
 
 function Cash() -> Cash:
     return [0,0,0,0,0,0,0,0]
 
-function Cash([nat] coins) -> Cash
+function Cash(nat[] coins) -> Cash
 // No coin in coins larger than permitted values
-requires no { c in coins | c >= |Value| }:
+requires no { i in 0..|coins| | coins[i] >= |Value| }:
     Cash cash = [0,0,0,0,0,0,0,0]
     int i = 0
     while i < |coins| 
-        where |cash| == |Value| && no {c in cash | c < 0}:
+        where |cash| == |Value| && no {k in 0..|cash| | cash[k] < 0}:
         nat coin = coins[i]
         cash[coin] = cash[coin] + 1
         i = i + 1
@@ -147,17 +145,19 @@ ensures r is Cash ==> (contained(till,r) && total(r) == change):
 /**
  * Print out cash in a friendly format
  */
-function toString(Cash c) -> string:
-    string r = ""
+function toString(Cash c) -> ASCII.string:
+    ASCII.string r = ""
     bool firstTime = true
     int i = 0
     while i < |c|:
         int amt = c[i]
         if amt != 0:
             if !firstTime:
-                r = r ++ ", "
+                r = Array.append(r,", ")
             firstTime = false
-            r = r ++ Int.toString(amt) ++ " x " ++ Descriptions[i]
+            r = Array.append(r,Int.toString(amt))
+            r = Array.append(r," x ")
+            r = Array.append(r,Descriptions[i])
         i = i + 1
     if r == "":
         r = "(nothing)"
@@ -180,19 +180,24 @@ constant Descriptions is [
  */
 public method buy(System.Console console, Cash till, Cash given, int cost) -> Cash:
     console.out.println_s("--")
-    console.out.println_s("Customer wants to purchase item for " ++ Int.toString(cost) ++ "c.")
-    console.out.println_s("Customer gives: " ++ toString(given))
+    console.out.print_s("Customer wants to purchase item for ")
+    console.out.print_s(Int.toString(cost))
+    console.out.println_s("c.")
+    console.out.print_s("Customer gives: ")
+    console.out.println_s(toString(given))
     if total(given) < cost:
         console.out.println_s("Customer has not given enough cash!")
     else:
         Cash|null change = calculateChange(till,total(given) - cost)
         if change == null:
-            console.out.println_s("Cash till cannot given exact change!")
+            console.out.println_s("Cash till cannot give exact change!")
         else:
-            console.out.println_s("Change given: " ++ toString(change))
+            console.out.print_s("Change given: ")
+            console.out.println_s(toString(change))
             till = add(till,given)
             till = subtract(till,change)
-            console.out.println_s("Till: " ++ toString(till))
+            console.out.print_s("Till: ")
+            console.out.println_s(toString(till))
     return till
 
 /**
@@ -200,7 +205,8 @@ public method buy(System.Console console, Cash till, Cash given, int cost) -> Ca
  */
 public method main(System.Console console):
     Cash till = [5,3,3,1,1,3,0,0]
-    console.out.println_s("Till: " ++ toString(till))
+    console.out.print_s("Till: ")
+    console.out.println_s(toString(till))
     // now, run through some sequences...
     till = buy(console,till,Cash([ONE_DOLLAR]),85)
     till = buy(console,till,Cash([ONE_DOLLAR]),105)
