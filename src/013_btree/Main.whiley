@@ -1,6 +1,4 @@
-import whiley.lang.System
-import whiley.lang.Int
-import string from whiley.lang.ASCII
+import whiley.lang.*
 
 // A Binary Search Tree where elements are stored in sorted order.
 // That is, given a node n then we have the following invariant:
@@ -16,16 +14,16 @@ type Tree is null | Node
 
 type Node is { int data, Tree left, Tree right } where 
 	// Data in nodes reachable from left must be below this
-	(left != null ==> all { d in elts(left) | d < data }) &&
+	(left != null ==>  all { i in 0..|elts(left)| | elts(left)[i] < data }) &&
 	// Data in nodes reachable from right must be above this
-	(right != null ==> all { d in elts(right) | d > data })
+	(right != null ==> all { i in 0..|elts(right)| | elts(right)[i] > data })
 
 // Construct a given tree
 function Node(int data, Tree left, Tree right) -> Node
 // Data in nodes reachable from left must be below this
-requires left != null ==> all { d in elts(left) | d < data }
+requires left != null ==> all { i in 0..|elts(left)| | elts(left)[i] < data }
 // Data in nodes reachable from right must be above this
-requires right != null ==> all { d in elts(right) | d > data }:
+requires right != null ==> all { i in 0..|elts(right)| | elts(right)[i] > data }:
     //
     return {
     	data: data,
@@ -34,18 +32,25 @@ requires right != null ==> all { d in elts(right) | d > data }:
     }
 
 // Return all data elements contained in the tree
-function elts(Tree t) -> ({int} ret)
-// Data in this node should be in result
-ensures t != null ==> t.data in ret
+function elts(Tree t) -> (int[] ret)
 // All data reachable from left node should be in result
-ensures t != null ==> elts(t.left) ⊆ ret
+ensures t != null ==> all { i in 0..|elts(t.left)| | ret[i] == elts(t.left)[i] }
+// Data in this node should be in result
+ensures t != null ==> t.data == ret[|elts(t.left)|]
 // All data reachable from right node should be in result
-ensures t != null ==> elts(t.right) ⊆ ret:
+ensures t != null ==> all { i in 0..|elts(t.right)| | ret[i+|elts(t.left)|+1] == elts(t.right)[i] }:
     //
     if t is null:
-        return {}
-    else:        
-        return elts(t.left) + {t.data} + elts(t.right)
+        return [0;0]
+    else:      
+        int[] left = elts(t.left)
+        int[] right = elts(t.right)
+        int[] result = [0; |left| + 1 + |right|]
+        result = Array.copy(left,0,result,0,|left|)
+        result = Array.copy(right,0,result,|left|+1,|right|)
+        result[|left|] = t.data
+        //
+        return result
 
 // =================================================
 // Insert
@@ -132,13 +137,17 @@ ensures elts(tree) == elts(r):
 // toString
 // =================================================
 
-public function toString(Tree tree) -> string:
+public function toString(Tree tree) -> ASCII.string:
     if tree == null:
         return "null"
     else:
-        return "(" ++ Int.toString(tree.data) ++ ", " ++
-                 toString(tree.left) ++ ", " ++
-                 toString(tree.right) ++ ")"
+        ASCII.string r = "("
+        r = Array.append(r, Int.toString(tree.data))
+        r = Array.append(r, ", ")
+        r = Array.append(r, toString(tree.left))
+        r = Array.append(r, ", ")
+        r = Array.append(r,toString(tree.right))
+        return Array.append(r,")")
 
 // =================================================
 // Test Harness

@@ -1,5 +1,4 @@
-import whiley.lang.Int
-import whiley.lang.System
+import whiley.lang.*
 import string from whiley.lang.ASCII
 
 // A simple fixed-size cyclic buffer supporting read and write
@@ -8,7 +7,7 @@ import string from whiley.lang.ASCII
 type nat is (int x) where x >= 0
 
 type Buffer is {
-    [int] data,
+    int[] data,
     nat rpos,
     nat wpos
 } where rpos < |data| && wpos < |data|
@@ -35,14 +34,8 @@ public function Buffer(int size) -> EmptyBuffer
 // Cannot create buffer with zero size
 requires size > 0:
     //
-    [int] data = []
-    int i = 0
-    while i < size:
-        data = data ++ [0]
-        i = i + 1
-    assume |data| == size
     return {
-        data: data,
+        data: [0; size],
         rpos: 0,
         wpos: 0
     }
@@ -82,14 +75,14 @@ public function toString(Buffer b) -> string:
     int i = 0
     while i < |b.data|:
         if i != 0:
-            r = r ++ ", "
+            r = Array.append(r,", ")
         if i == b.rpos:
-            r = r ++ "<"
+            r = Array.append(r,"<")
         if i == b.wpos:
-            r = r ++ ">"
-        r = r ++ Int.toString(b.data[i])
+            r = Array.append(r,">")
+        r = Array.append(r,Int.toString(b.data[i]))
         i = i + 1
-    return r ++ "]"
+    return Array.append(r,"]")
 
 constant ITEMS is [5,4,6,3,7,2,8,1,9,10,0]
 
@@ -97,7 +90,8 @@ method main(System.Console console):
     int i = 0
     Buffer buf = Buffer(10)
     //
-    console.out.println_s("INIT: " ++ toString(buf))
+    console.out.print_s("INIT: ")
+    console.out.println_s(toString(buf))
     
     // NOTE: following loop invariant should not be necessary!  It is
     // needed because the verifier doesn't current enforce the
@@ -111,7 +105,10 @@ method main(System.Console console):
             console.out.println_s("BUFFER FULL")
             break
         buf = write(buf,ITEMS[i])
-        console.out.println_s("WROTE: " ++ Int.toString(ITEMS[i]) ++ ", " ++ toString(buf))
+        console.out.print_s("WROTE: ")
+        console.out.print_s(Int.toString(ITEMS[i]))
+        console.out.print_s(", ")
+        console.out.println_s(toString(buf))
         i = i + 1
     //
     int item
@@ -130,8 +127,14 @@ method main(System.Console console):
             break
         buf,item = read(buf)
         if item == ITEMS[i]:
-            console.out.println_s("READ: " ++ Int.toString(item) ++ ", " ++ toString(buf))
+            console.out.print_s("READ: ")
+            console.out.print_s(Int.toString(item)) 
+            console.out.print_s(", ")
+            console.out.println_s(toString(buf))
         else:
-            console.out.println_s("ERROR: read " ++ Int.toString(item) ++ ", expecting " ++ Int.toString(ITEMS[i]))
+            console.out.print_s("ERROR READ: ")
+            console.out.print_s(Int.toString(item))
+            console.out.print_s(", expecting ")
+            console.out.println_s(Int.toString(ITEMS[i]))
         i = i + 1
     
