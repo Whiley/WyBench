@@ -10,43 +10,60 @@ import wybench.Parser
 // ===============================================
 
 type Job is { nat button, bool orange }
-
 // ===============================================
 // Parser
 // ===============================================
 
-function parseJobs(nat pos, string input) -> ([Job],nat):
+constant EMPTY_JOB is { button: 0, orange: false }
+
+function parseJobs(nat pos, string input) -> (Job[],nat):
     //
     int|null nitems
+    //
+    pos = Parser.skipWhiteSpace(pos,input)
     nitems,pos = Parser.parseInt(pos,input)
     if nitems != null:
         return parseNumJobs(nitems,pos,input)
     else:
-        return ([],pos)
+        return ([EMPTY_JOB;0],pos)
 
-function parseNumJobs(nat nitems, nat pos, string input) -> ([Job],nat):
+function parseNumJobs(nat nitems, nat pos, string input) -> (Job[],nat):
     //
-    if nitems == 0:
-        return ([],pos)
-    else:
+    Job[] jobs = [EMPTY_JOB; nitems]
+    int|null target
+    int i = 0
+    //        
+    while i < nitems:
         pos = Parser.skipWhiteSpace(pos,input)
-        if pos < |input|:
-            int|null target, [Job] jobs
-            bool flag = (input[pos] == 'O')
-            pos = Parser.skipWhiteSpace(pos+1,input)
-            target,pos = Parser.parseInt(pos,input)
-            if target != null:
-                jobs,pos = parseNumJobs(nitems-1,pos,input)
-                jobs = [{button: target, orange: flag}] ++ jobs
-                return jobs,pos        
-        // default
-        return ([],pos)
+        bool flag = (input[pos] == 'O')
+        pos = Parser.skipWhiteSpace(pos+1,input)
+        target,pos = Parser.parseInt(pos,input)
+        if target != null:            
+            jobs[i] = {button:target, orange: flag}
+        i = i + 1
+    //
+    return jobs,pos
+    // if nitems == 0:
+    //     return ([EMPTY_JOB;0],pos)
+    // else:
+    //     pos = Parser.skipWhiteSpace(pos,input)
+    //     if pos < |input|:
+    //         int|null target, Job[] jobs
+    //         bool flag = (input[pos] == 'O')
+    //         pos = Parser.skipWhiteSpace(pos+1,input)
+    //         target,pos = Parser.parseInt(pos,input)
+    //         if target != null:
+    //             jobs,pos = parseNumJobs(nitems-1,pos,input)
+    //             jobs = [{button: target, orange: flag}] ++ jobs
+    //             return jobs,pos        
+    //     // default
+    //     return ([EMPTY_JOB;0],pos)
 
 // ===============================================
 // Main Computation
 // ===============================================
 
-function processJobs([Job] jobs) -> nat:
+function processJobs(Job[] jobs) -> nat:
     //
     int Opos = 1    // current orange position
     int Bpos = 1    // current blue position 
@@ -85,10 +102,13 @@ method main(System.Console sys):
         int|null ntests, int pos = Parser.parseInt(0,input)
         if ntests != null:
             int c = 1
-            [Job] jobs
+            Job[] jobs
             while c <= ntests where pos >= 0:
                 jobs,pos = parseJobs(pos,input)
                 pos = Parser.skipWhiteSpace(pos,input)
                 int time = processJobs(jobs)
-                sys.out.println_s("Case #" ++ Int.toString(c) ++ ": " ++ Int.toString(time))
+                sys.out.print_s("Case #")
+                sys.out.print_s(Int.toString(c))
+                sys.out.print_s(": ")
+                sys.out.println_s(Int.toString(time))
                 c = c + 1
