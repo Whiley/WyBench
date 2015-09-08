@@ -3,8 +3,7 @@
 // http://www.youtube.com/watch?v=P2durYFsJSA
 //
 
-import whiley.lang.System
-import whiley.lang.Int
+import whiley.lang.*
 import string from whiley.lang.ASCII
 
 /**
@@ -20,7 +19,7 @@ import string from whiley.lang.ASCII
  * Note that we're assuming unsigned sequences here only.
  */
 
-function value([bool] bits) -> (int result)
+function value(bool[] bits) -> (int result)
 // We are only consider unsigned integers
 ensures result >= 0:
     //
@@ -48,7 +47,7 @@ ensures result >= 0:
  *
  * (writing most significant bit first)
  */
-function increment([bool] bits) -> ([bool] result)
+function increment(bool[] bits) -> (bool[] result)
 // This is the key property for this benchmark
 ensures value(result) == value(bits) + 1:
     //
@@ -64,21 +63,21 @@ ensures value(result) == value(bits) + 1:
         bits[i] = true
         return bits
     else:
-        return bits ++ [true]
+        return Array.append(bits,true)
 
 /**
  * Print out a sequence of bits in the usual 
  * right-to-left format.
  */
-function toString([bool] bits, int n) -> string:
+function toString(bool[] bits, int n) -> string:
     int i = 0
     string r = ""
     //
     while i < n where i >= 0:
        if i < |bits| && bits[i]:
-           r = "1" ++ r
+           r = Array.append('1',r)
        else:
-           r = "0" ++ r
+           r = Array.append('0',r)
        i = i + 1
     //
     return r
@@ -87,11 +86,13 @@ function toString([bool] bits, int n) -> string:
  * Print and enumerate first 15 bit patterns
  */
 method main(System.Console console):
-    [bool] bits = [ false ]
+    bool[] bits = [ false ]
     int i = 0
     //
     while i < 16:
-        console.out.println_s(toString(bits,4) ++ " = " ++ Int.toString(value(bits)))
+        console.out.print_s(toString(bits,4))
+        console.out.print_s(" = ")
+        console.out.println_s(Int.toString(value(bits)))
         bits = increment(bits)
         i = i + 1
     //
