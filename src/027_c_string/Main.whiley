@@ -11,9 +11,11 @@ import whiley.lang.System
 //
 type ASCII_char is (int n) where 0 <= n && n <= 255
 
-type C_string is ([ASCII_char] chars) 
+constant NULL is 0
+
+type C_string is (ASCII_char[] str) 
 // Must have at least one character (i.e. null terminator)
-where |chars| > 0 && some { i in 0 .. |str| | str[i] == NULL }
+where |str| > 0 && some { i in 0 .. |str| | str[i] == NULL }
 
 // Determine the length of a C string.
 public function strlen(C_string str) -> (int r)
@@ -45,7 +47,7 @@ public method main(System.Console console):
     // ==============================================================
     // TEST: strlen
     // ==============================================================
-    C_string src = ([int]) ['H','e','l','l','o','W','o','r','l','d',0]
+    C_string src = ['H','e','l','l','o','W','o','r','l','d',0]
     console.out.println(strlen(src))
     
     // ==============================================================
