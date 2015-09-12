@@ -30,11 +30,11 @@ type ListAccess is {
 type Expr is int |  // constant
     Var |              // variable
     BinOp |            // binary operator
-    [Expr] |           // list constructor
+    Expr[] |           // array constructor
     ListAccess         // list access
 
 // values
-type Value is int | [Value]
+type Value is int | Value[]
 
 // stmts
 type Print is { Expr rhs }
@@ -46,11 +46,12 @@ type Stmt is Print | Set
 // ====================================================
 
 type RuntimeError is { string msg }
+type Environment is [{string k, Value v}]
 
 // Evaluate an expression in a given environment reducing either to a
 // value, or a runtime error.  The latter occurs if evaluation gets
 // "stuck" (e.g. expression is // not well-formed)
-function evaluate(Expr e, {string=>Value} env) -> Value | RuntimeError:
+function evaluate(Expr e, Environment env) -> Value | RuntimeError:
     //
     if e is int:
         return e
@@ -72,7 +73,7 @@ function evaluate(Expr e, {string=>Value} env) -> Value | RuntimeError:
         else if rhs != 0:
             return lhs / rhs
         return {msg: "divide-by-zero"}
-    else if e is [Expr]:
+    else if e is Expr[]:
         [Value] r = []
         for i in e:
             Value|RuntimeError v = evaluate(i, env)
@@ -269,7 +270,7 @@ public method main(System.Console sys):
         File.Reader file = File.Reader(sys.args[0])
         string input = ASCII.fromBytes(file.readAll())
         
-        {string=>Value} env = {"$"=>0} 
+        Environment env = Environment()
         State st = {pos: 0, input: input}
         while st.pos < |st.input|:
             Stmt s

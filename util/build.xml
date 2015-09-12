@@ -1,5 +1,6 @@
 <project name="WyBench Library" default="build">  
 
+  <property name="wyc.verificationConditions" value="true"/>
   <import file="../config.xml"/> 
   <import file="build-template.xml"/>  
   
@@ -7,6 +8,7 @@
     <jar destfile="../lib/wybench.jar">
       <fileset dir="." includes="*/**/*.class"/>
       <fileset dir="." includes="*/**/*.wyil"/>
+      <fileset dir="." includes="*/**/*.wycs"/>
     </jar>    
   </target>
 

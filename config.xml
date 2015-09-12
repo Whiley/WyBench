@@ -3,6 +3,7 @@
 <project name="BuildConfig">
   <property environment="env"/>
   <property name="wyc.verification" value="false"/>
+  <property name="wyc.verificationConditions" value="false"/>
   <property name="input" value=""/>
   <property name="main" value="Main"/>
 
