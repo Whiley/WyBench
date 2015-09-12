@@ -13,7 +13,7 @@ function conflict(Pos p, nat row, nat col) -> bool:
     int rowDiff = Math.abs(r - row)
     return colDiff == rowDiff
 
-function run([Pos] queens, nat n, int dim) -> [[Pos]] 
+function run(Pos[] queens, nat n, int dim) -> Pos[][] 
 // The number of allocated queens is at most the number of queens
 requires n <= |queens|
 // Dim matches the size of the array
@@ -22,7 +22,7 @@ requires dim == |queens|:
     if dim == n:
         return [queens]
     else:
-        [[Pos]] solutions = []
+        Pos[][] solutions = [[(0,0);0];0]
         int col = 0
         while col < dim where n < |queens| && dim == |queens|:
             bool solution = true
@@ -35,19 +35,32 @@ requires dim == |queens|:
                 i = i + 1
             if solution:
                 queens[n] = (n,col)
-                solutions = solutions ++ run(queens,n+1,dim)                    
+                solutions = append(solutions,run(queens,n+1,dim))
             col = col + 1
         return solutions
 
 method main(System.Console sys):
     int dim = 10
-    [(int,int)] init = []
+    Pos[] init = [(0,0); dim]
     //
-    int i = 0
-    while i < dim:
-        init = init ++ [(0,0)]
+    Pos[][] solutions = run(init,0,dim)
+    sys.out.print_s("Found ")
+    sys.out.print_s(Int.toString(|solutions|))
+    sys.out.println_s(" solutions.")
+
+// This will be deprecated once the Array.append function is generic.
+function append(Pos[][] xs, Pos[][] ys) -> Pos[][]:
+    Pos[][] zs =  [[(0,0);0]; |xs| + |ys|]
+    zs = copy(xs,0,zs,0,|xs|)
+    return copy(ys,0,zs,|xs|,|ys|)
+
+function copy(Pos[][] xs, int xsStart, Pos[][] ys, int ysStart, int len) -> Pos[][]:
+    int i = xsStart
+    int j = ysStart
+    int end = xsStart + len
+    while i < end:
+        ys[j] = xs[i]
         i = i + 1
+        j = j + 1
     //
-    assume |init| == dim
-    [[Pos]] solutions = run(init,0,dim)
-    sys.out.println_s("Found " ++ Int.toString(|solutions|) ++ " solutions.")
+    return ys
