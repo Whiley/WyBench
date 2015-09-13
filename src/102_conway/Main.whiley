@@ -1,6 +1,5 @@
 import whiley.lang.*
 import whiley.io.File
-import string from whiley.lang.ASCII
 import nat from whiley.lang.Int
 
 import wybench.Parser
@@ -10,26 +9,16 @@ import wybench.Parser
 // ============================================
 
 type Board is {
-    [[bool]] cells,
+    bool[][] cells,
     nat width,
     nat height
-} where |cells| == height && all { row in cells | |row| == width }
+} where |cells| == height && all { i in 0..|cells| | |cells[i]| == width }
 
 // Create an empty board of size width x height.  That is, where each
 // square is "off".
 function Board(nat height, nat width) -> Board:
-    [bool] row = []
-    int i = 0
-    while i < width where i >= 0:
-        row = row ++ [false]
-        i = i + 1
-    assume |row| == width
-    [[bool]] cells = []
-    i = 0
-    while i < height where i >= 0 && all { r in cells | |r| == width }:
-        cells = cells ++ [row]
-        i = i + 1
-    assume |cells| == height
+    bool[] row = [false; width]
+    bool[][] cells = [row; height]
     return { 
         cells: cells, 
         height: height, 
@@ -39,13 +28,13 @@ function Board(nat height, nat width) -> Board:
 // Take the current board and determine the next state based on the
 // current state of all cells.
 function update(Board board) -> Board:
-    [[bool]] ncells = board.cells
+    bool[][] ncells = board.cells
     int height = board.height
     int width = board.width
     int i = 0
-    while i < height where i >= 0 && |ncells| == height && all { row in ncells | |row| == width }:
+    while i < height where i >= 0 && |ncells| == height && all { k in 0..|ncells| | |ncells[k]| == width }:
         int j = 0
-        while j < width where j >= 0 && all { row in ncells | |row| == width }:
+        while j < width where j >= 0 && all { k in 0..|ncells| | |ncells[k]| == width }:
             int c = countLiving(board,i,j)
             assume i < |board.cells|    // FIXME
             assume j < |board.cells[i]| // FIXME
@@ -103,7 +92,7 @@ function isAlive(Board board, int row, int col) -> int:
 // Parser
 // ============================================
 
-function parseConfig([int] data) -> (Board,int):
+function parseConfig(int[] data) -> (Board,int):
     //
     int niters = data[0]
     int cols = data[1]
@@ -125,8 +114,8 @@ function parseConfig([int] data) -> (Board,int):
 method main(System.Console sys):
     // First, parse input file
     File.Reader file = File.Reader(sys.args[0])
-    string input = ASCII.fromBytes(file.readAll())
-    [int]|null data = Parser.parseInts(input)
+    ASCII.string input = ASCII.fromBytes(file.readAll())
+    int[]|null data = Parser.parseInts(input)
     // Second, construct and iterate board
     if data != null:
         Board board, int niters = parseConfig(data)
@@ -142,18 +131,28 @@ method main(System.Console sys):
 method printBoard(System.Console sys, Board board):
     int ncols = board.width
     sys.out.print_s("+")
-    for i in 0..ncols:
+    int i = 0
+    while i < ncols:
         sys.out.print_s("-")
+        i = i + 1
     sys.out.println_s("+")
-    for row in board.cells:
+    i = 0
+    while i < |board.cells|:
+        bool[] row = board.cells[i]
         sys.out.print_s("|")
-        for cell in row:
-            if cell:
+        int j = 0
+        while j < |row|:
+            if row[j]:
                 sys.out.print_s("#")
             else:
                 sys.out.print_s(" ")
+            j = j + 1        
         sys.out.println_s("|")
+        i = i + 1
+    //
     sys.out.print_s("+")
-    for i in 0..ncols:
+    i = 0
+    while i < ncols:
         sys.out.print_s("-")
+        i = i + 1
     sys.out.println_s("+")
