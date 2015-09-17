@@ -34,7 +34,7 @@ function update(Board board) -> Board:
     int i = 0
     while i < height where i >= 0 && |ncells| == height && all { k in 0..|ncells| | |ncells[k]| == width }:
         int j = 0
-        while j < width where j >= 0 && all { k in 0..|ncells| | |ncells[k]| == width }:
+        while j < width where j >= 0 && |ncells| == height && all { k in 0..|ncells| | |ncells[k]| == width }:
             int c = countLiving(board,i,j)
             assume i < |board.cells|    // FIXME
             assume j < |board.cells[i]| // FIXME
