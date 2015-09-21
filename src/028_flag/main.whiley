@@ -9,24 +9,31 @@ type Color is (int n)
 where n == RED || n == WHITE || n == BLUE 
 
 function partition(Color[] cols) -> (Color[] r):
-    int i = 0
-    int j = 0
-    int n = |cols|-1
+    int lo = 0
+    int mid = 0
+    int hi = |cols|-1
 
-    while j <= n:
-        if cols[j] < WHITE:
-            cols = swap(cols,i,j)
-            i = i + 1
-            j = j + 1
-        else if cols[j] > WHITE:
-            cols = swap(cols,j,n)
-            n = n - 1
+    while mid <= hi
+        where lo >= 0 && lo <= mid && hi < |cols|:
+        //
+        if cols[mid] < WHITE:
+            cols = swap(cols,lo,mid)
+            lo = lo + 1
+            mid = mid + 1
+        else if cols[mid] > WHITE:
+            cols = swap(cols,mid,hi)
+            hi = hi - 1
         else:
-            j = j + 1
+            mid = mid + 1
     //
     return cols
 
-function swap(Color[] cols, int i, int j) -> (Color[] r):
+function swap(Color[] cols, int i, int j) -> (Color[] r)
+// Requires that index i is within bounds
+requires i >= 0 && i < |cols|
+// Requires that index j is within bounds
+requires j >= 0 && j < |cols|:
+    //
     int tmp = cols[i]
     cols[i] = cols[j]
     cols[j] = tmp
