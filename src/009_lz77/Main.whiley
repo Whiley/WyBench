@@ -49,7 +49,7 @@ function findLongestMatch(byte[] data, nat pos) -> (nat offset, nat len)
     //
     return bestOffset,bestLen
 
-function match(byte[] data, nat offset, nat end) -> int len
+function match(byte[] data, nat offset, nat end) -> (int len)
     ensures 0 <= len && len <= 255:
     //
     nat pos = end
@@ -114,13 +114,16 @@ method main(System.Console sys):
     sys.out.print_s(ASCII.fromBytes(data))
 
 // This is temporary and should be removed
-public function append(byte[] items, byte item) -> byte[] nitems
+public function append(byte[] items, byte item) -> (byte[] nitems)
     ensures |nitems| == |items| + 1:
     //
     byte[] nitems = [0b; |items| + 1]
     int i = 0
     //
-    while i < |items| where i >= 0 && i <= |items| && |nitems| == |items| + 1:
+    while i < |items|
+        where i >= 0 && i <= |items|
+        where |nitems| == |items| + 1:
+        //
         nitems[i] = items[i]
         i = i + 1
     //
