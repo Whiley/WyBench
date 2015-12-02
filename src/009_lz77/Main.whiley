@@ -28,14 +28,18 @@ function compress(byte[] data) -> byte[]:
     return output
 
 // pos is current position in input value
-function findLongestMatch(byte[] data, nat pos) -> (nat,nat):
+function findLongestMatch(byte[] data, nat pos) -> (nat offset, nat len)
+    ensures offset >= 0 && offset <= 255
+    ensures len >= 0 && len <= 255:
     //
     nat bestOffset = 0
     nat bestLen = 0
     int start = Math.max(pos - 255,0)
     assert start >= 0
     nat offset = start
-    while offset < pos where offset >= 0 && pos >= 0 && bestOffset >= 0 && bestLen >= 0:
+    while offset < pos
+        where offset >= 0 && pos >= 0 && bestOffset >= 0 && bestLen >= 0
+        where bestOffset <= 255 && pos - offset <= 255 && bestLen <= 255:
         //
         int len = match(data,offset,pos)
         if len > bestLen:
@@ -45,12 +49,14 @@ function findLongestMatch(byte[] data, nat pos) -> (nat,nat):
     //
     return bestOffset,bestLen
 
-function match(byte[] data, nat offset, nat end) -> int:
+function match(byte[] data, nat offset, nat end) -> (int len)
+    ensures 0 <= len && len <= 255:
+    //
     nat pos = end
     nat len = 0
     //
-    while offset < pos && pos < |data| && data[offset] == data[pos]
-        where offset >= 0 && pos >= 0:
+    while offset < pos && pos < |data| && data[offset] == data[pos] && len < 255
+        where offset >= 0 && pos >= 0 && len >= 0 && len <= 255:
         //
         offset = offset + 1
         pos = pos + 1
@@ -75,15 +81,19 @@ function decompress(byte[] data) -> byte[]:
             // How to avoid these assumptions?
             //assume offset <= |data|
             //assume (start+len) < |data|
+            //assume start >= 0
+            //assume start < |output|
             int i = start
-            while i < (start+len) where i >= 0:
+            while i < (start+len) where i >= 0 && i < |output|:
                 item = output[i]
                 output = append(output,item)
                 i = i + 1     
     // all done!
     return output
 
-function write_u1(byte[] bytes, int u1) -> byte[]:
+function write_u1(byte[] bytes, int u1) -> byte[]
+    requires u1 >= 0 && u1 <= 255:
+    //
     return append(bytes,Int.toUnsignedByte(u1))
 
 method main(System.Console sys):
@@ -104,11 +114,16 @@ method main(System.Console sys):
     sys.out.print_s(ASCII.fromBytes(data))
 
 // This is temporary and should be removed
-public function append(byte[] items, byte item) -> byte[]:
+public function append(byte[] items, byte item) -> (byte[] nitems)
+    ensures |nitems| == |items| + 1:
+    //
     byte[] nitems = [0b; |items| + 1]
     int i = 0
     //
-    while i < |items|:
+    while i < |items|
+        where i >= 0 && i <= |items|
+        where |nitems| == |items| + 1:
+        //
         nitems[i] = items[i]
         i = i + 1
     //
