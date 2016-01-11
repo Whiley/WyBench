@@ -93,19 +93,31 @@ function find(Matching m, bool[] visited, int from) -> (Matching r_m, bool[] r_v
             int tor = m.right[e.to]
             if tor == UNMATCHED:
                 // to is unmatched; hence, greedily match it
-                m.left[from] = e.to
-                m.right[e.to] = from
-                return m,visited
+                return match(m,from,e.to), visited
             else if !visited[tor]:
-                // to is already matched; hence, try to find augmenting path so it can be unmatched.
+                // to already matched; hence, try to find augmenting
+                // path so it can be unmatched.
                 m,visited = find(m,visited,tor)
-                // FIXME: something is wrong here because cannot get UNMATCHED
                 if m.right[e.to] == UNMATCHED:
-                    m.left[from] = e.to
-                    m.right[e.to] = from
-                    return m,visited
+                    return match(m,from,e.to), visited
         i = i + 1
     //
     // Failed
     // 
     return m,visited
+
+function match(Matching m, int from, int to) -> (Matching r)
+// The target vertex cannot be matched; note, however,
+// that the source vertex may already be matched
+requires m.right[to] == UNMATCHED:
+    //
+    int l_from = m.left[from]
+    //
+    if l_from != UNMATCHED:
+        // from was already matched
+        m.right[l_from] = UNMATCHED
+    //
+    m.left[from] = to
+    m.right[to] = from
+    //
+    return m
