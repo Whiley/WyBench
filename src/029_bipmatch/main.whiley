@@ -66,26 +66,30 @@ function findMaximalMatching(Graph g) -> (null|Matching r):
     else:
         // N1 == N2
         Matching m = Matching(g)
-        //
+        bool matched
         int i = 0
+        //
         while i < g.N1 where i >= 0
         // Every vertex below i is already matched
         where all { j in 0..i | m.left[j] != UNMATCHED }:
             bool[] visited = [false; g.N1]
-            m,visited = find(m,visited,i)
-            if m.left[i] == UNMATCHED:
+            m,visited,matched = find(m,visited,i)
+            if matched:
                 // no match for this vertex possible
                 return null
             i = i + 1
         //
         return m
 
-function find(Matching m, bool[] visited, int from) -> (Matching r_m, bool[] r_visited):
+function find(Matching m, bool[] visited, int from) -> (Matching r_m, bool[] r_visited, bool matched)
+// If return true, then from was definitely matched
+ensures matched ==> m.left[from] != UNMATCHED:
     //
     Graph g = m.graph
     visited[from] = true
     //
     int i = 0
+    bool matched
     //
     while i < |g.edges| where i >= 0:
         edge e = g.edges[i]
@@ -93,18 +97,18 @@ function find(Matching m, bool[] visited, int from) -> (Matching r_m, bool[] r_v
             int tor = m.right[e.to]
             if tor == UNMATCHED:
                 // to is unmatched; hence, greedily match it
-                return match(m,from,e.to), visited
+                return match(m,from,e.to), visited, true
             else if !visited[tor]:
                 // to already matched; hence, try to find augmenting
                 // path so it can be unmatched.
-                m,visited = find(m,visited,tor)
-                if m.right[e.to] == UNMATCHED:
-                    return match(m,from,e.to), visited
+                m,visited,matched = find(m,visited,tor)
+                if matched:
+                    return match(m,from,e.to), visited, true
         i = i + 1
     //
     // Failed
     // 
-    return m,visited
+    return m,visited,false
 
 function match(Matching m, int from, int to) -> (Matching r)
 // The target vertex cannot be matched; note, however,
