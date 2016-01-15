@@ -8,7 +8,7 @@ public type nat is (int x) where x >= 0
 // Parse Ints
 // ========================================================
 
-public function parseInt(nat pos, ASCII.string input) -> (null|int,nat):
+public function parseInt(nat pos, ASCII.string input) -> (null|int val,nat npos):
     //
     int start = pos
     while pos < |input| && ASCII.isDigit(input[pos]):
