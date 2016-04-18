@@ -3,14 +3,17 @@ import * from whiley.lang.System
 
 import nat from whiley.lang.Int
 
-type Pos is (int,int)
+type Pos is {int row, int col}
+
+function Pos(int row, int col) -> Pos:
+    //
+    return {row:row, col:col}
 
 function conflict(Pos p, nat row, nat col) -> bool:
-    int r, int c = p
-    if r == row || c == col:
+    if p.row == row || p.col == col:
         return true
-    int colDiff = Math.abs(c - col)
-    int rowDiff = Math.abs(r - row)
+    int colDiff = Math.abs(p.col - col)
+    int rowDiff = Math.abs(p.row - row)
     return colDiff == rowDiff
 
 function run(Pos[] queens, nat n, int dim) -> Pos[][] 
@@ -22,7 +25,7 @@ requires dim == |queens|:
     if dim == n:
         return [queens]
     else:
-        Pos[][] solutions = [[(0,0);0];0]
+        Pos[][] solutions = [[Pos(0,0);0];0]
         int col = 0
         while col < dim where n < |queens| && dim == |queens|:
             bool solution = true
@@ -34,14 +37,14 @@ requires dim == |queens|:
                     break
                 i = i + 1
             if solution:
-                queens[n] = (n,col)
+                queens[n] = Pos(n,col)
                 solutions = append(solutions,run(queens,n+1,dim))
             col = col + 1
         return solutions
 
 method main(System.Console sys):
     int dim = 10
-    Pos[] init = [(0,0); dim]
+    Pos[] init = [Pos(0,0); dim]
     //
     Pos[][] solutions = run(init,0,dim)
     sys.out.print_s("Found ")
@@ -50,7 +53,7 @@ method main(System.Console sys):
 
 // This will be deprecated once the Array.append function is generic.
 function append(Pos[][] xs, Pos[][] ys) -> Pos[][]:
-    Pos[][] zs =  [[(0,0);0]; |xs| + |ys|]
+    Pos[][] zs =  [[Pos(0,0);0]; |xs| + |ys|]
     zs = copy(xs,0,zs,0,|xs|)
     return copy(ys,0,zs,|xs|,|ys|)
 
