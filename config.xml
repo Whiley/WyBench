@@ -1,15 +1,26 @@
-<!-- Requires environment WYBENCH_HOME is set -->
-
-<project name="BuildConfig">
+<project name="BuildConfig" xmlns:maven="urn:maven-ant">
+  <!-- Get the root directory of the project by looking at the directory enclosing this file. -->
+  <dirname property="rootdir" file="${ant.file.BuildConfig}"/>
+  <!-- Configure helpful stuff -->
   <property environment="env"/>
   <property name="wyc.verification" value="false"/>
   <property name="wyc.verificationConditions" value="false"/>
   <property name="input" value=""/>
   <property name="main" value="Main"/>
-
-  <property name="wyjc.jar" value="${env.WYBENCH_HOME}/lib/wyjc-all-v0.3.37.jar"/>
-  <property name="wyrl.jar" value="${env.WYBENCH_HOME}/lib/wyrl-v0.4.4.jar"/>
-  <property name="wyrt.jar" value="${env.WYBENCH_HOME}/lib/wyrt-v0.3.37.jar"/>
-  <property name="wybench.jar" value="${env.WYBENCH_HOME}/lib/wybench.jar"/>
-  <taskdef name="wyjc" classname="wyjc.util.WyjcAntTask" classpath="${wyjc.jar}:${wyrl.jar}"/>
+  <!-- Set the current version -->
+  <property name="version" value="0.1.8"/>
+  <!-- Define destination for jar -->
+  <property name="LIB_DIR" value="lib/"/>
+  <!-- Load the Maven Ant tasks so that we can work with Maven repositories. -->
+  <typedef uri="urn:maven-ant" classpath="${rootdir}/lib/maven-ant-tasks-2.1.3.jar" resource="org/apache/maven/artifact/ant/antlib.xml"/>
+  <!-- Set the classpath for Junit and its dependencies -->
+  <maven:dependencies pathId="wyc.jar">
+    <dependency groupId="org.whiley" artifactId="wyc" version="LATEST"/>
+  </maven:dependencies>
+  <!-- Define the WyC build task -->
+  <taskdef name="wyc" classname="wyc.util.AntTask">
+    <classpath>
+      <path refid="wyc.jar"/>
+    </classpath>
+  </taskdef>  
 </project>

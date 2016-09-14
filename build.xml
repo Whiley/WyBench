@@ -1,6 +1,4 @@
 <project name="wybench" default="compile">  
-  <property name="version" value="0.1.7"/>
-
   <target name="compile">
     <subant failonerror="false" target="build">
       <fileset dir="util" includes="build.xml"/>

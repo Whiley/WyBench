@@ -3,8 +3,9 @@
   <target name="compile">
     <echo message="COMPILING: ${ant.project.name}"/>
     <echo message="==================================="/>
-    <wyjc verification="${wyc.verification}" verificationConditions="${wyc.verificationConditions}" verbose="false" wycsdir="." wyildir="." whileydir="." whileypath="${wybench.jar}:${wyrt.jar}" includes="**/*.whiley"/>
-    <javac debug="true" srcdir="." includeantruntime="false" includes="**/*.java" classpath=".:${wyjc.jar}"/> 
+    <!--<wyjc verification="${wyc.verification}" verificationConditions="${wyc.verificationConditions}"verbose="false" wycsdir="." wyildir="." whileydir="." whileypath="${wybench.jar}:${wyrt.jar}" includes="**/*.whiley"/>-->
+    <wyc wyildir="." whileydir="."/>
+    <!--<javac debug="true" srcdir="." includeantruntime="false" includes="**/*.java" classpath=".:${wyjc.jar}"/>-->
   </target>
 
   <target name="run">
