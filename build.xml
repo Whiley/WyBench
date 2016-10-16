@@ -1,4 +1,9 @@
-<project name="wybench" default="compile">  
+<project name="wybench" default="compile">
+
+  <!-- ================================================================== -->
+  <!-- Compile -->
+  <!-- ================================================================== -->
+
   <target name="compile">
     <subant failonerror="false" target="build">
       <fileset dir="util" includes="build.xml"/>
@@ -8,6 +13,10 @@
     </subant>
   </target>
 
+  <!-- ================================================================== -->
+  <!-- Clean -->
+  <!-- ================================================================== -->
+
   <target name="clean">
     <subant failonerror="false" target="clean">
       <fileset dir="src" includes="*/build.xml"/>
@@ -16,6 +25,10 @@
       <fileset file="*~"/>
     </delete>
   </target>
+
+  <!-- ================================================================== -->
+  <!-- Dist -->
+  <!-- ================================================================== -->
 
   <target name="dist">
     <mkdir dir="wybench-v${version}"/>
