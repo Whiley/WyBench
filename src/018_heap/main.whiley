@@ -1,11 +1,11 @@
-type Heap is {
+type Heap is ({
     int[] data,
     int length
-} 
+} h)
 // Items on left branch are below their parent's item
-where all { i in 0..length | (2*i)+1 < length ==> data[i] > data[(2*i)+1] }
+where all { i in 0..h.length | (2*i)+1 < h.length ==> h.data[i] > h.data[(2*i)+1] }
 // Items on right branch are below their parent's item
-where all { i in 0..length | (2*i)+2 < length ==> data[i] > data[(2*i)+2] }
+where all { i in 0..h.length | (2*i)+2 < h.length ==> h.data[i] > h.data[(2*i)+2] }
 
 function insert(Heap heap, int item) -> Heap:
     //

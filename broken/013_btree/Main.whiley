@@ -12,18 +12,18 @@ import whiley.lang.*
 
 type Tree is null | Node
 
-type Node is { int data, Tree left, Tree right } where 
+type Node is ({ int data, Tree left, Tree right } n) where 
 	// Data in nodes reachable from left must be below this
-	(left != null ==>  all { i in 0..|elts(left)| | elts(left)[i] < data }) &&
+	(n.left != null ==>  all { i in 0..|elts(n.left)| | elts(n.left)[i] < n.data }) &&
 	// Data in nodes reachable from right must be above this
-	(right != null ==> all { i in 0..|elts(right)| | elts(right)[i] > data })
+	(n.right != null ==> all { i in 0..|elts(n.right)| | elts(n.right)[i] > n.data })
 
 // Construct a given tree
 function Node(int data, Tree left, Tree right) -> Node
 // Data in nodes reachable from left must be below this
-requires left != null ==> all { i in 0..|elts(left)| | elts(left)[i] < data }
+requires left is Node ==> all { i in 0..|elts(left)| | elts(left)[i] < data }
 // Data in nodes reachable from right must be above this
-requires right != null ==> all { i in 0..|elts(right)| | elts(right)[i] > data }:
+requires right is Node ==> all { i in 0..|elts(right)| | elts(right)[i] > data }:
     //
     return {
     	data: data,
@@ -59,7 +59,7 @@ ensures t != null ==> all { i in 0..|elts(t.right)| | ret[i+|elts(t.left)|+1] ==
 // Insert a given data element into a tree
 function insert(Tree tree, int data) -> (Tree r)
 // Return tree cannot be empty
-ensures r != null:
+ensures r is Node:
 // Original tree data is retained
 // ensures elts(tree) == elts(r) + {data}:
     //

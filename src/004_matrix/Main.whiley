@@ -28,17 +28,17 @@ import string from whiley.lang.ASCII
 
 type nat is (int x) where x >= 0
 
-type Matrix is {
+type Matrix is ({
     int width,
     int height,
     int[][] data
-} where |data| == height && no { i in 0..|data| | |data[i]| != width }
+} m) where |m.data| == m.height && all { i in 0..|m.data| | |m.data[i]| == m.width }
 
 function Matrix(nat width, nat height, int[][] data) -> (Matrix r)
 // Input array must match matrix height
 requires |data| == height
 // Elements of input array must match matrix width
-requires no { i in 0..|data| | |data[i]| != width }
+requires all { i in 0..|data| | |data[i]| == width }
 // 
 ensures r.width == width && r.height == height && r.data == data:
     //

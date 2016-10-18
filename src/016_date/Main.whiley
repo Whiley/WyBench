@@ -22,13 +22,13 @@ type month is (int x) where JAN <= x && x <= DEC
 // Date
 // =================================================
 
-type Date is {
+type Date is ({
     day day,
     month month,
     int year
-} where (day <= 30 || (month != SEP && month != APR && month != JUN && month != NOV)) &&
-        (month != FEB || day <= 29 ) && // normal restriction
-        (month != FEB || year % 4 != 0 || (year % 100 == 0 && year % 400 != 0) || day <= 28) // leap-year restriction
+} d) where (d.day <= 30 || (d.month != SEP && d.month != APR && d.month != JUN && d.month != NOV)) &&
+        (d.month != FEB || d.day <= 29 ) && // normal restriction
+        (d.month != FEB || d.year % 4 != 0 || (d.year % 100 == 0 && d.year % 400 != 0) || d.day <= 28) // leap-year restriction
 
 function Date(day day, month month, int year) -> Date
 // 30 days hath September, April, June and November.

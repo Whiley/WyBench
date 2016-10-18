@@ -8,11 +8,11 @@ import wybench.Parser
 // Game Logic
 // ============================================
 
-type Board is {
+type Board is ({
     bool[][] cells,
     nat width,
     nat height
-} where |cells| == height && all { i in 0..|cells| | |cells[i]| == width }
+} b) where |b.cells| == b.height && all { i in 0..|b.cells| | |b.cells[i]| == b.width }
 
 // Create an empty board of size width x height.  That is, where each
 // square is "off".
@@ -92,33 +92,35 @@ function isAlive(Board board, int row, int col) -> int:
 // Parser
 // ============================================
 
-function parseConfig(int[] data) -> (Board,int):
+function parseConfig(int[] data) -> (Board board, int nIterations):
     //
     int niters = data[0]
     int cols = data[1]
     int rows = data[2]
-    Board board = Board(cols,rows)
+    Board brd = Board(cols,rows)
     int i = 3
     while i < |data|:
         int col = data[i]
         int row = data[i+1]
-        board.cells[row][col] = true
+        brd.cells[row][col] = true
         i = i + 2
     //
-    return board,niters
+    return brd,niters
 
 // ============================================
 // Main
 // ============================================
 
 method main(System.Console sys):
+    Board board
+    int niters
     // First, parse input file
     File.Reader file = File.Reader(sys.args[0])
     ASCII.string input = ASCII.fromBytes(file.readAll())
     int[]|null data = Parser.parseInts(input)
     // Second, construct and iterate board
     if data != null:
-        Board board, int niters = parseConfig(data)
+        board,niters = parseConfig(data)
         int i = 0
         while i < niters:
             printBoard(sys,board)

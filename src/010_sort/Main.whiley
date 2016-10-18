@@ -17,7 +17,9 @@ function sort(int[] items, int start, int end) -> sortedList:
         int pivot = (end + start) / 2
         int[] lhs = sort(items,start,pivot)
         int[] rhs = sort(items,pivot,end)
-        int l, int r, int i = (start,pivot,start)
+        int l = start
+        int r = pivot
+        int i = start
         while i < end && l < pivot && r < end where l >= 0 && r >= 0 && i >= 0:
             if lhs[l] <= rhs[r]:
                 items[i] = lhs[l] 

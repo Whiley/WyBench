@@ -7,7 +7,7 @@ import whiley.lang.System
 type Fraction is ({
     int numerator,
     int denominator
-} this) where this.denominator > 0
+} fr) where fr.denominator > 0
 
 function Fraction(int numerator, int denominator) -> (Fraction r)
 requires denominator > 0

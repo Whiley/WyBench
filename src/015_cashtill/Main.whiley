@@ -35,11 +35,11 @@ function Cash() -> Cash:
 
 function Cash(nat[] coins) -> Cash
 // No coin in coins larger than permitted values
-requires no { i in 0..|coins| | coins[i] >= |Value| }:
+requires all { i in 0..|coins| | coins[i] < |Value| }:
     Cash cash = [0,0,0,0,0,0,0,0]
     int i = 0
     while i < |coins| 
-        where |cash| == |Value| && no {k in 0..|cash| | cash[k] < 0}:
+        where |cash| == |Value| && all {k in 0..|cash| | cash[k] >= 0}:
         nat coin = coins[i]
         cash[coin] = cash[coin] + 1
         i = i + 1
@@ -131,14 +131,14 @@ ensures r is Cash ==> (contained(till,r) && total(r) == change):
         nat i = 0
         while i < |till|:
             if till[i] > 0 && Value[i] <= change:
-                null|Cash tmp = till
+                Cash tmp = till
                 // temporarily take coin out of till
                 tmp[i] = tmp[i] - 1 
-                tmp = calculateChange(tmp,change - Value[i])
-                if tmp != null:
+                null|Cash chg = calculateChange(tmp,change - Value[i])
+                if chg != null:
                     // we have enough change
-                    tmp[i] = tmp[i] + 1
-                    return tmp 
+                    chg[i] = chg[i] + 1
+                    return chg
             i = i + 1
         // cannot give exact change :( 
         return null

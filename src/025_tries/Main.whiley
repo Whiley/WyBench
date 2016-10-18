@@ -3,13 +3,13 @@ import nat from whiley.lang.Int
 
 // Represents a transition from one 
 // state to another for a given character.
-type Transition is {
+type Transition is ({
     int from,
     int to,
     ASCII.char character
-} where 
-    from >= 0 && to >= 0 &&
-    from < to
+} tr) where 
+    tr.from >= 0 && tr.to >= 0 &&
+    tr.from < tr.to
 
 // Define the Empty Transition
 constant EmptyTransition is { from: 0, to: 0, character: 'a' }

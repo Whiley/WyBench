@@ -16,7 +16,9 @@ function compress(byte[] data) -> byte[]:
     //
     // keep going until all data matched
     while pos < |data| where pos >= 0:
-        int offset, int len = findLongestMatch(data,pos)
+        int offset
+        int len
+        offset,len = findLongestMatch(data,pos)
         output = write_u1(output,offset)
         if offset == 0:
             output = append(output,data[pos])
@@ -28,29 +30,29 @@ function compress(byte[] data) -> byte[]:
     return output
 
 // pos is current position in input value
-function findLongestMatch(byte[] data, nat pos) -> (nat offset, nat len)
+function findLongestMatch(byte[] data, nat pos) -> (nat offset, nat length)
     ensures offset >= 0 && offset <= 255
-    ensures len >= 0 && len <= 255:
+    ensures length >= 0 && length <= 255:
     //
     nat bestOffset = 0
     nat bestLen = 0
     int start = Math.max(pos - 255,0)
     assert start >= 0
-    nat offset = start
-    while offset < pos
-        where offset >= 0 && pos >= 0 && bestOffset >= 0 && bestLen >= 0
-        where bestOffset <= 255 && pos - offset <= 255 && bestLen <= 255:
+    nat index = start
+    while index < pos
+        where index >= 0 && pos >= 0 && bestOffset >= 0 && bestLen >= 0
+        where bestOffset <= 255 && pos - index <= 255 && bestLen <= 255:
         //
-        int len = match(data,offset,pos)
+        int len = match(data,index,pos)
         if len > bestLen:
-            bestOffset = pos - offset
+            bestOffset = pos - index
             bestLen = len
-        offset = offset + 1
+        index = index + 1
     //
     return bestOffset,bestLen
 
-function match(byte[] data, nat offset, nat end) -> (int len)
-    ensures 0 <= len && len <= 255:
+function match(byte[] data, nat offset, nat end) -> (int length)
+    ensures 0 <= length && length <= 255:
     //
     nat pos = end
     nat len = 0
@@ -114,8 +116,8 @@ method main(System.Console sys):
     sys.out.print_s(ASCII.fromBytes(data))
 
 // This is temporary and should be removed
-public function append(byte[] items, byte item) -> (byte[] nitems)
-    ensures |nitems| == |items| + 1:
+public function append(byte[] items, byte item) -> (byte[] ritems)
+    ensures |ritems| == |items| + 1:
     //
     byte[] nitems = [0b; |items| + 1]
     int i = 0

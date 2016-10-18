@@ -5,11 +5,11 @@ type nat is (int x) where x >= 0
 
 constant maxCarsOnIsland is 10
 
-type State is {
+type State is ({
 	nat carsOnMl,  // number of cars on Main Land
 	nat carsOnIl,  // number of cars on Island
 	nat carsOnBr   // number of cars on Bridge
-} where (carsOnBr + carsOnIl) < maxCarsOnIsland
+} st) where (st.carsOnBr + st.carsOnIl) < maxCarsOnIsland
 
 // A car leaves the island and enters the bridge.
 function carLeavesIsland(State st) -> State

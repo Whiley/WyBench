@@ -16,7 +16,7 @@ type Job is { nat button, bool orange }
 
 constant EMPTY_JOB is { button: 0, orange: false }
 
-function parseJobs(nat pos, string input) -> (Job[],nat):
+function parseJobs(nat pos, string input) -> (Job[] jobs, nat npos):
     //
     int|null nitems
     //
@@ -25,11 +25,11 @@ function parseJobs(nat pos, string input) -> (Job[],nat):
     if nitems != null:
         return parseNumJobs(nitems,pos,input)
     else:
-        return ([EMPTY_JOB;0],pos)
+        return [EMPTY_JOB;0],pos
 
-function parseNumJobs(nat nitems, nat pos, string input) -> (Job[],nat):
+function parseNumJobs(nat nitems, nat pos, string input) -> (Job[] jobs, nat npos):
     //
-    Job[] jobs = [EMPTY_JOB; nitems]
+    Job[] js = [EMPTY_JOB; nitems]
     int|null target
     int i = 0
     //        
@@ -39,10 +39,10 @@ function parseNumJobs(nat nitems, nat pos, string input) -> (Job[],nat):
         pos = Parser.skipWhiteSpace(pos+1,input)
         target,pos = Parser.parseInt(pos,input)
         if target != null:            
-            jobs[i] = {button:target, orange: flag}
+            js[i] = {button:target, orange: flag}
         i = i + 1
     //
-    return jobs,pos
+    return js,pos
     // if nitems == 0:
     //     return ([EMPTY_JOB;0],pos)
     // else:
@@ -96,10 +96,13 @@ method main(System.Console sys):
     if |sys.args| == 0:
         sys.out.println("input file required!")
     else:
+        int pos
+        int|null ntests
         // first, read the input file    
         File.Reader file = File.Reader(sys.args[0])
         string input = ASCII.fromBytes(file.readAll())
-        int|null ntests, int pos = Parser.parseInt(0,input)
+        ntests,pos = Parser.parseInt(0,input)
+        //
         if ntests != null:
             int c = 1
             Job[] jobs

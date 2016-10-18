@@ -6,11 +6,11 @@ import string from whiley.lang.ASCII
 
 type nat is (int x) where x >= 0
 
-type Buffer is {
+type Buffer is ({
     int[] data,
     nat rpos,
     nat wpos
-} where rpos < |data| && wpos < |data|
+} b) where b.rpos < |b.data| && b.wpos < |b.data|
 
 // The buffer is empty when the read and write pointers are at the
 // same position.
@@ -51,13 +51,13 @@ public function write(NonFullBuffer buf, int item) -> Buffer:
     return buf
 
 // Read an item from a buffer which is not empty
-public function read(NonEmptyBuffer buf) -> (Buffer,int):
-    int item = buf.data[buf.rpos]
+public function read(NonEmptyBuffer buf) -> (Buffer nbuf,int item):
+    int val = buf.data[buf.rpos]
     buf.rpos = buf.rpos + 1
     // NOTE: could use modulus operator here
     if buf.rpos >= |buf.data|:
         buf.rpos = 0
-    return (buf,item)
+    return buf,val
 
 public function isFull(Buffer buf) -> (bool r)
 ensures buf is FullBuffer ==> r:

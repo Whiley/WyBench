@@ -71,55 +71,10 @@ public function append(int[][] items, int[] item) -> int[][]:
     return nitems
 
 // ========================================================
-// Parse Reals
-// ========================================================
-
-public function parseReal(nat pos, ASCII.string input) -> (null|real,int):
-    //
-    int start = pos
-    while pos < |input| && (ASCII.isDigit(input[pos]) || input[pos] == '.'):
-        pos = pos + 1
-    //
-    if pos == start:
-        return null,pos
-    //
-    return Real.parse(Array.slice(input,start,pos)),pos
-
-// Parse list of reals whilst ignoring whitespace
-public function parseReals(ASCII.string input) -> real[]|null:
-    //
-    real[] data = [0.0; 0]
-    nat pos = skipWhiteSpace(0,input)
-    // first, read data
-    while pos < |input|:
-        real|null i
-        i,pos = parseReal(pos,input)
-        if i != null:
-            data = append(data,i)
-            pos = skipWhiteSpace(pos,input)
-        else:
-            return null
-    //
-    return data
-
-// Should be remove when Array.append become generic
-public function append(real[] items, real item) -> real[]:
-    real[] nitems = [0.0; |items| + 1]
-    int i = 0
-    //
-    while i < |items|:
-        nitems[i] = items[i]
-        i = i + 1
-    //
-    nitems[i] = item    
-    //
-    return nitems
-
-// ========================================================
 // Parse Strings
 // ========================================================
 
-public function parseString(nat pos, ASCII.string input) -> (ASCII.string,nat):
+public function parseString(nat pos, ASCII.string input) -> (ASCII.string str,nat npos):
     nat start = pos
     while pos < |input| && !isWhiteSpace(input[pos]):
         pos = pos + 1

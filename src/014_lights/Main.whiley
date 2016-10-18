@@ -1,14 +1,14 @@
 import whiley.lang.*
 
 // the British interpretation of traffic lights!
-type TrafficLights is {
+type TrafficLights is ({
     bool red,
     bool amber,
     bool green    
-} where (!red && !amber && green) ||
-        (!red && amber && !green) || // ignoring flashing
-        (red && !amber && !green) ||
-        (red && amber && !green)
+} t) where (!t.red && !t.amber && t.green) ||
+           (!t.red && t.amber && !t.green) || // ignoring flashing
+           (t.red && !t.amber && !t.green) ||
+           (t.red &&  t.amber && !t.green)
 
 function TrafficLights() -> TrafficLights:
     return {

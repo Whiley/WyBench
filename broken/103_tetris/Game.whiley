@@ -67,11 +67,11 @@ constant testGrid is [
 
 
 type Square is char | null
-type Row is [Square]
-type Grid is [Row]
+type Row is Square[]
+type Grid is Row[]
 type gridSq is char | null
-type gridRow is [gridSq] 
-type bufferGrid is [gridRow]
+type gridRow is gridSq[]
+type bufferGrid is gridRow[]
 //
 //**** BLOCKS *****
 //
