@@ -5,10 +5,10 @@
   <!-- ================================================================== -->
 
   <target name="compile">
-    <subant failonerror="false" target="build">
+    <subant failonerror="true" target="build">
       <fileset dir="util" includes="build.xml"/>
     </subant>
-    <subant failonerror="false" target="compile">
+    <subant failonerror="true" target="compile">
       <fileset dir="src" includes="*/build.xml"/>
     </subant>
   </target>
