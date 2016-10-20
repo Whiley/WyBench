@@ -4,7 +4,7 @@
   <!-- Configure helpful stuff -->
   <property environment="env"/>
   <property name="wyrt.jar" value="lib/wyrt-v0.1.0.jar"/>
-  <property name="wybench.jar" value="lib/wybench.jar"/>    
+  <property name="wybench.jar" value="lib/wybench.jar"/>
   <property name="wyc.verification" value="false"/>
   <property name="wyc.verificationConditions" value="false"/>
   <property name="input" value=""/>
@@ -24,5 +24,5 @@
     <classpath>
       <path refid="wyc.jar"/>
     </classpath>
-  </taskdef>  
+  </taskdef>
 </project>
