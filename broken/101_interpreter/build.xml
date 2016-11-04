@@ -1,4 +1,4 @@
-<project name="101_calculator" default="compile">  
+<project name="101_interpreter" default="compile">  
 
   <import file="../../config.xml"/> 
   <import file="../../util/build-template.xml"/>  

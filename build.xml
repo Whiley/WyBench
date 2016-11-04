@@ -19,6 +19,9 @@
 
   <target name="clean">
     <subant failonerror="false" target="clean">
+      <fileset dir="util" includes="build.xml"/>
+    </subant>
+    <subant failonerror="false" target="clean">
       <fileset dir="src" includes="*/build.xml"/>
     </subant>
     <delete includeEmptyDirs="true" failonerror="false">

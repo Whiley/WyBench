@@ -46,7 +46,7 @@ type Stmt is Print | Set
 // ====================================================
 
 type RuntimeError is { string msg }
-type Environment is [{string k, Value v}]
+type Environment is {string k, Value v}[]
 
 // Evaluate an expression in a given environment reducing either to a
 // value, or a runtime error.  The latter occurs if evaluation gets
@@ -74,7 +74,7 @@ function evaluate(Expr e, Environment env) -> Value | RuntimeError:
             return lhs / rhs
         return {msg: "divide-by-zero"}
     else if e is Expr[]:
-        [Value] r = []
+        Value[] r = [0;0]
         for i in e:
             Value|RuntimeError v = evaluate(i, env)
             if v is RuntimeError:
