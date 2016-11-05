@@ -74,19 +74,22 @@ function evaluate(Expr e, Environment env) -> Value | RuntimeError:
             return lhs / rhs
         return {msg: "divide-by-zero"}
     else if e is Expr[]:
-        Value[] r = [0;0]
-        for i in e:
+        Value[] r = [0;|e|]
+        int i = 0
+        while i < |e|:
             Value|RuntimeError v = evaluate(i, env)
             if v is RuntimeError:
                 return v
             else:
-                r = r ++ [v]
+                r[i] = v
+            i = i + 1
+        //
         return r
     else if e is ListAccess:
         Value|RuntimeError src = evaluate(e.src, env)
         Value|RuntimeError index = evaluate(e.index, env)
         // santity checks
-        if src is [Value] && index is int && index >= 0 && index < |src|:
+        if src is Value[] && index is int && index >= 0 && index < |src|:
             return src[index]
         else:
             return {msg: "invalid list access"}
@@ -104,9 +107,10 @@ function SyntaxError(string msg, int start, int end) -> SyntaxError:
     return { msg: msg, start: start, end: end }
 
 // Top-level parse method
-function parse(State st) -> (Stmt,State)|SyntaxError:
+function parse(State st) -> (Stmt|SyntaxError result, State nst):
     //
-    Var keyword, Var v
+    Var keyword
+    Var v
     Expr e
     int start = st.pos
     //
@@ -118,7 +122,7 @@ function parse(State st) -> (Stmt,State)|SyntaxError:
                 e,st = r
                 return {rhs: e},st
             else:
-                return r // error case
+                return r,st // error case
         case "set":
             st = parseWhiteSpace(st)
             v,st = parseIdentifier(st)
@@ -127,13 +131,14 @@ function parse(State st) -> (Stmt,State)|SyntaxError:
                 e,st = r
                 return {lhs: v.id, rhs: e},st
             else:
-                return r // error case
+                return r,st // error case
         default:
-            return SyntaxError("unknown statement",start,st.pos-1)
+            return SyntaxError("unknown statement",start,st.pos-1),st
 
-function parseAddSubExpr(State st) -> (Expr, State)|SyntaxError:    
+function parseAddSubExpr(State st) -> (Expr|SyntaxError result, State nst):
     //
-    Expr lhs, Expr rhs      
+    Expr lhs
+    Expr rhs
     // First, pass left-hand side 
     any r  = parseMulDivExpr(st)
     //
@@ -162,11 +167,12 @@ function parseAddSubExpr(State st) -> (Expr, State)|SyntaxError:
         else:
             return r    
     // No right-hand side
-    return (lhs,st)
+    return lhs,st
 
-function parseMulDivExpr(State st) -> (Expr, State)|SyntaxError:    
+function parseMulDivExpr(State st) -> (Expr|SyntaxError result, State nst):
     // First, parse left-hand side
-    Expr lhs, Expr rhs
+    Expr lhs
+    Expr rhs
     any r  = parseTerm(st)
     if r is SyntaxError:
         return r
@@ -193,9 +199,9 @@ function parseMulDivExpr(State st) -> (Expr, State)|SyntaxError:
         else:
             return r
     // No right-hand side
-    return (lhs,st)
+    return lhs,st
 
-function parseTerm(State st) -> (Expr, State)|SyntaxError:
+function parseTerm(State st) -> (Expr|SyntaxError result, State nst):
     //
     st = parseWhiteSpace(st)        
     if st.pos < |st.input|:
@@ -208,32 +214,35 @@ function parseTerm(State st) -> (Expr, State)|SyntaxError:
     //
     return SyntaxError("expecting number or variable",st.pos,st.pos)
 
-function parseIdentifier(State st) -> (Var, State):
+function parseIdentifier(State st) -> (Var result, State nst):
     //
-    string txt = ""
+    int i = st.pos
     // inch forward until end of identifier reached
-    while st.pos < |st.input| && ASCII.isLetter(st.input[st.pos]):
-        txt = txt ++ [st.input[st.pos]]
-        st.pos = st.pos + 1
-    return ({id:txt}, st)
+    while i < |st.input| && ASCII.isLetter(st.input[i]):
+        i = i + 1    
+    // copy identifier into new array
+    int[] txt = [0;i-st.pos]
+    txt = Array.copy(st.input,st.pos,txt,0,|txt|)
+    //
+    return {id:txt}, st
 
-function parseNumber(State st) -> (Expr, State)|SyntaxError:    
+function parseNumber(State st) -> (Expr|SyntaxError result, State nst):    
     // inch forward until end of identifier reached
     int start = st.pos
     while st.pos < |st.input| && ASCII.isDigit(st.input[st.pos]):
         st.pos = st.pos + 1    
     //
-    int|null iv = Int.parse(st.input[start..st.pos])
+    int|null iv = Int.parse(Array.slice(st.input,start,st.pos))
     if iv == null:
         return SyntaxError("Error parsing number",start,st.pos)
     else:
         return iv, st
 
-function parseList(State st) -> (Expr, State)|SyntaxError:    
+function parseList(State st) -> (Expr|SyntaxError result, State nst):
     //
     st.pos = st.pos + 1 // skip '['
     st = parseWhiteSpace(st)
-    [Expr] l = [] // initial list
+    Expr[] l = [0;0] // initial list
     bool firstTime = true
     while st.pos < |st.input| && st.input[st.pos] != ']':
         if !firstTime && st.input[st.pos] != ',':
@@ -248,11 +257,26 @@ function parseList(State st) -> (Expr, State)|SyntaxError:
             Expr e
             e,st = r
             // perform annoying error check    
-            l = l ++ [e]
+            l = append(e,l)
             st = parseWhiteSpace(st)
     st.pos = st.pos + 1
     return l,st
- 
+
+public function append(Expr[] items, Expr item) -> (Expr[] r):
+    //
+    int[] nitems = [0; |items| + 1]
+    int i = 0
+    //
+    while i < |items| 
+    where i >= 0 && i <= |items| && |nitems| == |items|+1
+    where all { k in 0..i | nitems[k] == items[k] }:
+        nitems[i] = items[i]
+        i = i + 1
+    //
+    nitems[i] = item    
+    //
+    return nitems
+
 // Parse all whitespace upto end-of-file
 function parseWhiteSpace(State st) -> State:
     while st.pos < |st.input| && ASCII.isWhiteSpace(st.input[st.pos]):
@@ -276,12 +300,14 @@ public method main(System.Console sys):
             Stmt s
             any r = parse(st)
             if r is SyntaxError:
-                sys.out.println("syntax error: " ++ r.msg)  
+                sys.out.println("syntax error")
+                sys.out.println(r.msg)
                 return
             s,st = r
             Value|RuntimeError v = evaluate(s.rhs,env)
             if v is RuntimeError:
-                sys.out.println("runtime error: " ++ v.msg) 
+                sys.out.println("runtime error: ")
+                sys.out.println(v.msg)
                 return
             if s is Set:
                 env[s.lhs] = v
