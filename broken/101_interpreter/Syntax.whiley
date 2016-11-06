@@ -32,10 +32,10 @@ public constant PRINT is 9
 // Constant Expression
 // ====================================================
 
-public type Const is { 
+public type Const is ({ 
     int opcode, 
     Value value
-} where opcode == CONST
+} e) where e.opcode == CONST
 
 public function Const(Value v) -> Const:
     return { opcode: CONST, value: v }
@@ -44,11 +44,11 @@ public function Const(Value v) -> Const:
 // Binary Expression
 // ====================================================
 
-public type BinaryOp is { 
+public type BinaryOp is ({ 
     int opcode, 
     Expr lhs, 
     Expr rhs 
-} where opcode >= ADD && opcode <= DIV
+} e) where e.opcode >= ADD && e.opcode <= DIV
 
 public function BinaryOp(int opcode, Expr l, Expr r) -> BinaryOp
 requires ADD <= opcode && opcode <= DIV:
@@ -59,10 +59,10 @@ requires ADD <= opcode && opcode <= DIV:
 // Variable Expression
 // ====================================================
 
-public type Var is { 
+public type Var is ({ 
     int opcode,
     ASCII.string name
-} where opcode == VAR
+} e) where e.opcode == VAR
 
 public function Var(ASCII.string n) -> Var:
     return {opcode: VAR, name: n}
@@ -71,10 +71,10 @@ public function Var(ASCII.string n) -> Var:
 // Array Constructor
 // ====================================================
 
-public type Array is { 
+public type Array is ({ 
     int opcode,
     Expr[] elements
-} where opcode == ARRAY
+} e) where e.opcode == ARRAY
 
 public function Array(Expr[] es) -> Array:
     return {opcode: ARRAY, elements: es}
@@ -83,11 +83,11 @@ public function Array(Expr[] es) -> Array:
 // Array Access
 // ====================================================
 
-public type Access is { 
+public type Access is ({ 
     int opcode,
     Expr src, 
     Expr index
-} where opcode == ACCESS
+} e) where e.opcode == ACCESS
 
 public function Access(Expr src, Expr index) -> Access:
     return {opcode: ACCESS, src: src, index: index}
@@ -106,11 +106,11 @@ public type Expr is Const |   // constant
 // Assignment Statement
 // ====================================================
 
-public type Assign is { 
+public type Assign is ({ 
     int opcode,
     ASCII.string lhs, 
     Expr rhs 
-} where opcode == ASSIGN
+} s) where s.opcode == ASSIGN
 
 public function Assign(ASCII.string l, Expr r) -> Assign:
     return {opcode: ASSIGN, lhs: l, rhs: r}
@@ -119,10 +119,10 @@ public function Assign(ASCII.string l, Expr r) -> Assign:
 // Print Statement
 // ====================================================
 
-public type Print is { 
+public type Print is ({ 
     int opcode, 
     Expr rhs 
-} where opcode == PRINT
+} s) where s.opcode == PRINT
 
 public function Print(Expr r) -> Print:
     return {opcode: PRINT, rhs: r}

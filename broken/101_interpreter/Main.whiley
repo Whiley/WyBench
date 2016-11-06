@@ -56,7 +56,7 @@ function evaluate(Expr e, Environment env) -> Value | RuntimeError:
     if e is int:
         return e
     else if e is Var:
-        return env[e.id]
+        return getValue(env,e.id)
     else if e is BinOp:
         Value|RuntimeError lhs = evaluate(e.lhs, env)
         Value|RuntimeError rhs = evaluate(e.rhs, env)
@@ -96,6 +96,16 @@ function evaluate(Expr e, Environment env) -> Value | RuntimeError:
     else:
         return 0 // dead-code
 
+function getValue(Environment env, string key) -> Value|RuntimeError:
+    int i = 0
+    //
+    while i < |env|:
+        if env[i].k == key:
+            return env[i].v
+        i = i + 1
+    //
+    return {msg: "invalid environment access"}
+    
 // ====================================================
 // Expression Parser
 // ====================================================
@@ -111,27 +121,25 @@ function parse(State st) -> (Stmt|SyntaxError result, State nst):
     //
     Var keyword
     Var v
-    Expr e
+    Expr|SyntaxError e
     int start = st.pos
     //
     keyword,st = parseIdentifier(st)
     switch keyword.id:
         case "print":
-            any r = parseAddSubExpr(st)
-            if !(r is SyntaxError):
-                e,st = r
+            e,st = parseAddSubExpr(st)
+            if !(e is SyntaxError):
                 return {rhs: e},st
             else:
-                return r,st // error case
+                return e,st // error case
         case "set":
             st = parseWhiteSpace(st)
             v,st = parseIdentifier(st)
-            any r = parseAddSubExpr(st)
-            if !(r is SyntaxError):
-                e,st = r
+            e = parseAddSubExpr(st)
+            if !(e is SyntaxError):
                 return {lhs: v.id, rhs: e},st
             else:
-                return r,st // error case
+                return e,st // error case
         default:
             return SyntaxError("unknown statement",start,st.pos-1),st
 
@@ -140,7 +148,7 @@ function parseAddSubExpr(State st) -> (Expr|SyntaxError result, State nst):
     Expr lhs
     Expr rhs
     // First, pass left-hand side 
-    any r  = parseMulDivExpr(st)
+    any r = parseMulDivExpr(st)
     //
     if r is SyntaxError:
         return r

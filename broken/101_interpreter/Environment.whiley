@@ -9,7 +9,7 @@ type nameValuePair is {
     Value value
 }
 
-constant DUMMY_PAIR is {name: "", value: 0}
+constant DUMMY_PAIR is {name: " ", value: 0}
 
 public type Environment is nameValuePair[]
 
