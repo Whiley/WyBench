@@ -26,7 +26,7 @@ public constant ARRAY is 6
 public constant ACCESS is 7
 
 public constant ASSIGN is 8
-public constant PRINT is 9
+public constant RETURN is 9
 
 // ====================================================
 // Constant Expression
@@ -116,20 +116,20 @@ public function Assign(ASCII.string l, Expr r) -> Assign:
     return {opcode: ASSIGN, lhs: l, rhs: r}
 
 // ====================================================
-// Print Statement
+// Return Statement
 // ====================================================
 
-public type Print is ({ 
+public type Return is ({ 
     int opcode, 
     Expr rhs 
-} s) where s.opcode == PRINT
+} s) where s.opcode == RETURN
 
-public function Print(Expr r) -> Print:
-    return {opcode: PRINT, rhs: r}
+public function Return(Expr r) -> Return:
+    return {opcode: RETURN, rhs: r}
 
 // ====================================================
 // Statements
 // ====================================================
 
-public type Stmt is Print | Assign
+public type Stmt is Return | Assign
 
