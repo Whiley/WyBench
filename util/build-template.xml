@@ -3,7 +3,7 @@
   <target name="compile">
     <echo message="COMPILING: ${ant.project.name}"/>
     <echo message="==================================="/>
-    <wyc whileypath="${wybench.jar}:${wyrt.jar}" wyildir="." whileydir="." includes="**/*.whiley"/>
+    <wyc whileypath="${wybench.jar}:${wyrt.jar}" wyildir="." whileydir="." includes="**/*.whiley" verify="${wyc.verification}"/>
   </target>
 
   <target name="run">
