@@ -6,7 +6,7 @@
   <target name="compile">
     <echo message="COMPILING: ${ant.project.name}"/>
     <echo message="==================================="/>
-    <wyc whileypath="${wyrt.jar}" wyildir="util" whileydir="util"/>
+    <wyc whileypath="${wyrt.jar}" wyildir="." whileydir="."/>
   </target>
   
   <target name="build" depends="compile">
