@@ -3,9 +3,10 @@
   <dirname property="rootdir" file="${ant.file.BuildConfig}"/>
   <!-- Configure helpful stuff -->
   <property environment="env"/>
+  <property name="WHILEYHOME" value="${env.WHILEYHOME}"/>
   <property name="wyrt.jar" value="lib/wyrt-v0.1.0.jar"/>
   <property name="wybench.jar" value="lib/wybench.jar"/>
-  <property name="wyc.verification" value="false"/>
+  <property name="wyc.verification" value="true"/>
   <property name="input" value=""/>
   <property name="main" value="Main"/>
   <!-- Set the current version -->
@@ -16,12 +17,15 @@
   <typedef uri="urn:maven-ant" classpath="${rootdir}/lib/maven-ant-tasks-2.1.3.jar" resource="org/apache/maven/artifact/ant/antlib.xml"/>
   <!-- Set the classpath for Junit and its dependencies -->
   <maven:dependencies pathId="wyc.jar">
-    <dependency groupId="org.whiley" artifactId="wyc" version="0.4.9"/>
+    <dependency groupId="org.whiley" artifactId="wyc" version="0.4.11"/>
   </maven:dependencies>
   <!-- Define the WyC build task -->
   <taskdef name="wyc" classname="wyc.util.AntTask">
     <classpath>
       <path refid="wyc.jar"/>
+      <!--<pathelement location="${WHILEYHOME}/lib/wyc-0.4.9.jar"/>
+      <pathelement location="${WHILEYHOME}/lib/wycc-0.5.5.jar"/>
+      <pathelement location="${WHILEYHOME}/lib/wytp-0.5.5.jar"/>-->
     </classpath>
   </taskdef>
 </project>
