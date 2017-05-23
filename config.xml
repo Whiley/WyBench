@@ -4,7 +4,7 @@
   <!-- Configure helpful stuff -->
   <property environment="env"/>
   <property name="WHILEYHOME" value="${env.WHILEYHOME}"/>
-  <property name="wyrt.jar" value="lib/wyrt-v0.1.0.jar"/>
+  <property name="wyrt.jar" value="lib/wyrt-v0.1.1.jar"/>
   <property name="wybench.jar" value="lib/wybench.jar"/>
   <property name="wyc.verification" value="true"/>
   <property name="input" value=""/>
