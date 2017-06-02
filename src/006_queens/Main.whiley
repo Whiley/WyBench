@@ -26,11 +26,11 @@ requires dim == |queens|:
         return [queens]
     else:
         Pos[][] solutions = [[Pos(0,0);0];0]
-        int col = 0
+        nat col = 0
         while col < dim where n < |queens| && dim == |queens|:
             bool solution = true
-            int i = 0
-            while i < n where n < |queens| && i >= 0 && dim == |queens|:
+            nat i = 0
+            while i < n where n < |queens| && dim == |queens|:
                 Pos p = queens[i]
                 if conflict(p,n,col):
                     solution = false
@@ -57,13 +57,14 @@ function append(Pos[][] xs, Pos[][] ys) -> Pos[][]:
     zs = copy(xs,0,zs,0,|xs|)
     return copy(ys,0,zs,|xs|,|ys|)
 
-function copy(Pos[][] xs, int xsStart, Pos[][] ys, int ysStart, int len) -> Pos[][]:
-    int i = xsStart
-    int j = ysStart
-    int end = xsStart + len
-    while i < end:
-        ys[j] = xs[i]
+function copy(Pos[][] xs, nat xsStart, Pos[][] ys, nat ysStart, int len) -> (Pos[][] zs)
+requires xsStart + len <= |xs|
+requires ysStart + len <= |ys|
+ensures |zs| == |ys|:
+    nat ysLen = |ys|
+    nat i = 0
+    while i < len where |ys| == ysLen:
+        ys[i+ysStart] = xs[i+xsStart]
         i = i + 1
-        j = j + 1
     //
     return ys
