@@ -4,8 +4,8 @@
   <!-- Configure helpful stuff -->
   <property environment="env"/>
   <property name="WHILEYHOME" value="${env.WHILEYHOME}"/>
-  <property name="wyrt.jar" value="lib/wyrt-v0.1.1.jar"/>
-  <property name="wybench.jar" value="lib/wybench.jar"/>
+  <property name="wyrt.jar" value="${rootdir}/lib/wyrt-v0.1.2.jar"/>
+  <property name="wybench.jar" value="${rootdir}/lib/wybench.jar"/>
   <property name="wyc.verification" value="true"/>
   <property name="input" value=""/>
   <property name="main" value="Main"/>
@@ -22,10 +22,10 @@
   <!-- Define the WyC build task -->
   <taskdef name="wyc" classname="wyc.util.AntTask">
     <classpath>
-      <path refid="wyc.jar"/>
-      <!--<pathelement location="${WHILEYHOME}/lib/wyc-0.4.9.jar"/>
-      <pathelement location="${WHILEYHOME}/lib/wycc-0.5.5.jar"/>
-      <pathelement location="${WHILEYHOME}/lib/wytp-0.5.5.jar"/>-->
+      <!--<path refid="wyc.jar"/>-->
+      <pathelement location="${WHILEYHOME}/lib/wyc-0.4.12.jar"/>
+      <pathelement location="${WHILEYHOME}/lib/wycc-0.5.6.jar"/>
+      <pathelement location="${WHILEYHOME}/lib/wytp-0.6.1.jar"/>
     </classpath>
   </taskdef>
 </project>

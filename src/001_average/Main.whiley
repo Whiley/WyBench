@@ -16,7 +16,7 @@ function average(int[] data) -> int
 requires |data| > 0:
     //
     int sum = 0
-    int i = 0
+    nat i = 0
     while i < |data|:
         sum = sum + data[i]
         i = i + 1
@@ -35,7 +35,7 @@ method main(System.Console sys):
         string input = ASCII.fromBytes(file.readAll())
         int[]|null data = Parser.parseInts(input)
         // second, run the benchmark
-        if data == null:
+        if data is null:
             sys.out.println_s("error parsing input")
         else if |data| == 0:
             sys.out.println_s("no data provided!")

@@ -27,7 +27,7 @@ public function parseInts(ASCII.string input) -> int[]|null:
     while pos < |input|:
         int|null i
         i,pos = parseInt(pos,input)
-        if i != null:
+        if i is int:
             data = Array.append(data,i)
             pos = skipWhiteSpace(pos,input)
         else:
@@ -46,7 +46,7 @@ public function parseIntLines(ASCII.string input) -> int[][]|null:
         while !isWhiteSpace(input[pos]):
             int|null i
             i,pos = parseInt(pos,input)
-            if i != null:
+            if i is int:
                 line = Array.append(line,i)
                 pos = skipLineSpace(pos,input)
             else:

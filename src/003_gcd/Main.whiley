@@ -25,14 +25,15 @@ method main(System.Console sys):
         string input = ASCII.fromBytes(file.readAll())
         int[]|null data = Parser.parseInts(input)
         // Second, compute gcds
-        if data == null:
+        if data is null:
             sys.out.println_s("error parsing input")
         else:
-            int i = 0
+            nat i = 0
             while i < |data|:
-                int j = i+1
+                nat j = i+1
                 while j < |data|:
-                    sys.out.println(gcd(data[i],data[j]))
+                    if(data[i] is nat && data[j] is nat):
+                        sys.out.println(gcd(data[i],data[j]))
                     j = j + 1
                 i = i + 1
             //
