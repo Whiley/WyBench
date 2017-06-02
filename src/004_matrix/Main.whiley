@@ -29,8 +29,8 @@ import string from whiley.lang.ASCII
 type nat is (int x) where x >= 0
 
 type Matrix is ({
-    int width,
-    int height,
+    nat width,
+    nat height,
     int[][] data
 } m) where |m.data| == m.height && all { i in 0..|m.data| | |m.data[i]| == m.width }
 
@@ -48,6 +48,13 @@ ensures r.width == width && r.height == height && r.data == data:
         data: data
     }
 
+property sized(int height, int width, int[][] C)
+where height == |C|
+where all { k in 0..|C| | width == |C[k]| }
+
+property sized(Matrix A, Matrix B, int[][] C)
+where sized(A.height,B.width,C)
+
 function multiply(Matrix A, Matrix B) -> (Matrix C) 
 // Must be possible to multiply matrices
 requires A.width == B.height
@@ -61,12 +68,12 @@ ensures C.width == B.width && C.height == A.height:
     // "for" statements.  However, for the moment I use "while"
     // statements as these work better with verification.
     //
-    while i < A.height where i >= 0:
+    while i < A.height where sized(A,B,C_data):
         nat j = 0
-        while j < B.width where j >= 0:
+        while j < B.width where sized(A,B,C_data):
             int r = 0
             nat k = 0
-            while k < A.width where k >= 0:
+            while k < A.width where sized(A,B,C_data):
                 r = r + (A.data[i][k] * B.data[k][j])
                 k = k + 1
             C_data[i][j] = r
@@ -75,15 +82,16 @@ ensures C.width == B.width && C.height == A.height:
     //
     return Matrix(B.width,A.height,C_data)
 
-function buildMatrix(nat width, nat height, int[] data, int pos) -> Matrix
+function buildMatrix(nat width, nat height, int[] data, nat pos) -> Matrix
 requires |data| > pos + (width * height):
     //
     int[][] rows = [[0; width]; height]
     //
-    int i = 0
-    while i < height:
-        int j = 0
-        while j < width:
+    nat i = 0
+    while i < height where sized(height,width,rows):
+        nat j = 0
+        while j < width where sized(height,width,rows):
+            assume (pos+j) < |data| // FIXME
             rows[i][j] = data[pos+j]
             j = j + 1   
         i = i + 1
@@ -96,9 +104,9 @@ requires |data| > pos + (width * height):
 // ========================================================
 
 method printMat(System.Console sys, Matrix A):
-    int i = 0 
+    nat i = 0 
     while i < A.height:
-        int j = 0
+        nat j = 0
         while j < A.width:
             sys.out.print(A.data[i][j])
             sys.out.print_s(" ")
@@ -114,7 +122,7 @@ method main(System.Console sys):
         // first, read data
         string input = ASCII.fromBytes(file.readAll())
         int[]|null data = Parser.parseInts(input)
-        if data == null || |data| < 2:
+        if data is null || |data| < 2:
             sys.out.println_s("error reading file")
         else:
             int width = data[0]
