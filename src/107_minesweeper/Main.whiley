@@ -1,6 +1,5 @@
-import whiley.lang.System
-import whiley.lang.Int
-
+import std.io
+import std.ascii
 import * from Minesweeper
 
 type Move is {
@@ -16,66 +15,79 @@ constant MOVES is [
     {expose: true, col: 2, row: 0}
 ]
 
+type Point is {
+    int x,
+    int y
+}
+
 constant BOMBS is [
- (0,1), (2,3), (3,3), (4,4), (4,2), (6,4) 
+ Point{x:0,y:1}, Point{x:2,y:3}, Point{x:3,y:3}, Point{x:4,y:4}, Point{x:4,y:2}, Point{x:6,y:4} 
 ]
 
 // Some simple test code for the Minesweeper game
-public method main(System.Console console):
+public method main(ascii.string[] args):
     Board board = Board(10,5)
     // Place bombs along diaganol
     int i = 0
     while i < |BOMBS|:
-        int x, int y = BOMBS[i]
-        board = setSquare(board,x,y,HiddenSquare(true,false))
+        Point p = BOMBS[i]
+        board = setSquare(board,p.x,p.y,HiddenSquare(true,false))
         i = i + 1
 
     // Print the starting board
-    printBoard(board,console)
+    printBoard(board)
     //
     i = 0
     while i < |MOVES|:
         Move m = MOVES[i]
         // Apply the move
         if m.expose:
-            console.out.println_s("Player exposes square at " ++ Int.toString(m.col) ++ ", " ++ Int.toString(m.row))
+            io.print("Player exposes square at ")
+            io.print(m.col)
+            io.print(", ")
+            io.println(m.row)
             board = exposeSquare(board,m.col,m.row)
         else:
-            console.out.println_s("Player flags square at " ++ Int.toString(m.col) ++ ", " ++ Int.toString(m.row))
+            io.println("Player flags square at ")
+            io.print(m.col)
+            io.print(", ")
+            io.println(m.row)
             board = flagSquare(board,m.col,m.row)
         // Print the board
-        printBoard(board,console)
+        printBoard(board)
         // Check for game over
-        bool isOver, bool hasWon = isGameOver(board)
+        bool isOver
+        bool hasWon
+        isOver, hasWon = isGameOver(board)
         if isOver:
             if hasWon:
-                console.out.println_s("Game Over --- Player has Won!")
+                io.println("Game Over --- Player has Won!")
             else:
-                console.out.println_s("Game Over --- Player has Lost!")
+                io.println("Game Over --- Player has Lost!")
         i = i + 1
     // Done
-    console.out.println_s("All moves completed")
+    io.println("All moves completed")
 
-method printBoard(Board board, System.Console console):
+method printBoard(Board board):
     int row = 0
     while row < board.height: 
         // Print Side Wall
-        console.out.print_s("|")
+        io.print("|")
         int col = 0
         while col < board.width:
             Square sq = getSquare(board,col,row)
             if sq is HiddenSquare:
                 if sq.flagged:
-                    console.out.print_s("P")
+                    io.print("P")
                 else:
-                    console.out.print_s("X")
+                    io.print("X")
             else if sq.holdsBomb:
-                console.out.print_s("*")
+                io.print("*")
             else if sq.rank == 0:
-                console.out.print_s(" ")
+                io.print(" ")
             else:
-                console.out.print(sq.rank)
+                io.print(sq.rank)
             col = col + 1
         // Print Side Wall
-        console.out.println_s("|")
+        io.println("|")
         row = row + 1
