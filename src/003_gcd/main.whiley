@@ -2,7 +2,7 @@ import std.ascii
 import std.fs
 import std.io
 
-import wybench.Parser
+import wybench.parser
 
 type nat is (int x) where x >= 0
 
@@ -23,7 +23,7 @@ method main(ascii.string[] args):
         // First, parse input
         fs.File file = fs.open(args[0])
         ascii.string input = ascii.fromBytes(file.readAll())
-        int[]|null data = Parser.parseInts(input)
+        int[]|null data = parser.parseInts(input)
         // Second, compute gcds
         if data is null:
             io.println("error parsing input")

@@ -2,7 +2,7 @@ import std.ascii
 import std.fs
 import std.io
 
-import wybench.Parser
+import wybench.parser
 
 // Author: David J. Pearce
 
@@ -119,7 +119,7 @@ method main(ascii.string[] args):
         fs.File file = fs.open(args[0])
         // first, read data
         ascii.string input = ascii.fromBytes(file.readAll())
-        int[]|null data = Parser.parseInts(input)
+        int[]|null data = parser.parseInts(input)
         if data is null || |data| < 2:
             io.println("error reading file")
         else:

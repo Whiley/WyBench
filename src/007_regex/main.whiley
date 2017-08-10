@@ -3,7 +3,7 @@ import char from std.ascii
 import std.fs
 import std.io
 
-import wybench.Parser
+import wybench.parser
 
 // match: search for regexp anywhere in text
 function match(string regex, string text) -> bool:
@@ -53,7 +53,7 @@ public method main(string[] args):
     else:
         fs.File file = fs.open(args[0])
         string input = ascii.fromBytes(file.readAll())
-        string[] data = Parser.parseStrings(input)
+        string[] data = parser.parseStrings(input)
         int i = 0
         int nmatches = 0
         int total = 0

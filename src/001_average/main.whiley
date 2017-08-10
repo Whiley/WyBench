@@ -1,11 +1,12 @@
 import whiley.lang.*
 import std.io
 import * from std.fs
-import wybench.Parser
 
 import char from std.ascii
 import string from std.ascii
 import nat from std.integer
+
+import wybench.parser
 
 // ========================================================
 // Benchmark
@@ -33,7 +34,7 @@ method main(ascii.string[] args):
         // first, read the input data
         File file = open(args[0])
         string input = ascii.fromBytes(file.readAll())
-        int[]|null data = Parser.parseInts(input)
+        int[]|null data = parser.parseInts(input)
         // second, run the benchmark
         if data is null:
             io.println("error parsing input")
