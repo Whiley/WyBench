@@ -1,5 +1,6 @@
-import whiley.lang.*
-import string from whiley.lang.ASCII
+import std.array
+import std.ascii
+import std.io
 
 // A simple fixed-size cyclic buffer supporting read and write
 // operations.
@@ -70,28 +71,28 @@ ensures buf is EmptyBuffer ==> r :
     //
     return buf.rpos == buf.wpos
 
-public function toString(Buffer b) -> string:
-    string r = "["
+public function toString(Buffer b) -> ascii.string:
+    ascii.string r = "["
     int i = 0
     while i < |b.data|:
         if i != 0:
-            r = Array.append(r,", ")
+            r = array.append(r,", ")
         if i == b.rpos:
-            r = Array.append(r,"<")
+            r = array.append(r,"<")
         if i == b.wpos:
-            r = Array.append(r,">")
-        r = Array.append(r,Int.toString(b.data[i]))
+            r = array.append(r,">")
+        r = array.append(r,ascii.toString(b.data[i]))
         i = i + 1
-    return Array.append(r,"]")
+    return array.append(r,"]")
 
 constant ITEMS is [5,4,6,3,7,2,8,1,9,10,0]
 
-method main(System.Console console):
+method main(ascii.string[] args):
     int i = 0
     Buffer buf = Buffer(10)
     //
-    console.out.print_s("INIT: ")
-    console.out.println_s(toString(buf))
+    io.print("INIT: ")
+    io.println(toString(buf))
     
     // NOTE: following loop invariant should not be necessary!  It is
     // needed because the verifier doesn't current enforce the
@@ -102,13 +103,13 @@ method main(System.Console console):
         where buf.wpos >= 0 && buf.wpos < |buf.data|:
         //
         if isFull(buf):
-            console.out.println_s("BUFFER FULL")
+            io.println("BUFFER FULL")
             break
         buf = write(buf,ITEMS[i])
-        console.out.print_s("WROTE: ")
-        console.out.print_s(Int.toString(ITEMS[i]))
-        console.out.print_s(", ")
-        console.out.println_s(toString(buf))
+        io.print("WROTE: ")
+        io.print(ITEMS[i])
+        io.print(", ")
+        io.println(toString(buf))
         i = i + 1
     //
     int item
@@ -123,18 +124,18 @@ method main(System.Console console):
         where buf.wpos >= 0 && buf.wpos < |buf.data|:
         //
         if isEmpty(buf):
-            console.out.println_s("BUFFER EMPTY")
+            io.println("BUFFER EMPTY")
             break
         buf,item = read(buf)
         if item == ITEMS[i]:
-            console.out.print_s("READ: ")
-            console.out.print_s(Int.toString(item)) 
-            console.out.print_s(", ")
-            console.out.println_s(toString(buf))
+            io.print("READ: ")
+            io.print(item) 
+            io.print(", ")
+            io.println(toString(buf))
         else:
-            console.out.print_s("ERROR READ: ")
-            console.out.print_s(Int.toString(item))
-            console.out.print_s(", expecting ")
-            console.out.println_s(Int.toString(ITEMS[i]))
+            io.print("ERROR READ: ")
+            io.print(item)
+            io.print(", expecting ")
+            io.println(ITEMS[i])
         i = i + 1
     

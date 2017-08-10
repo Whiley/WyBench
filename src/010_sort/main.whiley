@@ -1,9 +1,8 @@
-import whiley.lang.*
-import whiley.io.*
-import whiley.io.File
-import whiley.lang.System
+import std.ascii
+import std.io
+import std.fs
 
-import wybench.Parser
+import wybench.parser
 
 type sortedList is (int[] xs) 
 where |xs| <= 1 || all { i in 0 .. |xs|-1 | xs[i] <= xs[i+1] }
@@ -57,38 +56,50 @@ function search(sortedList list, int item) -> null|int:
     // failed to find it
     return null
 
-method lookFor(System.Console console, sortedList list, int item):
+function toString(int[] items) -> ascii.string:
+    ascii.string r = ""
+    int i = 0
+    while i < |items|:
+        if i != 0:
+            r = ascii.append(r,",")
+        ascii.string str = ascii.toString(items[0])
+        r = ascii.append(r,str)
+        i = i + 1
+    //
+    return r
+
+method lookFor(sortedList list, int item):
     int|null index = search(list,item)
     if index != null:
-        console.out.print_s("FOUND: ")
-        console.out.print_s(Int.toString(item))
-        console.out.print_s(" in ")
-        console.out.print_s(Any.toString(list))
-        console.out.print_s(" @ ")
-        console.out.println_s(Int.toString(index))
+        io.print("FOUND: ")
+        io.print(item)
+        io.print(" in ")
+        io.print(toString(list))
+        io.print(" @ ")
+        io.println(index)
     else:
-        console.out.print_s("NOT FOUND: ")
-        console.out.print_s(Int.toString(item))
-        console.out.print_s(" in ")
-        console.out.print_s(Any.toString(list))
+        io.print("NOT FOUND: ")
+        io.print(item)
+        io.print(" in ")
+        io.print(list)
 
 constant searchTerms is [1,2,3,4,5,6,7,8,9]
 
-method main(System.Console sys):
+method main(ascii.string[] args):
     // first, read data
-    File.Reader file = File.Reader(sys.args[0])
-    ASCII.string input = ASCII.fromBytes(file.readAll())
-    int[]|null data = Parser.parseInts(input)
+    fs.File file = fs.open(args[0])
+    ascii.string input = ascii.fromBytes(file.readAll())
+    int[]|null data = parser.parseInts(input)
     // second, sort data
     if data != null:
         data = sort(data,0,|data|)
         // third, print output
-        sys.out.print_s("SORTED: ") 
-        sys.out.println(Any.toString(data))
+        io.print("SORTED: ") 
+        io.println(data)
         int i = 0
         while i < |searchTerms|:
-            lookFor(sys,data,i)
+            lookFor(data,i)
             i = i + 1
     else:
-        sys.out.println_s("Error parsing input")
+        io.println("Error parsing input")
 
