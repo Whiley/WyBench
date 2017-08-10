@@ -1,8 +1,8 @@
-import whiley.lang.System
-import whiley.io.File
-import wybench.Parser
+import std.ascii
+import std.fs
+import std.io
 
-import string from whiley.lang.ASCII
+import wybench.Parser
 
 type nat is (int x) where x >= 0
 
@@ -16,24 +16,24 @@ function gcd(nat a, nat b) -> nat:
             b = b - a
     return a
 
-method main(System.Console sys):
-    if |sys.args| == 0:
-        sys.out.println_s("usage: gcd <input-file>")
+method main(ascii.string[] args):
+    if |args| == 0:
+        io.println("usage: gcd <input-file>")
     else:
         // First, parse input
-        File.Reader file = File.Reader(sys.args[0])
-        string input = ASCII.fromBytes(file.readAll())
+        fs.File file = fs.open(args[0])
+        ascii.string input = ascii.fromBytes(file.readAll())
         int[]|null data = Parser.parseInts(input)
         // Second, compute gcds
         if data is null:
-            sys.out.println_s("error parsing input")
+            io.println("error parsing input")
         else:
             nat i = 0
             while i < |data|:
                 nat j = i+1
                 while j < |data|:
                     if(data[i] is nat && data[j] is nat):
-                        sys.out.println(gcd(data[i],data[j]))
+                        io.println(gcd(data[i],data[j]))
                     j = j + 1
                 i = i + 1
             //

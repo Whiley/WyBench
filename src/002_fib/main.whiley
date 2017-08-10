@@ -1,4 +1,5 @@
-import whiley.lang.*
+import std.ascii
+import std.io
 
 type nat is (int x) where x >= 0
 
@@ -8,9 +9,9 @@ function fib(nat x) -> nat:
     else:
         return fib(x-1) + fib(x-2)
 
-method main(System.Console sys):
+method main(ascii.string[] args):
     nat i = 0
     while i < 41:
         nat r = fib(i)
-        sys.out.println(r)
+        io.println(r)
         i = i + 1

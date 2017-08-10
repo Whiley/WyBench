@@ -1,10 +1,8 @@
-import whiley.lang.*
-import whiley.lang.System
-import whiley.io.File
-import wybench.Parser
+import std.ascii
+import std.fs
+import std.io
 
-import char from whiley.lang.ASCII
-import string from whiley.lang.ASCII
+import wybench.Parser
 
 // Author: David J. Pearce
 
@@ -103,33 +101,33 @@ requires |data| > pos + (width * height):
 // Main
 // ========================================================
 
-method printMat(System.Console sys, Matrix A):
+method printMat(Matrix A):
     nat i = 0 
     while i < A.height:
         nat j = 0
         while j < A.width:
-            sys.out.print(A.data[i][j])
-            sys.out.print_s(" ")
+            io.print(A.data[i][j])
+            io.print(" ")
             j = j + 1
         i = i + 1
-        sys.out.println_s("")
+        io.println(" ")
 
-method main(System.Console sys):
-    if |sys.args| == 0:
-        sys.out.println_s("usage: matrix <input-file>")
+method main(ascii.string[] args):
+    if |args| == 0:
+        io.println("usage: matrix <input-file>")
     else:
-        File.Reader file = File.Reader(sys.args[0])
+        fs.File file = fs.open(args[0])
         // first, read data
-        string input = ASCII.fromBytes(file.readAll())
+        ascii.string input = ascii.fromBytes(file.readAll())
         int[]|null data = Parser.parseInts(input)
         if data is null || |data| < 2:
-            sys.out.println_s("error reading file")
+            io.println("error reading file")
         else:
             int width = data[0]
             int height = data[1]
             int size = width*height
             if(|data| != 2+(size * 2)): 
-                sys.out.println_s("file geometry incorrect")           
+                io.println("file geometry incorrect")           
             else:
                 // second, build the matrices
                 Matrix A = buildMatrix(width,height,data,2)
@@ -137,5 +135,5 @@ method main(System.Console sys):
                 // third, run the benchmark
                 Matrix C = multiply(A,B)
                 // finally, print the result!
-                printMat(sys,C)
+                printMat(C)
           

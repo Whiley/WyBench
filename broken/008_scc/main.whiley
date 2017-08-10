@@ -1,8 +1,7 @@
-import whiley.lang.*
-import whiley.lang.Stack
-import whiley.io.File
-import char from whiley.lang.ASCII
-import string from whiley.lang.ASCII
+import std.array
+import std.ascii
+import std.io
+import std.math
 
 import wybench.Parser
 
@@ -24,10 +23,10 @@ constant EMPTY_DIGRAPH is [[0;0];0]
 
 function addEdge(Digraph g, nat from, nat to) -> Digraph:
     // First, ensure enough capacity
-    int max = Math.max(from,to)
+    int max = math.max(from,to)
     g = resize(g,max+1)
     // Second, add the actual edge
-    g[from] = Array.append(g[from],to)
+    g[from] = array.append(g[from],to)
     // Done
     return g
 
@@ -118,7 +117,7 @@ function find_components(Digraph g) -> int[][]:
     //
     while i < |g|:
         int cindex = state.rindex[i]
-        components[cindex] = Array.append(components[cindex],i)
+        components[cindex] = array.append(components[cindex],i)
         i = i + 1
     //
     return components
@@ -155,9 +154,9 @@ function visit(int v, State s) -> State:
     // all done
     return s
 
-method main(System.Console sys):
-    File.Reader file = File.Reader(sys.args[0])
-    string input = ASCII.fromBytes(file.readAll())
+method main(ascii.string[] args):
+    fs.File file = fs.open(args[0])
+    ascii.string input = ascii.fromBytes(file.readAll())
     int[][]|null data = Parser.parseIntLines(input)
     if data == null:
         sys.out.println_s("error parsing input")

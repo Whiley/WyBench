@@ -1,6 +1,7 @@
 package wybench
 
-import whiley.lang.*
+import std.array
+import std.ascii
 
 public type nat is (int x) where x >= 0
 
@@ -8,18 +9,18 @@ public type nat is (int x) where x >= 0
 // Parse Ints
 // ========================================================
 
-public function parseInt(nat pos, ASCII.string input) -> (null|int val,nat npos):
+public function parseInt(nat pos, ascii.string input) -> (null|int val,nat npos):
     //
     int start = pos
-    while pos < |input| && ASCII.isDigit(input[pos]):
+    while pos < |input| && ascii.isDigit(input[pos]):
         pos = pos + 1
     if pos == start:
         return null,pos
     //
-    return Int.parse(Array.slice(input,start,pos)), pos
+    return ascii.parseInt(array.slice(input,start,pos)), pos
 
 // Parse list of integers whilst ignoring whitespace
-public function parseInts(ASCII.string input) -> int[]|null:
+public function parseInts(ascii.string input) -> int[]|null:
     //    
     int[] data = [0;0]
     nat pos = skipWhiteSpace(0,input)
@@ -28,7 +29,7 @@ public function parseInts(ASCII.string input) -> int[]|null:
         int|null i
         i,pos = parseInt(pos,input)
         if i is int:
-            data = Array.append(data,i)
+            data = array.append(data,i)
             pos = skipWhiteSpace(pos,input)
         else:
             return null
@@ -36,7 +37,7 @@ public function parseInts(ASCII.string input) -> int[]|null:
     return data
 
 // Parse lines of integers
-public function parseIntLines(ASCII.string input) -> int[][]|null:
+public function parseIntLines(ascii.string input) -> int[][]|null:
     //    
     int[][] data = [[0;0];0]
     nat pos = skipWhiteSpace(0,input)
@@ -47,7 +48,7 @@ public function parseIntLines(ASCII.string input) -> int[][]|null:
             int|null i
             i,pos = parseInt(pos,input)
             if i is int:
-                line = Array.append(line,i)
+                line = array.append(line,i)
                 pos = skipLineSpace(pos,input)
             else:
                 return null
@@ -57,7 +58,7 @@ public function parseIntLines(ASCII.string input) -> int[][]|null:
     //
     return data
 
-// Should be remove when Array.append become generic
+// Should be remove when array.append become generic
 public function append(int[][] items, int[] item) -> int[][]:
     int[][] nitems = [[0;0]; |items| + 1]
     int i = 0
@@ -74,20 +75,20 @@ public function append(int[][] items, int[] item) -> int[][]:
 // Parse Strings
 // ========================================================
 
-public function parseString(nat pos, ASCII.string input) -> (ASCII.string str,nat npos):
+public function parseString(nat pos, ascii.string input) -> (ascii.string str,nat npos):
     nat start = pos
     while pos < |input| && !isWhiteSpace(input[pos]):
         pos = pos + 1
-    return Array.slice(input,start,pos),pos
+    return array.slice(input,start,pos),pos
 
 // Parse list of reals whilst ignoring whitespace
-public function parseStrings(ASCII.string input) -> ASCII.string[]:
+public function parseStrings(ascii.string input) -> ascii.string[]:
     //
-    ASCII.string[] data = [[0;0];0]
+    ascii.string[] data = [[0;0];0]
     nat pos = skipWhiteSpace(0,input)
     // first, read data
     while pos < |input|:
-        ASCII.string s
+        ascii.string s
         s,pos = parseString(pos,input)
         data = append(data,s)
         pos = skipWhiteSpace(pos,input)
@@ -98,7 +99,7 @@ public function parseStrings(ASCII.string input) -> ASCII.string[]:
 // SkipWhiteSpace
 // ========================================================
 
-public function skipWhiteSpace(nat index, ASCII.string input) -> nat:
+public function skipWhiteSpace(nat index, ascii.string input) -> nat:
     //
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
@@ -109,14 +110,14 @@ public function skipWhiteSpace(nat index, ASCII.string input) -> nat:
 // IsWhiteSpace
 // ========================================================
 
-public function isWhiteSpace(ASCII.char c) -> bool:
+public function isWhiteSpace(ascii.char c) -> bool:
     return c == ' ' || c == '\t' || c == '\n' || c == '\r'
 
 // ========================================================
 // SkipLineSpace
 // ========================================================
 
-public function skipLineSpace(nat index, ASCII.string input) -> nat:
+public function skipLineSpace(nat index, ascii.string input) -> nat:
     //
     while index < |input| && isLineSpace(input[index]):
         index = index + 1
@@ -127,5 +128,5 @@ public function skipLineSpace(nat index, ASCII.string input) -> nat:
 // IsLineSpace
 // ========================================================
 
-public function isLineSpace(ASCII.char c) -> bool:
+public function isLineSpace(ascii.char c) -> bool:
     return c == ' ' || c == '\t'

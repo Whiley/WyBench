@@ -3,10 +3,11 @@
  *
  * See: http://en.wikipedia.org/wiki/LZ77_and_LZ78
  */
-
-import * from whiley.io.File
-import * from whiley.lang.System
-import whiley.lang.*
+import std.ascii
+import std.fs
+import std.integer
+import std.io
+import std.math
 
 type nat is (int x) where x >= 0
 
@@ -36,7 +37,7 @@ function findLongestMatch(byte[] data, nat pos) -> (nat offset, nat length)
     //
     nat bestOffset = 0
     nat bestLen = 0
-    int start = Math.max(pos - 255,0)
+    int start = math.max(pos - 255,0)
     assert start >= 0
     nat index = start
     while index < pos
@@ -77,8 +78,8 @@ function decompress(byte[] data) -> byte[]:
         if header == 00000000b:
             output = append(output,item)
         else:
-            int offset = Byte.toUnsignedInt(header)
-            int len = Byte.toUnsignedInt(item)
+            int offset = integer.toUnsignedInt(header)
+            int len = integer.toUnsignedInt(item)
             int start = |output| - offset
             // How to avoid these assumptions?
             //assume offset <= |data|
@@ -96,24 +97,24 @@ function decompress(byte[] data) -> byte[]:
 function write_u1(byte[] bytes, int u1) -> byte[]
     requires u1 >= 0 && u1 <= 255:
     //
-    return append(bytes,Int.toUnsignedByte(u1))
+    return append(bytes,integer.toUnsignedByte(u1))
 
-method main(System.Console sys):
-    File.Reader file = File.Reader(sys.args[0])
+method main(ascii.string[] args):
+    fs.File file = fs.open(args[0])
     byte[] data = file.readAll()
-    sys.out.print_s("READ:         ")
-    sys.out.print_s(Int.toString(|data|))
-    sys.out.println_s(" bytes")
+    io.print("READ:         ")
+    io.print(|data|)
+    io.println(" bytes")
     data = compress(data)
-    sys.out.print_s("COMPRESSED:   ")
-    sys.out.print_s(Int.toString(|data|))
-    sys.out.println_s(" bytes")
+    io.print("COMPRESSED:   ")
+    io.print(|data|)
+    io.println(" bytes")
     data = decompress(data)
-    sys.out.print_s("UNCOMPRESSED:   ")
-    sys.out.print_s(Int.toString(|data|))
-    sys.out.println_s(" bytes")
-    sys.out.println_s("==================================")
-    sys.out.print_s(ASCII.fromBytes(data))
+    io.print("UNCOMPRESSED:   ")
+    io.print(|data|)
+    io.println(" bytes")
+    io.println("==================================")
+    io.print(ascii.fromBytes(data))
 
 // This is temporary and should be removed
 public function append(byte[] items, byte item) -> (byte[] ritems)

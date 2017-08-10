@@ -1,11 +1,11 @@
 import whiley.lang.*
-import whiley.lang.System
-import whiley.io.File
+import std.io
+import * from std.fs
 import wybench.Parser
 
-import char from whiley.lang.ASCII
-import string from whiley.lang.ASCII
-import nat from whiley.lang.Int
+import char from std.ascii
+import string from std.ascii
+import nat from std.integer
 
 // ========================================================
 // Benchmark
@@ -26,19 +26,19 @@ requires |data| > 0:
 // Main
 // ========================================================
 
-method main(System.Console sys):
-    if |sys.args| == 0:
-        sys.out.println_s("usage: average <file>")
+method main(ascii.string[] args):
+    if |args| == 0:
+        io.println("usage: average <file>")
     else:
         // first, read the input data
-        File.Reader file = File.Reader(sys.args[0])
-        string input = ASCII.fromBytes(file.readAll())
+        File file = open(args[0])
+        string input = ascii.fromBytes(file.readAll())
         int[]|null data = Parser.parseInts(input)
         // second, run the benchmark
         if data is null:
-            sys.out.println_s("error parsing input")
+            io.println("error parsing input")
         else if |data| == 0:
-            sys.out.println_s("no data provided!")
+            io.println("no data provided!")
         else:
             int avg = average(data)
-            sys.out.println(avg)    
+            io.println(avg)

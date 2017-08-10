@@ -1,11 +1,9 @@
-import whiley.lang.*
-import whiley.lang.System
-import whiley.io.File
+import string from std.ascii
+import char from std.ascii
+import std.fs
+import std.io
 
 import wybench.Parser
-
-import char from whiley.lang.ASCII
-import string from whiley.lang.ASCII
 
 // match: search for regexp anywhere in text
 function match(string regex, string text) -> bool:
@@ -49,12 +47,12 @@ function matchStar(char c, string regex, int rIndex, string text, int tIndex) ->
         return true
     return false
 
-public method main(System.Console sys):
-    if |sys.args| == 0:
-        sys.out.println_s("usage: regex <input-file>")
+public method main(string[] args):
+    if |args| == 0:
+        io.println("usage: regex <input-file>")
     else:
-        File.Reader file = File.Reader(sys.args[0])
-        string input = ASCII.fromBytes(file.readAll())
+        fs.File file = fs.open(args[0])
+        string input = ascii.fromBytes(file.readAll())
         string[] data = Parser.parseStrings(input)
         int i = 0
         int nmatches = 0
@@ -67,8 +65,8 @@ public method main(System.Console sys):
             total = total + 1
             i = i + 2
         //
-        sys.out.print_s("Matched ")
-        sys.out.print_s(Int.toString(nmatches))
-        sys.out.print_s(" / ")
-        sys.out.print_s(Int.toString(total))
-        sys.out.println_s(" inputs.")
+        io.print("Matched ")
+        io.print(nmatches)
+        io.print(" / ")
+        io.print(total)
+        io.println(" inputs.")
