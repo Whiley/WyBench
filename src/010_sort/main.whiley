@@ -1,6 +1,6 @@
 import std.ascii
 import std.io
-import std.fs
+import std.filesystem
 
 import wybench.parser
 
@@ -87,7 +87,7 @@ constant searchTerms is [1,2,3,4,5,6,7,8,9]
 
 method main(ascii.string[] args):
     // first, read data
-    fs.File file = fs.open(args[0])
+    filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
     ascii.string input = ascii.fromBytes(file.readAll())
     int[]|null data = parser.parseInts(input)
     // second, sort data

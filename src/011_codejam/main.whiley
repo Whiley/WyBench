@@ -1,5 +1,5 @@
 import std.ascii
-import std.fs
+import std.filesystem
 import nat from std.integer
 import std.io
 import std.math
@@ -100,7 +100,7 @@ method main(ascii.string[] args):
         int pos
         int|null ntests
         // first, read the input file    
-        fs.File file = fs.open(args[0])
+        filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
         ascii.string input = ascii.fromBytes(file.readAll())
         ntests,pos = parser.parseInt(0,input)
         //

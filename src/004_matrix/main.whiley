@@ -1,5 +1,5 @@
 import std.ascii
-import std.fs
+import std.filesystem
 import std.io
 
 import wybench.parser
@@ -116,7 +116,7 @@ method main(ascii.string[] args):
     if |args| == 0:
         io.println("usage: matrix <input-file>")
     else:
-        fs.File file = fs.open(args[0])
+        filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
         // first, read data
         ascii.string input = ascii.fromBytes(file.readAll())
         int[]|null data = parser.parseInts(input)

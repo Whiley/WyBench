@@ -1,6 +1,6 @@
 import string from std.ascii
 import char from std.ascii
-import std.fs
+import std.filesystem
 import std.io
 
 import wybench.parser
@@ -51,7 +51,7 @@ public method main(string[] args):
     if |args| == 0:
         io.println("usage: regex <input-file>")
     else:
-        fs.File file = fs.open(args[0])
+        filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
         string input = ascii.fromBytes(file.readAll())
         string[] data = parser.parseStrings(input)
         int i = 0

@@ -1,6 +1,5 @@
-import whiley.lang.*
+import std.filesystem
 import std.io
-import * from std.fs
 
 import char from std.ascii
 import string from std.ascii
@@ -32,7 +31,7 @@ method main(ascii.string[] args):
         io.println("usage: average <file>")
     else:
         // first, read the input data
-        File file = open(args[0])
+        filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
         string input = ascii.fromBytes(file.readAll())
         int[]|null data = parser.parseInts(input)
         // second, run the benchmark

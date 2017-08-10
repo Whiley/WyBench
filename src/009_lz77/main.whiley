@@ -4,7 +4,7 @@
  * See: http://en.wikipedia.org/wiki/LZ77_and_LZ78
  */
 import std.ascii
-import std.fs
+import std.filesystem
 import std.integer
 import std.io
 import std.math
@@ -100,7 +100,7 @@ function write_u1(byte[] bytes, int u1) -> byte[]
     return append(bytes,integer.toUnsignedByte(u1))
 
 method main(ascii.string[] args):
-    fs.File file = fs.open(args[0])
+    filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
     byte[] data = file.readAll()
     io.print("READ:         ")
     io.print(|data|)

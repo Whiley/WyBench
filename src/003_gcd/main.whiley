@@ -1,5 +1,5 @@
 import std.ascii
-import std.fs
+import std.filesystem
 import std.io
 
 import wybench.parser
@@ -21,7 +21,7 @@ method main(ascii.string[] args):
         io.println("usage: gcd <input-file>")
     else:
         // First, parse input
-        fs.File file = fs.open(args[0])
+        filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
         ascii.string input = ascii.fromBytes(file.readAll())
         int[]|null data = parser.parseInts(input)
         // Second, compute gcds
