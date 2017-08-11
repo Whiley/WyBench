@@ -3,8 +3,9 @@
 // http://www.youtube.com/watch?v=P2durYFsJSA
 //
 
-import whiley.lang.*
-import string from whiley.lang.ASCII
+import std.array
+import std.ascii
+import std.io
 
 /**
  * Convert a bit sequence into a integer in the usual manner.  
@@ -63,21 +64,21 @@ ensures value(result) == value(bits) + 1:
         bits[i] = true
         return bits
     else:
-        return Array.append(bits,true)
+        return array.append(bits,true)
 
 /**
  * Print out a sequence of bits in the usual 
  * right-to-left format.
  */
-function toString(bool[] bits, int n) -> string:
+function toString(bool[] bits, int n) -> ascii.string:
     int i = 0
-    string r = ""
+    ascii.string r = ""
     //
     while i < n where i >= 0:
        if i < |bits| && bits[i]:
-           r = Array.append('1',r)
+           r = array.append('1',r)
        else:
-           r = Array.append('0',r)
+           r = array.append('0',r)
        i = i + 1
     //
     return r
@@ -85,14 +86,14 @@ function toString(bool[] bits, int n) -> string:
 /**
  * Print and enumerate first 15 bit patterns
  */
-method main(System.Console console):
+method main(ascii.string[] args):
     bool[] bits = [ false ]
     int i = 0
     //
     while i < 16:
-        console.out.print_s(toString(bits,4))
-        console.out.print_s(" = ")
-        console.out.println_s(Int.toString(value(bits)))
+        io.print(toString(bits,4))
+        io.print(" = ")
+        io.println(value(bits))
         bits = increment(bits)
         i = i + 1
     //

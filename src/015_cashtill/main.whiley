@@ -1,4 +1,6 @@
-import whiley.lang.*
+import std.array
+import std.ascii
+import std.io
 
 type nat is (int n) where n >= 0
 
@@ -145,19 +147,19 @@ ensures r is Cash ==> (contained(till,r) && total(r) == change):
 /**
  * Print out cash in a friendly format
  */
-function toString(Cash c) -> ASCII.string:
-    ASCII.string r = ""
+function toString(Cash c) -> ascii.string:
+    ascii.string r = ""
     bool firstTime = true
     int i = 0
     while i < |c|:
         int amt = c[i]
         if amt != 0:
             if !firstTime:
-                r = Array.append(r,", ")
+                r = array.append(r,", ")
             firstTime = false
-            r = Array.append(r,Int.toString(amt))
-            r = Array.append(r," x ")
-            r = Array.append(r,Descriptions[i])
+            r = array.append(r,ascii.toString(amt))
+            r = array.append(r," x ")
+            r = array.append(r,Descriptions[i])
         i = i + 1
     if r == "":
         r = "(nothing)"
@@ -178,38 +180,38 @@ constant Descriptions is [
  * Run through the sequence of a customer attempting to purchase an item
  * of a specified cost using a given amount of cash and a current till.
  */
-public method buy(System.Console console, Cash till, Cash given, int cost) -> Cash:
-    console.out.println_s("--")
-    console.out.print_s("Customer wants to purchase item for ")
-    console.out.print_s(Int.toString(cost))
-    console.out.println_s("c.")
-    console.out.print_s("Customer gives: ")
-    console.out.println_s(toString(given))
+public method buy(Cash till, Cash given, int cost) -> Cash:
+    io.println("--")
+    io.print("Customer wants to purchase item for ")
+    io.print(ascii.toString(cost))
+    io.println("c.")
+    io.print("Customer gives: ")
+    io.println(toString(given))
     if total(given) < cost:
-        console.out.println_s("Customer has not given enough cash!")
+        io.println("Customer has not given enough cash!")
     else:
         Cash|null change = calculateChange(till,total(given) - cost)
         if change == null:
-            console.out.println_s("Cash till cannot give exact change!")
+            io.println("Cash till cannot give exact change!")
         else:
-            console.out.print_s("Change given: ")
-            console.out.println_s(toString(change))
+            io.print("Change given: ")
+            io.println(toString(change))
             till = add(till,given)
             till = subtract(till,change)
-            console.out.print_s("Till: ")
-            console.out.println_s(toString(till))
+            io.print("Till: ")
+            io.println(toString(till))
     return till
 
 /**
  * Test Harness
  */
-public method main(System.Console console):
+public method main(ascii.string[] args):
     Cash till = [5,3,3,1,1,3,0,0]
-    console.out.print_s("Till: ")
-    console.out.println_s(toString(till))
+    io.print("Till: ")
+    io.println(toString(till))
     // now, run through some sequences...
-    till = buy(console,till,Cash([ONE_DOLLAR]),85)
-    till = buy(console,till,Cash([ONE_DOLLAR]),105)
-    till = buy(console,till,Cash([TEN_DOLLARS]),5)
-    till = buy(console,till,Cash([FIVE_DOLLARS]),305)
+    till = buy(till,Cash([ONE_DOLLAR]),85)
+    till = buy(till,Cash([ONE_DOLLAR]),105)
+    till = buy(till,Cash([TEN_DOLLARS]),5)
+    till = buy(till,Cash([FIVE_DOLLARS]),305)
 

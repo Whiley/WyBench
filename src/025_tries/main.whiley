@@ -1,12 +1,13 @@
-import whiley.lang.*
-import nat from whiley.lang.Int
+import std.ascii
+import nat from std.integer
+import std.io
 
 // Represents a transition from one 
 // state to another for a given character.
 type Transition is ({
     int from,
     int to,
-    ASCII.char character
+    ascii.char character
 } tr) where 
     tr.from >= 0 && tr.to >= 0 &&
     tr.from < tr.to
@@ -23,12 +24,12 @@ type Trie is {
 constant EmptyTrie is { transitions: [EmptyTransition; 0] }
 
 // Add a complete string into a Trie starting from the root node.
-function add(Trie trie, ASCII.string str) -> Trie:
+function add(Trie trie, ascii.string str) -> Trie:
     return add(trie,0,str,0)
 
 // Add a string into a Trie from a given state, producing an 
 // updated Trie.
-function add(Trie trie, int state, ASCII.string str, int index) -> Trie
+function add(Trie trie, int state, ascii.string str, int index) -> Trie
 requires state >= 0:
     //
     if index == |str|:
@@ -37,7 +38,7 @@ requires state >= 0:
         //
         // Check whether transition exists for first 
         // character of str already.
-        ASCII.char c = str[index]
+        ascii.char c = str[index]
         int i = 0
         //
         while i < |trie.transitions| where i >= 0:
@@ -70,12 +71,12 @@ function add(Transition[] ts, Transition transition) -> Transition[]:
 
 // Check whether a given string is contained in the trie, 
 // starting from the root state.
-function contains(Trie trie, ASCII.string str) -> bool:        
+function contains(Trie trie, ascii.string str) -> bool:        
     return contains(trie,0,str,0)
 
 // Check whether a given string is contained in the trie, 
 // starting from a given state.
-function contains(Trie trie, int state, ASCII.string str, int index) -> bool
+function contains(Trie trie, int state, ascii.string str, int index) -> bool
 requires state >= 0:
     //
     if index == |str|:
@@ -83,7 +84,7 @@ requires state >= 0:
     else:
         // Check whether transition exists for first 
         // character of str.
-        ASCII.char c = str[index]
+        ascii.char c = str[index]
         int i = 0
         //
         while i < |trie.transitions| where i >= 0:
@@ -95,24 +96,27 @@ requires state >= 0:
         //
         return false
     
-method main(System.Console console):
+method main(ascii.string[] args):
     Trie t = EmptyTrie
-    ASCII.string[] inputs = ["hello","world","help"]
+    ascii.string[] inputs = ["hello","world","help"]
     // First, initialise trie    
     nat i = 0
     while i < |inputs|:
-        console.out.print_s("ADDING: ")
-        console.out.println_s(inputs[i])
+        io.print("ADDING: ")
+        io.println(inputs[i])
         t = add(t,inputs[i])   
         i = i + 1
     // Second, check containment
-    ASCII.string[] checks = ["hello","blah","hel","dave"]
+    ascii.string[] checks = ["hello","blah","hel","dave"]
     i = 0 
     while i < |checks|:
         bool r = contains(t,checks[i])
-        console.out.print_s("CONTAINS: ")
-        console.out.print_s(checks[i])
-        console.out.print_s(" = ")
-        console.out.println_s(Any.toString(r))
+        io.print("CONTAINS: ")
+        io.print(checks[i])
+        io.print(" = ")
+        if r:
+            io.println("true")
+        else:
+            io.println("false")
         i = i + 1
     

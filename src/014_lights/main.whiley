@@ -1,4 +1,6 @@
-import whiley.lang.*
+import std.array
+import std.ascii
+import std.io
 
 // the British interpretation of traffic lights!
 type TrafficLights is ({
@@ -32,31 +34,31 @@ function change(TrafficLights ls) -> TrafficLights:
         // -> !red && amber && !green
         return { red: true, amber: false, green: false }
 
-function toString(TrafficLights ls) -> ASCII.string:
-    ASCII.string r
+function toString(TrafficLights ls) -> ascii.string:
+    ascii.string r
     //
     if ls.red:
         r = "RED "
     else:
         r = "    "
     if ls.amber:
-        r = Array.append(r,"AMBER ")
+        r = array.append(r,"AMBER ")
     else:
-        r = Array.append(r,"       ")
+        r = array.append(r,"       ")
     if ls.green:
-        r = Array.append(r,"GREEN ")
+        r = array.append(r,"GREEN ")
     else:
-        r = Array.append(r,"      ")
+        r = array.append(r,"      ")
     return r
 
-public method main(System.Console console):
+public method main(ascii.string[] args):
     TrafficLights lights = TrafficLights()
-    console.out.println_s(toString(lights))
+    io.println(toString(lights))
     lights = change(lights)
-    console.out.println_s(toString(lights))
+    io.println(toString(lights))
     lights = change(lights)
-    console.out.println_s(toString(lights))
+    io.println(toString(lights))
     lights = change(lights)
-    console.out.println_s(toString(lights))
+    io.println(toString(lights))
     lights = change(lights)
-    console.out.println_s(toString(lights))
+    io.println(toString(lights))

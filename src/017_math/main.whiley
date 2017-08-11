@@ -1,4 +1,6 @@
-import whiley.lang.*
+import std.array
+import std.ascii
+import std.io
 
 // Some simple mathematical functions
 
@@ -94,7 +96,7 @@ function sum_3(nat[] items) -> nat:
     if |items| == 0:
         return 0
     else:
-        return items[0] + sum_3(Array.slice(items,1,|items|))
+        return items[0] + sum_3(array.slice(items,1,|items|))
 
 /**
  * Compute the sum of a list of naturals 
@@ -104,40 +106,52 @@ function sum_4(nat[] items) -> nat:
     if items == [0;0]:
         return 0
     else:
-        return items[0] + sum_4(Array.slice(items,1,|items|))
+        return items[0] + sum_4(array.slice(items,1,|items|))
+
+function toString(int[] items) -> ascii.string:
+    ascii.string r = ""
+    int i = 0
+    while i < |items|:
+        if i != 0:
+            r = ascii.append(r,",")
+        ascii.string str = ascii.toString(items[0])
+        r = ascii.append(r,str)
+        i = i + 1
+    //
+    return r
 
 // Test harness
-method main(System.Console console):
+method main(ascii.string[] args):
     // test data
     int[] items = [90,-1,4,-54,324,-2319,-23498,23,12,93,73,56872]
     // test inc/dec 
     nat i = 0
     while i < |items|:
         if i >= 0:
-            console.out.print_s("INC(DEC(")
-            console.out.print_s(Int.toString(items[i]))
-            console.out.print_s(")) = ")
-            console.out.println_s(Int.toString(inc(dec(items[i]))))
+            io.print("INC(DEC(")
+            io.print(items[i])
+            io.print(")) = ")
+            io.println(inc(dec(items[i])))
         i = i + 1
     // test abs
     i = 0
     while i < |items|:
-        console.out.print_s("ABS(")
-        console.out.print_s(Int.toString(items[i]))
-        console.out.print_s(") = ")
-        console.out.println_s(Int.toString(abs(items[i])))
+        io.print("ABS(")
+        io.print(items[i])
+        io.print(") = ")
+        io.println(abs(items[i]))
         i = i + 1
     // test max
     i = 0
     while i < |items|:
         nat j = 0
         while j < |items|:
-            console.out.print_s("MAX(")
-            console.out.print_s(Int.toString(items[i]))
-            console.out.print_s(", ")
-            console.out.print_s(Int.toString(items[j]))
-            console.out.print_s(") = ")
-            console.out.println_s(Int.toString(max(items[i],items[j])))
+            io.print("MAX(")
+            io.print(items[i])
+            io.print(", ")
+            io.print(items[j])
+            io.print(") = ")
+            io.println(max(items[i],items[j]))
             j = j + 1
         i = i + 1
     // test min
@@ -145,33 +159,33 @@ method main(System.Console console):
     while i < |items|:
         nat j = 0
         while j < |items|:
-            console.out.print_s("MIN(")
-            console.out.print_s(Int.toString(items[i]))
-            console.out.print_s(", ")
-            console.out.print_s(Int.toString(items[j]))
-            console.out.print_s(") = ")
-            console.out.println_s(Int.toString(min(items[i],items[j])))
+            io.print("MIN(")
+            io.print(items[i])
+            io.print(", ")
+            io.print(items[j])
+            io.print(") = ")
+            io.println(min(items[i],items[j]))
             j = j + 1
         i = i + 1
     
     // test sum_1
     items = [90,4,324,23,12,93,73,56872]
-    console.out.print_s("SUM_1(")
-    console.out.print_s(Any.toString(items))
-    console.out.print_s(") = ")
-    console.out.println_s(Int.toString(sum_1(items)))
+    io.print("SUM_1(")
+    io.print(toString(items))
+    io.print(") = ")
+    io.println(sum_1(items))
     // test sum_2
-    console.out.print_s("SUM_2(")
-    console.out.print_s(Any.toString(items))
-    console.out.print_s(") = ")
-    console.out.println_s(Int.toString(sum_2(items)))
+    io.print("SUM_2(")
+    io.print(toString(items))
+    io.print(") = ")
+    io.println(sum_2(items))
     // test sum_3
-    console.out.print_s("SUM_3(")
-    console.out.print_s(Any.toString(items))
-    console.out.print_s(") = ")
-    console.out.println_s(Int.toString(sum_3(items)))
+    io.print("SUM_3(")
+    io.print(toString(items))
+    io.print(") = ")
+    io.println(sum_3(items))
     // test sum_4
-    console.out.print_s("SUM_4(")
-    console.out.print_s(Any.toString(items))
-    console.out.print_s(") = ")
-    console.out.println_s(Int.toString(sum_4(items)))
+    io.print("SUM_4(")
+    io.print(items)
+    io.print(") = ")
+    io.println(sum_4(items))
