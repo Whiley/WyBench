@@ -1,6 +1,6 @@
 import std.io
 import std.ascii
-import * from Minesweeper
+import * from minesweeper
 
 type Move is {
     bool expose, // true == exposing, false == flagging

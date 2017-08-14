@@ -1,19 +1,4 @@
-// Should be imported from standard library
-function max(int a, int b) -> (int r)
-ensures r >= a && r >= b
-ensures (r == a) || (r == b):
-    if a > b:
-        return a
-    else:
-        return b
-
-function min(int a, int b) -> (int r)
-ensures r <= a && r <= b
-ensures (r == a) || (r == b):
-    if a < b:
-        return a
-    else:
-        return b
+import std.math
 
 // =================================================================
 // Squares
@@ -115,10 +100,10 @@ function determineRank(Board b, nat col, nat row) -> int
 requires col < b.width && row < b.height:
     int rank = 0
     // Calculate the rank
-    nat r = max(0,row-1)
-    while r < min(b.height,row+2):
-        nat c = max(0,col-1)
-        while c < min(b.width,col+2):
+    nat r = math.max(0,row-1)
+    while r < math.min(b.height,row+2):
+        nat c = math.max(0,col-1)
+        while c < math.min(b.width,col+2):
             Square sq = getSquare(b,c,r)
             if sq.holdsBomb:
                 rank = rank + 1
@@ -145,10 +130,10 @@ function exposeSquare(Board b, int col, int row) -> Board:
 
 // Recursively expose all valid neighbouring squares on the board
 function exposeNeighbours(Board b, int col, int row) -> Board:
-    int r = max(0,row-1)
-    while r != min(b.height,row+2):
-        int c = max(0,col-1)
-        while c != min(b.width,col+2):
+    int r = math.max(0,row-1)
+    while r != math.min(b.height,row+2):
+        int c = math.max(0,col-1)
+        while c != math.min(b.width,col+2):
            b = exposeSquare(b,c,r)
            c = c + 1
         r = r + 1
