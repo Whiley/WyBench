@@ -1,4 +1,5 @@
-import whiley.lang.System
+import std.ascii
+import std.io
 
 constant RED is 0
 constant WHITE is 1
@@ -44,9 +45,9 @@ requires |cols| > 0:
     return cols
 
 
-public method main(System.Console console):
+public method main(ascii.string[] args):
     int[] colors = [WHITE,RED,BLUE,WHITE]
     //
     colors = partition(colors)
     //
-    console.out.println(colors)
+    io.println(colors)

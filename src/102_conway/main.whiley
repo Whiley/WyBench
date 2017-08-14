@@ -1,8 +1,9 @@
-import whiley.lang.*
-import whiley.io.File
-import nat from whiley.lang.Int
+import std.ascii
+import std.filesystem
+import std.io
+import nat from std.integer
 
-import wybench.Parser
+import wybench.parser
 
 // ============================================
 // Game Logic
@@ -111,50 +112,50 @@ function parseConfig(int[] data) -> (Board board, int nIterations):
 // Main
 // ============================================
 
-method main(System.Console sys):
+method main(ascii.string[] args):
     Board board
     int niters
     // First, parse input file
-    File.Reader file = File.Reader(sys.args[0])
-    ASCII.string input = ASCII.fromBytes(file.readAll())
-    int[]|null data = Parser.parseInts(input)
+    filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
+    ascii.string input = ascii.fromBytes(file.readAll())
+    int[]|null data = parser.parseInts(input)
     // Second, construct and iterate board
     if data != null:
         board,niters = parseConfig(data)
         int i = 0
         while i < niters:
-            printBoard(sys,board)
+            printBoard(board)
             board = update(board)
             i = i + 1
         //
     else:
-        sys.out.println_s("error parsing file")
+        io.println("error parsing file")
 
-method printBoard(System.Console sys, Board board):
+method printBoard(Board board):
     int ncols = board.width
-    sys.out.print_s("+")
+    io.print("+")
     int i = 0
     while i < ncols:
-        sys.out.print_s("-")
+        io.print("-")
         i = i + 1
-    sys.out.println_s("+")
+    io.println("+")
     i = 0
     while i < |board.cells|:
         bool[] row = board.cells[i]
-        sys.out.print_s("|")
+        io.print("|")
         int j = 0
         while j < |row|:
             if row[j]:
-                sys.out.print_s("#")
+                io.print("#")
             else:
-                sys.out.print_s(" ")
+                io.print(" ")
             j = j + 1        
-        sys.out.println_s("|")
+        io.println("|")
         i = i + 1
     //
-    sys.out.print_s("+")
+    io.print("+")
     i = 0
     while i < ncols:
-        sys.out.print_s("-")
+        io.print("-")
         i = i + 1
-    sys.out.println_s("+")
+    io.println("+")
