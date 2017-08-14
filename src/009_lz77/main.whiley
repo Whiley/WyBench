@@ -3,11 +3,11 @@
  *
  * See: http://en.wikipedia.org/wiki/LZ77_and_LZ78
  */
-import std.ascii
-import std.filesystem
-import std.integer
-import std.io
-import std.math
+import std::ascii
+import std::filesystem
+import std::integer
+import std::io
+import std::math
 
 type nat is (int x) where x >= 0
 
@@ -37,7 +37,7 @@ function findLongestMatch(byte[] data, nat pos) -> (nat offset, nat length)
     //
     nat bestOffset = 0
     nat bestLen = 0
-    int start = math.max(pos - 255,0)
+    int start = math::max(pos - 255,0)
     assert start >= 0
     nat index = start
     while index < pos
@@ -78,8 +78,8 @@ function decompress(byte[] data) -> byte[]:
         if header == 00000000b:
             output = append(output,item)
         else:
-            int offset = integer.toUnsignedInt(header)
-            int len = integer.toUnsignedInt(item)
+            int offset = integer::toUnsignedInt(header)
+            int len = integer::toUnsignedInt(item)
             int start = |output| - offset
             // How to avoid these assumptions?
             //assume offset <= |data|
@@ -97,24 +97,24 @@ function decompress(byte[] data) -> byte[]:
 function write_u1(byte[] bytes, int u1) -> byte[]
     requires u1 >= 0 && u1 <= 255:
     //
-    return append(bytes,integer.toUnsignedByte(u1))
+    return append(bytes,integer::toUnsignedByte(u1))
 
-method main(ascii.string[] args):
-    filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
+method main(ascii::string[] args):
+    filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
     byte[] data = file.readAll()
-    io.print("READ:         ")
-    io.print(|data|)
-    io.println(" bytes")
+    io::print("READ:         ")
+    io::print(|data|)
+    io::println(" bytes")
     data = compress(data)
-    io.print("COMPRESSED:   ")
-    io.print(|data|)
-    io.println(" bytes")
+    io::print("COMPRESSED:   ")
+    io::print(|data|)
+    io::println(" bytes")
     data = decompress(data)
-    io.print("UNCOMPRESSED:   ")
-    io.print(|data|)
-    io.println(" bytes")
-    io.println("==================================")
-    io.print(ascii.fromBytes(data))
+    io::print("UNCOMPRESSED:   ")
+    io::print(|data|)
+    io::println(" bytes")
+    io::println("==================================")
+    io::print(ascii::fromBytes(data))
 
 // This is temporary and should be removed
 public function append(byte[] items, byte item) -> (byte[] ritems)

@@ -1,6 +1,6 @@
 import whiley.lang.*
 import * from whiley.lang.*
-import * from whiley.io.File
+import * from whiley.io::File
 
 // ===============================================
 // Definitions

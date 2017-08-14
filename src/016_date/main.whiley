@@ -1,6 +1,6 @@
-import std.array
-import std.ascii
-import std.io
+import std::array
+import std::ascii
+import std::io
 
 constant JAN is 1
 constant FEB is 2
@@ -66,22 +66,22 @@ function next(Date date) -> Date:
     // done
     return date
 
-function toString(Date date) -> ascii.string:
-    ascii.string d = ascii.toString(date.day)
-    ascii.string m = ascii.toString(date.month)
-    ascii.string y = ascii.toString(date.year)
-    ascii.string r = array.append(d,"/")
-    r = array.append(r,m)
-    r = array.append(r,"/")
-    return array.append(r,y)
+function toString(Date date) -> ascii::string:
+    ascii::string d = ascii::toString(date.day)
+    ascii::string m = ascii::toString(date.month)
+    ascii::string y = ascii::toString(date.year)
+    ascii::string r = array::append(d,"/")
+    r = array::append(r,m)
+    r = array::append(r,"/")
+    return array::append(r,y)
 
 // =================================================
 // Test Harness
 // =================================================
 
-method main(ascii.string[] args):
+method main(ascii::string[] args):
     Date start = Date(1,JAN,2000)
     Date end = Date(6,JAN,2013)
     while start != end:
-        io.println(toString(start))    
+        io::println(toString(start))    
         start = next(start)

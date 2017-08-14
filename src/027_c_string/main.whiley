@@ -1,5 +1,5 @@
-import std.ascii
-import std.io
+import std::ascii
+import std::io
 
 //
 // This little example is showing off an almost complete encoding
@@ -44,16 +44,16 @@ requires |src| <= |(*dest)|:
     return
     
 // Print out hello world!
-public method main(ascii.string[] args):
+public method main(ascii::string[] args):
     // ==============================================================
     // TEST: strlen
     // ==============================================================
     C_string src = ['H','e','l','l','o','W','o','r','l','d',0]
-    io.println(strlen(src))
+    io::println(strlen(src))
     
     // ==============================================================
     // TEST: strcpy
     // ==============================================================
     &C_string dest = new [1,2,3,4,5,6,7,8,9,10,11,12,13,14]
     strcpy(dest,src)
-    io.println(src)
+    io::println(src)

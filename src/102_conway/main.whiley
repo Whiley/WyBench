@@ -1,9 +1,9 @@
-import std.ascii
-import std.filesystem
-import std.io
-import nat from std.integer
+import std::ascii
+import std::filesystem
+import std::io
+import nat from std::integer
 
-import wybench.parser
+import wybench::parser
 
 // ============================================
 // Game Logic
@@ -112,13 +112,13 @@ function parseConfig(int[] data) -> (Board board, int nIterations):
 // Main
 // ============================================
 
-method main(ascii.string[] args):
+method main(ascii::string[] args):
     Board board
     int niters
     // First, parse input file
-    filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
-    ascii.string input = ascii.fromBytes(file.readAll())
-    int[]|null data = parser.parseInts(input)
+    filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+    ascii::string input = ascii::fromBytes(file.readAll())
+    int[]|null data = parser::parseInts(input)
     // Second, construct and iterate board
     if data != null:
         board,niters = parseConfig(data)
@@ -129,33 +129,33 @@ method main(ascii.string[] args):
             i = i + 1
         //
     else:
-        io.println("error parsing file")
+        io::println("error parsing file")
 
 method printBoard(Board board):
     int ncols = board.width
-    io.print("+")
+    io::print("+")
     int i = 0
     while i < ncols:
-        io.print("-")
+        io::print("-")
         i = i + 1
-    io.println("+")
+    io::println("+")
     i = 0
     while i < |board.cells|:
         bool[] row = board.cells[i]
-        io.print("|")
+        io::print("|")
         int j = 0
         while j < |row|:
             if row[j]:
-                io.print("#")
+                io::print("#")
             else:
-                io.print(" ")
+                io::print(" ")
             j = j + 1        
-        io.println("|")
+        io::println("|")
         i = i + 1
     //
-    io.print("+")
+    io::print("+")
     i = 0
     while i < ncols:
-        io.print("-")
+        io::print("-")
         i = i + 1
-    io.println("+")
+    io::println("+")

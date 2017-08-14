@@ -1,5 +1,5 @@
-import std.ascii
-import std.io
+import std::ascii
+import std::io
 
 type nat is (int x) where x >= 0
 
@@ -9,9 +9,9 @@ function fib(nat x) -> nat:
     else:
         return fib(x-1) + fib(x-2)
 
-method main(ascii.string[] args):
+method main(ascii::string[] args):
     nat i = 0
     while i < 41:
         nat r = fib(i)
-        io.println(r)
+        io::println(r)
         i = i + 1

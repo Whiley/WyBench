@@ -1,8 +1,8 @@
-import std.ascii
-import std.io
-import std.filesystem
+import std::ascii
+import std::io
+import std::filesystem
 
-import wybench.parser
+import wybench::parser
 
 type sortedList is (int[] xs) 
 where |xs| <= 1 || all { i in 0 .. |xs|-1 | xs[i] <= xs[i+1] }
@@ -56,14 +56,14 @@ function search(sortedList list, int item) -> null|int:
     // failed to find it
     return null
 
-function toString(int[] items) -> ascii.string:
-    ascii.string r = ""
+function toString(int[] items) -> ascii::string:
+    ascii::string r = ""
     int i = 0
     while i < |items|:
         if i != 0:
-            r = ascii.append(r,",")
-        ascii.string str = ascii.toString(items[0])
-        r = ascii.append(r,str)
+            r = ascii::append(r,",")
+        ascii::string str = ascii::toString(items[0])
+        r = ascii::append(r,str)
         i = i + 1
     //
     return r
@@ -71,35 +71,35 @@ function toString(int[] items) -> ascii.string:
 method lookFor(sortedList list, int item):
     int|null index = search(list,item)
     if index != null:
-        io.print("FOUND: ")
-        io.print(item)
-        io.print(" in ")
-        io.print(toString(list))
-        io.print(" @ ")
-        io.println(index)
+        io::print("FOUND: ")
+        io::print(item)
+        io::print(" in ")
+        io::print(toString(list))
+        io::print(" @ ")
+        io::println(index)
     else:
-        io.print("NOT FOUND: ")
-        io.print(item)
-        io.print(" in ")
-        io.print(list)
+        io::print("NOT FOUND: ")
+        io::print(item)
+        io::print(" in ")
+        io::print(list)
 
 constant searchTerms is [1,2,3,4,5,6,7,8,9]
 
-method main(ascii.string[] args):
+method main(ascii::string[] args):
     // first, read data
-    filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
-    ascii.string input = ascii.fromBytes(file.readAll())
-    int[]|null data = parser.parseInts(input)
+    filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+    ascii::string input = ascii::fromBytes(file.readAll())
+    int[]|null data = parser::parseInts(input)
     // second, sort data
     if data != null:
         data = sort(data,0,|data|)
         // third, print output
-        io.print("SORTED: ") 
-        io.println(data)
+        io::print("SORTED: ") 
+        io::println(data)
         int i = 0
         while i < |searchTerms|:
             lookFor(data,i)
             i = i + 1
     else:
-        io.println("Error parsing input")
+        io::println("Error parsing input")
 

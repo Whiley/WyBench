@@ -1,9 +1,9 @@
-import string from std.ascii
-import char from std.ascii
-import std.filesystem
-import std.io
+import string from std::ascii
+import char from std::ascii
+import std::filesystem
+import std::io
 
-import wybench.parser
+import wybench::parser
 
 // match: search for regexp anywhere in text
 function match(string regex, string text) -> bool:
@@ -49,11 +49,11 @@ function matchStar(char c, string regex, int rIndex, string text, int tIndex) ->
 
 public method main(string[] args):
     if |args| == 0:
-        io.println("usage: regex <input-file>")
+        io::println("usage: regex <input-file>")
     else:
-        filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
-        string input = ascii.fromBytes(file.readAll())
-        string[] data = parser.parseStrings(input)
+        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        string input = ascii::fromBytes(file.readAll())
+        string[] data = parser::parseStrings(input)
         int i = 0
         int nmatches = 0
         int total = 0
@@ -65,8 +65,8 @@ public method main(string[] args):
             total = total + 1
             i = i + 2
         //
-        io.print("Matched ")
-        io.print(nmatches)
-        io.print(" / ")
-        io.print(total)
-        io.println(" inputs.")
+        io::print("Matched ")
+        io::print(nmatches)
+        io::print(" / ")
+        io::print(total)
+        io::println(" inputs.")

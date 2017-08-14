@@ -1,5 +1,5 @@
-import std.ascii
-import std.io
+import std::ascii
+import std::io
 
 // The purpose of this benchmark is to determine whether or not we can
 // reason effectively about fractions without requiring a built-in
@@ -45,7 +45,7 @@ ensures r > 0 <==> (f1.numerator * f2.denominator) < (f2.numerator * f1.denomina
         return 0
 
 // Some simple test methods
-method main(ascii.string[] args):
+method main(ascii::string[] args):
     Fraction f1 = Fraction(1,2) // = 1/2
     Fraction f2 = Fraction(2,4) // = 2/4
     assert compare(f1,f2) == 0
