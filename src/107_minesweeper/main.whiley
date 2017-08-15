@@ -1,5 +1,5 @@
-import std.io
-import std.ascii
+import std::io
+import std::ascii
 import * from minesweeper
 
 type Move is {
@@ -25,7 +25,7 @@ constant BOMBS is [
 ]
 
 // Some simple test code for the Minesweeper game
-public method main(ascii.string[] args):
+public method main(ascii::string[] args):
     Board board = Board(10,5)
     // Place bombs along diaganol
     int i = 0
@@ -42,16 +42,16 @@ public method main(ascii.string[] args):
         Move m = MOVES[i]
         // Apply the move
         if m.expose:
-            io.print("Player exposes square at ")
-            io.print(m.col)
-            io.print(", ")
-            io.println(m.row)
+            io::print("Player exposes square at ")
+            io::print(m.col)
+            io::print(", ")
+            io::println(m.row)
             board = exposeSquare(board,m.col,m.row)
         else:
-            io.println("Player flags square at ")
-            io.print(m.col)
-            io.print(", ")
-            io.println(m.row)
+            io::println("Player flags square at ")
+            io::print(m.col)
+            io::print(", ")
+            io::println(m.row)
             board = flagSquare(board,m.col,m.row)
         // Print the board
         printBoard(board)
@@ -61,33 +61,33 @@ public method main(ascii.string[] args):
         isOver, hasWon = isGameOver(board)
         if isOver:
             if hasWon:
-                io.println("Game Over --- Player has Won!")
+                io::println("Game Over --- Player has Won!")
             else:
-                io.println("Game Over --- Player has Lost!")
+                io::println("Game Over --- Player has Lost!")
         i = i + 1
     // Done
-    io.println("All moves completed")
+    io::println("All moves completed")
 
 method printBoard(Board board):
     int row = 0
     while row < board.height: 
         // Print Side Wall
-        io.print("|")
+        io::print("|")
         int col = 0
         while col < board.width:
             Square sq = getSquare(board,col,row)
             if sq is HiddenSquare:
                 if sq.flagged:
-                    io.print("P")
+                    io::print("P")
                 else:
-                    io.print("X")
+                    io::print("X")
             else if sq.holdsBomb:
-                io.print("*")
+                io::print("*")
             else if sq.rank == 0:
-                io.print(" ")
+                io::print(" ")
             else:
-                io.print(sq.rank)
+                io::print(sq.rank)
             col = col + 1
         // Print Side Wall
-        io.println("|")
+        io::println("|")
         row = row + 1

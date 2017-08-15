@@ -1,6 +1,6 @@
-import std.array
-import std.ascii
-import std.io
+import std::array
+import std::ascii
+import std::io
 
 // the British interpretation of traffic lights!
 type TrafficLights is ({
@@ -34,31 +34,31 @@ function change(TrafficLights ls) -> TrafficLights:
         // -> !red && amber && !green
         return { red: true, amber: false, green: false }
 
-function toString(TrafficLights ls) -> ascii.string:
-    ascii.string r
+function toString(TrafficLights ls) -> ascii::string:
+    ascii::string r
     //
     if ls.red:
         r = "RED "
     else:
         r = "    "
     if ls.amber:
-        r = array.append(r,"AMBER ")
+        r = array::append(r,"AMBER ")
     else:
-        r = array.append(r,"       ")
+        r = array::append(r,"       ")
     if ls.green:
-        r = array.append(r,"GREEN ")
+        r = array::append(r,"GREEN ")
     else:
-        r = array.append(r,"      ")
+        r = array::append(r,"      ")
     return r
 
-public method main(ascii.string[] args):
+public method main(ascii::string[] args):
     TrafficLights lights = TrafficLights()
-    io.println(toString(lights))
+    io::println(toString(lights))
     lights = change(lights)
-    io.println(toString(lights))
+    io::println(toString(lights))
     lights = change(lights)
-    io.println(toString(lights))
+    io::println(toString(lights))
     lights = change(lights)
-    io.println(toString(lights))
+    io::println(toString(lights))
     lights = change(lights)
-    io.println(toString(lights))
+    io::println(toString(lights))

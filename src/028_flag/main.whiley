@@ -1,5 +1,5 @@
-import std.ascii
-import std.io
+import std::ascii
+import std::io
 
 constant RED is 0
 constant WHITE is 1
@@ -45,9 +45,9 @@ requires |cols| > 0:
     return cols
 
 
-public method main(ascii.string[] args):
+public method main(ascii::string[] args):
     int[] colors = [WHITE,RED,BLUE,WHITE]
     //
     colors = partition(colors)
     //
-    io.println(colors)
+    io::println(colors)

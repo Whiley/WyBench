@@ -1,5 +1,3 @@
-package game.logic
-
 public constant BLANK is 0
 public constant CROSS is 1
 public constant CIRCLE is 2

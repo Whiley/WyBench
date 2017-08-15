@@ -1,6 +1,4 @@
-package game.logic
-
-import * from game.logic.board
+import * from board
 
 /**
  * The Game State consists of a board and a boolean
@@ -24,14 +22,14 @@ public function Game() -> Game:
  * Place a piece on the board at a given row and column 
  * by the next player. 
  */
-public function play(Game state, board.Index row, board.Index col) -> Game
+public function play(Game state, board::Index row, board::Index col) -> Game
 // There cannot be a piece already at the position to play on
-requires board.get(state.board,row,col) == board.BLANK:
+requires board::get(state.board,row,col) == board::BLANK:
 	// Place a CIRCLE if its circle's turn
 	if state.circlesTurn:
-		state.board[(row*3)+col] = board.CIRCLE
+		state.board[(row*3)+col] = board::CIRCLE
 	else:
-		state.board[(row*3)+col] = board.CROSS
+		state.board[(row*3)+col] = board::CROSS
 	// Update turn to other player
 	state.circlesTurn = !state.circlesTurn
 	// Done.

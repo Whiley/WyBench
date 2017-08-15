@@ -1,8 +1,8 @@
-import std.ascii
-import std.filesystem
-import std.io
+import std::ascii
+import std::filesystem
+import std::io
 
-import wybench.parser
+import wybench::parser
 
 // Author: David J. Pearce
 
@@ -106,28 +106,28 @@ method printMat(Matrix A):
     while i < A.height:
         nat j = 0
         while j < A.width:
-            io.print(A.data[i][j])
-            io.print(" ")
+            io::print(A.data[i][j])
+            io::print(" ")
             j = j + 1
         i = i + 1
-        io.println(" ")
+        io::println(" ")
 
-method main(ascii.string[] args):
+method main(ascii::string[] args):
     if |args| == 0:
-        io.println("usage: matrix <input-file>")
+        io::println("usage: matrix <input-file>")
     else:
-        filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
+        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
         // first, read data
-        ascii.string input = ascii.fromBytes(file.readAll())
-        int[]|null data = parser.parseInts(input)
+        ascii::string input = ascii::fromBytes(file.readAll())
+        int[]|null data = parser::parseInts(input)
         if data is null || |data| < 2:
-            io.println("error reading file")
+            io::println("error reading file")
         else:
             int width = data[0]
             int height = data[1]
             int size = width*height
             if(|data| != 2+(size * 2)): 
-                io.println("file geometry incorrect")           
+                io::println("file geometry incorrect")           
             else:
                 // second, build the matrices
                 Matrix A = buildMatrix(width,height,data,2)

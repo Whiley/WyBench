@@ -1,6 +1,6 @@
-import std.array
-import std.ascii
-import std.io
+import std::array
+import std::ascii
+import std::io
 
 // A simple fixed-size cyclic buffer supporting read and write
 // operations.
@@ -71,28 +71,28 @@ ensures buf is EmptyBuffer ==> r :
     //
     return buf.rpos == buf.wpos
 
-public function toString(Buffer b) -> ascii.string:
-    ascii.string r = "["
+public function toString(Buffer b) -> ascii::string:
+    ascii::string r = "["
     int i = 0
     while i < |b.data|:
         if i != 0:
-            r = array.append(r,", ")
+            r = array::append(r,", ")
         if i == b.rpos:
-            r = array.append(r,"<")
+            r = array::append(r,"<")
         if i == b.wpos:
-            r = array.append(r,">")
-        r = array.append(r,ascii.toString(b.data[i]))
+            r = array::append(r,">")
+        r = array::append(r,ascii::toString(b.data[i]))
         i = i + 1
-    return array.append(r,"]")
+    return array::append(r,"]")
 
 constant ITEMS is [5,4,6,3,7,2,8,1,9,10,0]
 
-method main(ascii.string[] args):
+method main(ascii::string[] args):
     int i = 0
     Buffer buf = Buffer(10)
     //
-    io.print("INIT: ")
-    io.println(toString(buf))
+    io::print("INIT: ")
+    io::println(toString(buf))
     
     // NOTE: following loop invariant should not be necessary!  It is
     // needed because the verifier doesn't current enforce the
@@ -103,13 +103,13 @@ method main(ascii.string[] args):
         where buf.wpos >= 0 && buf.wpos < |buf.data|:
         //
         if isFull(buf):
-            io.println("BUFFER FULL")
+            io::println("BUFFER FULL")
             break
         buf = write(buf,ITEMS[i])
-        io.print("WROTE: ")
-        io.print(ITEMS[i])
-        io.print(", ")
-        io.println(toString(buf))
+        io::print("WROTE: ")
+        io::print(ITEMS[i])
+        io::print(", ")
+        io::println(toString(buf))
         i = i + 1
     //
     int item
@@ -124,18 +124,18 @@ method main(ascii.string[] args):
         where buf.wpos >= 0 && buf.wpos < |buf.data|:
         //
         if isEmpty(buf):
-            io.println("BUFFER EMPTY")
+            io::println("BUFFER EMPTY")
             break
         buf,item = read(buf)
         if item == ITEMS[i]:
-            io.print("READ: ")
-            io.print(item) 
-            io.print(", ")
-            io.println(toString(buf))
+            io::print("READ: ")
+            io::print(item) 
+            io::print(", ")
+            io::println(toString(buf))
         else:
-            io.print("ERROR READ: ")
-            io.print(item)
-            io.print(", expecting ")
-            io.println(ITEMS[i])
+            io::print("ERROR READ: ")
+            io::print(item)
+            io::print(", expecting ")
+            io::println(ITEMS[i])
         i = i + 1
     

@@ -1,11 +1,11 @@
-import std.filesystem
-import std.io
+import std::filesystem
+import std::io
 
-import char from std.ascii
-import string from std.ascii
-import nat from std.integer
+import char from std::ascii
+import string from std::ascii
+import nat from std::integer
 
-import wybench.parser
+import wybench::parser
 
 // ========================================================
 // Benchmark
@@ -26,19 +26,19 @@ requires |data| > 0:
 // Main
 // ========================================================
 
-method main(ascii.string[] args):
+method main(ascii::string[] args):
     if |args| == 0:
-        io.println("usage: average <file>")
+        io::println("usage: average <file>")
     else:
         // first, read the input data
-        filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
-        string input = ascii.fromBytes(file.readAll())
-        int[]|null data = parser.parseInts(input)
+        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        string input = ascii::fromBytes(file.readAll())
+        int[]|null data = parser::parseInts(input)
         // second, run the benchmark
         if data is null:
-            io.println("error parsing input")
+            io::println("error parsing input")
         else if |data| == 0:
-            io.println("no data provided!")
+            io::println("no data provided!")
         else:
             int avg = average(data)
-            io.println(avg)
+            io::println(avg)

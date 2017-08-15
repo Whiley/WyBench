@@ -1,8 +1,8 @@
-import std.ascii
-import std.filesystem
-import std.io
+import std::ascii
+import std::filesystem
+import std::io
 
-import wybench.parser
+import wybench::parser
 
 type nat is (int x) where x >= 0
 
@@ -16,24 +16,24 @@ function gcd(nat a, nat b) -> nat:
             b = b - a
     return a
 
-method main(ascii.string[] args):
+method main(ascii::string[] args):
     if |args| == 0:
-        io.println("usage: gcd <input-file>")
+        io::println("usage: gcd <input-file>")
     else:
         // First, parse input
-        filesystem.File file = filesystem.open(args[0],filesystem.READONLY)
-        ascii.string input = ascii.fromBytes(file.readAll())
-        int[]|null data = parser.parseInts(input)
+        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        ascii::string input = ascii::fromBytes(file.readAll())
+        int[]|null data = parser::parseInts(input)
         // Second, compute gcds
         if data is null:
-            io.println("error parsing input")
+            io::println("error parsing input")
         else:
             nat i = 0
             while i < |data|:
                 nat j = i+1
                 while j < |data|:
                     if(data[i] is nat && data[j] is nat):
-                        io.println(gcd(data[i],data[j]))
+                        io::println(gcd(data[i],data[j]))
                     j = j + 1
                 i = i + 1
             //

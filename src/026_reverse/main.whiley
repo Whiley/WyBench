@@ -1,6 +1,6 @@
-import std.array
-import std.ascii
-import std.io
+import std::array
+import std::ascii
+import std::io
 
 // Sum over the elements of a list
 function sum(int[] xs, int index) -> (int r)
@@ -37,22 +37,22 @@ ensures |xs| > 0 ==> sum(xs,0) == sum(rs,0):
     //
     return ys
     
-function toString(int[] items) -> ascii.string:
-    ascii.string r = ""
+function toString(int[] items) -> ascii::string:
+    ascii::string r = ""
     int i = 0
     while i < |items|:
         if i != 0:
-            r = ascii.append(r,",")
-        ascii.string str = ascii.toString(items[0])
-        r = ascii.append(r,str)
+            r = ascii::append(r,",")
+        ascii::string str = ascii::toString(items[0])
+        r = ascii::append(r,str)
         i = i + 1
     //
     return r
     
-method main(ascii.string[] args):
+method main(ascii::string[] args):
     int[] l1 = [1,2,3,4]
     int[] l2 = reverse(l1)
-    io.println(array.append("L1 = ",toString(l1)))
-    io.println(array.append("L2 = ", toString(l2)))
-    io.println(array.append("SUM(L1) = ", ascii.toString(sum(l1,0))))
-    io.println(array.append("SUM(L2) = ", ascii.toString(sum(l2,0))))
+    io::println(array::append("L1 = ",toString(l1)))
+    io::println(array::append("L2 = ", toString(l2)))
+    io::println(array::append("SUM(L1) = ", ascii::toString(sum(l1,0))))
+    io::println(array::append("SUM(L2) = ", ascii::toString(sum(l2,0))))
