@@ -1,8 +1,7 @@
+import std::ascii
 import std::filesystem
 import std::io
 
-import char from std::ascii
-import string from std::ascii
 import nat from std::integer
 
 import wybench::parser
@@ -32,7 +31,7 @@ method main(ascii::string[] args):
     else:
         // first, read the input data
         filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-        string input = ascii::fromBytes(file.readAll())
+        ascii::string input = ascii::fromBytes(file.readAll())
         int[]|null data = parser::parseInts(input)
         // second, run the benchmark
         if data is null:

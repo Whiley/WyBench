@@ -7,16 +7,16 @@ type nat is (int n) where n >= 0
 /**
  * Define coins/notes and their values (in cents)
  */
-constant ONE_CENT is 0
-constant FIVE_CENTS is 1
-constant TEN_CENTS is 2
-constant TWENTY_CENTS is 3
-constant FIFTY_CENTS is 4
-constant ONE_DOLLAR is 5  // 1 dollar
-constant FIVE_DOLLARS is 6  // 5 dollars
-constant TEN_DOLLARS is 7 // 10 dollars
+int ONE_CENT = 0
+int FIVE_CENTS = 1
+int TEN_CENTS = 2
+int TWENTY_CENTS = 3
+int FIFTY_CENTS = 4
+int ONE_DOLLAR = 5  // 1 dollar
+int FIVE_DOLLARS = 6  // 5 dollars
+int TEN_DOLLARS = 7 // 10 dollars
 
-constant Value is [
+int[] Value = [
     1,
     5,
     10,
@@ -137,7 +137,7 @@ ensures r is Cash ==> (contained(till,r) && total(r) == change):
                 // temporarily take coin out of till
                 tmp[i] = tmp[i] - 1 
                 null|Cash chg = calculateChange(tmp,change - Value[i])
-                if chg != null:
+                if chg is Cash:
                     // we have enough change
                     chg[i] = chg[i] + 1
                     return chg
@@ -165,7 +165,7 @@ function toString(Cash c) -> ascii::string:
         r = "(nothing)"
     return r
     
-constant Descriptions is [
+ascii::string[] Descriptions = [
     "1c",
     "5c",
     "10c",
@@ -191,7 +191,7 @@ public method buy(Cash till, Cash given, int cost) -> Cash:
         io::println("Customer has not given enough cash!")
     else:
         Cash|null change = calculateChange(till,total(given) - cost)
-        if change == null:
+        if change is null:
             io::println("Cash till cannot give exact change!")
         else:
             io::print("Change given: ")

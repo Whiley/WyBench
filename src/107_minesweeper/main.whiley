@@ -1,6 +1,13 @@
 import std::io
 import std::ascii
-import * from minesweeper
+import Board from minesweeper
+import Square from minesweeper
+import HiddenSquare from minesweeper
+import setSquare from minesweeper
+import getSquare from minesweeper
+import exposeSquare from minesweeper
+import flagSquare from minesweeper
+import isGameOver from minesweeper
 
 type Move is {
     bool expose, // true == exposing, false == flagging
@@ -8,7 +15,7 @@ type Move is {
     int row     // row of square to expose or flag
 }
         
-constant MOVES is [
+Move[] MOVES = [
     // First move, expose square 0,0
     {expose: true, col: 0, row: 0},
     {expose: false, col: 0, row: 1},
@@ -20,7 +27,7 @@ type Point is {
     int y
 }
 
-constant BOMBS is [
+Point[] BOMBS = [
  Point{x:0,y:1}, Point{x:2,y:3}, Point{x:3,y:3}, Point{x:4,y:4}, Point{x:4,y:2}, Point{x:6,y:4} 
 ]
 

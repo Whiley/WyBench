@@ -15,7 +15,7 @@ type Job is { nat button, bool orange }
 // Parser
 // ===============================================
 
-constant EMPTY_JOB is { button: 0, orange: false }
+Job EMPTY_JOB = { button: 0, orange: false }
 
 function parseJobs(nat pos, ascii::string input) -> (Job[] jobs, nat npos):
     //
@@ -23,7 +23,7 @@ function parseJobs(nat pos, ascii::string input) -> (Job[] jobs, nat npos):
     //
     pos = parser::skipWhiteSpace(pos,input)
     nitems,pos = parser::parseInt(pos,input)
-    if nitems != null:
+    if nitems is int:
         return parseNumJobs(nitems,pos,input)
     else:
         return [EMPTY_JOB;0],pos
@@ -39,7 +39,7 @@ function parseNumJobs(nat nitems, nat pos, ascii::string input) -> (Job[] jobs, 
         bool flag = (input[pos] == 'O')
         pos = parser::skipWhiteSpace(pos+1,input)
         target,pos = parser::parseInt(pos,input)
-        if target != null:            
+        if target is int:
             js[i] = {button:target, orange: flag}
         i = i + 1
     //
@@ -104,7 +104,7 @@ method main(ascii::string[] args):
         ascii::string input = ascii::fromBytes(file.readAll())
         ntests,pos = parser::parseInt(0,input)
         //
-        if ntests != null:
+        if ntests is int:
             int c = 1
             Job[] jobs
             while c <= ntests where pos >= 0:

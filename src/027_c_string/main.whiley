@@ -12,7 +12,7 @@ import std::io
 //
 type ASCII_char is (int n) where 0 <= n && n <= 255
 
-constant NULL is 0
+ASCII_char NULL = 0
 
 type C_string is (ASCII_char[] str) 
 // Must have at least one character (i.e. null terminator)

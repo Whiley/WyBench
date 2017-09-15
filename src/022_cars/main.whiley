@@ -3,7 +3,7 @@
 
 type nat is (int x) where x >= 0
 
-constant maxCarsOnIsland is 10
+int maxCarsOnIsland = 10
 
 type State is ({
 	nat carsOnMl,  // number of cars on Main Land

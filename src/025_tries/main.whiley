@@ -13,7 +13,7 @@ type Transition is ({
     tr.from < tr.to
 
 // Define the Empty Transition
-constant EmptyTransition is { from: 0, to: 0, character: 'a' }
+Transition EmptyTransition = { from: 0, to: 0, character: 'a' }
 
 // A Finite State Machine representation of a Trie
 type Trie is {
@@ -21,7 +21,7 @@ type Trie is {
 } 
 
 // Define the Empty Trie
-constant EmptyTrie is { transitions: [EmptyTransition; 0] }
+Trie EmptyTrie = { transitions: [EmptyTransition; 0] }
 
 // Add a complete string into a Trie starting from the root node.
 function add(Trie trie, ascii::string str) -> Trie:

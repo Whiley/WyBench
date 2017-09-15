@@ -1,16 +1,13 @@
-import std.array
-import std.ascii
-import std.io
-import std.math
+import std::array
+import std::ascii
+import std::io
+import std::math
+import std::collection
+import std::filesystem
 
-import wybench.Parser
+import wybench::parser
 
 type nat is (int x) where x >= 0
-
-public type Stack is { // should be unnecessary
-    int[] items,
-    int length
-}
 
 // ============================================
 // Adjacency List directed graph structure
@@ -19,14 +16,14 @@ public type Stack is { // should be unnecessary
 type Digraph is (nat[][] edges)
     where all { i in 0..|edges|, j in 0..|edges[i]| | edges[i][j] < |edges| }
 
-constant EMPTY_DIGRAPH is [[0;0];0]
+Digraph EMPTY_DIGRAPH = [[0;0];0]
 
 function addEdge(Digraph g, nat from, nat to) -> Digraph:
     // First, ensure enough capacity
-    int max = math.max(from,to)
+    int max = math::max(from,to)
     g = resize(g,max+1)
     // Second, add the actual edge
-    g[from] = array.append(g[from],to)
+    g[from] = array::append(g[from],to)
     // Done
     return g
 
@@ -86,7 +83,7 @@ type State is {
     bool[] visited,
     bool[] inComponent,
     int[] rindex,
-    Stack stack,
+    collection::Stack stack,
     int index,
     int cindex
 }
@@ -97,7 +94,7 @@ function State(Digraph g) -> State:
         visited: [false; |g|],
         inComponent: [false; |g|],
         rindex: [0; |g|],    
-        stack: Stack.create(|g|),
+        stack: collection::Stack(|g|),
         index: 0,
         cindex: 0
     }
@@ -117,7 +114,7 @@ function find_components(Digraph g) -> int[][]:
     //
     while i < |g|:
         int cindex = state.rindex[i]
-        components[cindex] = array.append(components[cindex],i)
+        components[cindex] = array::append(components[cindex],i)
         i = i + 1
     //
     return components
@@ -142,24 +139,24 @@ function visit(int v, State s) -> State:
     if root:
         s.inComponent[v] = true
         int rindex_v = s.rindex[v]
-        while Stack.size(s.stack) > 0 && rindex_v <= s.rindex[Stack.top(s.stack)]:
-            int w = Stack.top(s.stack)
-            s.stack = Stack.pop(s.stack)
+        while collection::size(s.stack) > 0 && rindex_v <= s.rindex[collection::top(s.stack)]:
+            int w = collection::top(s.stack)
+            s.stack = collection::pop(s.stack)
             s.rindex[w] = s.cindex
             s.inComponent[w] = true
         s.rindex[v] = s.cindex
         s.cindex = s.cindex + 1
     else:
-        s.stack = Stack.push(s.stack,v)
+        s.stack = collection::push(s.stack,v)
     // all done
     return s
 
-method main(ascii.string[] args):
-    fs.File file = fs.open(args[0])
-    ascii.string input = ascii.fromBytes(file.readAll())
-    int[][]|null data = Parser.parseIntLines(input)
-    if data == null:
-        sys.out.println_s("error parsing input")
+method main(ascii::string[] args):
+    filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+    ascii::string input = ascii::fromBytes(file.readAll())
+    int[][]|null data = parser::parseIntLines(input)
+    if data is null:
+        io::println("error parsing input")
     else:
         Digraph[] graphs = buildDigraphs(data)
         // third, print output
@@ -167,24 +164,24 @@ method main(ascii.string[] args):
         int i = 0 
         while i < |graphs|:
             Digraph graph = graphs[i]
-            sys.out.print_s("=== Graph #")
-            sys.out.print_s(Int.toString(i))
-            sys.out.println_s(" ===")
+            io::print("=== Graph #")
+            io::print(ascii::toString(i))
+            io::println(" ===")
             i = i + 1
             int[][] sccs = find_components(graph)
             int j = 0 
             while j < |sccs|:
-                sys.out.print_s("{")
+                io::print("{")
                 bool firstTime=true
                 int[] scc = sccs[j]
                 int k = 0
                 while k < |scc|:
                     if !firstTime:
-                        sys.out.print_s(",")
+                        io::print(",")
                     firstTime=false
-                    sys.out.print(scc[k])
+                    io::print(scc[k])
                     k = k + 1
-                sys.out.print_s("}")
+                io::print("}")
                 j = j + 1
             //        
-            sys.out.println_s("")
+            io::println("")

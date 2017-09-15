@@ -85,7 +85,7 @@ public function toString(Buffer b) -> ascii::string:
         i = i + 1
     return array::append(r,"]")
 
-constant ITEMS is [5,4,6,3,7,2,8,1,9,10,0]
+int[] ITEMS = [5,4,6,3,7,2,8,1,9,10,0]
 
 method main(ascii::string[] args):
     int i = 0

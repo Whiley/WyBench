@@ -1,4 +1,6 @@
-import whiley.lang.*
+import std::ascii
+import std::array
+import std::io
 
 // A Binary Search Tree where elements are stored in sorted order.
 // That is, given a node n then we have the following invariant:
@@ -14,9 +16,9 @@ type Tree is null | Node
 
 type Node is ({ int data, Tree left, Tree right } n) where 
 	// Data in nodes reachable from left must be below this
-	(n.left != null ==>  all { i in 0..|elts(n.left)| | elts(n.left)[i] < n.data }) &&
+	(n.left is Node ==>  all { i in 0..|elts(n.left)| | elts(n.left)[i] < n.data }) &&
 	// Data in nodes reachable from right must be above this
-	(n.right != null ==> all { i in 0..|elts(n.right)| | elts(n.right)[i] > n.data })
+	(n.right is Node ==> all { i in 0..|elts(n.right)| | elts(n.right)[i] > n.data })
 
 // Construct a given tree
 function Node(int data, Tree left, Tree right) -> Node
@@ -34,11 +36,11 @@ requires right is Node ==> all { i in 0..|elts(right)| | elts(right)[i] > data }
 // Return all data elements contained in the tree
 function elts(Tree t) -> (int[] ret)
 // All data reachable from left node should be in result
-ensures t != null ==> all { i in 0..|elts(t.left)| | ret[i] == elts(t.left)[i] }
+ensures t is Node ==> all { i in 0..|elts(t.left)| | ret[i] == elts(t.left)[i] }
 // Data in this node should be in result
-ensures t != null ==> t.data == ret[|elts(t.left)|]
+ensures t is Node ==> t.data == ret[|elts(t.left)|]
 // All data reachable from right node should be in result
-ensures t != null ==> all { i in 0..|elts(t.right)| | ret[i+|elts(t.left)|+1] == elts(t.right)[i] }:
+ensures t is Node ==> all { i in 0..|elts(t.right)| | ret[i+|elts(t.left)|+1] == elts(t.right)[i] }:
     //
     if t is null:
         return [0;0]
@@ -46,8 +48,8 @@ ensures t != null ==> all { i in 0..|elts(t.right)| | ret[i+|elts(t.left)|+1] ==
         int[] left = elts(t.left)
         int[] right = elts(t.right)
         int[] result = [0; |left| + 1 + |right|]
-        result = Array.copy(left,0,result,0,|left|)
-        result = Array.copy(right,0,result,|left|+1,|right|)
+        result = array::copy(left,0,result,0,|left|)
+        result = array::copy(right,0,result,|left|+1,|right|)
         result[|left|] = t.data
         //
         return result
@@ -94,14 +96,13 @@ function rotateClockwise(Tree tree) -> (Tree r)
 // All data items in the tree are preserved
 ensures elts(tree) == elts(r):
     //
-    if tree == null:
-        return tree
-    //
-    Tree left = tree.left 
-    //
-    if left == null:
+    if tree is null || tree.left is null:
         return tree
     else:
+        //
+        Tree left = tree.left
+        assert left is Node
+        //
         Tree right = Node(tree.data,left.right,tree.right)
         return Node(left.data,left.left,right)
 
@@ -122,14 +123,11 @@ function rotateCounterClockwise(Tree tree) -> (Tree r)
 // All data items in the tree are preserved
 ensures elts(tree) == elts(r):
     //
-    if tree == null:
-        return tree
-    //
-    Tree right = tree.right
-    //
-    if right == null:
+    if tree is null || tree.right is null:
         return tree
     else:
+        Tree right = tree.right
+        assert right is Node
         Tree left = Node(tree.data,right.left,tree.left)
         return Node(right.data,left,right.right)
 
@@ -137,38 +135,38 @@ ensures elts(tree) == elts(r):
 // toString
 // =================================================
 
-public function toString(Tree tree) -> ASCII.string:
-    if tree == null:
+public function toString(Tree tree) -> ascii::string:
+    if tree is null:
         return "null"
     else:
-        ASCII.string r = "("
-        r = Array.append(r, Int.toString(tree.data))
-        r = Array.append(r, ", ")
-        r = Array.append(r, toString(tree.left))
-        r = Array.append(r, ", ")
-        r = Array.append(r,toString(tree.right))
-        return Array.append(r,")")
+        ascii::string r = "("
+        r = array::append(r, ascii::toString(tree.data))
+        r = array::append(r, ", ")
+        r = array::append(r, toString(tree.left))
+        r = array::append(r, ", ")
+        r = array::append(r,toString(tree.right))
+        return array::append(r,")")
 
 // =================================================
 // Test Harness
 // =================================================
 
-constant ITEMS is [54,7,201,52,3,1,0,54,12,90,9,8,8,7,34,32,35,34]
+int[] ITEMS = [54,7,201,52,3,1,0,54,12,90,9,8,8,7,34,32,35,34]
 
-method main(System.Console console):
+method main(ascii::string[] args):
     Tree bt = null
     Tree tmp
     //
-    console.out.println(bt)
+    io::println(toString(bt))
     //
     int i = 0
     while i < |ITEMS|:
         bt = insert(bt,ITEMS[i])
-        console.out.println(bt)
+        io::println(toString(bt))
         tmp = rotateClockwise(bt)
-        console.out.println(tmp)
+        io::println(toString(tmp))
         tmp = rotateCounterClockwise(bt)
-        console.out.println(tmp)
+        io::println(toString(tmp))
         i = i + 1
         
     

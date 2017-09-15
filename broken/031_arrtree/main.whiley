@@ -1,3 +1,6 @@
+import std::ascii
+import std::io
+
 type nat is (int x) where x >= 0
 
 type Node is ({
@@ -63,7 +66,7 @@ requires i < t.size && t.size < |t.ns|:
         return newLeftChild(t,n,i,d)
     else if (d > n.data) && (n.right == |ns|):
         // Reached right leaf, so insert
-        return newRightChild(t,b,i,d)
+        return newRightChild(t,n,i,d)
     else if d < n.data:
         // Reached left non-leaf, so continue
         return insert(t,n.left,d)
@@ -75,9 +78,9 @@ function newLeftChild(Tree t, Node n, nat i, int d) -> (Tree r)
 // ith node must be in tree, and need space available
 requires i < t.size && t.size < |t.ns|
 // Node n must be the ith node
-requires n == t.nodes[i]
+requires n == t.ns[i]
 // Data must be for left (empty) position
-requires d < n.data && n.left == |t.nodes|:
+requires d < n.data && n.left == |t.ns|:
     //
     Node[] ns = t.ns
     ns[i] = Node(n.data,t.size,n.right)
@@ -88,19 +91,19 @@ function newRightChild(Tree t, Node n, nat i, int d) -> (Tree r)
 // ith node must be in tree, and need space available
 requires i < t.size && t.size < |t.ns|
 // Node n must be the ith node
-requires n == t.nodes[i]
+requires n == t.ns[i]
 // Data must be for left (empty) position
-requires d < n.data && n.left == |t.nodes|:
+requires d < n.data && n.left == |t.ns|:
     //
     Node[] ns = t.ns
     ns[i] = Node(n.data,n.left,t.size)
     ns[t.size] = Node(d,|ns|,|ns|)
     return { ns: ns, size: t.size+1 } 
 
-method main(System.Console console):
+method main(ascii::string[] args):
     // Construct empty tree with capacity for ten nodes
     Tree t = EmptyTree(10)
-    console.out.println(t)
+    io::println(t)
     //
     int[] items = [2,1,4,3,5]
     int i = 0
@@ -108,7 +111,7 @@ method main(System.Console console):
     while i < 0:
         t = insert(t,items[i])
         i = i + 1
-        console.out.println(t)
+        io::println(t)
     //
     // Final shape of tree should be:
     //
@@ -117,4 +120,4 @@ method main(System.Console console):
     //     1   4
     //        / \
     //       3   5
-    console.out.println("done")
+    io::println("done")

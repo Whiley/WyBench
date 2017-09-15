@@ -1,6 +1,6 @@
-public constant BLANK is 0
-public constant CROSS is 1
-public constant CIRCLE is 2
+public int BLANK = 0
+public int CROSS = 1
+public int CIRCLE = 2
 
 /**
  * A piece is either a blank, a cross or a circle.

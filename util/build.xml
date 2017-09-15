@@ -1,12 +1,12 @@
 <project name="WyBench Library" default="build">  
 
-  <property name="wyc.verificationConditions" value="true"/>
+  <property name="wyc.verificationConditions" value="false"/>
   <import file="../config.xml"/>
 
   <target name="compile">
     <echo message="COMPILING: ${ant.project.name}"/>
     <echo message="==================================="/>
-    <wyc whileypath="${wyrt.jar}" wyaldir="." wyildir="." whileydir="." vcg="true"/>
+    <wyc whileypath="${wyrt.jar}" wyaldir="." wyildir="." whileydir="." vcg="false"/>
   </target>
   
   <target name="build" depends="compile">

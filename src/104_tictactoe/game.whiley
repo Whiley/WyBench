@@ -1,4 +1,4 @@
-import * from board
+import Board from board
 
 /**
  * The Game State consists of a board and a boolean

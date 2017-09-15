@@ -1,12 +1,13 @@
 import std::ascii
 import std::io
 
-import * from game
-import * from board
+import Game from game
+import Piece from board
+import Board from board
 
 type Pos is { int x, int y }
 
-constant GAME is [
+Pos[] GAME = [
 	{x:0, y:0}, // circle
 	{x:1, y:1}, // cross
 	{x:0, y:1}, // circle
@@ -20,7 +21,7 @@ public method main(ascii::string[] args):
     int i = 0
     while i < |GAME|:
         Pos pos = GAME[i]
-        game = play(game,pos.y,pos.x)	
+        game = game::play(game,pos.y,pos.x)	
         printBoard(game.board)
         io::println(" ")
         Piece piece = board::isWinner(game.board)

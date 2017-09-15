@@ -2,18 +2,18 @@ import std::array
 import std::ascii
 import std::io
 
-constant JAN is 1
-constant FEB is 2
-constant MAR is 3
-constant APR is 4
-constant MAY is 5
-constant JUN is 6
-constant JUL is 7
-constant AUG is 8
-constant SEP is 9
-constant OCT is 10
-constant NOV is 11
-constant DEC is 12
+int JAN = 1
+int FEB = 2
+int MAR = 3
+int APR = 4
+int MAY = 5
+int JUN = 6
+int JUL = 7
+int AUG = 8
+int SEP = 9
+int OCT = 10
+int NOV = 11
+int DEC = 12
 
 type day is (int d) where d <= 1 && d <= 31
 

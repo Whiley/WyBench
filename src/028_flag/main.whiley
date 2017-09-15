@@ -1,9 +1,9 @@
 import std::ascii
 import std::io
 
-constant RED is 0
-constant WHITE is 1
-constant BLUE is 2
+int RED = 0
+int WHITE = 1
+int BLUE = 2
 
 type Color is (int n) 
 // The dutch national flag has three colours

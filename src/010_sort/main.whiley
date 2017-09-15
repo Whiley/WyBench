@@ -70,7 +70,7 @@ function toString(int[] items) -> ascii::string:
 
 method lookFor(sortedList list, int item):
     int|null index = search(list,item)
-    if index != null:
+    if index is int:
         io::print("FOUND: ")
         io::print(item)
         io::print(" in ")
@@ -83,7 +83,7 @@ method lookFor(sortedList list, int item):
         io::print(" in ")
         io::print(list)
 
-constant searchTerms is [1,2,3,4,5,6,7,8,9]
+int[] searchTerms = [1,2,3,4,5,6,7,8,9]
 
 method main(ascii::string[] args):
     // first, read data
@@ -91,7 +91,7 @@ method main(ascii::string[] args):
     ascii::string input = ascii::fromBytes(file.readAll())
     int[]|null data = parser::parseInts(input)
     // second, sort data
-    if data != null:
+    if data is int[]:
         data = sort(data,0,|data|)
         // third, print output
         io::print("SORTED: ") 
