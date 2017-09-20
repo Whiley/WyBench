@@ -1,33 +1,32 @@
-import whiley.lang.*
 
 // =============================================================
 // Pieces
 // =============================================================
 
-public constant PAWN is 0
-public constant KNIGHT is 1 
-public constant BISHOP is 2
-public constant ROOK is 3
-public constant QUEEN is 4
-public constant KING is 5
-public constant PIECE_CHARS is [ 'P', 'N', 'B', 'R', 'Q', 'K' ]
+public int PAWN = 0
+public int KNIGHT = 1 
+public int BISHOP = 2
+public int ROOK = 3
+public int QUEEN = 4
+public int KING = 5
+public int PIECE_CHARS = [ 'P', 'N', 'B', 'R', 'Q', 'K' ]
 
 public type PieceKind is (int x) where PAWN <= x && x <= KING
 public type Piece is { PieceKind kind, bool colour }
 
-public constant WHITE_PAWN is { kind: PAWN, colour: true }
-public constant WHITE_KNIGHT is { kind: KNIGHT, colour: true }
-public constant WHITE_BISHOP is { kind: BISHOP, colour: true }
-public constant WHITE_ROOK is { kind: ROOK, colour: true }
-public constant WHITE_QUEEN is { kind: QUEEN, colour: true }
-public constant WHITE_KING is { kind: KING, colour: true }
+public Piece WHITE_PAWN = { kind: PAWN, colour: true }
+public Piece WHITE_KNIGHT = { kind: KNIGHT, colour: true }
+public Piece WHITE_BISHOP = { kind: BISHOP, colour: true }
+public Piece WHITE_ROOK = { kind: ROOK, colour: true }
+public Piece WHITE_QUEEN = { kind: QUEEN, colour: true }
+public Piece WHITE_KING = { kind: KING, colour: true }
 
-public constant BLACK_PAWN is { kind: PAWN, colour: false }
-public constant BLACK_KNIGHT is { kind: KNIGHT, colour: false }
-public constant BLACK_BISHOP is { kind: BISHOP, colour: false }
-public constant BLACK_ROOK is { kind: ROOK, colour: false }
-public constant BLACK_QUEEN is { kind: QUEEN, colour: false }
-public constant BLACK_KING is { kind: KING, colour: false }
+public Piece BLACK_PAWN = { kind: PAWN, colour: false }
+public Piece BLACK_KNIGHT = { kind: KNIGHT, colour: false }
+public Piece BLACK_BISHOP = { kind: BISHOP, colour: false }
+public Piece BLACK_ROOK = { kind: ROOK, colour: false }
+public Piece BLACK_QUEEN = { kind: QUEEN, colour: false }
+public Piece BLACK_KING = { kind: KING, colour: false }
 
 // =============================================================
 // Positions
@@ -36,48 +35,48 @@ public constant BLACK_KING is { kind: KING, colour: false }
 public type RowCol is int // where 0 <= $ && $ <= 8
 public type Pos is { RowCol col, RowCol row } 
 
-public constant A1 is { col: 0, row: 0 }
-public constant A2 is { col: 0, row: 1 }
-public constant A3 is { col: 0, row: 2 }
-public constant A4 is { col: 0, row: 3 }
-public constant A5 is { col: 0, row: 4 }
-public constant A6 is { col: 0, row: 5 }
-public constant A7 is { col: 0, row: 6 }
-public constant A8 is { col: 0, row: 7 }
+public Pos A1 = { col: 0, row: 0 }
+public Pos A2 = { col: 0, row: 1 }
+public Pos A3 = { col: 0, row: 2 }
+public Pos A4 = { col: 0, row: 3 }
+public Pos A5 = { col: 0, row: 4 }
+public Pos A6 = { col: 0, row: 5 }
+public Pos A7 = { col: 0, row: 6 }
+public Pos A8 = { col: 0, row: 7 }
 
-public constant B1 is { col: 1, row: 0 }
-public constant B2 is { col: 1, row: 1 }
-public constant B3 is { col: 1, row: 2 }
-public constant B4 is { col: 1, row: 3 }
-public constant B5 is { col: 1, row: 4 }
-public constant B6 is { col: 1, row: 5 }
-public constant B7 is { col: 1, row: 6 }
-public constant B8 is { col: 1, row: 7 }
+public Pos B1 = { col: 1, row: 0 }
+public Pos B2 = { col: 1, row: 1 }
+public Pos B3 = { col: 1, row: 2 }
+public Pos B4 = { col: 1, row: 3 }
+public Pos B5 = { col: 1, row: 4 }
+public Pos B6 = { col: 1, row: 5 }
+public Pos B7 = { col: 1, row: 6 }
+public Pos B8 = { col: 1, row: 7 }
 
-public constant C1 is { col: 2, row: 0 }
-public constant C2 is { col: 2, row: 1 }
-public constant C3 is { col: 2, row: 2 }
-public constant C4 is { col: 2, row: 3 }
-public constant C5 is { col: 2, row: 4 }
-public constant C6 is { col: 2, row: 5 }
-public constant C7 is { col: 2, row: 6 }
-public constant C8 is { col: 2, row: 7 }
+public Pos C1 = { col: 2, row: 0 }
+public Pos C2 = { col: 2, row: 1 }
+public Pos C3 = { col: 2, row: 2 }
+public Pos C4 = { col: 2, row: 3 }
+public Pos C5 = { col: 2, row: 4 }
+public Pos C6 = { col: 2, row: 5 }
+public Pos C7 = { col: 2, row: 6 }
+public Pos C8 = { col: 2, row: 7 }
 
 // =============================================================
 // board
 // =============================================================
 
 public type Square is Piece | null
-public type Row is [Square] // where |$| == 8
+public type Row is Square[] // where |$| == 8
 public type Board is {
-    [Row] rows, 
+    Row[] rows, 
     bool whiteCastleKingSide,
     bool whiteCastleQueenSide,
     bool blackCastleKingSide,
     bool blackCastleQueenSide
 }    
 
-constant startingChessRows is [
+Piece startingChessRows = [
     [ WHITE_ROOK,WHITE_KNIGHT,WHITE_BISHOP,WHITE_QUEEN,WHITE_KING,WHITE_BISHOP,WHITE_KNIGHT,WHITE_ROOK ], // rank 1
     [ WHITE_PAWN,WHITE_PAWN,WHITE_PAWN,WHITE_PAWN,WHITE_PAWN,WHITE_PAWN,WHITE_PAWN,WHITE_PAWN ],          // rank 2
     [ null, null, null, null, null, null, null, null ],                                                   // rank 3
@@ -88,7 +87,7 @@ constant startingChessRows is [
     [ BLACK_ROOK,BLACK_KNIGHT,BLACK_BISHOP,BLACK_QUEEN,BLACK_KING,BLACK_BISHOP,BLACK_KNIGHT,BLACK_ROOK ]  // rank 8
 ]
 
-public constant startingChessBoard is {
+public Piece startingChessBoard = {
     rows: startingChessRows,
     whiteCastleKingSide: true,  // White can still castle king side
     whiteCastleQueenSide: true, // White can still castle queen side
@@ -171,8 +170,8 @@ function sign(int x, int y) -> int:
     
 // This method finds a given piece.  It's used primarily to locate
 // kings on the board to check if they are in check.
-public function findPiece(Piece p, Board b) -> [Pos]:
-    [Pos] matches = []
+public function findPiece(Piece p, Board b) -> Pos[]:
+    Pos[] matches = [A1;0]
     int r = 0
     while r < 8:
         int c = 0
@@ -189,7 +188,7 @@ public function findPiece(Piece p, Board b) -> [Pos]:
 // I/O Functions
 // =============================================================
 
-constant BLACK_PIECE_CHARS is [ 'p', 'n', 'b', 'r', 'q', 'k' ]
+Piece BLACK_PIECE_CHARS = [ 'p', 'n', 'b', 'r', 'q', 'k' ]
 
 public function toString(Board b) -> ASCII.string:
     ASCII.string r = ""

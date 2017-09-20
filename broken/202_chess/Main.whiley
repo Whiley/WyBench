@@ -1,11 +1,8 @@
-import whiley.lang.*
-import * from whiley.lang.Errors
-import * from whiley.lang.System
-import * from whiley.io.File
+import std::ascii
 import ShortRound from ShortMove
 
-public method main(System.Console sys):
-    if |sys.args| == 0:
+public method main(ascii::string[] args):
+    if |args| == 0:
         usage(sys)
         return
     File.Reader file = File.Reader(sys.args[0])
