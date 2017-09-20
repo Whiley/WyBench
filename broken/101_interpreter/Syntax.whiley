@@ -1,4 +1,4 @@
-import whiley.lang.ASCII
+import std::ascii
 
 // ====================================================
 // Syntax for our Simple Imperative Language
@@ -16,17 +16,17 @@ public type Value is int | Value[]
 // Opcodes
 // ====================================================
 
-public constant CONST is 0
-public constant VAR is 1
-public constant ADD is 2
-public constant SUB is 3
-public constant MUL is 4
-public constant DIV is 5
-public constant ARRAY is 6
-public constant ACCESS is 7
+public int CONST = 0
+public int VAR = 1
+public int ADD = 2
+public int SUB = 3
+public int MUL = 4
+public int DIV = 5
+public int ARRAY = 6
+public int ACCESS = 7
 
-public constant ASSIGN is 8
-public constant RETURN is 9
+public int ASSIGN = 8
+public int RETURN = 9
 
 // ====================================================
 // Constant Expression
@@ -61,10 +61,10 @@ requires ADD <= opcode && opcode <= DIV:
 
 public type Var is ({ 
     int opcode,
-    ASCII.string name
+    ascii::string name
 } e) where e.opcode == VAR
 
-public function Var(ASCII.string n) -> Var:
+public function Var(ascii::string n) -> Var:
     return {opcode: VAR, name: n}
 
 // ====================================================
@@ -108,11 +108,11 @@ public type Expr is Const |   // constant
 
 public type Assign is ({ 
     int opcode,
-    ASCII.string lhs, 
+    ascii::string lhs, 
     Expr rhs 
 } s) where s.opcode == ASSIGN
 
-public function Assign(ASCII.string l, Expr r) -> Assign:
+public function Assign(ascii::string l, Expr r) -> Assign:
     return {opcode: ASSIGN, lhs: l, rhs: r}
 
 // ====================================================

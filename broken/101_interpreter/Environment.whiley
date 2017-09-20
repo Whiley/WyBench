@@ -1,15 +1,15 @@
-import whiley.lang.ASCII
+import std::ascii
 import Value from Syntax
 
 // The environment is a simple data type mapping variable names to
 // their current values.
 
 type nameValuePair is {
-    ASCII.string name,
+    ascii::string name,
     Value value
 }
 
-constant DUMMY_PAIR is {name: " ", value: 0}
+nameValuePair DUMMY_PAIR = {name: " ", value: 0}
 
 public type Environment is nameValuePair[]
 
@@ -18,7 +18,7 @@ public function create() -> Environment:
 
 // Get the value associated with a given variable name, or null if no
 // such value exists.
-public function get(Environment env, ASCII.string n) -> Value|null:
+public function get(Environment env, ascii::string n) -> Value|null:
     // Check whether a key already exists for this name
     int index = indexOf(env,n)
     //
@@ -32,7 +32,7 @@ public function get(Environment env, ASCII.string n) -> Value|null:
 // Insert a new name-value pair into the environment.  If a pair
 // already exists for the given variable name, then this is overwritten.
 // Otherwise, a new pair is added
-public function insert(Environment env, ASCII.string n, Value v) -> Environment:
+public function insert(Environment env, ascii::string n, Value v) -> Environment:
     // Check whether a key already exists for this name
     int index = indexOf(env,n)
     //
@@ -49,7 +49,7 @@ public function insert(Environment env, ASCII.string n, Value v) -> Environment:
         //
         return nEnv
 
-private function indexOf(Environment env, ASCII.string n) -> (int r):
+private function indexOf(Environment env, ascii::string n) -> (int r):
     //
     int i = 0
     // Check whether a key already exists for this name

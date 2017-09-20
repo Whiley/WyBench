@@ -1,13 +1,17 @@
-import whiley.lang.ASCII
-import * from Syntax
+import std::ascii
+import Value from Syntax
+import Stmt from Syntax
+import Expr from Syntax
+import Const from Syntax
+import Environment from Environment
 
 // ====================================================
 // Runtime Error
 // ====================================================
 
-public type RuntimeError is { ASCII.string msg }
+public type RuntimeError is { int[] msg } // FIXME: should be ascii::string
 
-public function RuntimeError(ASCII.string msg) -> RuntimeError:
+public function RuntimeError(ascii::string msg) -> RuntimeError:
     return { msg: msg }
 
 // ====================================================
@@ -22,7 +26,7 @@ public type ValueErr is Value | RuntimeError
 public function interpret(Stmt[] program) -> (ValueErr r):
     //
     int i = 0
-    Environment env = Environment.create()
+    Environment env = Environment::create()
     //
     while i < |program|:
         // Execute next statement

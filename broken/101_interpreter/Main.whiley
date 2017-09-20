@@ -1,24 +1,24 @@
-import whiley.lang.System
-import whiley.lang.Int
-import whiley.io.File
-import string from whiley.lang.ASCII
-import char from whiley.lang.ASCII
+import std::ascii
+import std::array
+import std::filesystem
+import std::io
+import Environment from Environment
 
 // ====================================================
 // A simple calculator for expressions
 // ====================================================
 
-constant ADD is 0
-constant SUB is 1
-constant MUL is 2
-constant DIV is 3
+int ADD = 0
+int SUB = 1
+int MUL = 2
+int DIV = 3
 
 // binary operation
 type BOp is (int x) where ADD <= x && x <= DIV
 type BinOp is { BOp op, Expr lhs, Expr rhs } 
 
 // variables
-type Var is { string id }
+type Var is { ascii::string id }
 
 // list access
 type ListAccess is { 
@@ -38,15 +38,14 @@ type Value is int | Value[]
 
 // stmts
 type Print is { Expr rhs }
-type Set is { string lhs, Expr rhs }
+type Set is { ascii::string lhs, Expr rhs }
 type Stmt is Print | Set
 
 // ====================================================
 // Expression Evaluator
 // ====================================================
 
-type RuntimeError is { string msg }
-type Environment is {string k, Value v}[]
+type RuntimeError is { int[] msg } // FIXME: should be ascii::string
 
 // Evaluate an expression in a given environment reducing either to a
 // value, or a runtime error.  The latter occurs if evaluation gets
@@ -96,11 +95,11 @@ function evaluate(Expr e, Environment env) -> Value | RuntimeError:
     else:
         return 0 // dead-code
 
-function getValue(Environment env, string key) -> Value|RuntimeError:
+function getValue(Environment env, ascii::string key) -> Value|RuntimeError:
     int i = 0
     //
     while i < |env|:
-        if env[i].k == key:
+        if env[i].name == key:
             return env[i].v
         i = i + 1
     //
@@ -110,10 +109,10 @@ function getValue(Environment env, string key) -> Value|RuntimeError:
 // Expression Parser
 // ====================================================
 
-type State is { string input, int pos }
-type SyntaxError is { string msg, int start, int end }
+type State is { ascii::string input, int pos }
+type SyntaxError is { int[] msg, int start, int end } // FIXME: should be ascii::string
 
-function SyntaxError(string msg, int start, int end) -> SyntaxError:
+function SyntaxError(ascii::string msg, int start, int end) -> SyntaxError:
     return { msg: msg, start: start, end: end }
 
 // Top-level parse method
@@ -135,7 +134,7 @@ function parse(State st) -> (Stmt|SyntaxError result, State nst):
         case "set":
             st = parseWhiteSpace(st)
             v,st = parseIdentifier(st)
-            e = parseAddSubExpr(st)
+            e,st = parseAddSubExpr(st)
             if !(e is SyntaxError):
                 return {lhs: v.id, rhs: e},st
             else:
@@ -145,67 +144,61 @@ function parse(State st) -> (Stmt|SyntaxError result, State nst):
 
 function parseAddSubExpr(State st) -> (Expr|SyntaxError result, State nst):
     //
-    Expr lhs
-    Expr rhs
+    Expr|SyntaxError lhs
+    Expr|SyntaxError rhs
     // First, pass left-hand side 
-    any r = parseMulDivExpr(st)
+    lhs,st = parseMulDivExpr(st)
     //
-    if r is SyntaxError:
-        return r
+    if lhs is SyntaxError:
+        return lhs,st
     //    
-    lhs,st = r
     st = parseWhiteSpace(st)
     // Second, see if there is a right-hand side
     if st.pos < |st.input| && st.input[st.pos] == '+':
         // add expression
         st.pos = st.pos + 1
-        r = parseAddSubExpr(st)        
-        if !(r is SyntaxError):
-            rhs,st = r
-            return {op: ADD, lhs: lhs, rhs: rhs},st
+        rhs,st = parseAddSubExpr(st)        
+        if rhs is SyntaxError:
+            return rhs,st
         else:
-            return r
+            return {op: ADD, lhs: lhs, rhs: rhs},st
     else if st.pos < |st.input| && st.input[st.pos] == '-':
         // subtract expression
         st.pos = st.pos + 1
-        r = parseAddSubExpr(st)        
-        if !(r is SyntaxError):
-            rhs,st = r
-            return {op: SUB, lhs: lhs, rhs: rhs},st
+        rhs,st = parseAddSubExpr(st)        
+        if rhs is SyntaxError:
+            return rhs,st
         else:
-            return r    
+            return {op: SUB, lhs: lhs, rhs: rhs},st
     // No right-hand side
     return lhs,st
 
 function parseMulDivExpr(State st) -> (Expr|SyntaxError result, State nst):
     // First, parse left-hand side
-    Expr lhs
-    Expr rhs
-    any r  = parseTerm(st)
-    if r is SyntaxError:
-        return r
+    Expr|SyntaxError lhs
+    Expr|SyntaxError rhs
+    lhs,st  = parseTerm(st)
+    if lhs is SyntaxError:
+        return lhs,st
     //
-    lhs,st = r
     st = parseWhiteSpace(st)
     // Second, see if there is a right-hand side
     if st.pos < |st.input| && st.input[st.pos] == '*':
         // add expression
         st.pos = st.pos + 1
-        r = parseMulDivExpr(st)   
-        if !(r is SyntaxError):
-            rhs,st = r
-            return {op: MUL, lhs: lhs, rhs: rhs}, st
+        rhs,st = parseMulDivExpr(st)   
+        if rhs is SyntaxError:
+            return rhs,st
         else:
-            return r
+            return {op: MUL, lhs: lhs, rhs: rhs}, st
     else if st.pos < |st.input| && st.input[st.pos] == '/':
         // subtract expression
         st.pos = st.pos + 1
-        r = parseMulDivExpr(st)        
-        if !(r is SyntaxError):
-            rhs,st = r
-            return {op: DIV, lhs: lhs, rhs: rhs}, st
+        rhs,st = parseMulDivExpr(st)        
+        if rhs is SyntaxError:
+            return rhs,st
         else:
-            return r
+            return {op: DIV, lhs: lhs, rhs: rhs}, st
     // No right-hand side
     return lhs,st
 
@@ -213,36 +206,36 @@ function parseTerm(State st) -> (Expr|SyntaxError result, State nst):
     //
     st = parseWhiteSpace(st)        
     if st.pos < |st.input|:
-        if ASCII.isLetter(st.input[st.pos]):
+        if ascii::isLetter(st.input[st.pos]):
             return parseIdentifier(st)
-        else if ASCII.isDigit(st.input[st.pos]):
+        else if ascii::isDigit(st.input[st.pos]):
             return parseNumber(st)
         else if st.input[st.pos] == '[':
             return parseList(st)
     //
-    return SyntaxError("expecting number or variable",st.pos,st.pos)
+    return SyntaxError("expecting number or variable",st.pos,st.pos),st
 
 function parseIdentifier(State st) -> (Var result, State nst):
     //
     int i = st.pos
     // inch forward until end of identifier reached
-    while i < |st.input| && ASCII.isLetter(st.input[i]):
+    while i < |st.input| && ascii::isLetter(st.input[i]):
         i = i + 1    
     // copy identifier into new array
     int[] txt = [0;i-st.pos]
-    txt = Array.copy(st.input,st.pos,txt,0,|txt|)
+    txt = array::copy(st.input,st.pos,txt,0,|txt|)
     //
     return {id:txt}, st
 
 function parseNumber(State st) -> (Expr|SyntaxError result, State nst):    
     // inch forward until end of identifier reached
     int start = st.pos
-    while st.pos < |st.input| && ASCII.isDigit(st.input[st.pos]):
+    while st.pos < |st.input| && ascii::isDigit(st.input[st.pos]):
         st.pos = st.pos + 1    
     //
-    int|null iv = Int.parse(Array.slice(st.input,start,st.pos))
-    if iv == null:
-        return SyntaxError("Error parsing number",start,st.pos)
+    int|null iv = ascii::parseInt(array::slice(st.input,start,st.pos))
+    if iv is null:
+        return SyntaxError("Error parsing number",start,st.pos),st
     else:
         return iv, st
 
@@ -253,26 +246,27 @@ function parseList(State st) -> (Expr|SyntaxError result, State nst):
     Expr[] l = [0;0] // initial list
     bool firstTime = true
     while st.pos < |st.input| && st.input[st.pos] != ']':
+        Expr|SyntaxError e
+        //
         if !firstTime && st.input[st.pos] != ',':
-            return SyntaxError("expecting comma",st.pos,st.pos)
+            return SyntaxError("expecting comma",st.pos,st.pos),st
         else if !firstTime:
             st.pos = st.pos + 1 // skip ','
+        //
         firstTime = false
-        any r = parseAddSubExpr(st)
-        if r is SyntaxError:
-            return r
+        e,st = parseAddSubExpr(st)
+        //
+        if e is SyntaxError:
+            return e,st
         else:
-            Expr e
-            e,st = r
-            // perform annoying error check    
-            l = append(e,l)
+            l = append(l,e)
             st = parseWhiteSpace(st)
     st.pos = st.pos + 1
     return l,st
 
 public function append(Expr[] items, Expr item) -> (Expr[] r):
     //
-    int[] nitems = [0; |items| + 1]
+    Expr[] nitems = [0; |items| + 1]
     int i = 0
     //
     while i < |items| 
@@ -287,7 +281,7 @@ public function append(Expr[] items, Expr item) -> (Expr[] r):
 
 // Parse all whitespace upto end-of-file
 function parseWhiteSpace(State st) -> State:
-    while st.pos < |st.input| && ASCII.isWhiteSpace(st.input[st.pos]):
+    while st.pos < |st.input| && ascii::isWhiteSpace(st.input[st.pos]):
         st.pos = st.pos + 1
     return st
 
@@ -295,31 +289,31 @@ function parseWhiteSpace(State st) -> State:
 // Main Method
 // ====================================================
 
-public method main(System.Console sys):
-    if(|sys.args| == 0):
-        sys.out.println("no parameter provided!")
+public method main(ascii::string[] args):
+    if(|args| == 0):
+        io::println("no parameter provided!")
     else:
-        File.Reader file = File.Reader(sys.args[0])
-        string input = ASCII.fromBytes(file.readAll())
+        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        ascii::string input = ascii::fromBytes(file.readAll())
         
-        Environment env = Environment()
+        Environment env = Environment::create()
         State st = {pos: 0, input: input}
         while st.pos < |st.input|:
             Stmt s
             any r = parse(st)
             if r is SyntaxError:
-                sys.out.println("syntax error")
-                sys.out.println(r.msg)
+                io::println("syntax error")
+                io::println(r.msg)
                 return
             s,st = r
             Value|RuntimeError v = evaluate(s.rhs,env)
             if v is RuntimeError:
-                sys.out.println("runtime error: ")
-                sys.out.println(v.msg)
+                io::println("runtime error: ")
+                io::println(v.msg)
                 return
             if s is Set:
                 env[s.lhs] = v
             else:
-                sys.out.println(r)
+                io::println(r)
             st = parseWhiteSpace(st)
             
