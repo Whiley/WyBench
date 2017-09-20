@@ -18,10 +18,11 @@ type Microwave is ({
 // in order to implement timed cooking.
 function clockTick(Microwave m) -> Microwave:
         //
-        if m.heatOn && m.timer == 0:
+        if m.heatOn:
+            if m.timer == 0:
                 // Timer has expired
                 m.heatOn = false
-        else if m.heatOn:
+            else:
                 // Still time left
                 m.timer = m.timer - 1
         // If heating is not on, then ignore this event
