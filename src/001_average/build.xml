@@ -1,5 +1,6 @@
-<project name="001_average" default="compile">  
-
+<project name="001_average" default="compile">
+  
+  <property name="wyc.verification" value="true"/>
   <import file="../../config.xml"/> 
   <import file="../../util/build-template.xml"/>  
 

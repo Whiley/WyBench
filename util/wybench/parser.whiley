@@ -9,15 +9,18 @@ public type nat is (int x) where x >= 0
 // Parse Ints
 // ========================================================
 
-public function parseInt(nat pos, ascii::string input) -> (null|int val,nat npos):
+public function parseInt(nat pos, ascii::string input) -> (null|int val,nat npos)
+requires pos <= |input|:
     //
-    int start = pos
-    while pos < |input| && ascii::isDigit(input[pos]):
+    nat start = pos
+    while pos < |input| && ascii::isDigit(input[pos])
+    where start <= pos && pos <= |input|:
         pos = pos + 1
     if pos == start:
         return null,pos
     //
-    return ascii::parseInt(array::slice(input,start,pos)), pos
+    ascii::string slice = array::slice(input,start,pos)
+    return ascii::parseInt(slice), pos
 
 // Parse list of integers whilst ignoring whitespace
 public function parseInts(ascii::string input) -> int[]|null:
@@ -44,7 +47,7 @@ public function parseIntLines(ascii::string input) -> int[][]|null:
     // first, read data
     while pos < |input|:
         int[] line = [0;0]
-        while !isWhiteSpace(input[pos]):
+        while pos < |input| && !isWhiteSpace(input[pos]):
             int|null i
             i,pos = parseInt(pos,input)
             if i is int:
@@ -59,11 +62,17 @@ public function parseIntLines(ascii::string input) -> int[][]|null:
     return data
 
 // Should be remove when array::append become generic
-public function append(int[][] items, int[] item) -> int[][]:
-    int[][] nitems = [[0;0]; |items| + 1]
-    int i = 0
+public function append(int[][] items, int[] item) -> (int[][] r)
+ensures |r| == |items| + 1
+ensures all { k in 0..|items| | r[k] == items[k] }
+ensures r[|items|] == item:
     //
-    while i < |items|:
+    int[][] nitems = [[0;0]; |items| + 1]
+    nat i = 0
+    //
+    while i < |items|
+    where |nitems| == |items| + 1 && i <= |items|
+    where all { k in 0..i | nitems[k] == items[k] }:
         nitems[i] = items[i]
         i = i + 1
     //
@@ -75,10 +84,13 @@ public function append(int[][] items, int[] item) -> int[][]:
 // Parse Strings
 // ========================================================
 
-public function parseString(nat pos, ascii::string input) -> (ascii::string str,nat npos):
+public function parseString(nat pos, ascii::string input) -> (ascii::string str,nat npos)
+requires pos <= |input|:
     nat start = pos
-    while pos < |input| && !isWhiteSpace(input[pos]):
+    while pos < |input| && !isWhiteSpace(input[pos])
+    where start <= pos && pos <= |input|:
         pos = pos + 1
+    //
     return array::slice(input,start,pos),pos
 
 // Parse list of reals whilst ignoring whitespace

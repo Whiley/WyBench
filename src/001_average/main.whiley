@@ -2,9 +2,9 @@ import std::ascii
 import std::filesystem
 import std::io
 
-import nat from std::integer
-
 import wybench::parser
+
+type nat is (int x) where x >= 0
 
 // ========================================================
 // Benchmark
