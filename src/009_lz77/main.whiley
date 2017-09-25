@@ -8,8 +8,7 @@ import std::filesystem
 import std::integer
 import std::io
 import std::math
-
-type nat is (int x) where x >= 0
+import nat from std::integer
 
 function compress(byte[] data) -> byte[]:
     nat pos = 0
@@ -37,9 +36,8 @@ function findLongestMatch(byte[] data, nat pos) -> (nat offset, nat length)
     //
     nat bestOffset = 0
     nat bestLen = 0
-    int start = math::max(pos - 255,0)
-    assert start >= 0
-    nat index = start
+    nat start = math::max(pos - 255,0)
+    int index = start
     while index < pos
         where index >= 0 && pos >= 0 && bestOffset >= 0 && bestLen >= 0
         where bestOffset <= 255 && pos - index <= 255 && bestLen <= 255:

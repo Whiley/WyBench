@@ -1,5 +1,6 @@
 <project name="009_lz77" default="compile">  
 
+  <property name="wyc.verification" value="false"/>
   <import file="../../config.xml"/> 
   <import file="../../util/build-template.xml"/>  
 

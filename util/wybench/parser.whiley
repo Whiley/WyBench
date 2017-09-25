@@ -9,8 +9,7 @@ public type nat is (int x) where x >= 0
 // Parse Ints
 // ========================================================
 
-public function parseInt(nat pos, ascii::string input) -> (null|int val,nat npos)
-requires pos <= |input|:
+public function parseInt(nat pos, ascii::string input) -> (null|int val,nat npos):
     //
     nat start = pos
     while pos < |input| && ascii::isDigit(input[pos])
@@ -111,7 +110,9 @@ public function parseStrings(ascii::string input) -> ascii::string[]:
 // SkipWhiteSpace
 // ========================================================
 
-public function skipWhiteSpace(nat index, ascii::string input) -> nat:
+public function skipWhiteSpace(nat index, ascii::string input) -> (nat r)
+// Returned value always increases
+ensures (index <= r):
     //
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1

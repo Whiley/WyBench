@@ -39,7 +39,7 @@ function Cash(nat[] coins) -> Cash
 // No coin in coins larger than permitted values
 requires all { i in 0..|coins| | coins[i] < |Value| }:
     Cash cash = [0,0,0,0,0,0,0,0]
-    int i = 0
+    nat i = 0
     while i < |coins| 
         where |cash| == |Value| && all {k in 0..|cash| | cash[k] >= 0}:
         nat coin = coins[i]
@@ -52,7 +52,7 @@ requires all { i in 0..|coins| | coins[i] < |Value| }:
  */ 
 function total(Cash c) -> int:
     int r = 0
-    int i = 0
+    nat i = 0
     while i < |c|:
         r = r + (Value[i] * c[i])
         i = i + 1
@@ -64,7 +64,7 @@ function total(Cash c) -> int:
  * get any negative amounts.
  */
 function contained(Cash first, Cash second) -> bool:
-    int i = 0
+    nat i = 0
     while i < |first|:
         if first[i] < second[i]:
             return false
@@ -81,8 +81,10 @@ function add(Cash first, Cash second) -> (Cash r)
 // Result total must be sum of argument totals
 ensures total(r) == total(first) + total(second):
     //
-    int i = 0
+    nat i = 0
+    //
     while i < |first|:
+        assert first[i] >= 0
         first[i] = first[i] + second[i]
         i = i + 1
     //

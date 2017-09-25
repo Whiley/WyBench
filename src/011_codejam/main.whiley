@@ -23,7 +23,7 @@ function parseJobs(nat pos, ascii::string input) -> (Job[] jobs, nat npos):
     //
     pos = parser::skipWhiteSpace(pos,input)
     nitems,pos = parser::parseInt(pos,input)
-    if nitems is int:
+    if nitems is nat:
         return parseNumJobs(nitems,pos,input)
     else:
         return [EMPTY_JOB;0],pos
@@ -32,14 +32,14 @@ function parseNumJobs(nat nitems, nat pos, ascii::string input) -> (Job[] jobs, 
     //
     Job[] js = [EMPTY_JOB; nitems]
     int|null target
-    int i = 0
+    nat i = 0
     //        
-    while i < nitems:
+    while i < nitems where |js| == nitems:
         pos = parser::skipWhiteSpace(pos,input)
-        bool flag = (input[pos] == 'O')
+        bool flag = (pos < |input| && input[pos] == 'O')
         pos = parser::skipWhiteSpace(pos+1,input)
         target,pos = parser::parseInt(pos,input)
-        if target is int:
+        if target is nat:
             js[i] = {button:target, orange: flag}
         i = i + 1
     //
@@ -76,15 +76,15 @@ function processJobs(Job[] jobs) -> nat:
     while i < |jobs| where time >= 0:
         Job job = jobs[i]
         if job.orange:
-            int diff = math::abs(job.button - Opos)
-            int timediff = math::max(0, diff - Osaved) + 1
+            nat diff = math::abs(job.button - Opos)
+            nat timediff = math::max(0, diff - Osaved) + 1
             time = time + timediff
             Bsaved = Bsaved + timediff
             Osaved = 0
             Opos = job.button
         else:
-            int diff = math::abs(job.button - Bpos)
-            int timediff = math::max(0, diff - Bsaved) + 1
+            nat diff = math::abs(job.button - Bpos)
+            nat timediff = math::max(0, diff - Bsaved) + 1
             time = time + timediff
             Osaved = Osaved + timediff
             Bsaved = 0

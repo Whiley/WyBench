@@ -16,7 +16,6 @@ int NOV = 11
 int DEC = 12
 
 type day is (int d) where d <= 1 && d <= 31
-
 type month is (int x) where JAN <= x && x <= DEC
 
 // =================================================
@@ -28,8 +27,9 @@ type Date is ({
     month month,
     int year
 } d) where (d.day <= 30 || (d.month != SEP && d.month != APR && d.month != JUN && d.month != NOV)) &&
-        (d.month != FEB || d.day <= 29 ) && // normal restriction
-        (d.month != FEB || d.year % 4 != 0 || (d.year % 100 == 0 && d.year % 400 != 0) || d.day <= 28) // leap-year restriction
+        (d.month != FEB || d.day <= 29 ) // && // normal restriction
+        // FIXME: put back support for leap years
+        // (d.month != FEB || d.year % 4 != 0 || (d.year % 100 == 0 && d.year % 400 != 0) || d.day <= 28) // leap-year restriction
 
 function Date(day day, month month, int year) -> Date
 // 30 days hath September, April, June and November.

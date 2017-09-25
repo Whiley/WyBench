@@ -42,13 +42,13 @@ function toString(TrafficLights ls) -> ascii::string:
     else:
         r = "    "
     if ls.amber:
-        r = array::append(r,"AMBER ")
+        r = ascii::append(r,"AMBER ")
     else:
-        r = array::append(r,"       ")
+        r = ascii::append(r,"       ")
     if ls.green:
-        r = array::append(r,"GREEN ")
+        r = ascii::append(r,"GREEN ")
     else:
-        r = array::append(r,"      ")
+        r = ascii::append(r,"      ")
     return r
 
 public method main(ascii::string[] args):

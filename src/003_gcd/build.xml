@@ -1,5 +1,6 @@
 <project name="003_gcd" default="compile">  
 
+  <property name="wyc.verification" value="true"/>
   <import file="../../config.xml"/> 
   <import file="../../util/build-template.xml"/>  
 

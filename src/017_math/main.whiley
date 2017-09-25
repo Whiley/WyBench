@@ -96,7 +96,8 @@ function sum_3(nat[] items) -> nat:
     if |items| == 0:
         return 0
     else:
-        return items[0] + sum_3(array::slice(items,1,|items|))
+        nat[] slice = array::slice(items,1,|items|)
+        return items[0] + sum_3(slice)
 
 /**
  * Compute the sum of a list of naturals 
@@ -106,15 +107,16 @@ function sum_4(nat[] items) -> nat:
     if items == [0;0]:
         return 0
     else:
-        return items[0] + sum_4(array::slice(items,1,|items|))
+        nat[] slice = array::slice(items,1,|items|)
+        return items[0] + sum_4(slice)
 
 function toString(int[] items) -> ascii::string:
     ascii::string r = ""
-    int i = 0
+    nat i = 0
     while i < |items|:
         if i != 0:
             r = ascii::append(r,",")
-        ascii::string str = ascii::toString(items[0])
+        ascii::string str = ascii::toString(items[i])
         r = ascii::append(r,str)
         i = i + 1
     //
@@ -127,7 +129,7 @@ method main(ascii::string[] args):
     // test inc/dec 
     nat i = 0
     while i < |items|:
-        if i >= 0:
+        if i >= 0 && items[i] is pos:
             io::print("INC(DEC(")
             io::print(items[i])
             io::print(")) = ")
@@ -186,6 +188,6 @@ method main(ascii::string[] args):
     io::println(sum_3(items))
     // test sum_4
     io::print("SUM_4(")
-    io::print(items)
+    io::print(toString(items))
     io::print(") = ")
     io::println(sum_4(items))

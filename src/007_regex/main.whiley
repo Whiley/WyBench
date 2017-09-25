@@ -4,6 +4,7 @@ import std::ascii
 import std::filesystem
 import std::io
 
+import nat from std::integer
 import wybench::parser
 
 // match: search for regexp anywhere in text
@@ -12,7 +13,7 @@ function match(string regex, string text) -> bool:
         return matchHere(regex,1,text,0)
     if matchHere(regex,0,text,0):
         return true
-    int i = 0
+    nat i = 0
     while i < |text|:
         if matchHere(regex,0,text,i):
             return true
@@ -21,7 +22,8 @@ function match(string regex, string text) -> bool:
     return false
 
 // matchHere: search for regex at beginning of text
-function matchHere(string regex, int rIndex, string text, int tIndex) -> bool:
+function matchHere(string regex, nat rIndex, string text, nat tIndex) -> bool
+requires rIndex <= |regex|:
     if rIndex == |regex|:
         return true
     else if (rIndex+1) < |regex| && regex[rIndex+1] == '*':
@@ -34,12 +36,13 @@ function matchHere(string regex, int rIndex, string text, int tIndex) -> bool:
         return false
 
 // matchstar: search for c*regex at beginning of text
-function matchStar(char c, string regex, int rIndex, string text, int tIndex) -> bool:
+function matchStar(char c, string regex, nat rIndex, string text, nat tIndex) -> bool
+requires rIndex <= |regex|:
     // first, check for zero matches
     if matchHere(regex,rIndex,text,tIndex):
         return true
     // second, check for one or more matches
-    while tIndex != |text| && (text[tIndex] == c || c == '.'):
+    while tIndex < |text| && (text[tIndex] == c || c == '.'):
         if matchHere(regex,rIndex,text,tIndex):    
             return true
         else:
@@ -54,11 +57,15 @@ public method main(string[] args):
     else:
         filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
         string input = ascii::fromBytes(file.readAll())
-        string[] data = parser::parseStrings(input)
+        int[][] data = parser::parseStrings(input)
         int i = 0
         int nmatches = 0
         int total = 0
         while (i+1) < |data| where i >= 0:
+            // FIXME: Needed to verify
+            assume data[i] is string
+            assume data[i+1] is string
+            //
             string text = data[i]
             string regex = data[i+1]
             if match(regex,text):
