@@ -3,8 +3,37 @@ import nat from std::integer
 import std::io
 import std::math
 
-// Represents a transition from one 
-// state to another for a given character.
+// A straightforward implementation of a "trie".  This is a directed
+// acyclic graph structure which encodes multiple strings in a compact
+// fashion.  As a simplest example, the string "abc" is encoded like so:
+//
+// (0) -- a --> (1) -- b --> (2) -- c --> (3)
+//
+// Since this only encodes one string, there is no real benefit.
+// Support we now add the string "abd" to the trie.  Then, the structure
+// would look like this:
+//
+// (0) -- a --> (1) -- b --> (2) -- c --> (3)
+//                             \
+//                              \-- d --> (4)
+//
+// Finally, suppose we add the string "ace", then the structure looks
+// like this:
+//
+//                 /-- c --> (5) -- e --> (6)
+//                /          
+// (0) -- a --> (1) -- b --> (2) -- c --> (3)
+//                             \
+//                              \-- d --> (4)
+//
+// Finally, observe the given representation of tries is, in some
+// sense, "lossy".  This is because there is no mechanism to determine
+// exactly which states represent "end points".  Thus, we must assume
+// that any state represents an end point.  Therefore, the string "ab"
+// is considered to be contained in the above structure, even though we
+// didn't actually put it in.
+
+// Represents a transition from one state to another for a given character.
 type Transition is ({
     nat from,
     nat to,

@@ -1,11 +1,12 @@
 import std::ascii
 import std::io
+import nat from std::integer
 
 import Game from game
 import Piece from board
 import Board from board
 
-type Pos is { int x, int y }
+type Pos is { board::Index x, board::Index y }
 
 Pos[] GAME = [
 	{x:0, y:0}, // circle
@@ -18,9 +19,11 @@ Pos[] GAME = [
 
 public method main(ascii::string[] args):
     Game game = Game()
-    int i = 0
+    nat i = 0
     while i < |GAME|:
         Pos pos = GAME[i]
+        // FIXME: this should be unnecessary
+        assume board::get(game.board,pos.y,pos.x) == board::BLANK
         game = game::play(game,pos.y,pos.x)	
         printBoard(game.board)
         io::println(" ")
@@ -31,7 +34,7 @@ public method main(ascii::string[] args):
         i = i + 1
 
 public method printBoard(Board board):
-    int row = 0
+    nat row = 0
     while row < 3:
         if row != 0:
             io::println("---- | ---- | ----")
@@ -43,8 +46,9 @@ public method printBoard(Board board):
     // done
     io::println(" ")
 
-public method printRowTop(Board brd, int row):
-    int col = 0
+public method printRowTop(Board brd, nat row)
+requires row < 3:
+    nat col = 0
     while col < 3:
         Piece p = board::get(brd,row,col)
         if col != 0:

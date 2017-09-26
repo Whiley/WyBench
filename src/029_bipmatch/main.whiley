@@ -15,7 +15,7 @@
 //
 // Author: David J. Pearce, 2016
 
-constant UNMATCHED is -1
+int UNMATCHED = -1
 
 // Every edge in our bipartite graph is from one side to the other.
 type edge is { int from, int to }
@@ -89,7 +89,6 @@ ensures matched ==> m.left[from] != UNMATCHED:
     visited[from] = true
     //
     int i = 0
-    bool matched
     //
     while i < |g.edges| where i >= 0:
         edge e = g.edges[i]

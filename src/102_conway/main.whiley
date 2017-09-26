@@ -30,12 +30,14 @@ function Board(nat height, nat width) -> Board:
 // current state of all cells.
 function update(Board board) -> Board:
     bool[][] ncells = board.cells
-    int height = board.height
-    int width = board.width
-    int i = 0
-    while i < height where i >= 0 && |ncells| == height && all { k in 0..|ncells| | |ncells[k]| == width }:
-        int j = 0
-        while j < width where j >= 0 && |ncells| == height && all { k in 0..|ncells| | |ncells[k]| == width }:
+    nat height = board.height
+    nat width = board.width
+    nat i = 0
+    while i < height where |ncells| == height && all { k in 0..|ncells| | |ncells[k]| == width }:
+        nat j = 0
+        while j < width
+        where |ncells| == height
+        where all { k in 0..|ncells| | |ncells[k]| == width }:
             int c = countLiving(board,i,j)
             assume i < |board.cells|    // FIXME
             assume j < |board.cells[i]| // FIXME
