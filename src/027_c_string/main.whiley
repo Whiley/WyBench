@@ -1,5 +1,6 @@
 import std::ascii
 import std::io
+import nat from std::integer
 
 //
 // This little example is showing off an almost complete encoding
@@ -22,10 +23,10 @@ where |str| > 0 && some { i in 0 .. |str| | str[i] == NULL }
 public function strlen(C_string str) -> (int r)
 ensures r >= 0:
     //
-    int i = 0
+    nat i = 0
     //
     while str[i] != 0 
-        where i >= 0 && i < |str|
+        where i < |str|
         where all { k in 0 .. i | str[k] != NULL}:
         //
         i = i + 1
@@ -36,8 +37,10 @@ ensures r >= 0:
 public method strcpy(&C_string dest, C_string src)
 requires |src| <= |(*dest)|:
     //
-    int i=0
-    while src[i] != 0:
+    nat i=0
+    while src[i] != 0
+    where i < |src|
+    where all { k in 0 .. i | src[k] != NULL}:
         (*dest)[i] = src[i]
         i = i + 1
     //
@@ -48,7 +51,7 @@ public method main(ascii::string[] args):
     // ==============================================================
     // TEST: strlen
     // ==============================================================
-    C_string src = ['H','e','l','l','o','W','o','r','l','d',0]
+    C_string src = ['H','e','l','l','o','W','o','r','l','d',NULL]
     io::println(strlen(src))
     
     // ==============================================================
