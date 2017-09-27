@@ -4,31 +4,31 @@
 // current board state in order to decode them.
 //
 // See http://en.wikipedia.org/wiki/Algebraic_chess_notation for more.
+import std::ascii
 
-import whiley.lang.*
-import * from whiley.lang.Errors
-import * from ShortMove
-import * from Board
+import ShortRound from shortmove
 
-type state is {ASCII.string input, int pos}
+type state is {ascii::string input, int pos}
 
-public function parseChessGame(ASCII.string input) -> [ShortRound]|null:
+ShortRound DUMMY = {}
+
+public function parseChessGame(ascii::string input) -> ShortRound[]|null:
     int pos = 0
-    [ShortRound] moves = []
+    ShortRound[] moves = [DUMMY; 0]
     while pos < |input|:        
         ShortRound|null round
         round,pos = parseRound(pos,input)
         if round is null:
             return null
         else:
-            moves = moves ++ [round]
+            moves = append(moves,round)
     return moves
 
-function parseRound(int pos, ASCII.string input) -> (ShortRound|null,int):
+function parseRound(int pos, ascii::string input) -> (ShortRound|null r, int npos):
     ShortMove white
     ShortMove|null black
-    int|null npos = parseNumber(pos,input)
-    if npos == null:
+    int|null tpos = parseNumber(pos,input)
+    if tpos == null:
         return null,pos
     pos = parseWhiteSpace(npos,input)
     white,pos = parseMove(pos,input,true)
@@ -40,7 +40,7 @@ function parseRound(int pos, ASCII.string input) -> (ShortRound|null,int):
         black = null
     return (white,black),pos
 
-function parseNumber(int pos, ASCII.string input) -> int|null:
+function parseNumber(int pos, ascii::string input) -> int|null:
     while pos < |input| && input[pos] != '.':
         pos = pos + 1
     if pos == |input|:
@@ -48,7 +48,7 @@ function parseNumber(int pos, ASCII.string input) -> int|null:
     else:
         return pos+1
 
-function parseMove(int pos, ASCII.string input, bool isWhite) -> (ShortMove,int):
+function parseMove(int pos, ascii::string input, bool isWhite) -> (ShortMove,int):
     ShortMove move
     // first, we check for castling moves    
     if |input| >= (pos+5) && input[pos..(pos+5)] == "O-O-O":
@@ -77,8 +77,8 @@ function parseMove(int pos, ASCII.string input, bool isWhite) -> (ShortMove,int)
         move = {check: move}     
     return move,pos
 
-function parsePiece(int index, ASCII.string input, bool isWhite) -> (Piece,int):
-    ASCII.char lookahead = input[index]
+function parsePiece(int index, ascii::string input, bool isWhite) -> (Piece,int):
+    ascii::char lookahead = input[index]
     int piece
     switch lookahead:
         case 'N':
@@ -96,33 +96,44 @@ function parsePiece(int index, ASCII.string input, bool isWhite) -> (Piece,int):
             piece = PAWN
     return {kind: piece, colour: isWhite}, index+1
     
-function parsePos(int pos, ASCII.string input) -> (Pos,int):
+function parsePos(int pos, ascii::string input) -> (Pos,int):
     int c = (int) input[pos] - 'a'
     int r = (int) input[pos+1] - '1'
     return { col: c, row: r },pos+2
 
-function parseShortPos(int index, ASCII.string input) -> (ShortPos,int):
-    ASCII.char c = input[index]
-    if ASCII.isDigit(c):
+function parseShortPos(int index, ascii::string input) -> (ShortPos,int):
+    ascii::char c = input[index]
+    if ascii::isDigit(c):
         // signals rank only
         return { row: (int) c - '1' },index+1
-    else if c != 'x' && ASCII.isLetter(c):
+    else if c != 'x' && ascii::isLetter(c):
         // so, could be file only, file and rank, or empty
-        ASCII.char d = input[index+1]
-        if ASCII.isLetter(d):
+        ascii::char d = input[index+1]
+        if ascii::isLetter(d):
             // signals file only
             return { col: (int) c - 'a' },index+1         
-        else if (index+2) < |input| && ASCII.isLetter(input[index+2]):
+        else if (index+2) < |input| && ascii::isLetter(input[index+2]):
             // signals file and rank
             return { col: ((int) c - 'a'), row: (int) d - '1' },index+2
     // no short move given
     return null,index
 
-function parseWhiteSpace(int index, ASCII.string input) -> int:
+function parseWhiteSpace(int index, ascii::string input) -> int:
     while index < |input| && isWhiteSpace(input[index]):
         index = index + 1
     return index
 
-function isWhiteSpace(ASCII.char c) -> bool:
+function isWhiteSpace(ascii::char c) -> bool:
     return c == ' ' || c == '\t' || c == '\n'
 
+// FIXME: this should really not be here
+function append(ShortRound[] rounds, ShortRound round):
+    ShortRound[] nRounds = [DUMMY; |rounds| + 1]
+    //
+    int i = 0
+    while i < |nRounds|:
+        nRounds[i] = rounds[i]
+        i = i + 1
+    //
+    nRounds[i] = round
+    return nRounds
