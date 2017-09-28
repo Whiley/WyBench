@@ -60,7 +60,7 @@ public function toString(Any t) => string:
         string r = t.pkg
         string c = ""
         for class in t.classes:
-            c = c ++ "." ++ class
+            c = ascii::append(c,ascii::append(".",class))
         if |r| == 0:
             return c[1..]
         else:
