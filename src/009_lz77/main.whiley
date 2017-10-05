@@ -44,12 +44,12 @@ function compress(byte[] data) -> byte[]:
         int offset
         int len
         offset,len = findLongestMatch(data,pos)
-        output = write_u1(output,offset)
+        output = write_u8(output,offset)
         if offset == 0:
             output = append(output,data[pos])
             pos = pos + 1
         else:
-            output = write_u1(output,len)
+            output = write_u8(output,len)
             pos = pos + len
     // done!
     return output
@@ -105,13 +105,15 @@ function findLongestMatch(byte[] data, nat pos) -> (u8 offset, u8 length):
 // character (or we reach the end).  It then returns the length of the
 // match (which in this would be three).
 function match(byte[] data, nat offset, nat end) -> (int length)
-    ensures 0 <= length && length <= 255:
+// Position to search from within sliding window
+requires (end - offset) <= 255
+// Returned match size cannot exceed sliding window
+ensures 0 <= length && length <= 255:
     //
     nat pos = end
-    nat len = 0
+    u8 len = 0
     //
-    while offset < pos && pos < |data| && data[offset] == data[pos] && len < 255
-        where offset >= 0 && pos >= 0 && len >= 0 && len <= 255:
+    while offset < pos && pos < |data| && data[offset] == data[pos] && len < 255:
         //
         offset = offset + 1
         pos = pos + 1
@@ -130,49 +132,56 @@ function decompress(byte[] data) -> byte[]:
     while (pos+1) < |data| where pos >= 0:
         byte header = data[pos]
         byte item = data[pos+1]
+        // NOTE: calculating offset here suboptimal as can test
+        // directly against 00000000b, but helps verification as later
+        // know that offset != 0.        
+        u8 offset = integer::toUnsignedInt(header)
         pos = pos + 2 
-        if header == 00000000b:
+        if offset == 0:
             output = append(output,item)
         else:
-            int offset = integer::toUnsignedInt(header)
-            int len = integer::toUnsignedInt(item)
+            u8 len = integer::toUnsignedInt(item)
+            // NOTE: start >= 0 not guaranteed.  If negative, we have
+            // error case and implementation proceeds producing junk.
             int start = |output| - offset
-            // How to avoid these assumptions?
-            //assume offset <= |data|
-            //assume (start+len) < |data|
-            //assume start >= 0
-            //assume start < |output|
             int i = start
-            while i < (start+len) where i >= 0 && i < |output|:
+            // NOTE: i >= 0 required to handle case of start < 0 by
+            // allowing implementation to proceed regardless.
+            while i >= 0 && i < (start+len) where i < |output|:
                 item = output[i]
                 output = append(output,item)
                 i = i + 1     
     // all done!
     return output
 
-function write_u1(byte[] bytes, int u1) -> byte[]
-    requires u1 >= 0 && u1 <= 255:
+function write_u8(byte[] bytes, u8 u1) -> byte[]:
     //
     return append(bytes,integer::toUnsignedByte(u1))
 
 method main(ascii::string[] args):
-    filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-    byte[] data = file.readAll()
-    io::print("READ:         ")
-    io::print(|data|)
-    io::println(" bytes")
-    data = compress(data)
-    io::print("COMPRESSED:   ")
-    io::print(|data|)
-    io::println(" bytes")
-    data = decompress(data)
-    io::print("UNCOMPRESSED:   ")
-    io::print(|data|)
-    io::println(" bytes")
-    io::println("==================================")
-    io::print(ascii::fromBytes(data))
+    if(|args| == 0):
+        io::print("usage: lz77 file")
+    else:
+        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        byte[] data = file.readAll()
+        io::print("READ:         ")
+        io::print(|data|)
+        io::println(" bytes")
+        data = compress(data)
+        io::print("COMPRESSED:   ")
+        io::print(|data|)
+        io::println(" bytes")
+        data = decompress(data)
+        io::print("UNCOMPRESSED:   ")
+        io::print(|data|)
+        io::println(" bytes")
+        io::println("==================================")
+        io::print(ascii::fromBytes(data))
 
-// This is temporary and should be removed
+// NOTE: This is temporary and should be removed.  The reason is it
+// required is that Whiley dropped support for the append operator
+// "++" and, whilst append is implemented in std::array, this is only
+// for int[] (i.e. as there are no generics at this time).
 public function append(byte[] items, byte item) -> (byte[] ritems)
     ensures |ritems| == |items| + 1:
     //
