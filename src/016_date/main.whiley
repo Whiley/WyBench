@@ -15,7 +15,7 @@ int OCT = 10
 int NOV = 11
 int DEC = 12
 
-type day is (int d) where d <= 1 && d <= 31
+type day is (int d) where 1 <= d && d <= 31
 type month is (int x) where JAN <= x && x <= DEC
 
 // =================================================
