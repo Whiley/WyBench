@@ -74,7 +74,8 @@ ensures buf is EmptyBuffer ==> r :
 public function toString(Buffer b) -> ascii::string:
     ascii::string r = "["
     int i = 0
-    while i < |b.data|:
+    while i < |b.data|
+    where 0 <= i && i <= |b.data|:
         if i != 0:
             r = ascii::append(r,", ")
         if i == b.rpos:
