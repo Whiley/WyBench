@@ -33,7 +33,7 @@ ensures f3.denominator == (f1.denominator * f2.denominator):
 function compare(Fraction f1, Fraction f2) -> (int r)
 ensures r < 0 <==> (f1.numerator * f2.denominator) < (f2.numerator * f1.denominator)
 ensures r == 0 <==> (f1.numerator * f2.denominator) == (f2.numerator * f1.denominator)
-ensures r > 0 <==> (f1.numerator * f2.denominator) < (f2.numerator * f1.denominator):
+ensures r > 0 <==> (f1.numerator * f2.denominator) > (f2.numerator * f1.denominator):
     //
     int n1 = f1.numerator * f2.denominator
     int n2 = f2.numerator * f1.denominator
