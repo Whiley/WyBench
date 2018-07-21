@@ -95,7 +95,8 @@ function isAlive(Board board, int row, int col) -> int:
 // Parser
 // ============================================
 
-function parseConfig(int[] data) -> (Board board, int nIterations):
+function parseConfig(int[] data) -> (Board board, int nIterations)
+requires |data| >= 3:
     //
     int niters = data[0]
     int cols = data[1]
