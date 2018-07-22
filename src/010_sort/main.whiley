@@ -11,7 +11,9 @@ where |xs| <= 1 || all { i in 0 .. |xs|-1 | xs[i] <= xs[i+1] }
  * Sort a given list of items into ascending order, producing a sorted
  * list.
  */
-function sort(int[] items, int start, int end) -> sortedList:
+function sort(int[] items, int start, int end) -> sortedList
+requires start >= 0 && start < |items|
+requires end >= 0 && end < |items|:
     if (start+1) < end:
         int pivot = (end + start) / 2
         int[] lhs = sort(items,start,pivot)
