@@ -4,7 +4,6 @@
 // bipartite graph.  The algorithm is apparently an implementation of
 // "Kuhn's algorithm", though I haven't found a reference for that yet.
 //
-//
 // The algorithm is relatively straightforward and it proceeds by a
 // left-to-right traversal of the vertices in the first partition.  For
 // each vertex, if it encounters a neighbour which is unmatched, then it
@@ -14,6 +13,7 @@
 // vertex.
 //
 // Author: David J. Pearce, 2016
+import std::ascii
 
 int UNMATCHED = -1
 
@@ -30,7 +30,7 @@ where N1 >= 0 && N2 >= 0
 // All edges are from a valid vertex
 where all { i in 0..|edges| | 0 <= edges[i].from && edges[i].from < N1 }
 // All edges are to a valid vertex
-where all { i in 0..|edges| | 0 <= edges[i].to && edges[i].to < N2 }
+where all { i in 0..|edges| | N1 <= edges[i].to && edges[i].to < (N1+N2) }
 
 type Matching is {
     Graph graph,
@@ -58,6 +58,46 @@ ensures all { i in 0..g.N2 | m.right[i] == UNMATCHED }:
         right: [UNMATCHED; g.N2]
     }
 
+
+// Generate a human-readable string for a given matching.
+// 
+function toString(null|Matching m) -> (ascii::string s):
+   if m is null:
+      return "(no match)"
+   else:
+      ascii::string r = ""
+      int i=0
+      while i < |m.left|:
+         ascii::string f = ascii::toString(i)
+         ascii::string t = ascii::toString(m.left[i])
+         r = ascii::append(r,f)
+         r = ascii::append(r,"--")
+         r = ascii::append(r,t)
+         i = i + 1
+      //
+      return r
+
+// Given a bipartite graph, can we find a matching of every vertex in
+// one partiaion to a vertex in the second partition?  Each vertex in
+// either partition can only be matched once.  For example, consider
+// this easy case:
+//
+// A -- B
+// C -- D
+//
+// Here, the first partition contains {A,C} and the second contains
+// {B,D}.  The matching is then {A-B,C-D}.  In contrast, this does not
+// match:
+//
+// A -- B
+//    /
+//   /
+// C -- D
+//    /
+//   /
+// E    F
+//
+// That's because we clearly don't have enough edges to pull this off. 
 function findMaximalMatching(Graph g) -> (null|Matching r):
     //
     if g.N1 != g.N2:
@@ -81,6 +121,22 @@ function findMaximalMatching(Graph g) -> (null|Matching r):
         //
         return m
 
+// Perform a depth-first search from a given vertex whilst attempting
+// to find augmented paths for already matched vertices. For
+// example, consider this graph:
+//
+// *A -- B*
+//     /
+//    /
+//  C -- D
+//     /
+//    /
+//  E -- F
+//
+// Support A and B are matched and we're traversing from C.  At first,
+// we'll try to find an augmenting path for B.  In otherwords, try to
+// find another match for B.  That will of course fail and we'll then
+// try to match D and will succeed immediately.
 function find(Matching m, bool[] visited, int from) -> (Matching r_m, bool[] r_visited, bool matched)
 // If return true, then from was definitely matched
 ensures matched ==> m.left[from] != UNMATCHED:
@@ -109,6 +165,9 @@ ensures matched ==> m.left[from] != UNMATCHED:
     // 
     return m,visited,false
 
+// Update matching to record a match between from and to.  However, if
+// source vertex was already matched against another vertex, then the
+// status for the over vertex is updated (i.e. set to unmatched).
 function match(Matching m, int from, int to) -> (Matching r)
 // The target vertex cannot be matched; note, however,
 // that the source vertex may already be matched
@@ -124,3 +183,19 @@ requires m.right[to] == UNMATCHED:
     m.right[to] = from
     //
     return m
+   
+
+public export method main():
+    final int A = 0
+    final int B = 1
+    final int C = 2
+    final int D = 3
+    final int E = 4
+    final int F = 5
+    //
+    edge[] es = [ {from:A, to: D}, {from: B, to: D}, {from: B, to: E}, {from: C, to: F}, {from: C, to: E} ]
+    Graph g = {N1:3, N2: 3, edges: es}
+    // Try it out!
+    null|Matching r = findMaximalMatching(g)
+    // Done
+    debug toString(r)
