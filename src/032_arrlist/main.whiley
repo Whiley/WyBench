@@ -14,7 +14,7 @@ ensures (r.data == d) && (r.next == n):
 
 property valid(LinkedList l, Link n, int i)
 // All next links go "down", cannot be cyclic or a "null"
-where (n.next < i) || (i == 0) || (n.next == |l.links|)
+where (n.next < i) || (i == 0 && n.next == |l.links|) || (n.next == |l.links|)
 
 type LinkedList is ({Link[] links, nat size} l)
 // Never more links than available space
