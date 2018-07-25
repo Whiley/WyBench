@@ -2,6 +2,8 @@ type Heap is ({
     int[] data,
     int length
 } h)
+where 0 <= h.length && h.length < |h.data|
+
 // Items on left branch are below their parent's item
 where all { i in 0..h.length | (2*i)+1 < h.length ==> h.data[i] > h.data[(2*i)+1] }
 // Items on right branch are below their parent's item
