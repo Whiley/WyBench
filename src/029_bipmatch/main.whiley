@@ -55,7 +55,7 @@ ensures all { i in 0..g.N2 | m.right[i] == UNMATCHED }:
     return {
         graph: g,
         left: [UNMATCHED; g.N1],
-        right: [UNMATCHED; g.N2]
+        right: [UNMATCHED; g.N1+g.N2]
     }
 
 
@@ -68,6 +68,8 @@ function toString(null|Matching m) -> (ascii::string s):
       ascii::string r = ""
       int i=0
       while i < |m.left|:
+         if(i != 0):
+            r = ascii::append(r,",")      
          ascii::string f = ascii::toString(i)
          ascii::string t = ascii::toString(m.left[i])
          r = ascii::append(r,f)
@@ -114,7 +116,7 @@ function findMaximalMatching(Graph g) -> (null|Matching r):
         where all { j in 0..i | m.left[j] != UNMATCHED }:
             bool[] visited = [false; g.N1]
             m,visited,matched = find(m,visited,i)
-            if matched:
+            if !matched:
                 // no match for this vertex possible
                 return null
             i = i + 1
@@ -139,7 +141,7 @@ function findMaximalMatching(Graph g) -> (null|Matching r):
 // try to match D and will succeed immediately.
 function find(Matching m, bool[] visited, int from) -> (Matching r_m, bool[] r_visited, bool matched)
 // If return true, then from was definitely matched
-ensures matched ==> m.left[from] != UNMATCHED:
+ensures matched ==> r_m.left[from] != UNMATCHED:
     //
     Graph g = m.graph
     visited[from] = true
@@ -162,7 +164,7 @@ ensures matched ==> m.left[from] != UNMATCHED:
         i = i + 1
     //
     // Failed
-    // 
+    //
     return m,visited,false
 
 // Update matching to record a match between from and to.  However, if
@@ -194,8 +196,10 @@ public export method main():
     final int F = 5
     //
     edge[] es = [ {from:A, to: D}, {from: B, to: D}, {from: B, to: E}, {from: C, to: F}, {from: C, to: E} ]
+    //edge[] es = [ {from:A, to: B} ]
     Graph g = {N1:3, N2: 3, edges: es}
     // Try it out!
     null|Matching r = findMaximalMatching(g)
     // Done
     debug toString(r)
+    debug "\n"
