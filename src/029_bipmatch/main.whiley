@@ -38,7 +38,7 @@ type Matching is {
     int[] right // matches to => from
 }
 // Every vertex is left either unmatched (-1) or a valid vertex in partition two
-where all { i in 0..|left| | left[i] >= UNMATCHED && left[i] < graph.N2 }
+where all { i in 0..|left| | left[i] >= UNMATCHED && left[i] < (graph.N1+graph.N2) }
 // Every vertex in right either unmatched (-1) or a valid vertex in partition one
 where all { i in 0..|right| | right[i] >= UNMATCHED && right[i] < graph.N1 }
 // Every match is symmetric
@@ -197,7 +197,7 @@ public export method main():
     //
     edge[] es = [ {from:A, to: D}, {from: B, to: D}, {from: B, to: E}, {from: C, to: F}, {from: C, to: E} ]
     //edge[] es = [ {from:A, to: B} ]
-    Graph g = {N1:3, N2: 3, edges: es}
+    Graph g = {N1:1, N2: 1, edges: es}
     // Try it out!
     null|Matching r = findMaximalMatching(g)
     // Done
