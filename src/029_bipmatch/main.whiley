@@ -197,7 +197,7 @@ public export method main():
     //
     edge[] es = [ {from:A, to: D}, {from: B, to: D}, {from: B, to: E}, {from: C, to: F}, {from: C, to: E} ]
     //edge[] es = [ {from:A, to: B} ]
-    Graph g = {N1:1, N2: 1, edges: es}
+    Graph g = {N1:3, N2: 3, edges: es}
     // Try it out!
     null|Matching r = findMaximalMatching(g)
     // Done
