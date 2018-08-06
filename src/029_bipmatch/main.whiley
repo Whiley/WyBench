@@ -141,6 +141,7 @@ function findMaximalMatching(Graph g) -> (null|Matching r):
 // try to match D and will succeed immediately.
 function find(Matching m, bool[] visited, int from) -> (Matching r_m, bool[] r_visited, bool matched)
 // If return true, then from was definitely matched
+requires 0 <= from && from < |visited|
 ensures matched ==> r_m.left[from] != UNMATCHED:
     //
     Graph g = m.graph
