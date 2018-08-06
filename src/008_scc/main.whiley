@@ -29,7 +29,7 @@ function addEdge(Digraph g, nat from, nat to) -> Digraph:
 
 // Ensure graph has sufficient capacity
 function resize(Digraph g, int size) -> (Digraph r)
-ensures |r| == size:
+ensures |r| > size || (size >= |g| && |r| == size):
     //
     if size >= |g|:
         // Graph smaller than required
