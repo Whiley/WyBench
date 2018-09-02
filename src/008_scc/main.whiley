@@ -119,7 +119,8 @@ function find_components(Digraph g) -> int[][]:
     //
     return components
 
-function visit(int v, State s) -> State:
+function visit(int v, State s) -> State
+requires v < |s.visited| && v < |s.rindex| && v < |s.inComponent| && v < |s.graph|:
     bool root = true
     s.visited[v] = true
     s.rindex[v] = s.index
