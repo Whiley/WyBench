@@ -87,6 +87,9 @@ type State is {
     int index,
     int cindex
 }
+where |visited| == |graph|
+where |inComponent| == |graph|
+where |rindex| == |graph|
 
 function State(Digraph g) -> State:
     return {
@@ -120,7 +123,7 @@ function find_components(Digraph g) -> int[][]:
     return components
 
 function visit(int v, State s) -> State
-requires v < |s.visited| && v < |s.rindex| && v < |s.inComponent| && v < |s.graph|:
+requires v < |s.graph|:
     bool root = true
     s.visited[v] = true
     s.rindex[v] = s.index
