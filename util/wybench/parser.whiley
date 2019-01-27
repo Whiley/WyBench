@@ -12,14 +12,14 @@ public type nat is (int x) where x >= 0
 public function parseInt(nat pos, ascii::string input) -> (null|int val,nat npos):
     //
     nat start = pos
-    while pos < |input| && ascii::isDigit(input[pos])
+    while pos < |input| && ascii::is_digit(input[pos])
     where start <= pos && pos <= |input|:
         pos = pos + 1
     if pos == start:
         return null,pos
     //
     ascii::string slice = array::slice(input,start,pos)
-    return ascii::parseInt(slice), pos
+    return ascii::parse_int(slice), pos
 
 // Parse list of integers whilst ignoring whitespace
 public function parseInts(ascii::string input) -> int[]|null:

@@ -31,7 +31,7 @@ method main(ascii::string[] args):
     else:
         // first, read the input data
         filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-        ascii::string input = ascii::fromBytes(file.readAll())
+        ascii::string input = ascii::from_bytes(file.read_all())
         int[]|null data = parser::parseInts(input)
         // second, run the benchmark
         if data is null:
