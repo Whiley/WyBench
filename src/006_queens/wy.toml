@@ -1,5 +1,5 @@
 [package]
-name="001_average"
+name="006_queens"
 authors=["David J. Pearce"]
 
 [build]
@@ -9,9 +9,9 @@ platforms=["whiley"]
 source="/"
 
 [check]
-min=-3
-max=3
-length=2
+min=0
+max=1
+length=0
 depth=1
 
 [dependencies]

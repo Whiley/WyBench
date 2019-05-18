@@ -1,6 +1,0 @@
-<project name="102_conway" default="compile">  
-
-  <import file="../../config.xml"/> 
-  <import file="../../util/build-template.xml"/>  
-
-</project>

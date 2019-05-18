@@ -1,5 +1,5 @@
 [package]
-name="001_average"
+name="009_lz77"
 authors=["David J. Pearce"]
 
 [build]
@@ -9,8 +9,8 @@ platforms=["whiley"]
 source="/"
 
 [check]
-min=-3
-max=3
+min=-1
+max=1
 length=2
 depth=1
 
