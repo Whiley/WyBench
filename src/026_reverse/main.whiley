@@ -37,14 +37,14 @@ ensures |xs| > 0 ==> sum(xs,0) == sum(rs,0):
     //
     return ys
     
-function toString(int[] items) -> ascii::string:
+function to_string(int[] items) -> ascii::string:
     ascii::string r = ""
     int i = 0
     while i < |items|:
         if i != 0:
-            r = ascii::append(r,",")
-        ascii::string str = ascii::toString(items[0])
-        r = ascii::append(r,str)
+            r = array::append(r,",")
+        ascii::string str = ascii::to_string(items[0])
+        r = array::append(r,str)
         i = i + 1
     //
     return r
@@ -52,7 +52,7 @@ function toString(int[] items) -> ascii::string:
 method main(ascii::string[] args):
     int[] l1 = [1,2,3,4]
     int[] l2 = reverse(l1)
-    io::println(array::append("L1 = ",toString(l1)))
-    io::println(array::append("L2 = ", toString(l2)))
-    io::println(array::append("SUM(L1) = ", ascii::toString(sum(l1,0))))
-    io::println(array::append("SUM(L2) = ", ascii::toString(sum(l2,0))))
+    io::println(array::append("L1 = ",to_string(l1)))
+    io::println(array::append("L2 = ", to_string(l2)))
+    io::println(array::append("SUM(L1) = ", ascii::to_string(sum(l1,0))))
+    io::println(array::append("SUM(L2) = ", ascii::to_string(sum(l2,0))))

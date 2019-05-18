@@ -149,7 +149,7 @@ ensures r is Cash ==> (contained(till,r) && total(r) == change):
 /**
  * Print out cash in a friendly format
  */
-function toString(Cash c) -> ascii::string:
+function to_string(Cash c) -> ascii::string:
     ascii::string r = ""
     bool firstTime = true
     int i = 0
@@ -159,7 +159,7 @@ function toString(Cash c) -> ascii::string:
             if !firstTime:
                 r = array::append(r,", ")
             firstTime = false
-            r = array::append(r,ascii::toString(amt))
+            r = array::append(r,ascii::to_string(amt))
             r = array::append(r," x ")
             r = array::append(r,Descriptions[i])
         i = i + 1
@@ -185,10 +185,10 @@ ascii::string[] Descriptions = [
 public method buy(Cash till, Cash given, int cost) -> Cash:
     io::println("--")
     io::print("Customer wants to purchase item for ")
-    io::print(ascii::toString(cost))
+    io::print(ascii::to_string(cost))
     io::println("c.")
     io::print("Customer gives: ")
-    io::println(toString(given))
+    io::println(to_string(given))
     if total(given) < cost:
         io::println("Customer has not given enough cash!")
     else:
@@ -197,11 +197,11 @@ public method buy(Cash till, Cash given, int cost) -> Cash:
             io::println("Cash till cannot give exact change!")
         else:
             io::print("Change given: ")
-            io::println(toString(change))
+            io::println(to_string(change))
             till = add(till,given)
             till = subtract(till,change)
             io::print("Till: ")
-            io::println(toString(till))
+            io::println(to_string(till))
     return till
 
 /**
@@ -210,7 +210,7 @@ public method buy(Cash till, Cash given, int cost) -> Cash:
 public method main(ascii::string[] args):
     Cash till = [5,3,3,1,1,3,0,0]
     io::print("Till: ")
-    io::println(toString(till))
+    io::println(to_string(till))
     // now, run through some sequences...
     till = buy(till,Cash([ONE_DOLLAR]),85)
     till = buy(till,Cash([ONE_DOLLAR]),105)

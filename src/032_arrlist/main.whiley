@@ -1,5 +1,6 @@
 import std::ascii
 import std::io
+import std::array
 
 // An "array based" link-list implementation
 type nat is (int x) where x >= 0
@@ -55,30 +56,30 @@ requires (i < list.size) || (i == |list.links|):
     return { links: ls, size: list.size+1 }
 
 // Convert a link into a string representation
-function toString(Link l) -> (ascii::string s):
+function to_string(Link l) -> (ascii::string s):
     ascii::string r = "{"
-    r = ascii::append(r,ascii::toString(l.data))
-    r = ascii::append(r,";")        
-    r = ascii::append(r,ascii::toString(l.next))    
-    return ascii::append(r,"}")
+    r = array::append(r,ascii::to_string(l.data))
+    r = array::append(r,";")        
+    r = array::append(r,ascii::to_string(l.next))    
+    return array::append(r,"}")
 
 // Convert a linked list into a string representation
-function toString(LinkedList l) -> (ascii::string s):
+function to_string(LinkedList l) -> (ascii::string s):
     int i = 0
     ascii::string r = "["
     while i < l.size:
-        r = ascii::append(r,toString(l.links[i]))
+        r = array::append(r,to_string(l.links[i]))
         i = i + 1
     //
-    return ascii::append(r,"]")
+    return array::append(r,"]")
 
 public export method main():
     LinkedList l1 = LinkedList(5)
     LinkedList l2 = insert(l1,|l1.links|,0)
     LinkedList l3 = insert(l2,0,1)
-    io::println(toString(l1))
-    io::println(toString(l2))
-    io::println(toString(l3))    
+    io::println(to_string(l1))
+    io::println(to_string(l2))
+    io::println(to_string(l3))    
     assume length(l3,0) == 1
     assume length(l3,1) == 2
     

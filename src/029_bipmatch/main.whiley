@@ -14,6 +14,7 @@
 //
 // Author: David J. Pearce, 2016
 import std::ascii
+import std::array
 
 int UNMATCHED = -1
 
@@ -61,7 +62,7 @@ ensures all { i in 0..g.N2 | m.right[i] == UNMATCHED }:
 
 // Generate a human-readable string for a given matching.
 // 
-function toString(null|Matching m) -> (ascii::string s):
+function to_string(null|Matching m) -> (ascii::string s):
    if m is null:
       return "(no match)"
    else:
@@ -69,12 +70,12 @@ function toString(null|Matching m) -> (ascii::string s):
       int i=0
       while i < |m.left|:
          if(i != 0):
-            r = ascii::append(r,",")      
-         ascii::string f = ascii::toString(i)
-         ascii::string t = ascii::toString(m.left[i])
-         r = ascii::append(r,f)
-         r = ascii::append(r,"--")
-         r = ascii::append(r,t)
+            r = array::append(r,",")      
+         ascii::string f = ascii::to_string(i)
+         ascii::string t = ascii::to_string(m.left[i])
+         r = array::append(r,f)
+         r = array::append(r,"--")
+         r = array::append(r,t)
          i = i + 1
       //
       return r
@@ -202,5 +203,5 @@ public export method main():
     // Try it out!
     null|Matching r = findMaximalMatching(g)
     // Done
-    debug toString(r)
+    debug to_string(r)
     debug "\n"

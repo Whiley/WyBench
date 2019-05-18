@@ -77,12 +77,12 @@ public function toString(Buffer b) -> ascii::string:
     while i < |b.data|
     where 0 <= i && i <= |b.data|:
         if i != 0:
-            r = ascii::append(r,", ")
+            r = array::append(r,", ")
         if i == b.rpos:
-            r = ascii::append(r,"<")
+            r = array::append(r,"<")
         if i == b.wpos:
-            r = ascii::append(r,">")
-        r = ascii::append(r,ascii::toString(b.data[i]))
+            r = array::append(r,">")
+        r = array::append(r,ascii::to_string(b.data[i]))
         i = i + 1
     return array::append(r,"]")
 

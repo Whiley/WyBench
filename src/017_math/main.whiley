@@ -110,14 +110,14 @@ function sum_4(nat[] items) -> nat:
         nat[] slice = array::slice(items,1,|items|)
         return items[0] + sum_4(slice)
 
-function toString(int[] items) -> ascii::string:
+function to_string(int[] items) -> ascii::string:
     ascii::string r = ""
     nat i = 0
     while i < |items|:
         if i != 0:
-            r = ascii::append(r,",")
-        ascii::string str = ascii::toString(items[i])
-        r = ascii::append(r,str)
+            r = array::append(r,",")
+        ascii::string str = ascii::to_string(items[i])
+        r = array::append(r,str)
         i = i + 1
     //
     return r
@@ -173,21 +173,21 @@ method main(ascii::string[] args):
     // test sum_1
     items = [90,4,324,23,12,93,73,56872]
     io::print("SUM_1(")
-    io::print(toString(items))
+    io::print(to_string(items))
     io::print(") = ")
     io::println(sum_1(items))
     // test sum_2
     io::print("SUM_2(")
-    io::print(toString(items))
+    io::print(to_string(items))
     io::print(") = ")
     io::println(sum_2(items))
     // test sum_3
     io::print("SUM_3(")
-    io::print(toString(items))
+    io::print(to_string(items))
     io::print(") = ")
     io::println(sum_3(items))
     // test sum_4
     io::print("SUM_4(")
-    io::print(toString(items))
+    io::print(to_string(items))
     io::print(") = ")
     io::println(sum_4(items))

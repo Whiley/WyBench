@@ -135,16 +135,16 @@ ensures elts(tree) == elts(r):
 // toString
 // =================================================
 
-public function toString(Tree tree) -> ascii::string:
+public function to_string(Tree tree) -> ascii::string:
     if tree is null:
         return "null"
     else:
         ascii::string r = "("
-        r = array::append(r, ascii::toString(tree.data))
+        r = array::append(r, ascii::to_string(tree.data))
         r = array::append(r, ", ")
-        r = array::append(r, toString(tree.left))
+        r = array::append(r, to_string(tree.left))
         r = array::append(r, ", ")
-        r = array::append(r,toString(tree.right))
+        r = array::append(r,to_string(tree.right))
         return array::append(r,")")
 
 // =================================================
@@ -157,16 +157,16 @@ method main(ascii::string[] args):
     Tree bt = null
     Tree tmp
     //
-    io::println(toString(bt))
+    io::println(to_string(bt))
     //
     int i = 0
     while i < |ITEMS|:
         bt = insert(bt,ITEMS[i])
-        io::println(toString(bt))
+        io::println(to_string(bt))
         tmp = rotateClockwise(bt)
-        io::println(toString(tmp))
+        io::println(to_string(tmp))
         tmp = rotateCounterClockwise(bt)
-        io::println(toString(tmp))
+        io::println(to_string(tmp))
         i = i + 1
         
     
