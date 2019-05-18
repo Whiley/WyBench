@@ -1,6 +1,7 @@
 import std::ascii
 import std::math
 import std::io
+import std::array
 
 import nat from std::integer
 
@@ -39,7 +40,7 @@ requires dim == |queens|:
                 i = i + 1
             if solution:
                 queens[n] = Pos(n,col)
-                solutions = append(solutions,run(queens,n+1,dim))
+                solutions = array::append(solutions,run(queens,n+1,dim))
             col = col + 1
         return solutions
 
@@ -51,21 +52,3 @@ method main(ascii::string[] args):
     io::print("Found ")
     io::print(|solutions|)
     io::println(" solutions.")
-
-// This will be deprecated once the Array.append function is generic.
-function append(Pos[][] xs, Pos[][] ys) -> Pos[][]:
-    Pos[][] zs =  [[Pos(0,0);0]; |xs| + |ys|]
-    zs = copy(xs,0,zs,0,|xs|)
-    return copy(ys,0,zs,|xs|,|ys|)
-
-function copy(Pos[][] xs, nat xsStart, Pos[][] ys, nat ysStart, int len) -> (Pos[][] zs)
-requires xsStart + len <= |xs|
-requires ysStart + len <= |ys|
-ensures |zs| == |ys|:
-    nat ysLen = |ys|
-    nat i = 0
-    while i < len where |ys| == ysLen:
-        ys[i+ysStart] = xs[i+xsStart]
-        i = i + 1
-    //
-    return ys

@@ -1,4 +1,5 @@
 import std::ascii
+import std::array
 import std::io
 import std::filesystem
 
@@ -58,14 +59,14 @@ function search(sortedList list, int item) -> null|int:
     // failed to find it
     return null
 
-function toString(int[] items) -> ascii::string:
+function to_string(int[] items) -> ascii::string:
     ascii::string r = ""
     int i = 0
     while i < |items|:
         if i != 0:
-            r = ascii::append(r,",")
-        ascii::string str = ascii::toString(items[0])
-        r = ascii::append(r,str)
+            r = array::append(r,",")
+        ascii::string str = ascii::to_string(items[0])
+        r = array::append(r,str)
         i = i + 1
     //
     return r
@@ -76,7 +77,7 @@ method lookFor(sortedList list, int item):
         io::print("FOUND: ")
         io::print(item)
         io::print(" in ")
-        io::print(toString(list))
+        io::print(to_string(list))
         io::print(" @ ")
         io::println(index)
     else:
@@ -90,7 +91,7 @@ int[] searchTerms = [1,2,3,4,5,6,7,8,9]
 method main(ascii::string[] args):
     // first, read data
     filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-    ascii::string input = ascii::fromBytes(file.readAll())
+    ascii::string input = ascii::from_bytes(file.read_all())
     int[]|null data = parser::parseInts(input)
     // second, sort data
     if data is int[]:

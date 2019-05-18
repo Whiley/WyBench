@@ -101,7 +101,7 @@ method main(ascii::string[] args):
         int|null ntests
         // first, read the input file    
         filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-        ascii::string input = ascii::fromBytes(file.readAll())
+        ascii::string input = ascii::from_bytes(file.read_all())
         ntests,pos = parser::parseInt(0,input)
         //
         if ntests is int:
