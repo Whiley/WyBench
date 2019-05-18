@@ -1,0 +1,16 @@
+[package]
+name="wybenchparser"
+authors=["David J. Pearce"]
+version="1.0.0"
+
+[build]
+platforms=["whiley"]
+
+[check]
+min=-2
+max=2
+length=2
+depth=1
+
+[dependencies]
+std="0.2.11"

@@ -1,0 +1,16 @@
+[package]
+name="001_average"
+authors=["David J. Pearce"]
+
+[build]
+platforms=["whiley"]
+
+[check]
+min=-3
+max=3
+length=2
+depth=1
+
+[dependencies]
+wybenchparser="1.0.0"
+std="0.2.11"
