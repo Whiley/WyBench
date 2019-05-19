@@ -9,8 +9,8 @@ platforms=["whiley"]
 source="/"
 
 [check]
-min=-3
-max=3
+min=-2
+max=2
 length=2
 depth=1
 

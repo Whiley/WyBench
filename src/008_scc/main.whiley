@@ -47,7 +47,7 @@ ensures |r| > size || (size >= |g| && |r| == size):
 // Parser
 // ============================================
 
-function buildDigraphs(int[][] input) -> Digraph[]:
+function buildDigraphs(nat[][] input) -> Digraph[]:
     //
     Digraph[] graphs = [EMPTY_DIGRAPH; |input|]
     int i = 0
@@ -57,7 +57,7 @@ function buildDigraphs(int[][] input) -> Digraph[]:
     //
     return graphs
 
-function parseDigraph(int[] input) -> Digraph:
+function parseDigraph(nat[] input) -> Digraph:
     //
     Digraph graph = EMPTY_DIGRAPH
     int i = 0
@@ -97,7 +97,7 @@ function State(Digraph g) -> State:
         visited: [false; |g|],
         inComponent: [false; |g|],
         rindex: [0; |g|],    
-        stack: vector::Vector(|g|),
+        stack: vector::Vector<int>(),
         index: 0,
         cindex: 0
     }
@@ -159,9 +159,7 @@ method main(ascii::string[] args):
     filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
     ascii::string input = ascii::from_bytes(file.read_all())
     int[][]|null data = parser::parseIntLines(input)
-    if data is null:
-        io::println("error parsing input")
-    else:
+    if data is nat[][]:
         Digraph[] graphs = buildDigraphs(data)
         // third, print output
         int count = 0
@@ -189,3 +187,6 @@ method main(ascii::string[] args):
                 j = j + 1
             //        
             io::println("")
+    else:
+            io::println("error parsing input")
+

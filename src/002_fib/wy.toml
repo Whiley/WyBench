@@ -9,10 +9,11 @@ platforms=["whiley"]
 source="/"
 
 [check]
-min=0
-max=1
+min=2
+max=2
 length=2
 depth=1
+methods=false
 
 [dependencies]
 wybenchparser="1.0.0"
