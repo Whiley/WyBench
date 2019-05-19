@@ -29,7 +29,7 @@ where l.size <= |l.links|
 where all { i in 0 .. l.size | valid(l,l.links[i],i) }
 
 // Construct a linked list with a maximum number of nodes
-function LinkedList(int max) -> (LinkedList e)
+function LinkedList(nat max) -> (LinkedList e)
 // Ensure have exactly the given number of links
 ensures |e.links| == max:
   // 
