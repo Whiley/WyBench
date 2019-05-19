@@ -42,23 +42,38 @@ requires size > 0:
     }
 
 // Write an item into a buffer which is not full
-public function write(NonFullBuffer buf, int item) -> Buffer:
+public function write(NonFullBuffer buf, int item) -> (Buffer nbuf)
+// Read pointer unchanged and buffer sizes match
+ensures buf.rpos == nbuf.rpos
+// Correct item written
+ensures nbuf.data[buf.wpos] == item
+// All other items unchanged
+ensures equalsExcept(buf.data,nbuf.data,buf.wpos):
+    // Discard type invariant
+    Buffer tmp = buf
+    // Write data
+    tmp.data[tmp.wpos] = item
+    // Update write position
+    tmp.wpos = (tmp.wpos + 1) % |tmp.data|
     //
-    buf.data[buf.wpos] = item
-    buf.wpos = buf.wpos + 1
-    // NOTE: could use modulus operator here
-    if buf.wpos >= |buf.data|:
-        buf.wpos = 0
-    return buf
+    return tmp
 
 // Read an item from a buffer which is not empty
-public function read(NonEmptyBuffer buf) -> (Buffer nbuf,int item):
-    int val = buf.data[buf.rpos]
-    buf.rpos = buf.rpos + 1
-    // NOTE: could use modulus operator here
-    if buf.rpos >= |buf.data|:
-        buf.rpos = 0
-    return buf,val
+public function read(NonEmptyBuffer buf) -> (Buffer nbuf,int item)
+// Data is unchanged by this operation
+ensures buf.data == nbuf.data
+// Write pointer unchanged
+ensures buf.wpos == nbuf.wpos
+// Correct item returned
+ensures item == buf.data[buf.rpos]:
+    // Discard type invariant
+    Buffer tmp = buf
+    // Read data
+    int val = tmp.data[buf.rpos]
+    // Update read position
+    tmp.rpos = (tmp.rpos + 1) % |tmp.data|
+    // 
+    return tmp,val
 
 public function isFull(Buffer buf) -> (bool r)
 ensures buf is FullBuffer ==> r:
@@ -70,6 +85,14 @@ public function isEmpty(Buffer buf) -> (bool r)
 ensures buf is EmptyBuffer ==> r :
     //
     return buf.rpos == buf.wpos
+
+// Check that two arrays are equal, except for one item.  Should be
+// deprecated by support for notation left[i:=item] == right
+property equalsExcept<T>(T[] left, T[] right, nat index)
+// Array sizes are identical
+where |left| == |right|
+// All items except that at index are identical
+where all { k in 0..|left| | k == index || left[k] == right[k] }
 
 public function toString(Buffer b) -> ascii::string:
     ascii::string r = "["
