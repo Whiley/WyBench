@@ -1,0 +1,20 @@
+[package]
+name="006_queens"
+authors=["David J. Pearce"]
+
+[build]
+platforms=["whiley"]
+
+[build.whiley]
+source="/"
+
+[check]
+min=-2
+max=2
+length=2
+depth=2
+methods=false
+
+[dependencies]
+wybenchparser="1.0.0"
+std="0.2.11"

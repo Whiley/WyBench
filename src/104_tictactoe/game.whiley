@@ -1,4 +1,10 @@
 import Board from board
+import Piece from board
+import Index from board
+import BLANK from board
+import CIRCLE from board
+import CROSS from board
+import get from board
 
 /**
  * The Game State consists of a board and a boolean
@@ -22,14 +28,14 @@ public function Game() -> Game:
  * Place a piece on the board at a given row and column 
  * by the next player. 
  */
-public function play(Game state, board::Index row, board::Index col) -> Game
+public function play(Game state, Index row, Index col) -> Game
 // There cannot be a piece already at the position to play on
-requires board::get(state.board,row,col) == board::BLANK:
+requires get(state.board,row,col) == BLANK:
 	// Place a CIRCLE if its circle's turn
 	if state.circlesTurn:
-		state.board[(row*3)+col] = board::CIRCLE
+		state.board[(row*3)+col] = CIRCLE
 	else:
-		state.board[(row*3)+col] = board::CROSS
+		state.board[(row*3)+col] = CROSS
 	// Update turn to other player
 	state.circlesTurn = !state.circlesTurn
 	// Done.

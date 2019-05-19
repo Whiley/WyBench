@@ -135,12 +135,12 @@ function decompress(byte[] data) -> byte[]:
         // NOTE: calculating offset here suboptimal as can test
         // directly against 00000000b, but helps verification as later
         // know that offset != 0.        
-        u8 offset = integer::toUnsignedInt(header)
+        u8 offset = integer::to_uint(header)
         pos = pos + 2 
         if offset == 0:
             output = append(output,item)
         else:
-            u8 len = integer::toUnsignedInt(item)
+            u8 len = integer::to_uint(item)
             // NOTE: start >= 0 not guaranteed.  If negative, we have
             // error case and implementation proceeds producing junk.
             int start = |output| - offset
@@ -156,14 +156,14 @@ function decompress(byte[] data) -> byte[]:
 
 function write_u8(byte[] bytes, u8 u1) -> byte[]:
     //
-    return append(bytes,integer::toUnsignedByte(u1))
+    return append(bytes,integer::to_unsigned_byte(u1))
 
 method main(ascii::string[] args):
     if(|args| == 0):
         io::print("usage: lz77 file")
     else:
         filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-        byte[] data = file.readAll()
+        byte[] data = file.read_all()
         io::print("READ:         ")
         io::print(|data|)
         io::println(" bytes")
@@ -176,7 +176,7 @@ method main(ascii::string[] args):
         io::print(|data|)
         io::println(" bytes")
         io::println("==================================")
-        io::print(ascii::fromBytes(data))
+        io::print(ascii::from_bytes(data))
 
 // NOTE: This is temporary and should be removed.  The reason is it
 // required is that Whiley dropped support for the append operator

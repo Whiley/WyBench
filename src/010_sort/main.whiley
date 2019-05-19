@@ -1,19 +1,24 @@
 import std::ascii
+import std::array
 import std::io
 import std::filesystem
 
 import wybench::parser
 
-type sortedList is (int[] xs) 
-where |xs| <= 1 || all { i in 0 .. |xs|-1 | xs[i] <= xs[i+1] }
+property sorted(int[] xs, int start, int end) 
+where |xs| <= 1 || all { i in start .. end | xs[i] <= xs[i+1] }
+
+type sortedList is (int[] xs) where sorted(xs,0,|xs|)
 
 /**
  * Sort a given list of items into ascending order, producing a sorted
  * list.
  */
-function sort(int[] items, int start, int end) -> sortedList
+function sort(int[] items, int start, int end) -> (int[] rs)
 requires start >= 0 && start < |items|
-requires end >= 0 && end < |items|:
+requires end >= 0 && end < |items|
+ensures sorted(rs,start,end+1):
+    //
     if (start+1) < end:
         int pivot = (end + start) / 2
         int[] lhs = sort(items,start,pivot)
@@ -58,50 +63,41 @@ function search(sortedList list, int item) -> null|int:
     // failed to find it
     return null
 
-function toString(int[] items) -> ascii::string:
-    ascii::string r = ""
-    int i = 0
-    while i < |items|:
-        if i != 0:
-            r = ascii::append(r,",")
-        ascii::string str = ascii::toString(items[0])
-        r = ascii::append(r,str)
-        i = i + 1
-    //
-    return r
-
 method lookFor(sortedList list, int item):
     int|null index = search(list,item)
     if index is int:
         io::print("FOUND: ")
         io::print(item)
         io::print(" in ")
-        io::print(toString(list))
+        io::print(ascii::to_string(list))
         io::print(" @ ")
         io::println(index)
     else:
         io::print("NOT FOUND: ")
         io::print(item)
         io::print(" in ")
-        io::print(list)
+        io::print(ascii::to_string(list))
 
 int[] searchTerms = [1,2,3,4,5,6,7,8,9]
 
 method main(ascii::string[] args):
-    // first, read data
-    filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-    ascii::string input = ascii::fromBytes(file.readAll())
-    int[]|null data = parser::parseInts(input)
-    // second, sort data
-    if data is int[]:
-        data = sort(data,0,|data|)
-        // third, print output
-        io::print("SORTED: ") 
-        io::println(data)
-        int i = 0
-        while i < |searchTerms|:
-            lookFor(data,i)
-            i = i + 1
+    if |args| == 0:
+        io::println("usage: sort <file>")
     else:
-        io::println("Error parsing input")
+        // first, read data
+        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        ascii::string input = ascii::from_bytes(file.read_all())
+        int[]|null data = parser::parseInts(input)
+        // second, sort data
+        if data is int[] && |data| > 0:
+            data = sort(data,0,|data|)
+            // third, print output
+            io::print("SORTED: ") 
+            io::println(ascii::to_string(data))
+            int i = 0
+            while i < |searchTerms|:
+                lookFor(data,i)
+                i = i + 1
+        else:
+            io::println("Error parsing input")
 

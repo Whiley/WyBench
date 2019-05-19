@@ -1,0 +1,19 @@
+[package]
+name="014_lights"
+authors=["David J. Pearce"]
+
+[build]
+platforms=["whiley"]
+
+[build.whiley]
+source="/"
+
+[check]
+min=0
+max=1
+length=1
+depth=1
+
+[dependencies]
+wybenchparser="1.0.0"
+std="0.2.11"

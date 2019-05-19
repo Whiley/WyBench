@@ -1,0 +1,20 @@
+[package]
+name="024_bits"
+authors=["David J. Pearce"]
+
+[build]
+platforms=["whiley"]
+
+[build.whiley]
+source="/"
+
+[check]
+min=-3
+max=3
+length=3
+depth=3
+methods=false
+
+[dependencies]
+wybenchparser="1.0.0"
+std="0.2.11"

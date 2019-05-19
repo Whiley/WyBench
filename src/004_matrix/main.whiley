@@ -118,7 +118,7 @@ method main(ascii::string[] args):
     else:
         filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
         // first, read data
-        ascii::string input = ascii::fromBytes(file.readAll())
+        ascii::string input = ascii::from_bytes(file.read_all())
         int[]|null data = parser::parseInts(input)
         if data is null || |data| < 2:
             io::println("error reading file")

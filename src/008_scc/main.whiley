@@ -2,7 +2,11 @@ import std::array
 import std::ascii
 import std::io
 import std::math
-import std::collection
+import Vector from std::vector
+import push from std::vector
+import pop from std::vector
+import top from std::vector
+import size from std::vector
 import std::filesystem
 
 import wybench::parser
@@ -47,7 +51,7 @@ ensures |r| > size || (size >= |g| && |r| == size):
 // Parser
 // ============================================
 
-function buildDigraphs(int[][] input) -> Digraph[]:
+function buildDigraphs(nat[][] input) -> Digraph[]:
     //
     Digraph[] graphs = [EMPTY_DIGRAPH; |input|]
     int i = 0
@@ -57,7 +61,7 @@ function buildDigraphs(int[][] input) -> Digraph[]:
     //
     return graphs
 
-function parseDigraph(int[] input) -> Digraph:
+function parseDigraph(nat[] input) -> Digraph:
     //
     Digraph graph = EMPTY_DIGRAPH
     int i = 0
@@ -83,13 +87,15 @@ type State is {
     bool[] visited,
     bool[] inComponent,
     int[] rindex,
-    collection::Stack stack,
+    Vector<nat> stack,
     int index,
     int cindex
 }
 where |visited| == |graph|
 where |inComponent| == |graph|
 where |rindex| == |graph|
+// Every vertex on stack must be valid
+where all { k in 0..stack.length | stack.items[k] < |graph| }
 
 function State(Digraph g) -> State:
     return {
@@ -97,7 +103,7 @@ function State(Digraph g) -> State:
         visited: [false; |g|],
         inComponent: [false; |g|],
         rindex: [0; |g|],    
-        stack: collection::Stack(|g|),
+        stack: Vector<int>(),
         index: 0,
         cindex: 0
     }
@@ -105,7 +111,7 @@ function State(Digraph g) -> State:
 function find_components(Digraph g) -> int[][]:
     State state = State(g)
     
-    int i = 0
+    nat i = 0
     while i < |g|:
         if !state.visited[i]:
             state = visit(i,state)
@@ -122,7 +128,7 @@ function find_components(Digraph g) -> int[][]:
     //
     return components
 
-function visit(int v, State s) -> State
+function visit(nat v, State s) -> State
 requires v < |s.graph|:
     bool root = true
     s.visited[v] = true
@@ -132,7 +138,7 @@ requires v < |s.graph|:
     // process edges
     int i = 0
     while i < |s.graph[v]|:
-        int w = s.graph[v][i]
+        nat w = s.graph[v][i]
         if !s.visited[w]:
             s = visit(w,s)
         if !s.inComponent[w] && s.rindex[w] < s.rindex[v]:
@@ -143,49 +149,53 @@ requires v < |s.graph|:
     if root:
         s.inComponent[v] = true
         int rindex_v = s.rindex[v]
-        while collection::size(s.stack) > 0 && rindex_v <= s.rindex[collection::top(s.stack)]:
-            int w = collection::top(s.stack)
-            s.stack = collection::pop(s.stack)
+        while size(s.stack) > 0 && rindex_v <= s.rindex[top(s.stack)]:
+            int w = top(s.stack)
+            s.stack = pop(s.stack)
             s.rindex[w] = s.cindex
             s.inComponent[w] = true
         s.rindex[v] = s.cindex
         s.cindex = s.cindex + 1
     else:
-        s.stack = collection::push(s.stack,v)
+        s.stack = push(s.stack,v)
     // all done
     return s
 
 method main(ascii::string[] args):
-    filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-    ascii::string input = ascii::fromBytes(file.readAll())
-    int[][]|null data = parser::parseIntLines(input)
-    if data is null:
-        io::println("error parsing input")
+    if |args| == 0:
+        io::println("usage: average <file>")
     else:
-        Digraph[] graphs = buildDigraphs(data)
-        // third, print output
-        int count = 0
-        int i = 0 
-        while i < |graphs|:
-            Digraph graph = graphs[i]
-            io::print("=== Graph #")
-            io::print(ascii::toString(i))
-            io::println(" ===")
-            i = i + 1
-            int[][] sccs = find_components(graph)
-            int j = 0 
-            while j < |sccs|:
-                io::print("{")
-                bool firstTime=true
-                int[] scc = sccs[j]
-                int k = 0
-                while k < |scc|:
-                    if !firstTime:
-                        io::print(",")
-                    firstTime=false
-                    io::print(scc[k])
-                    k = k + 1
-                io::print("}")
-                j = j + 1
-            //        
-            io::println("")
+        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        ascii::string input = ascii::from_bytes(file.read_all())
+        int[][]|null data = parser::parseIntLines(input)
+        if data is nat[][]:
+            Digraph[] graphs = buildDigraphs(data)
+            // third, print output
+            int count = 0
+            int i = 0 
+            while i < |graphs|:
+                Digraph graph = graphs[i]
+                io::print("=== Graph #")
+                io::print(ascii::to_string(i))
+                io::println(" ===")
+                i = i + 1
+                int[][] sccs = find_components(graph)
+                int j = 0 
+                while j < |sccs|:
+                    io::print("{")
+                    bool firstTime=true
+                    int[] scc = sccs[j]
+                    int k = 0
+                    while k < |scc|:
+                        if !firstTime:
+                            io::print(",")
+                        firstTime=false
+                        io::print(scc[k])
+                        k = k + 1
+                    io::print("}")
+                    j = j + 1
+                //        
+                io::println("")
+        else:
+            io::println("error parsing input")
+

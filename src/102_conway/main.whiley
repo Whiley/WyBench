@@ -118,21 +118,24 @@ requires |data| >= 3:
 method main(ascii::string[] args):
     Board board
     int niters
-    // First, parse input file
-    filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-    ascii::string input = ascii::fromBytes(file.readAll())
-    int[]|null data = parser::parseInts(input)
-    // Second, construct and iterate board
-    if data is int[]:
-        board,niters = parseConfig(data)
-        int i = 0
-        while i < niters:
-            printBoard(board)
-            board = update(board)
-            i = i + 1
-        //
+    if |args| == 0:
+        io::println("usage: conway <file>")
     else:
-        io::println("error parsing file")
+        // First, parse input file
+        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        ascii::string input = ascii::from_bytes(file.read_all())
+        int[]|null data = parser::parseInts(input)
+        // Second, construct and iterate board
+        if data is int[] && |data| >= 3:
+            board,niters = parseConfig(data)
+            int i = 0
+            while i < niters:
+                printBoard(board)
+                board = update(board)
+                i = i + 1
+            //
+        else:
+            io::println("error parsing file")
 
 method printBoard(Board board):
     int ncols = board.width

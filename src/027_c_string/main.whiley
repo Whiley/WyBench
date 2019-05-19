@@ -1,5 +1,6 @@
 import std::ascii
 import std::io
+import std::array
 import nat from std::integer
 
 //
@@ -34,16 +35,18 @@ ensures r >= 0:
     return i
 
 // Copy string from src location into destination
-public method strcpy(&C_string dest, C_string src)
+public method strcpy(&(ASCII_char[]) dest, C_string src)
 requires |src| <= |(*dest)|:
     //
     nat i=0
-    while src[i] != 0
+    while src[i] != NULL
     where i < |src|
     where all { k in 0 .. i | src[k] != NULL}:
         (*dest)[i] = src[i]
         i = i + 1
-    //
+    // Terminate new string
+    (*dest)[i] = NULL
+    // Done
     return
     
 // Print out hello world!
@@ -59,4 +62,7 @@ public method main(ascii::string[] args):
     // ==============================================================
     &C_string dest = new [1,2,3,4,5,6,7,8,9,10,11,12,13,14]
     strcpy(dest,src)
+    // Check copy was correct
+    assert array::equals(src,*dest,0,11)
+    //
     io::println(src)

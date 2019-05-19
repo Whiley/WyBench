@@ -22,7 +22,7 @@ method main(ascii::string[] args):
     else:
         // First, parse input
         filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-        ascii::string input = ascii::fromBytes(file.readAll())
+        ascii::string input = ascii::from_bytes(file.read_all())
         int[]|null data = parser::parseInts(input)
         // Second, compute gcds
         if data is null:

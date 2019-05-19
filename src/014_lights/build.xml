@@ -1,7 +1,0 @@
-<project name="014_lights" default="compile">  
-
-  <property name="wyc.verification" value="false"/>
-  <import file="../../config.xml"/> 
-  <import file="../../util/build-template.xml"/>  
-
-</project>

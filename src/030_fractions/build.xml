@@ -1,8 +1,0 @@
-<project name="030_fractions" default="compile">  
-
-  <!-- <property name="wyc.verification" value="true"/>
-  -->
-  <import file="../../config.xml"/> 
-  <import file="../../util/build-template.xml"/>  
-
-</project>

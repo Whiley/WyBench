@@ -56,7 +56,7 @@ public method main(string[] args):
         io::println("usage: regex <input-file>")
     else:
         filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-        string input = ascii::fromBytes(file.readAll())
+        string input = ascii::from_bytes(file.read_all())
         int[][] data = parser::parseStrings(input)
         int i = 0
         int nmatches = 0

@@ -57,19 +57,20 @@ function next(Date date) -> Date:
     // second, calculate date of next day
     if date.day == last:
         date.day = 1
-        date.month = date.month + 1
-        if date.month == 13:
+        if date.month == DEC:
             date.year = date.year + 1
             date.month = JAN
+        else:
+            date.month = date.month + 1
     else:
         date.day = date.day + 1
     // done
     return date
 
-function toString(Date date) -> ascii::string:
-    ascii::string d = ascii::toString(date.day)
-    ascii::string m = ascii::toString(date.month)
-    ascii::string y = ascii::toString(date.year)
+function to_string(Date date) -> ascii::string:
+    ascii::string d = ascii::to_string(date.day)
+    ascii::string m = ascii::to_string(date.month)
+    ascii::string y = ascii::to_string(date.year)
     ascii::string r = array::append(d,"/")
     r = array::append(r,m)
     r = array::append(r,"/")
@@ -83,5 +84,5 @@ method main(ascii::string[] args):
     Date start = Date(1,JAN,2000)
     Date end = Date(6,JAN,2013)
     while start != end:
-        io::println(toString(start))    
+        io::println(to_string(start))    
         start = next(start)
