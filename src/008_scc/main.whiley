@@ -87,13 +87,15 @@ type State is {
     bool[] visited,
     bool[] inComponent,
     int[] rindex,
-    Vector<int> stack,
+    Vector<nat> stack,
     int index,
     int cindex
 }
 where |visited| == |graph|
 where |inComponent| == |graph|
 where |rindex| == |graph|
+// Every vertex on stack must be valid
+where all { k in 0..stack.length | stack.items[k] < |graph| }
 
 function State(Digraph g) -> State:
     return {
