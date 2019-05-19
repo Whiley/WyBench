@@ -11,7 +11,7 @@ source="/"
 [check]
 min=-2
 max=2
-length=2
+length=3
 depth=2
 
 [dependencies]
