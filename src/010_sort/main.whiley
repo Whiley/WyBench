@@ -59,32 +59,20 @@ function search(sortedList list, int item) -> null|int:
     // failed to find it
     return null
 
-function to_string(int[] items) -> ascii::string:
-    ascii::string r = ""
-    int i = 0
-    while i < |items|:
-        if i != 0:
-            r = array::append(r,",")
-        ascii::string str = ascii::to_string(items[0])
-        r = array::append(r,str)
-        i = i + 1
-    //
-    return r
-
 method lookFor(sortedList list, int item):
     int|null index = search(list,item)
     if index is int:
         io::print("FOUND: ")
         io::print(item)
         io::print(" in ")
-        io::print(to_string(list))
+        io::print(ascii::to_string(list))
         io::print(" @ ")
         io::println(index)
     else:
         io::print("NOT FOUND: ")
         io::print(item)
         io::print(" in ")
-        io::print(list)
+        io::print(ascii::to_string(list))
 
 int[] searchTerms = [1,2,3,4,5,6,7,8,9]
 
@@ -101,7 +89,7 @@ method main(ascii::string[] args):
             data = sort(data,0,|data|)
             // third, print output
             io::print("SORTED: ") 
-            io::println(data)
+            io::println(ascii::to_string(data))
             int i = 0
             while i < |searchTerms|:
                 lookFor(data,i)
