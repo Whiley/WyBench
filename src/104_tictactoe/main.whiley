@@ -3,10 +3,17 @@ import std::io
 import nat from std::integer
 
 import Game from game
+import Index from board
 import Piece from board
 import Board from board
+import BLANK from board
+import CIRCLE from board
+import CROSS from board
+import get from board
+import play from game
+import isWinner from board
 
-type Pos is { board::Index x, board::Index y }
+type Pos is { Index x, Index y }
 
 Pos[] GAME = [
 	{x:0, y:0}, // circle
@@ -23,12 +30,12 @@ public method main(ascii::string[] args):
     while i < |GAME|:
         Pos pos = GAME[i]
         // FIXME: this should be unnecessary
-        assume board::get(game.board,pos.y,pos.x) == board::BLANK
-        game = game::play(game,pos.y,pos.x)	
+        assume get(game.board,pos.y,pos.x) == BLANK
+        game = play(game,pos.y,pos.x)	
         printBoard(game.board)
         io::println(" ")
-        Piece piece = board::isWinner(game.board)
-        if piece != board::BLANK:
+        Piece piece = isWinner(game.board)
+        if piece != BLANK:
             io::println("we have a winner!")
             break
         i = i + 1
@@ -50,15 +57,15 @@ public method printRowTop(Board brd, nat row)
 requires row < 3:
     nat col = 0
     while col < 3:
-        Piece p = board::get(brd,row,col)
+        Piece p = get(brd,row,col)
         if col != 0:
             io::print(" | ")
         switch p:
-            case board::BLANK:
+            case BLANK:
                 io::print("    ")
-            case board::CROSS:
+            case CROSS:
                 io::print("\\  /")
-            case board::CIRCLE:
+            case CIRCLE:
                 io::print(" -- ")
         col = col + 1
     //
@@ -67,15 +74,15 @@ requires row < 3:
 public method printRowBottom(Board brd, int row):
     int col = 0
     while col < 3:
-        Piece p = board::get(brd,row,col)
+        Piece p = get(brd,row,col)
         if col != 0:
             io::print(" | ")
         switch p:
-            case board::BLANK:
+            case BLANK:
                 io::print("    ")
-            case board::CROSS:
+            case CROSS:
                 io::print("/  \\")
-            case board::CIRCLE:
+            case CIRCLE:
                 io::print(" -- ")
         col = col + 1
     //
@@ -84,15 +91,15 @@ public method printRowBottom(Board brd, int row):
 public method printRowUpperMiddle(Board brd, int row):
     int col = 0
     while col < 3:
-        Piece p = board::get(brd,row,col)
+        Piece p = get(brd,row,col)
         if col != 0:
             io::print(" | ")
         switch p:
-            case board::BLANK:
+            case BLANK:
                 io::print("    ")
-            case board::CROSS:
+            case CROSS:
                 io::print(" \\/ ")
-            case board::CIRCLE:
+            case CIRCLE:
                 io::print("|  |")
         col = col + 1
     io::println(" ")
@@ -100,15 +107,15 @@ public method printRowUpperMiddle(Board brd, int row):
 public method printRowLowerMiddle(Board brd, int row):
     int col = 0
     while col < 3:
-        Piece p = board::get(brd,row,col)
+        Piece p = get(brd,row,col)
         if col != 0:
             io::print(" | ")
         switch p:
-            case board::BLANK:
+            case BLANK:
                 io::print("    ")
-            case board::CROSS:
+            case CROSS:
                 io::print(" /\\")
-            case board::CIRCLE:
+            case CIRCLE:
                 io::print("|  |")
         col = col + 1
     //

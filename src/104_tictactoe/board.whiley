@@ -1,4 +1,4 @@
-public final int BLANK = 0
+public int BLANK = 0
 public int CROSS = 1
 public int CIRCLE = 2
 
