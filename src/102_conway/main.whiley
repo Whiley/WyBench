@@ -126,7 +126,7 @@ method main(ascii::string[] args):
         ascii::string input = ascii::from_bytes(file.read_all())
         int[]|null data = parser::parseInts(input)
         // Second, construct and iterate board
-        if data is int[]:
+        if data is int[] && |data| >= 3:
             board,niters = parseConfig(data)
             int i = 0
             while i < niters:
