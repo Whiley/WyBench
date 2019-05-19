@@ -9,9 +9,10 @@ public type nat is (int x) where x >= 0
 // Parse Ints
 // ========================================================
 
-public function parseInt(nat pos, ascii::string input) -> (null|int val,nat npos)
-requires pos <= |input|:
+public function parseInt(nat pos, ascii::string input) -> (null|int val,nat npos):
     //
+    if pos >= |input|:
+        return null,pos
     nat start = pos
     while pos < |input| && ascii::is_digit(input[pos])
     where start <= pos && pos <= |input|:
