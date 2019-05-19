@@ -14,9 +14,13 @@ function Link(int d, nat n) -> (Link r)
 ensures (r.data == d) && (r.next == n):
     return { data: d, next: n }
 
-property valid(LinkedList l, Link n, int i)
+property valid(RawLinkedList l, Link n, int i)
 // All next links go "down", cannot be cyclic or a "null"
 where (n.next < i) || (i == 0 && n.next == |l.links|) || (n.next == |l.links|)
+
+// NOTE: need to break infinite loop between valid() and LinkedList
+// below.
+type RawLinkedList is ({Link[] links, nat size} l)
 
 type LinkedList is ({Link[] links, nat size} l)
 // Never more links than available space
