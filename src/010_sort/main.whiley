@@ -89,20 +89,23 @@ method lookFor(sortedList list, int item):
 int[] searchTerms = [1,2,3,4,5,6,7,8,9]
 
 method main(ascii::string[] args):
-    // first, read data
-    filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-    ascii::string input = ascii::from_bytes(file.read_all())
-    int[]|null data = parser::parseInts(input)
-    // second, sort data
-    if data is int[]:
-        data = sort(data,0,|data|)
-        // third, print output
-        io::print("SORTED: ") 
-        io::println(data)
-        int i = 0
-        while i < |searchTerms|:
-            lookFor(data,i)
-            i = i + 1
+    if |args| == 0:
+        io::println("usage: sort <file>")
     else:
-        io::println("Error parsing input")
+        // first, read data
+        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        ascii::string input = ascii::from_bytes(file.read_all())
+        int[]|null data = parser::parseInts(input)
+        // second, sort data
+        if data is int[]:
+            data = sort(data,0,|data|)
+            // third, print output
+            io::print("SORTED: ") 
+            io::println(data)
+            int i = 0
+            while i < |searchTerms|:
+                lookFor(data,i)
+                i = i + 1
+        else:
+            io::println("Error parsing input")
 
