@@ -97,7 +97,7 @@ method main(ascii::string[] args):
         ascii::string input = ascii::from_bytes(file.read_all())
         int[]|null data = parser::parseInts(input)
         // second, sort data
-        if data is int[]:
+        if data is int[] && |data| > 0:
             data = sort(data,0,|data|)
             // third, print output
             io::print("SORTED: ") 
