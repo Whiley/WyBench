@@ -128,7 +128,7 @@ ensures elts(tree) == elts(r):
     else:
         Tree right = tree.right
         assert right is Node
-        Tree left = Node(tree.data,right.left,tree.left)
+        Tree left = Node(tree.data,tree.left,right.left)
         return Node(right.data,left,right.right)
 
 // =================================================
