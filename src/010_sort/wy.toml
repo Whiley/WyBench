@@ -11,8 +11,8 @@ source="/"
 [check]
 min=-2
 max=2
-length=3
-depth=1
+length=2
+depth=2
 
 [dependencies]
 wybenchparser="1.0.0"

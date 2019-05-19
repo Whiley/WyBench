@@ -12,9 +12,9 @@ source="/"
 min=-3
 max=3
 length=3
-depth=1
+depth=3
 methods=false
 
 [dependencies]
 wybenchparser="1.0.0"
-std="0.2.11"
+std="0.2.12"

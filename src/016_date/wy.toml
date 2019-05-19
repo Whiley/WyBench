@@ -9,12 +9,12 @@ platforms=["whiley"]
 source="/"
 
 [check]
-min=-3
-max=3
-length=2
-depth=1
+min=-5
+max=5
+length=3
+depth=2
 methods=false
 
 [dependencies]
 wybenchparser="1.0.0"
-std="0.2.11"
+std="0.2.12"

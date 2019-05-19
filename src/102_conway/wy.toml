@@ -1,5 +1,5 @@
 [package]
-name="012_cyclic"
+name="102_conway"
 authors=["David J. Pearce"]
 
 [build]
@@ -9,8 +9,8 @@ platforms=["whiley"]
 source="/"
 
 [check]
-min=-3
-max=3
+min=-2
+max=2
 length=3
 depth=3
 methods=false

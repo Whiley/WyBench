@@ -1,5 +1,5 @@
 [package]
-name="012_cyclic"
+name="104_tictactoe"
 authors=["David J. Pearce"]
 
 [build]
