@@ -2,7 +2,11 @@ import std::array
 import std::ascii
 import std::io
 import std::math
-import std::vector
+import Vector from std::vector
+import push from std::vector
+import pop from std::vector
+import top from std::vector
+import size from std::vector
 import std::filesystem
 
 import wybench::parser
@@ -83,7 +87,7 @@ type State is {
     bool[] visited,
     bool[] inComponent,
     int[] rindex,
-    vector::Vector<int> stack,
+    Vector<int> stack,
     int index,
     int cindex
 }
@@ -97,7 +101,7 @@ function State(Digraph g) -> State:
         visited: [false; |g|],
         inComponent: [false; |g|],
         rindex: [0; |g|],    
-        stack: vector::Vector<int>(),
+        stack: Vector<int>(),
         index: 0,
         cindex: 0
     }
@@ -143,50 +147,53 @@ requires v < |s.graph|:
     if root:
         s.inComponent[v] = true
         int rindex_v = s.rindex[v]
-        while vector::size(s.stack) > 0 && rindex_v <= s.rindex[vector::top(s.stack)]:
-            int w = vector::top(s.stack)
-            s.stack = vector::pop(s.stack)
+        while size(s.stack) > 0 && rindex_v <= s.rindex[top(s.stack)]:
+            int w = top(s.stack)
+            s.stack = pop(s.stack)
             s.rindex[w] = s.cindex
             s.inComponent[w] = true
         s.rindex[v] = s.cindex
         s.cindex = s.cindex + 1
     else:
-        s.stack = vector::push(s.stack,v)
+        s.stack = push(s.stack,v)
     // all done
     return s
 
 method main(ascii::string[] args):
-    filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-    ascii::string input = ascii::from_bytes(file.read_all())
-    int[][]|null data = parser::parseIntLines(input)
-    if data is nat[][]:
-        Digraph[] graphs = buildDigraphs(data)
-        // third, print output
-        int count = 0
-        int i = 0 
-        while i < |graphs|:
-            Digraph graph = graphs[i]
-            io::print("=== Graph #")
-            io::print(ascii::to_string(i))
-            io::println(" ===")
-            i = i + 1
-            int[][] sccs = find_components(graph)
-            int j = 0 
-            while j < |sccs|:
-                io::print("{")
-                bool firstTime=true
-                int[] scc = sccs[j]
-                int k = 0
-                while k < |scc|:
-                    if !firstTime:
-                        io::print(",")
-                    firstTime=false
-                    io::print(scc[k])
-                    k = k + 1
-                io::print("}")
-                j = j + 1
-            //        
-            io::println("")
+    if |args| == 0:
+        io::println("usage: average <file>")
     else:
+        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        ascii::string input = ascii::from_bytes(file.read_all())
+        int[][]|null data = parser::parseIntLines(input)
+        if data is nat[][]:
+            Digraph[] graphs = buildDigraphs(data)
+            // third, print output
+            int count = 0
+            int i = 0 
+            while i < |graphs|:
+                Digraph graph = graphs[i]
+                io::print("=== Graph #")
+                io::print(ascii::to_string(i))
+                io::println(" ===")
+                i = i + 1
+                int[][] sccs = find_components(graph)
+                int j = 0 
+                while j < |sccs|:
+                    io::print("{")
+                    bool firstTime=true
+                    int[] scc = sccs[j]
+                    int k = 0
+                    while k < |scc|:
+                        if !firstTime:
+                            io::print(",")
+                        firstTime=false
+                        io::print(scc[k])
+                        k = k + 1
+                    io::print("}")
+                    j = j + 1
+                //        
+                io::println("")
+        else:
             io::println("error parsing input")
 
