@@ -16,4 +16,4 @@ depth=1
 
 [dependencies]
 wybenchparser="1.0.0"
-std="0.2.11"
+std="0.2.12"
