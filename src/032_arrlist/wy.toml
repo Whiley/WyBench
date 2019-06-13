@@ -13,7 +13,8 @@ min=-3
 max=3
 length=3
 depth=3
-methods=false
+ignores=["main"]
+
 [dependencies]
 wybenchparser="1.0.0"
 std="0.2.12"
