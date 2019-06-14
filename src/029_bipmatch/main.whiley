@@ -38,6 +38,8 @@ type Matching is {
     int[] left, // matches from => to
     int[] right // matches to => from
 }
+// Partitions must have enough space
+where (|left| == graph.N1) && (|right| == (graph.N1+graph.N2))
 // Every vertex is left either unmatched (-1) or a valid vertex in partition two
 where all { i in 0..|left| | left[i] >= UNMATCHED && left[i] < (graph.N1+graph.N2) }
 // Every vertex in right either unmatched (-1) or a valid vertex in partition one
@@ -143,6 +145,7 @@ function findMaximalMatching(Graph g) -> (null|Matching r):
 function find(Matching m, bool[] visited, int from) -> (Matching r_m, bool[] r_visited, bool matched)
 // If return true, then from was definitely matched
 requires 0 <= from && from < |visited|
+// If something matched then from no longer unmatched
 ensures matched ==> r_m.left[from] != UNMATCHED:
     //
     Graph g = m.graph
@@ -156,13 +159,13 @@ ensures matched ==> r_m.left[from] != UNMATCHED:
             int tor = m.right[e.to]
             if tor == UNMATCHED:
                 // to is unmatched; hence, greedily match it
-                return match(m,from,e.to), visited, true
+                return match(m,e), visited, true
             else if !visited[tor]:
                 // to already matched; hence, try to find augmenting
                 // path so it can be unmatched.
                 m,visited,matched = find(m,visited,tor)
                 if matched:
-                    return match(m,from,e.to), visited, true
+                    return match(m,e), visited, true
         i = i + 1
     //
     // Failed
@@ -172,22 +175,27 @@ ensures matched ==> r_m.left[from] != UNMATCHED:
 // Update matching to record a match between from and to.  However, if
 // source vertex was already matched against another vertex, then the
 // status for the over vertex is updated (i.e. set to unmatched).
-function match(Matching m, int from, int to) -> (Matching r)
+function match(Matching m, edge e) -> (Matching r)
+// Edge must existing in graph
+requires some { i in 0..|m.graph.edges| | m.graph.edges[i] == e }
 // The target vertex cannot be matched; note, however,
 // that the source vertex may already be matched
-requires m.right[to] == UNMATCHED:
+requires m.right[e.to] == UNMATCHED:
     //
-    int l_from = m.left[from]
+    int[] m_left = m.left
+    int[] m_right = m.right
+    //
+    int l_from = m_left[e.from]
     //
     if l_from != UNMATCHED:
         // from was already matched
-        m.right[l_from] = UNMATCHED
+        m_right[l_from] = UNMATCHED
     //
-    m.left[from] = to
-    m.right[to] = from
+    m_left[e.from] = e.to
+    m_right[e.to] = e.from
     //
-    return m
-   
+    return { graph: m.graph, left: m_left, right: m_right }
+
 
 public export method main():
     final int A = 0
