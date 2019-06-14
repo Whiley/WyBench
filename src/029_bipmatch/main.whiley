@@ -27,7 +27,7 @@ type Graph is {
     edge[] edges // edges in graph
 }
 // Partitions are valid
-where N1 >= 0 && N2 >= 0
+where 0 <= N1 && N1 <= N2
 // All edges are from a valid vertex
 where all { i in 0..|edges| | 0 <= edges[i].from && edges[i].from < N1 }
 // All edges are to a valid vertex
@@ -35,30 +35,26 @@ where all { i in 0..|edges| | N1 <= edges[i].to && edges[i].to < (N1+N2) }
 
 type Matching is {
     Graph graph,
-    int[] left, // matches from => to
-    int[] right // matches to => from
+    int[] matching
 }
-// Partitions must have enough space
-where (|left| == graph.N1) && (|right| == (graph.N1+graph.N2))
-// Every vertex is left either unmatched (-1) or a valid vertex in partition two
-where all { i in 0..|left| | left[i] >= UNMATCHED && left[i] < (graph.N1+graph.N2) }
-// Every vertex in right either unmatched (-1) or a valid vertex in partition one
-where all { i in 0..|right| | right[i] >= UNMATCHED && right[i] < graph.N1 }
+// Matching must have enough space
+where |matching| == (graph.N1+graph.N2)
+// Every vertex is lower partion either unmatched (-1) or a valid vertex in upper partition
+where all { i in 0..graph.N1 | matching[i] == UNMATCHED || (matching[i] >= graph.N1 && matching[i] < (graph.N1+graph.N2)) }
+// Every vertex in upper partiaion either unmatched (-1) or a valid vertex in lower partition
+where all { i in graph.N1..(graph.N1+graph.N2) | matching[i] >= UNMATCHED && matching[i] < graph.N1 }
 // Every match is symmetric
-where all { i in 0..|left| | left[i] == UNMATCHED || right[left[i]] == i }
+where all { i in 0..graph.N1 | matching[i] == UNMATCHED || matching[matching[i]] == i }
 
 // Simple constructor for matching
 function Matching(Graph g) -> (Matching m)
 ensures m.graph == g
-// All left vertices are unmatched
-ensures all { i in 0..g.N1 | m.left[i] == UNMATCHED }
-// All right vertices are unmatched
-ensures all { i in 0..g.N2 | m.right[i] == UNMATCHED }:
+// All vertices in both partitions unmatched
+ensures all { i in 0..g.N1+g.N2 | m.matching[i] == UNMATCHED }:
     //
     return {
         graph: g,
-        left: [UNMATCHED; g.N1],
-        right: [UNMATCHED; g.N1+g.N2]
+        matching: [UNMATCHED; g.N1+g.N2]
     }
 
 
@@ -70,11 +66,11 @@ function to_string(null|Matching m) -> (ascii::string s):
    else:
       ascii::string r = ""
       int i=0
-      while i < |m.left|:
+      while i < m.graph.N1:
          if(i != 0):
             r = array::append(r,",")      
          ascii::string f = ascii::to_string(i)
-         ascii::string t = ascii::to_string(m.left[i])
+         ascii::string t = ascii::to_string(m.matching[i])
          r = array::append(r,f)
          r = array::append(r,"--")
          r = array::append(r,t)
@@ -116,7 +112,7 @@ function findMaximalMatching(Graph g) -> (null|Matching r):
         //
         while i < g.N1 where i >= 0
         // Every vertex below i is already matched
-        where all { j in 0..i | m.left[j] != UNMATCHED }:
+        where all { j in 0..i | m.matching[j] != UNMATCHED }:
             bool[] visited = [false; g.N1]
             m,visited,matched = find(m,visited,i)
             if !matched:
@@ -143,20 +139,22 @@ function findMaximalMatching(Graph g) -> (null|Matching r):
 // find another match for B.  That will of course fail and we'll then
 // try to match D and will succeed immediately.
 function find(Matching m, bool[] visited, int from) -> (Matching r_m, bool[] r_visited, bool matched)
+// Visited status needed for each vertex in lower partition
+requires |visited| == m.graph.N1
 // If return true, then from was definitely matched
 requires 0 <= from && from < |visited|
 // If something matched then from no longer unmatched
-ensures matched ==> r_m.left[from] != UNMATCHED:
+ensures matched ==> r_m.matching[from] != UNMATCHED:
     //
     Graph g = m.graph
     visited[from] = true
     //
     int i = 0
     //
-    while i < |g.edges| where i >= 0:
+    while i < |g.edges| where i >= 0 && |visited| == m.graph.N1:
         edge e = g.edges[i]
         if e.from == from:
-            int tor = m.right[e.to]
+            int tor = m.matching[e.to]
             if tor == UNMATCHED:
                 // to is unmatched; hence, greedily match it
                 return match(m,e), visited, true
@@ -180,21 +178,20 @@ function match(Matching m, edge e) -> (Matching r)
 requires some { i in 0..|m.graph.edges| | m.graph.edges[i] == e }
 // The target vertex cannot be matched; note, however,
 // that the source vertex may already be matched
-requires m.right[e.to] == UNMATCHED:
+requires m.matching[e.to] == UNMATCHED:
     //
-    int[] m_left = m.left
-    int[] m_right = m.right
+    int[] m_matching = m.matching
     //
-    int l_from = m_left[e.from]
+    int l_from = m_matching[e.from]
     //
     if l_from != UNMATCHED:
         // from was already matched
-        m_right[l_from] = UNMATCHED
+        m_matching[l_from] = UNMATCHED
     //
-    m_left[e.from] = e.to
-    m_right[e.to] = e.from
+    m_matching[e.from] = e.to
+    m_matching[e.to] = e.from
     //
-    return { graph: m.graph, left: m_left, right: m_right }
+    return { graph: m.graph, matching: m_matching }
 
 
 public export method main():
