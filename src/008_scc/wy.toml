@@ -9,10 +9,10 @@ platforms=["whiley"]
 source="/"
 
 [check]
-min=-2
-max=2
-length=2
-depth=2
+min=-3
+max=3
+length=3
+depth=3
 ignores=["main"]
 
 [dependencies]

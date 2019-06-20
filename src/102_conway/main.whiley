@@ -95,17 +95,18 @@ function isAlive(Board board, int row, int col) -> int:
 // Parser
 // ============================================
 
-function parseConfig(int[] data) -> (Board board, int nIterations)
+function parseConfig(nat[] data) -> (Board board, int nIterations)
 requires |data| >= 3:
     //
     int niters = data[0]
-    int cols = data[1]
-    int rows = data[2]
+    nat cols = data[1]
+    nat rows = data[2]
     Board brd = Board(cols,rows)
-    int i = 3
-    while i < |data|:
+    nat i = 3
+    while (i+1) < |data|:
         int col = data[i]
         int row = data[i+1]
+        //if col < cols && row < rows:
         brd.cells[row][col] = true
         i = i + 2
     //
