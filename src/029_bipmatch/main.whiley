@@ -16,6 +16,10 @@
 import std::ascii
 import std::array
 
+// Uniqueness property for arrays (could be moved into standard library)
+property unique(edge[] edges)
+where all { i in 0..|edges|, j in 0..|edges| | i!=j ==> edges[i] != edges[j]}
+
 int UNMATCHED = -1
 
 // Every edge in our bipartite graph is from one side to the other.
@@ -28,6 +32,8 @@ type Graph is {
 }
 // Partitions are valid
 where 0 <= N1 && N1 <= N2
+// All edges are unique (i.e. not a multi-graph)
+where unique(edges)
 // All edges are from a valid vertex
 where all { i in 0..|edges| | 0 <= edges[i].from && edges[i].from < N1 }
 // All edges are to a valid vertex
@@ -134,7 +140,7 @@ function findMaximalMatching(Graph g) -> (null|Matching r):
 //    /
 //  E -- F
 //
-// Support A and B are matched and we're traversing from C.  At first,
+// Suppose A and B are matched and we're traversing from C.  At first,
 // we'll try to find an augmenting path for B.  In otherwords, try to
 // find another match for B.  That will of course fail and we'll then
 // try to match D and will succeed immediately.
