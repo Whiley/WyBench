@@ -31,7 +31,7 @@ type FullBuffer is (Buffer b) where (b.rpos == b.wpos + 1) || (b.wpos == |b.data
 type NonFullBuffer is (Buffer b) where (b.rpos != b.wpos + 1) && (b.wpos != |b.data|-1 || b.rpos != 0)
 
 // Create a buffer with a given number of slots.
-public function Buffer(int size) -> EmptyBuffer
+function Buffer(int size) -> EmptyBuffer
 // Cannot create buffer with zero size
 requires size > 0:
     //
@@ -42,7 +42,7 @@ requires size > 0:
     }
 
 // Write an item into a buffer which is not full
-public function write(NonFullBuffer buf, int item) -> (Buffer nbuf)
+function write(NonFullBuffer buf, int item) -> (Buffer nbuf)
 // Read pointer unchanged and buffer sizes match
 ensures buf.rpos == nbuf.rpos
 // Correct item written
@@ -59,7 +59,7 @@ ensures equalsExcept(buf.data,nbuf.data,buf.wpos):
     return tmp
 
 // Read an item from a buffer which is not empty
-public function read(NonEmptyBuffer buf) -> (Buffer nbuf,int item)
+function read(NonEmptyBuffer buf) -> (Buffer nbuf,int item)
 // Data is unchanged by this operation
 ensures buf.data == nbuf.data
 // Write pointer unchanged
@@ -75,13 +75,13 @@ ensures item == buf.data[buf.rpos]:
     // 
     return tmp,val
 
-public function isFull(Buffer buf) -> (bool r)
+function isFull(Buffer buf) -> (bool r)
 ensures buf is FullBuffer ==> r:
     //
     return (buf.rpos == buf.wpos + 1) || 
             (buf.wpos == |buf.data|-1 && buf.rpos == 0)
 
-public function isEmpty(Buffer buf) -> (bool r)
+function isEmpty(Buffer buf) -> (bool r)
 ensures buf is EmptyBuffer ==> r :
     //
     return buf.rpos == buf.wpos
@@ -94,7 +94,7 @@ where |left| == |right|
 // All items except that at index are identical
 where all { k in 0..|left| | k == index || left[k] == right[k] }
 
-public function toString(Buffer b) -> ascii::string:
+function toString(Buffer b) -> ascii::string:
     ascii::string r = "["
     int i = 0
     while i < |b.data|
@@ -111,7 +111,7 @@ public function toString(Buffer b) -> ascii::string:
 
 int[] ITEMS = [5,4,6,3,7,2,8,1,9,10,0]
 
-method main(ascii::string[] args):
+public method main(ascii::string[] args):
     int i = 0
     Buffer buf = Buffer(10)
     //

@@ -135,7 +135,7 @@ ensures elts(tree) == elts(r):
 // toString
 // =================================================
 
-public function to_string(Tree tree) -> ascii::string:
+function to_string(Tree tree) -> ascii::string:
     if tree is null:
         return "null"
     else:
