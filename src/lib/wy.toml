@@ -13,4 +13,4 @@ length=2
 depth=1
 
 [dependencies]
-std="0.2.12"
+std="0.2.19"

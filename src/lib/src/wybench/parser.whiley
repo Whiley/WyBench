@@ -31,7 +31,7 @@ public function parseInts(ascii::string input) -> int[]|null:
     // first, read data
     while pos < |input|:
         int|null i
-        i,pos = parseInt(pos,input)
+        (i,pos) = parseInt(pos,input)
         if i is int:
             data = array::append(data,i)
             pos = skipWhiteSpace(pos,input)
@@ -50,7 +50,7 @@ public function parseIntLines(ascii::string input) -> int[][]|null:
         int[] line = [0;0]
         while pos < |input| && !isWhiteSpace(input[pos]):
             int|null i
-            i,pos = parseInt(pos,input)
+            (i,pos) = parseInt(pos,input)
             if i is int:
                 line = array::append(line,i)
                 pos = skipLineSpace(pos,input)
@@ -102,7 +102,7 @@ public function parseStrings(ascii::string input) -> ascii::string[]:
     // first, read data
     while pos < |input|:
         ascii::string s
-        s,pos = parseString(pos,input)
+        (s,pos) = parseString(pos,input)
         data = append(data,s)
         pos = skipWhiteSpace(pos,input)
     //
