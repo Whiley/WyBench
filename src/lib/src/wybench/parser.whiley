@@ -57,29 +57,10 @@ public function parseIntLines(ascii::string input) -> int[][]|null:
             else:
                 return null
         //
-        data = append(data,line)
+        data = array::append(data,line)
         pos = skipWhiteSpace(pos,input)
     //
     return data
-
-// Should be remove when array::append become generic
-public function append(int[][] items, int[] item) -> (int[][] r)
-ensures |r| == |items| + 1
-ensures all { k in 0..|items| | r[k] == items[k] }
-ensures r[|items|] == item:
-    //
-    int[][] nitems = [[0;0]; |items| + 1]
-    nat i = 0
-    //
-    while i < |items|
-    where |nitems| == |items| + 1 && i <= |items|
-    where all { k in 0..i | nitems[k] == items[k] }:
-        nitems[i] = items[i]
-        i = i + 1
-    //
-    nitems[i] = item    
-    //
-    return nitems
 
 // ========================================================
 // Parse Strings
@@ -103,7 +84,7 @@ public function parseStrings(ascii::string input) -> ascii::string[]:
     while pos < |input|:
         ascii::string s
         (s,pos) = parseString(pos,input)
-        data = append(data,s)
+        data = array::append(data,s)
         pos = skipWhiteSpace(pos,input)
     //
     return data
