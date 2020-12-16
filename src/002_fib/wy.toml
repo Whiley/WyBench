@@ -3,7 +3,7 @@ name="002_fib"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley"]
+platforms=["whiley","boogie2"]
 
 [build.whiley]
 source="/"

@@ -3,19 +3,16 @@
  * 
  *  https://en.wikipedia.org/wiki/Dutch_national_flag_problem
  */
-import std::ascii
-import std::io
-
 type nat is (int x) where x >= 0
 
 // Define colours of the Dutch National Flag
-int RED = 0
-int WHITE = 1
-int BLUE = 2
+final Color RED = 0
+final Color WHITE = 1
+final Color BLUE = 2
 
 type Color is (int n) 
 // The dutch national flag has three colours
-where RED <= n && n <= BLUE
+where 0 <= n && n <= 2
 
 // Every element in given slice of array matches item.  This looks
 // roughly like so:
@@ -91,9 +88,9 @@ ensures all { k in 1..|ncols| | ncols[k-1] <= ncols[k] }:
     //
     return ncols
 
-public method main(ascii::string[] args):
-    int[] colors = [WHITE,RED,BLUE,WHITE]
+public method test():
+    Color[] colors = [WHITE,RED,BLUE,WHITE]
     //
     colors = partition(colors)
     //
-    io::println(colors)
+    assert colors == [RED,WHITE,WHITE,BLUE]

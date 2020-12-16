@@ -1,5 +1,5 @@
 import std::ascii
-import std::filesystem
+import std::filesystem with rwMode
 import std::io
 
 import wybench::parser
@@ -116,15 +116,15 @@ method main(ascii::string[] args):
     if |args| == 0:
         io::println("usage: matrix <input-file>")
     else:
-        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        filesystem::File file = filesystem::open(args[0],(rwMode) filesystem::READONLY)
         // first, read data
         ascii::string input = ascii::from_bytes(file.read_all())
         int[]|null data = parser::parseInts(input)
-        if data is null || |data| < 2:
+        if data is null || |data| < 2 || !(data is nat[]):
             io::println("error reading file")
         else:
-            int width = data[0]
-            int height = data[1]
+            nat width = data[0]
+            nat height = data[1]
             int size = width*height
             if(|data| != 2+(size * 2)): 
                 io::println("file geometry incorrect")           

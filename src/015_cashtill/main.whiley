@@ -7,16 +7,16 @@ type nat is (int n) where n >= 0
 /**
  * Define coins/notes and their values (in cents)
  */
-int ONE_CENT = 0
-int FIVE_CENTS = 1
-int TEN_CENTS = 2
-int TWENTY_CENTS = 3
-int FIFTY_CENTS = 4
-int ONE_DOLLAR = 5  // 1 dollar
-int FIVE_DOLLARS = 6  // 5 dollars
-int TEN_DOLLARS = 7 // 10 dollars
+nat ONE_CENT = 0
+nat FIVE_CENTS = 1
+nat TEN_CENTS = 2
+nat TWENTY_CENTS = 3
+nat FIFTY_CENTS = 4
+nat ONE_DOLLAR = 5  // 1 dollar
+nat FIVE_DOLLARS = 6  // 5 dollars
+nat TEN_DOLLARS = 7 // 10 dollars
 
-int[] Value = [
+nat[] Value = [
     1,
     5,
     10,
@@ -182,7 +182,7 @@ ascii::string[] Descriptions = [
  * Run through the sequence of a customer attempting to purchase an item
  * of a specified cost using a given amount of cash and a current till.
  */
-public method buy(Cash till, Cash given, int cost) -> Cash:
+method buy(Cash till, Cash given, int cost) -> Cash:
     io::println("--")
     io::print("Customer wants to purchase item for ")
     io::print(ascii::to_string(cost))

@@ -3,7 +3,7 @@ name="029_bipmatch"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley"]
+platforms=["whiley","boogie2"]
 
 [build.whiley]
 source="/"

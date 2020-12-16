@@ -49,7 +49,7 @@ where t.from < size && t.to < size
 
 // A Finite State Machine representation of a Trie
 type Trie is {
-    int size, // maximum number of states
+    nat size, // maximum number of states
     Transition[] transitions
 } where size > 0
 // Ensures each transition to/from state within trie
@@ -107,8 +107,8 @@ ensures r.size >= trie.size:
     // append new transition
     Transition[] rs = array::append(trie.transitions,transition)
     // compute updated size
-    int max = math::max(trie.size,transition.from+1)
-    max = math::max(max,transition.to+1)
+    nat max = (nat) math::max(trie.size,transition.from+1)
+    max = (nat) math::max(max,transition.to+1)
     // done
     return { size: max, transitions: rs }
 

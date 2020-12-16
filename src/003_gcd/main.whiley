@@ -1,5 +1,5 @@
 import std::ascii
-import std::filesystem
+import std::filesystem with rwMode
 import std::io
 
 import wybench::parser
@@ -21,11 +21,11 @@ method main(ascii::string[] args):
         io::println("usage: gcd <input-file>")
     else:
         // First, parse input
-        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        filesystem::File file = filesystem::open(args[0], (rwMode) filesystem::READONLY)
         ascii::string input = ascii::from_bytes(file.read_all())
         int[]|null data = parser::parseInts(input)
         // Second, compute gcds
-        if data is null:
+        if data is null || !(data is nat[]):
             io::println("error parsing input")
         else:
             nat i = 0

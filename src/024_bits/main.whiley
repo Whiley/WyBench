@@ -76,9 +76,9 @@ function toString(bool[] bits, int n) -> ascii::string:
     //
     while i < n where i >= 0:
        if i < |bits| && bits[i]:
-           r = array::append('1',r)
+           r = array::append((ascii::char) '1',r)
        else:
-           r = array::append('0',r)
+           r = array::append((ascii::char) '0',r)
        i = i + 1
     //
     return r

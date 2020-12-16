@@ -14,11 +14,11 @@ import std::io
 
 type Tree is null | Node
 
-type Node is ({ int data, Tree left, Tree right } n) where 
-	// Data in nodes reachable from left must be below this
-	(n.left is Node ==>  all { i in 0..|elts(n.left)| | elts(n.left)[i] < n.data }) &&
-	// Data in nodes reachable from right must be above this
-	(n.right is Node ==> all { i in 0..|elts(n.right)| | elts(n.right)[i] > n.data })
+type Node is { int data, Tree left, Tree right }
+// Data in nodes reachable from left must be below this
+where left is Node ==>  all { i in 0..|elts(left)| | elts(left)[i] < data }
+// Data in nodes reachable from right must be above this
+where right is Node ==> all { i in 0..|elts(right)| | elts(right)[i] > data }
 
 // Construct a given tree
 function Node(int data, Tree left, Tree right) -> Node

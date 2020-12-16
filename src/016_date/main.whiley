@@ -2,21 +2,21 @@ import std::array
 import std::ascii
 import std::io
 
-int JAN = 1
-int FEB = 2
-int MAR = 3
-int APR = 4
-int MAY = 5
-int JUN = 6
-int JUL = 7
-int AUG = 8
-int SEP = 9
-int OCT = 10
-int NOV = 11
-int DEC = 12
+final month JAN = 1
+final month FEB = 2
+final month MAR = 3
+final month APR = 4
+final month MAY = 5
+final month JUN = 6
+final month JUL = 7
+final month AUG = 8
+final month SEP = 9
+final month OCT = 10
+final month NOV = 11
+final month DEC = 12
 
 type day is (int d) where 1 <= d && d <= 31
-type month is (int x) where JAN <= x && x <= DEC
+type month is (int x) where 1 <= x && x <= 12
 
 // =================================================
 // Date

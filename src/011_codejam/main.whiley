@@ -1,5 +1,5 @@
 import std::ascii
-import std::filesystem
+import std::filesystem with rwMode
 import nat from std::integer
 import std::io
 import std::math
@@ -22,7 +22,7 @@ function parseJobs(nat pos, ascii::string input) -> (Job[] jobs, nat npos):
     int|null nitems
     //
     pos = parser::skipWhiteSpace(pos,input)
-    nitems,pos = parser::parseInt(pos,input)
+    (nitems,pos) = parser::parseInt(pos,input)
     if nitems is nat:
         return parseNumJobs(nitems,pos,input)
     else:
@@ -38,7 +38,7 @@ function parseNumJobs(nat nitems, nat pos, ascii::string input) -> (Job[] jobs, 
         pos = parser::skipWhiteSpace(pos,input)
         bool flag = (pos < |input| && input[pos] == 'O')
         pos = parser::skipWhiteSpace(pos+1,input)
-        target,pos = parser::parseInt(pos,input)
+        (target,pos) = parser::parseInt(pos,input)
         if target is nat:
             js[i] = {button:target, orange: flag}
         i = i + 1
@@ -70,21 +70,21 @@ function processJobs(Job[] jobs) -> nat:
     int Bpos = 1    // current blue position 
     int Osaved = 0  // spare time orange has saved
     int Bsaved = 0  // spare time blue has saved
-    int time = 0    // total time accumulated thus far
+    nat time = 0    // total time accumulated thus far
     // now, do the work!
     nat i = 0
     while i < |jobs| where time >= 0:
         Job job = jobs[i]
         if job.orange:
-            nat diff = math::abs(job.button - Opos)
-            nat timediff = math::max(0, diff - Osaved) + 1
+            nat diff = (nat) math::abs(job.button - Opos)
+            nat timediff = (nat) math::max(0, diff - Osaved) + 1
             time = time + timediff
             Bsaved = Bsaved + timediff
             Osaved = 0
             Opos = job.button
         else:
-            nat diff = math::abs(job.button - Bpos)
-            nat timediff = math::max(0, diff - Bsaved) + 1
+            nat diff = (nat) math::abs(job.button - Bpos)
+            nat timediff = (nat) math::max(0, diff - Bsaved) + 1
             time = time + timediff
             Osaved = Osaved + timediff
             Bsaved = 0
@@ -97,18 +97,16 @@ method main(ascii::string[] args):
     if |args| == 0:
         io::println("input file required!")
     else:
-        int pos
-        int|null ntests
         // first, read the input file    
-        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        filesystem::File file = filesystem::open(args[0],(rwMode) filesystem::READONLY)
         ascii::string input = ascii::from_bytes(file.read_all())
-        ntests,pos = parser::parseInt(0,input)
+        (int|null ntests,nat pos) = parser::parseInt(0,input)
         //
         if ntests is int:
             int c = 1
             Job[] jobs
             while c <= ntests where pos >= 0:
-                jobs,pos = parseJobs(pos,input)
+                (jobs,pos) = parseJobs(pos,input)
                 pos = parser::skipWhiteSpace(pos,input)
                 int time = processJobs(jobs)
                 io::print("Case #")

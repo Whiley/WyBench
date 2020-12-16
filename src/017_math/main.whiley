@@ -66,9 +66,9 @@ ensures r == a || r == b:
  * (implementation 1)
  */
 function sum_1(nat[] items) -> nat:
-    int r = 0
+    nat r = 0
     nat i = 0
-    while i < |items| where r >= 0:
+    while i < |items|:
         r = r + items[i]
         i = i + 1
     return r
@@ -129,11 +129,12 @@ method main(ascii::string[] args):
     // test inc/dec 
     nat i = 0
     while i < |items|:
-        if i >= 0 && items[i] is pos:
+        int ith = items[i]
+        if i >= 0 && ith is pos:
             io::print("INC(DEC(")
             io::print(items[i])
             io::print(")) = ")
-            io::println(inc(dec(items[i])))
+            io::println(inc(dec(ith)))
         i = i + 1
     // test abs
     i = 0
@@ -171,23 +172,23 @@ method main(ascii::string[] args):
         i = i + 1
     
     // test sum_1
-    items = [90,4,324,23,12,93,73,56872]
+    nat[] nat_items = [90,4,324,23,12,93,73,56872]
     io::print("SUM_1(")
-    io::print(to_string(items))
+    io::print(to_string(nat_items))
     io::print(") = ")
-    io::println(sum_1(items))
+    io::println(sum_1(nat_items))
     // test sum_2
     io::print("SUM_2(")
-    io::print(to_string(items))
+    io::print(to_string(nat_items))
     io::print(") = ")
-    io::println(sum_2(items))
+    io::println(sum_2(nat_items))
     // test sum_3
     io::print("SUM_3(")
-    io::print(to_string(items))
+    io::print(to_string(nat_items))
     io::print(") = ")
-    io::println(sum_3(items))
+    io::println(sum_3(nat_items))
     // test sum_4
     io::print("SUM_4(")
-    io::print(to_string(items))
+    io::print(to_string(nat_items))
     io::print(") = ")
-    io::println(sum_4(items))
+    io::println(sum_4(nat_items))

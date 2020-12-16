@@ -1,7 +1,7 @@
 import string from std::ascii
 import char from std::ascii
 import std::ascii
-import std::filesystem
+import std::filesystem with rwMode
 import std::io
 
 import nat from std::integer
@@ -55,16 +55,13 @@ public method main(string[] args):
     if |args| == 0:
         io::println("usage: regex <input-file>")
     else:
-        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        filesystem::File file = filesystem::open(args[0], (rwMode) filesystem::READONLY)
         string input = ascii::from_bytes(file.read_all())
-        int[][] data = parser::parseStrings(input)
+        string[] data = parser::parseStrings(input)
         int i = 0
         int nmatches = 0
         int total = 0
         while (i+1) < |data| where i >= 0:
-            // FIXME: Needed to verify
-            assume data[i] is string
-            assume data[i+1] is string
             //
             string text = data[i]
             string regex = data[i+1]

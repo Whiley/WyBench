@@ -2,12 +2,8 @@ import std::array
 import std::ascii
 import std::io
 import std::math
-import Vector from std::vector
-import push from std::vector
-import pop from std::vector
-import top from std::vector
-import size from std::vector
-import std::filesystem
+import Vector,push,pop,top,size from std::collections::vector
+import std::filesystem with rwMode
 
 import wybench::parser
 
@@ -67,8 +63,8 @@ function parseDigraph(nat[] input) -> Digraph:
     int i = 0
     //
     while (i+1) < |input|:
-        int from = input[i]
-        int to = input[i + 1]
+        nat from = input[i]
+        nat to = input[i + 1]
         graph = addEdge(graph,from,to)
         i = i + 2
     //        
@@ -103,7 +99,7 @@ function State(Digraph g) -> State:
         visited: [false; |g|],
         inComponent: [false; |g|],
         rindex: [0; |g|],    
-        stack: Vector<int>(),
+        stack: Vector<nat>(),
         index: 0,
         cindex: 0
     }
@@ -165,7 +161,7 @@ method main(ascii::string[] args):
     if |args| == 0:
         io::println("usage: average <file>")
     else:
-        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        filesystem::File file = filesystem::open(args[0], (rwMode) filesystem::READONLY)
         ascii::string input = ascii::from_bytes(file.read_all())
         int[][]|null data = parser::parseIntLines(input)
         if data is nat[][]:

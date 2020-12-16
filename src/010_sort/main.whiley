@@ -1,7 +1,7 @@
 import std::ascii
 import std::array
 import std::io
-import std::filesystem
+import std::filesystem with rwMode
 
 import wybench::parser
 
@@ -14,9 +14,8 @@ type sortedList is (int[] xs) where sorted(xs,0,|xs|)
  * Sort a given list of items into ascending order, producing a sorted
  * list.
  */
-function sort(int[] items, int start, int end) -> (int[] rs)
-requires 0 <= start && start <= end && end <= |items|
-ensures sorted(rs,start,end):
+function sort(int[] items, int start, int end) -> (sortedList rs)
+requires 0 <= start && start <= end && end <= |items|:
     //
     if (start+1) < end:
         int pivot = (end + start) / 2
@@ -41,7 +40,8 @@ ensures sorted(rs,start,end):
             items[i] = rhs[r] 
             i=i+1 
             r=r+1
-    return items
+    //
+    return (sortedList) items
 
 /**
  * Perform a classical binary search on a sorted list to determine the
@@ -84,18 +84,18 @@ method main(ascii::string[] args):
         io::println("usage: sort <file>")
     else:
         // first, read data
-        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        filesystem::File file = filesystem::open(args[0], (rwMode) filesystem::READONLY)
         ascii::string input = ascii::from_bytes(file.read_all())
         int[]|null data = parser::parseInts(input)
         // second, sort data
         if data is int[] && |data| > 0:
-            data = sort(data,0,|data|)
+            sortedList sorted_data = sort(data,0,|data|)
             // third, print output
             io::print("SORTED: ") 
-            io::println(ascii::to_string(data))
+            io::println(ascii::to_string(sorted_data))
             int i = 0
             while i < |searchTerms|:
-                lookFor(data,i)
+                lookFor(sorted_data,i)
                 i = i + 1
         else:
             io::println("Error parsing input")

@@ -1,5 +1,5 @@
 import std::ascii
-import std::filesystem
+import std::filesystem with rwMode
 import std::io
 
 import wybench::parser
@@ -30,7 +30,7 @@ method main(ascii::string[] args):
         io::println("usage: average <file>")
     else:
         // first, read the input data
-        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
+        filesystem::File file = filesystem::open(args[0],(rwMode) filesystem::READONLY)
         ascii::string input = ascii::from_bytes(file.read_all())
         int[]|null data = parser::parseInts(input)
         // second, run the benchmark

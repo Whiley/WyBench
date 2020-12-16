@@ -129,7 +129,8 @@ public method main(ascii::string[] args):
         if isFull(buf):
             io::println("BUFFER FULL")
             break
-        buf = write(buf,ITEMS[i])
+        // FIXME: following cast is ugly
+        buf = write((NonFullBuffer) buf,ITEMS[i])
         io::print("WROTE: ")
         io::print(ITEMS[i])
         io::print(", ")
@@ -150,7 +151,8 @@ public method main(ascii::string[] args):
         if isEmpty(buf):
             io::println("BUFFER EMPTY")
             break
-        buf,item = read(buf)
+        // FIXME: following cast is ugly            
+        (buf,item) = read((NonEmptyBuffer) buf)
         if item == ITEMS[i]:
             io::print("READ: ")
             io::print(item) 

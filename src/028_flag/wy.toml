@@ -3,7 +3,7 @@ name="028_flag"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley"]
+platforms=["whiley","boogie2"]
 
 [build.whiley]
 source="/"

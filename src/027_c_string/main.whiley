@@ -21,7 +21,7 @@ type C_string is (ASCII_char[] str)
 where |str| > 0 && some { i in 0 .. |str| | str[i] == NULL }
 
 // Determine the length of a C string.
-public function strlen(C_string str) -> (int r)
+function strlen(C_string str) -> (int r)
 ensures r >= 0:
     //
     nat i = 0
@@ -35,7 +35,7 @@ ensures r >= 0:
     return i
 
 // Copy string from src location into destination
-public method strcpy(&(ASCII_char[]) dest, C_string src)
+method strcpy(&(ASCII_char[]) dest, C_string src)
 requires |src| <= |(*dest)|:
     //
     nat i=0

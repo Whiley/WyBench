@@ -120,7 +120,7 @@ function findMaximalMatching(Graph g) -> (null|Matching r):
         // Every vertex below i is already matched
         where all { j in 0..i | m.matching[j] != UNMATCHED }:
             bool[] visited = [false; g.N1]
-            m,visited,matched = find(m,visited,i)
+            (m,visited,matched) = find(m,visited,i)
             if !matched:
                 // no match for this vertex possible
                 return null
@@ -167,7 +167,7 @@ ensures matched ==> r_m.matching[from] != UNMATCHED:
             else if !visited[tor]:
                 // to already matched; hence, try to find augmenting
                 // path so it can be unmatched.
-                m,visited,matched = find(m,visited,tor)
+                (m,visited,matched) = find(m,visited,tor)
                 if matched:
                     return match(m,e), visited, true
         i = i + 1
