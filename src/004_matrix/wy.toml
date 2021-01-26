@@ -3,7 +3,7 @@ name="004_matrix"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley","boogie2"]
+platforms=["whiley","boogie"]
 
 [build.whiley]
 source="/"
