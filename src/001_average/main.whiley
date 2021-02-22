@@ -22,22 +22,30 @@ requires |data| > 0:
     return sum / |data|
 
 // ========================================================
-// Main
+// Tests
 // ========================================================
 
-method main(ascii::string[] args):
-    if |args| == 0:
-        io::println("usage: average <file>")
-    else:
-        // first, read the input data
-        filesystem::File file = filesystem::open(args[0],(rwMode) filesystem::READONLY)
-        ascii::string input = ascii::from_bytes(file.read_all())
-        int[]|null data = parser::parseInts(input)
-        // second, run the benchmark
-        if data is null:
-            io::println("error parsing input")
-        else if |data| == 0:
-            io::println("no data provided!")
-        else:
-            int avg = average(data)
-            io::println(avg)
+method test_01():
+    assume average([0]) == 0
+
+method test_02():
+    assume average([0,1]) == 0
+
+method test_03():
+    assume average([0,1,2]) == 1
+
+method test_04():
+    assume average([0,1,2,3]) == 1
+
+method test_05():
+    assume average([0,1,2,3,4]) == 2
+
+method test_06():
+    assume average([0,1,2,2,2]) == 1
+
+method test_07():
+    assume average([3,3,2,2,2]) == 2
+
+method test_08():
+    assume average([4,5,3,5,2,4,6,7,8]) == 4
+
