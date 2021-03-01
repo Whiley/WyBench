@@ -1,11 +1,7 @@
 import std::array
 import std::ascii
-import std::io
 import std::math
 import Vector,push,pop,top,size from std::collections::vector
-import std::filesystem with rwMode
-
-import wybench::parser
 
 type nat is (int x) where x >= 0
 
@@ -15,6 +11,8 @@ type nat is (int x) where x >= 0
 
 type Digraph is (nat[][] edges)
     where all { i in 0..|edges|, j in 0..|edges[i]| | edges[i][j] < |edges| }
+
+type Edge is { nat from, nat to }
 
 Digraph EMPTY_DIGRAPH = [[0;0];0]
 
@@ -44,31 +42,20 @@ ensures |r| > size || (size >= |g| && |r| == size):
         return g
 
 // ============================================
-// Parser
+// Constructors
 // ============================================
 
-function buildDigraphs(nat[][] input) -> Digraph[]:
-    //
-    Digraph[] graphs = [EMPTY_DIGRAPH; |input|]
-    int i = 0
-    while i < |input|:
-        graphs[i] = parseDigraph(input[i])
-        i = i + 1
-    //
-    return graphs
-
-function parseDigraph(nat[] input) -> Digraph:
+function Digraph(Edge[] input) -> Digraph:
     //
     Digraph graph = EMPTY_DIGRAPH
-    int i = 0
-    //
-    while (i+1) < |input|:
-        nat from = input[i]
-        nat to = input[i + 1]
-        graph = addEdge(graph,from,to)
-        i = i + 2
+    for i in 0..|input|:
+        Edge e = input[i]
+        graph = addEdge(graph,e.from,e.to)
     //        
     return graph
+
+function Edge(nat from, nat to) -> Edge:
+    return {from:from,to:to}
 
 // ============================================
 // PEA_FIND_SCC1
@@ -157,41 +144,9 @@ requires v < |s.graph|:
     // all done
     return s
 
-method main(ascii::string[] args):
-    if |args| == 0:
-        io::println("usage: average <file>")
-    else:
-        filesystem::File file = filesystem::open(args[0], (rwMode) filesystem::READONLY)
-        ascii::string input = ascii::from_bytes(file.read_all())
-        int[][]|null data = parser::parseIntLines(input)
-        if data is nat[][]:
-            Digraph[] graphs = buildDigraphs(data)
-            // third, print output
-            int count = 0
-            int i = 0 
-            while i < |graphs|:
-                Digraph graph = graphs[i]
-                io::print("=== Graph #")
-                io::print(ascii::to_string(i))
-                io::println(" ===")
-                i = i + 1
-                int[][] sccs = find_components(graph)
-                int j = 0 
-                while j < |sccs|:
-                    io::print("{")
-                    bool firstTime=true
-                    int[] scc = sccs[j]
-                    int k = 0
-                    while k < |scc|:
-                        if !firstTime:
-                            io::print(",")
-                        firstTime=false
-                        io::print(scc[k])
-                        k = k + 1
-                    io::print("}")
-                    j = j + 1
-                //        
-                io::println("")
-        else:
-            io::println("error parsing input")
+// ============================================
+// Tests
+// ============================================
 
+public method test_01():
+    assume find_components(Digraph([Edge(0,1)])) == [[0],[1]]
