@@ -1,20 +1,19 @@
 import std::ascii
 import std::array
-import std::io
-import std::filesystem with rwMode
-
-import wybench::parser
 
 property sorted(int[] xs, int start, int end) 
 where start >= end || all { i in start .. (end-1) | xs[i] <= xs[i+1] }
 
-type sortedList is (int[] xs) where sorted(xs,0,|xs|)
+type sorted is (int[] xs) where sorted(xs,0,|xs|)
 
 /**
  * Sort a given list of items into ascending order, producing a sorted
  * list.
  */
-function sort(int[] items, int start, int end) -> (sortedList rs)
+function sort(int[] items) -> (sorted rs):
+    return sort(items,0,|items|)
+
+function sort(int[] items, int start, int end) -> (sorted rs)
 requires 0 <= start && start <= end && end <= |items|:
     //
     if (start+1) < end:
@@ -41,13 +40,13 @@ requires 0 <= start && start <= end && end <= |items|:
             i=i+1 
             r=r+1
     //
-    return (sortedList) items
+    return (sorted) items
 
 /**
  * Perform a classical binary search on a sorted list to determine the
  * index of a given item (if it is contained) or null (otherwise).
  */
-function search(sortedList list, int item) -> null|int:
+function search(sorted list, int item) -> null|int:
     int lower = 0
     int upper = |list| // 1 past last element considered
     while lower < upper:
@@ -62,41 +61,30 @@ function search(sortedList list, int item) -> null|int:
     // failed to find it
     return null
 
-method lookFor(sortedList list, int item):
-    int|null index = search(list,item)
-    if index is int:
-        io::print("FOUND: ")
-        io::print(item)
-        io::print(" in ")
-        io::print(ascii::to_string(list))
-        io::print(" @ ")
-        io::println(index)
-    else:
-        io::print("NOT FOUND: ")
-        io::print(item)
-        io::print(" in ")
-        io::print(ascii::to_string(list))
+// ============================================
+// Tests
+// ============================================
 
-int[] searchTerms = [1,2,3,4,5,6,7,8,9]
+public method test_01():
+    sorted items = sort([])
+    assume items == []
+    assume search(items,-1) == null
+    assume search(items,0) == null
+    assume search(items,1) == null
+    assume search(items,2) == null
 
-method main(ascii::string[] args):
-    if |args| == 0:
-        io::println("usage: sort <file>")
-    else:
-        // first, read data
-        filesystem::File file = filesystem::open(args[0], (rwMode) filesystem::READONLY)
-        ascii::string input = ascii::from_bytes(file.read_all())
-        int[]|null data = parser::parseInts(input)
-        // second, sort data
-        if data is int[] && |data| > 0:
-            sortedList sorted_data = sort(data,0,|data|)
-            // third, print output
-            io::print("SORTED: ") 
-            io::println(ascii::to_string(sorted_data))
-            int i = 0
-            while i < |searchTerms|:
-                lookFor(sorted_data,i)
-                i = i + 1
-        else:
-            io::println("Error parsing input")
+public method test_02():
+    sorted items = sort([0])
+    assume items == [0]
+    assume search(items,-1) == null
+    assume search(items,0) == 0
+    assume search(items,1) == null
+    assume search(items,2) == null
 
+public method test_03():
+    sorted items = sort([1,0])
+    assume items == [0,1]
+    assume search(items,-1) == null
+    assume search(items,0) == 0
+    assume search(items,1) == 1
+    assume search(items,2) == null
