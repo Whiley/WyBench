@@ -4,9 +4,8 @@
  * See: http://en.wikipedia.org/wiki/LZ77_and_LZ78
  */
 import std::ascii
-import std::filesystem with rwMode
+import std::array
 import std::integer
-import std::io
 import std::math
 import nat from std::integer
 import u8 from std::integer
@@ -44,7 +43,7 @@ function compress(byte[] data) -> byte[]:
         (u8 offset, u8 len) = findLongestMatch(data,pos)
         output = write_u8(output,offset)
         if offset == 0:
-            output = append(output,data[pos])
+            output = array::append(output,data[pos])
             pos = pos + 1
         else:
             output = write_u8(output,len)
@@ -134,7 +133,7 @@ function decompress(byte[] data) -> byte[]:
         u8 offset = integer::to_uint(header)
         pos = pos + 2 
         if offset == 0:
-            output = append(output,item)
+            output = array::append(output,item)
         else:
             u8 len = integer::to_uint(item)
             // NOTE: start >= 0 not guaranteed.  If negative, we have
@@ -145,53 +144,35 @@ function decompress(byte[] data) -> byte[]:
             // allowing implementation to proceed regardless.
             while i >= 0 && i < (start+len) where i < |output|:
                 item = output[i]
-                output = append(output,item)
+                output = array::append(output,item)
                 i = i + 1     
     // all done!
     return output
 
 function write_u8(byte[] bytes, u8 u1) -> byte[]:
     //
-    return append(bytes,integer::to_unsigned_byte(u1))
+    return array::append(bytes,integer::to_unsigned_byte(u1))
 
-method main(ascii::string[] args):
-    if(|args| == 0):
-        io::print("usage: lz77 file")
-    else:
-        filesystem::File file = filesystem::open(args[0],(rwMode) filesystem::READONLY)
-        byte[] data = file.read_all()
-        io::print("READ:         ")
-        io::print(|data|)
-        io::println(" bytes")
-        data = compress(data)
-        io::print("COMPRESSED:   ")
-        io::print(|data|)
-        io::println(" bytes")
-        data = decompress(data)
-        io::print("UNCOMPRESSED:   ")
-        io::print(|data|)
-        io::println(" bytes")
-        io::println("==================================")
-        io::print(ascii::from_bytes(data))
+// ============================================
+// Tests
+// ============================================
 
-// NOTE: This is temporary and should be removed.  The reason is it
-// required is that Whiley dropped support for the append operator
-// "++" and, whilst append is implemented in std::array, this is only
-// for int[] (i.e. as there are no generics at this time).
-public function append(byte[] items, byte item) -> (byte[] ritems)
-    ensures |ritems| == |items| + 1:
-    //
-    byte[] nitems = [0b; |items| + 1]
-    int i = 0
-    //
-    while i < |items|
-        where i >= 0 && i <= |items|
-        where |nitems| == |items| + 1:
-        //
-        nitems[i] = items[i]
-        i = i + 1
-    //
-    nitems[i] = item    
-    //
-    return nitems
+method test_01():
+    byte[] c = compress([0b0,0b0])
+    assume c == [0b0,0b0,0b1,0b1]
+    assume decompress(c) == [0b0,0b0]
 
+method test_02():
+    byte[] c = compress([0b0,0b0,0b0])
+    assume c == [0b0,0b0,0b1,0b10]    
+    assume decompress(c) == [0b0,0b0,0b0]
+
+method test_03():
+    byte[] c = compress([0b0,0b1,0b0,0b0])
+    assume c == [0b0,0b0, 0b0,0b1, 0b10,0b1, 0b11,0b1]    
+    assume decompress(c) == [0b0,0b1,0b0,0b0]
+
+method test_04():
+    byte[] c = compress([0b0,0b1,0b0,0b0])
+    assume c == [0b0,0b0, 0b0,0b1, 0b10,0b1, 0b11,0b1]    
+    assume decompress(c) == [0b0,0b1,0b0,0b0]

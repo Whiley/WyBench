@@ -9,7 +9,7 @@ platforms=["whiley","boogie"]
 source="/"
 
 [build.boogie]
-timeout=60
+timeout=120
 
 [check]
 min=0

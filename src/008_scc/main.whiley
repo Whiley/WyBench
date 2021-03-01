@@ -111,8 +111,9 @@ function find_components(Digraph g) -> int[][]:
     //
     return components
 
-function visit(nat v, State s) -> State
-requires v < |s.graph|:
+function visit(nat v, State s) -> (State ns)
+requires v < |s.graph|
+ensures ns.graph == s.graph:
     bool root = true
     s.visited[v] = true
     s.rindex[v] = s.index
@@ -149,4 +150,49 @@ requires v < |s.graph|:
 // ============================================
 
 public method test_01():
-    assume find_components(Digraph([Edge(0,1)])) == [[0],[1]]
+    Digraph g = Digraph([Edge(0,1)])
+    assume find_components(g) == [[1],[0]]
+
+public method test_02():
+    Digraph g = Digraph([Edge(0,1),Edge(1,0)])
+    assume find_components(g) == [[0,1]]
+
+public method test_03():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,3)])
+    assume find_components(g) == [[3],[2],[1],[0]]
+
+public method test_04():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,1)])
+    assume find_components(g) == [[1,2],[0]]
+
+public method test_05():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,0)])
+    assume find_components(g) == [[0,1,2]]
+
+public method test_06():
+    Digraph g = Digraph([Edge(0,1),Edge(0,2),Edge(1,0)])
+    assume find_components(g) == [[2],[0,1]]
+
+public method test_07():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,3),Edge(3,4)])
+    assume find_components(g) == [[4],[3],[2],[1],[0]]
+
+public method test_08():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,3),Edge(3,2)])
+    assume find_components(g) == [[2,3],[1],[0]]
+
+public method test_09():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,3),Edge(3,1)])
+    assume find_components(g) == [[1,2,3],[0]]
+
+public method test_10():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,3),Edge(3,0)])
+    assume find_components(g) == [[0,1,2,3]]
+
+public method test_11():
+    Digraph g = Digraph([Edge(0,1),Edge(0,2),Edge(1,3),Edge(3,0)])
+    assume find_components(g) == [[2],[0,1,3]]
+
+public method test_12():
+    Digraph g = Digraph([Edge(0,1),Edge(0,2),Edge(1,0),Edge(2,0)])
+    assume find_components(g) == [[0,1,2]]
