@@ -6,6 +6,9 @@ import uint from std::integer
 public property sorted(int[] xs, int start, int end) 
 where start >= end || all { i in start .. (end-1) | xs[i] <= xs[i+1] }
 
+public property below(int[] xs, int start, int end, int item)
+where all { i in start .. end | xs[i] <= item }
+
 // ===================================================================
 // Merge sort
 // ===================================================================
@@ -94,7 +97,9 @@ requires start <= pivot && pivot <= end && end <= |items|
 requires sorted(items,start,pivot) && sorted(items,pivot,end)
 // Everything in the final partiaion is sorted
 ensures sorted(nitems,start,end)
-// Everything outside region untouched
+// Returned array has matching size
+ensures |items| == |nitems|
+// Everything else untouched
 ensures array::equals(items,nitems,0,start) && array::equals(items,nitems,end,|items|):
     // TODO: in-place merge should be preferred!
     int[] rs = items
@@ -105,10 +110,15 @@ ensures array::equals(items,nitems,0,start) && array::equals(items,nitems,end,|i
     while l < pivot && r < end
     // Sizes unchanged
     where |rs| == |items| && start <= l && pivot <= r
+    //
+    where l <= pivot && r <= end
     // Parts outside parition unchanged
     where array::equals(items,rs,0,start) && array::equals(items,rs,end,|items|)
     // Balancing between variables
-    where (i-start) == (l-start) + (r-pivot):
+    where (end - i) == (pivot - l) + (end - r)
+    // Sorting is happening!
+    where below(rs,start,i,items[l]) //&& below(rs,start,i,items[r])
+    where sorted(rs,start,i):
         if items[l] <= items[r]:
             rs[i] = items[l] 
             l = l + 1
