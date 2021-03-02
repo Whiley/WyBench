@@ -3,7 +3,7 @@ name="010_sort"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley"]
+platforms=["whiley","boogie"]
 
 [build.whiley]
 source="/"
