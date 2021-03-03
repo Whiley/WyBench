@@ -1,70 +1,25 @@
 import std::ascii
-import std::filesystem with rwMode
 import nat from std::integer
-import std::io
 import std::math
-
-import wybench::parser
 
 // ===============================================
 // Definitions
 // ===============================================
 
 type Job is { nat button, bool orange }
-// ===============================================
-// Parser
-// ===============================================
 
-Job EMPTY_JOB = { button: 0, orange: false }
 
-function parseJobs(nat pos, ascii::string input) -> (Job[] jobs, nat npos):
-    //
-    int|null nitems
-    //
-    pos = parser::skipWhiteSpace(pos,input)
-    (nitems,pos) = parser::parseInt(pos,input)
-    if nitems is nat:
-        return parseNumJobs(nitems,pos,input)
-    else:
-        return [EMPTY_JOB;0],pos
-
-function parseNumJobs(nat nitems, nat pos, ascii::string input) -> (Job[] jobs, nat npos):
-    //
-    Job[] js = [EMPTY_JOB; nitems]
-    int|null target
-    nat i = 0
-    //        
-    while i < nitems where |js| == nitems:
-        pos = parser::skipWhiteSpace(pos,input)
-        bool flag = (pos < |input| && input[pos] == 'O')
-        pos = parser::skipWhiteSpace(pos+1,input)
-        (target,pos) = parser::parseInt(pos,input)
-        if target is nat:
-            js[i] = {button:target, orange: flag}
-        i = i + 1
-    //
-    return js,pos
-    // if nitems == 0:
-    //     return ([EMPTY_JOB;0],pos)
-    // else:
-    //     pos = Parser.skipWhiteSpace(pos,input)
-    //     if pos < |input|:
-    //         int|null target, Job[] jobs
-    //         bool flag = (input[pos] == 'O')
-    //         pos = Parser.skipWhiteSpace(pos+1,input)
-    //         target,pos = Parser.parseInt(pos,input)
-    //         if target != null:
-    //             jobs,pos = parseNumJobs(nitems-1,pos,input)
-    //             jobs = [{button: target, orange: flag}] ++ jobs
-    //             return jobs,pos        
-    //     // default
-    //     return ([EMPTY_JOB;0],pos)
+function O(nat b) -> Job:
+    return { button: b, orange:true }
+    
+function B(nat b) -> Job:
+    return { button: b, orange:false }
 
 // ===============================================
 // Main Computation
 // ===============================================
 
-function processJobs(Job[] jobs) -> nat:
+function process(Job[] jobs) -> nat:
     //
     int Opos = 1    // current orange position
     int Bpos = 1    // current blue position 
@@ -92,25 +47,33 @@ function processJobs(Job[] jobs) -> nat:
         i = i + 1
     // finally, return total time accumulated
     return time
-            
-method main(ascii::string[] args):
-    if |args| == 0:
-        io::println("input file required!")
-    else:
-        // first, read the input file    
-        filesystem::File file = filesystem::open(args[0],(rwMode) filesystem::READONLY)
-        ascii::string input = ascii::from_bytes(file.read_all())
-        (int|null ntests,nat pos) = parser::parseInt(0,input)
-        //
-        if ntests is int:
-            int c = 1
-            Job[] jobs
-            while c <= ntests where pos >= 0:
-                (jobs,pos) = parseJobs(pos,input)
-                pos = parser::skipWhiteSpace(pos,input)
-                int time = processJobs(jobs)
-                io::print("Case #")
-                io::print(c)
-                io::print(": ")
-                io::println(time)
-                c = c + 1
+
+// ===============================================
+// Tests
+// ===============================================
+
+public method test_01():
+    Job[] jobs = [ O(1) ]
+    assume process(jobs) == 1
+
+public method test_02():
+    Job[] jobs = [ O(3) ]
+    debug ascii::to_string(process(jobs))
+    assume process(jobs) == 3
+
+public method test_03():
+    Job[] jobs = [ O(3),B(2) ]
+    assume process(jobs) == 4
+
+public method test_04():
+    Job[] jobs = [ O(3),B(2),O(1) ]
+    assume process(jobs) == 6
+
+public method test_05():
+    Job[] jobs = [ O(2),B(1),B(2),O(4) ]
+    assume process(jobs) == 6
+
+public method test_06():
+    Job[] jobs = [ O(2),B(1),B(2),O(2) ]
+    assume process(jobs) == 6
+
