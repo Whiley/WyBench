@@ -1,7 +1,3 @@
-import std::array
-import std::ascii
-import std::io
-
 // the British interpretation of traffic lights!
 type TrafficLights is ({
     bool red,
@@ -12,12 +8,25 @@ type TrafficLights is ({
            (t.red && !t.amber && !t.green) ||
            (t.red &&  t.amber && !t.green)
 
+TrafficLights RED = { red: true, amber: false, green: false }
+TrafficLights RED_AMBER = { red: true, amber: true, green: false }
+TrafficLights AMBER = { red: false, amber: true, green: false }
+TrafficLights GREEN = { red: false, amber: false, green: true }
+
+// =================================================
+// Constructor
+// =================================================
+
 function TrafficLights() -> TrafficLights:
     return {
         red: true,
         amber: false,
         green: false
     }
+
+// =================================================
+// Mutator
+// =================================================
 
 function change(TrafficLights ls) -> TrafficLights:
     if ls.green:
@@ -34,31 +43,50 @@ function change(TrafficLights ls) -> TrafficLights:
         // -> !red && amber && !green
         return { red: true, amber: false, green: false }
 
-function toString(TrafficLights ls) -> ascii::string:
-    ascii::string r
-    //
-    if ls.red:
-        r = "RED "
-    else:
-        r = "    "
-    if ls.amber:
-        r = array::append(r,"AMBER ")
-    else:
-        r = array::append(r,"       ")
-    if ls.green:
-        r = array::append(r,"GREEN ")
-    else:
-        r = array::append(r,"      ")
-    return r
+// =================================================
+// Tests
+// =================================================
 
-public method main(ascii::string[] args):
+public method test_01():
     TrafficLights lights = TrafficLights()
-    io::println(toString(lights))
+    assume lights == RED
+
+public method test_02():
+    TrafficLights lights = TrafficLights()
+    // RED -> RED AMBER
     lights = change(lights)
-    io::println(toString(lights))
+    //
+    assume lights == RED_AMBER
+
+public method test_03():
+    TrafficLights lights = TrafficLights()
+    // RED -> RED AMBER
+    lights = change(lights) 
+    // RED AMBER -> GREEN
     lights = change(lights)
-    io::println(toString(lights))
+    //
+    assume lights == GREEN
+
+public method test_04():
+    TrafficLights lights = TrafficLights()
+    // RED -> RED AMBER
+    lights = change(lights) 
+    // RED AMBER -> GREEN
     lights = change(lights)
-    io::println(toString(lights))
+    // GREEN -> AMBER
+    lights = change(lights)    
+    //
+    assume lights == AMBER
+
+public method test_05():
+    TrafficLights lights = TrafficLights()
+    // RED -> RED AMBER
+    lights = change(lights) 
+    // RED AMBER -> GREEN
     lights = change(lights)
-    io::println(toString(lights))
+    // GREEN -> AMBER
+    lights = change(lights)
+    // AMBER -> RED
+    lights = change(lights)
+    //
+    assume lights == RED
