@@ -1,6 +1,5 @@
 import std::array
 import std::ascii
-import std::io
 
 // A simple fixed-size cyclic buffer supporting read and write
 // operations.
@@ -13,27 +12,26 @@ type Buffer is ({
     nat wpos
 } b) where b.rpos < |b.data| && b.wpos < |b.data|
 
+// Determine number of items in buffer
+property size(Buffer b, int c)
+where (b.rpos <= b.wpos) ==> ((b.wpos - b.rpos) == c)
+where (b.rpos > b.wpos) ==> (b.wpos + (|b.data| - b.rpos)) == c
+
 // The buffer is empty when the read and write pointers are at the
 // same position.
-type EmptyBuffer is (Buffer b) where b.rpos == b.wpos
-
-// The buffer is non-empty when the read and write pointers are at
-// different positions.
-type NonEmptyBuffer is (Buffer b) where b.rpos != b.wpos
+property empty(Buffer b) where size(b,0)
 
 // The buffer is full when the write pointer is directly before the 
 // read pointer.  The special case exists where the read pointer 
 // has "wrapped" around.
-type FullBuffer is (Buffer b) where (b.rpos == b.wpos + 1) || (b.wpos == |b.data|-1 && b.rpos == 0)
-
-// NonFullBuffer has at least one writeable space.  Invariant obtained
-// by applying DeMorgan's Theorem to the invariant for a full buffer.
-type NonFullBuffer is (Buffer b) where (b.rpos != b.wpos + 1) && (b.wpos != |b.data|-1 || b.rpos != 0)
+property full(Buffer b) where size(b,|b.data|)
 
 // Create a buffer with a given number of slots.
-function Buffer(int size) -> EmptyBuffer
+function Buffer(int size) -> (Buffer buf)
 // Cannot create buffer with zero size
-requires size > 0:
+requires size > 0
+// Buffer initially empty
+ensures empty(buf):
     //
     return {
         data: [0; size],
@@ -42,7 +40,9 @@ requires size > 0:
     }
 
 // Write an item into a buffer which is not full
-function write(NonFullBuffer buf, int item) -> (Buffer nbuf)
+function write(Buffer buf, int item) -> (Buffer nbuf)
+// Cannot write into a full buffer
+requires !full(buf)
 // Read pointer unchanged and buffer sizes match
 ensures buf.rpos == nbuf.rpos
 // Correct item written
@@ -59,7 +59,9 @@ ensures equalsExcept(buf.data,nbuf.data,buf.wpos):
     return tmp
 
 // Read an item from a buffer which is not empty
-function read(NonEmptyBuffer buf) -> (Buffer nbuf,int item)
+function read(Buffer buf) -> (Buffer nbuf,int item)
+// Cannot read from empty buffer
+requires !empty(buf)
 // Data is unchanged by this operation
 ensures buf.data == nbuf.data
 // Write pointer unchanged
@@ -74,17 +76,6 @@ ensures item == buf.data[buf.rpos]:
     tmp.rpos = (tmp.rpos + 1) % |tmp.data|
     // 
     return tmp,val
-
-function isFull(Buffer buf) -> (bool r)
-ensures buf is FullBuffer ==> r:
-    //
-    return (buf.rpos == buf.wpos + 1) || 
-            (buf.wpos == |buf.data|-1 && buf.rpos == 0)
-
-function isEmpty(Buffer buf) -> (bool r)
-ensures buf is EmptyBuffer ==> r :
-    //
-    return buf.rpos == buf.wpos
 
 // Check that two arrays are equal, except for one item.  Should be
 // deprecated by support for notation left[i:=item] == right
@@ -109,59 +100,21 @@ function toString(Buffer b) -> ascii::string:
         i = i + 1
     return array::append(r,"]")
 
-int[] ITEMS = [5,4,6,3,7,2,8,1,9,10,0]
+// ===============================================
+// Tests
+// ===============================================
 
-public method main(ascii::string[] args):
-    int i = 0
-    Buffer buf = Buffer(10)
-    //
-    io::print("INIT: ")
-    io::println(toString(buf))
-    
-    // NOTE: following loop invariant should not be necessary!  It is
-    // needed because the verifier doesn't current enforce the
-    // variables declared invariants.
-    while i < |ITEMS| 
-        where i >= 0
-        where buf.rpos >= 0 && buf.rpos < |buf.data|
-        where buf.wpos >= 0 && buf.wpos < |buf.data|:
-        //
-        if isFull(buf):
-            io::println("BUFFER FULL")
-            break
-        // FIXME: following cast is ugly
-        buf = write((NonFullBuffer) buf,ITEMS[i])
-        io::print("WROTE: ")
-        io::print(ITEMS[i])
-        io::print(", ")
-        io::println(toString(buf))
-        i = i + 1
-    //
-    int item
-    i = 0
-    //
-    // NOTE: following loop invariant should not be necessary!  It is
-    // needed because the verifier doesn't current enforce the
-    // variables declared invariants.
-    while i < |ITEMS| 
-        where i >= 0
-        where buf.rpos >= 0 && buf.rpos < |buf.data|
-        where buf.wpos >= 0 && buf.wpos < |buf.data|:
-        //
-        if isEmpty(buf):
-            io::println("BUFFER EMPTY")
-            break
-        // FIXME: following cast is ugly            
-        (buf,item) = read((NonEmptyBuffer) buf)
-        if item == ITEMS[i]:
-            io::print("READ: ")
-            io::print(item) 
-            io::print(", ")
-            io::println(toString(buf))
-        else:
-            io::print("ERROR READ: ")
-            io::print(item)
-            io::print(", expecting ")
-            io::println(ITEMS[i])
-        i = i + 1
+public method test_01():
+    int v
+    Buffer b = Buffer(5)
+    // Write an element
+    b = write(b,1)
+    // Buffer is not full
+    assert !full(b)
+    // Read out of buffer
+    (b,v) = read(b)
+    // Check element
+    assert v == 1
+    // Check buffer empty
+    assert empty(b)
     
