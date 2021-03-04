@@ -8,13 +8,15 @@ platforms=["whiley","boogie"]
 [build.whiley]
 source="/"
 
+[build.boogie]
+timeout=120
+
 [check]
 min=-1
 max=2
 length=4
 depth=1
-ignores=["main"]
 
 [dependencies]
-wybenchparser="1.0.0"
+std="0.3.1"
 

@@ -1,6 +1,5 @@
 import std::array
-import std::ascii
-import std::integer
+import uint from std::integer
 
 // Binary heap implementation.  For each node n, the key value is
 // greater-or-equal than either of its children.  Furthermore, each child
@@ -22,8 +21,8 @@ import std::integer
 //
 // Here, the children of the root node 0 are located at 1 and 2
 // respectively, whilst the children of node 1 are located at 3 and 4.
-type Heap is ({ int[] data, int length} h)
-where 0 <= h.length && h.length <= |h.data|
+type Heap is ({ int[] data, uint length} h)
+where h.length <= |h.data|
 // Items on left branch are below their parent's item
 where all { i in 0..h.length | (2*i)+1 < h.length ==> h.data[i] >= h.data[(2*i)+1] }
 // Items on right branch are below their parent's item
@@ -33,6 +32,7 @@ final Heap EMPTY_HEAP = { data:[0;0], length: 0 }
 
 // Determines whether an item is contained within the heap.
 property contains(Heap h, int item)
+// Some matching item exists in the heap
 where some { k in 0..h.length | h.data[k] == item }
 
 // Insert an element into the heap.  This is done by assigning the
@@ -63,17 +63,28 @@ ensures contains(r,item)
 // Resulting heap retains items from original
 ensures all { k in 0..heap.length | contains(r,heap.data[k]) }:
     //
+    // FIXME: it would be nice to do this inplace properly.  This means
+    // using data as a ghost.
+    //
     int[] data = heap.data
     // Ensure sufficient capacity
     if |data| == heap.length:
         // Double size whilst accounting for empty array
-        data= array::resize(heap.data,(2*heap.length)+1,0)
+        data = array::resize(heap.data,(2*heap.length)+1,0)
     //
     int i = heap.length
     int parent = (i-1)/2
+    int n = |data| // ghost
     // Swap parents down to make space
-    while i > 0 && data[parent] < item:
-        // perform a swap
+    while i > 0 && data[parent] < item
+    where 0 <= i && i <= heap.length
+    where parent < heap.length
+    where (i > 0) ==> (parent >= 0)
+    // size of data preserved
+    where n == |data|
+    // items in heap are preserved
+    where all { k in 0..heap.length+1 | (k == i) || contains(heap,data[k]) }:
+        // perform a shift
         data[i] = data[parent]
         // update indices
         i = parent
@@ -120,7 +131,7 @@ ensures (heap.length - 1) == r.length
 ensures all { k in 1..heap.length | contains(r,heap.data[k]) }:
     //
     int[] data = heap.data
-    int length = heap.length - 1
+    uint length = heap.length - 1
     // Move last element to root
     data[0] = data[length]
     // Percolate last element down to restore invariant    
@@ -148,21 +159,15 @@ ensures all { k in 1..heap.length | contains(r,heap.data[k]) }:
     //
     return { length: length, data: data }
 
-method main(ascii::string[] args):
-    // Start with empty heap
+// ===================================================
+// Tests
+// ===================================================
+
+public method test_01():
     Heap h = EMPTY_HEAP
-    //
     h = push(h,5)
-    h = push(h,10)
-    h = push(h,0)
-    h = push(h,1)
-    //
-    assume peek(h) == 10
-    h = pop(h)
     assume peek(h) == 5
-    h = pop(h)
-    assume peek(h) == 1
-    h = pop(h)
-    assume peek(h) == 0
-    //
     assume h.length == 1
+    h = pop(h)
+    assume h.length == 0
+    
