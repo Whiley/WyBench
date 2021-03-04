@@ -16,4 +16,4 @@ depth=2
 ignores=["main"]
 
 [dependencies]
-wybenchparser="1.0.0"
+std="0.3.1"
