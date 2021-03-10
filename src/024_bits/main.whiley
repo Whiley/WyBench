@@ -5,7 +5,7 @@
 
 import std::array
 import std::ascii
-import std::io
+import uint from std::integer
 
 /**
  * Convert a bit sequence into a integer in the usual manner.  
@@ -17,24 +17,29 @@ import std::io
  * 100 ==> 4
  * ...
  *
- * Note that we're assuming unsigned sequences here only.
+ * Note that we're assuming unsigned sequences here only, and also
+ * that bit 0 occupies index 0.
  */
+function value(bool[] bits) -> (uint result):
+    //
+    return value(0,1,bits)
 
-function value(bool[] bits) -> (int result)
-// We are only consider unsigned integers
-ensures result >= 0:
-    //
-    int i = 0
-    int r = 0
-    int acc = 1
-    //
-    while i < |bits| where i >= 0 && r >= 0 && acc >= 1:
-        if bits[i]:
-            r = r + acc
-        i = i + 1
-        acc = acc + acc
-    //
-    return r
+function value(uint k, uint pow, bool[] bits) -> (uint result):
+    if k >= |bits|:
+        return 0
+    else if(bits[k]):
+        return pow + value(k+1,pow*2,bits)
+    else:
+        return value(k+1,pow*2,bits)
+
+/**
+ * Return n^k
+ */
+function pow(uint n, uint k) -> (uint r):
+    if k == 0:
+        return 1
+    else:
+        return n * pow(n,k-1)
 
 /**
  * Bitwise increment.  This changes the first false 
@@ -48,52 +53,61 @@ ensures result >= 0:
  *
  * (writing most significant bit first)
  */
-function increment(bool[] bits) -> (bool[] result)
-// This is the key property for this benchmark
-ensures value(result) == value(bits) + 1:
+function increment(bool[] bits) -> (bool[] result, bool carry)
+// Result has same dimension
+ensures |result| == |bits|
+// If no carry, result incremented in place
+ensures !carry ==> (value(result) == value(bits) + 1)
+// Otherwise, result requires carry
+ensures carry ==> (value(result) + pow(2,|bits|) == value(bits) + 1):
     //
-    int i = 0
+    uint i = 0
     //
-    while i < |bits| && bits[i] == true 
-       where i >= 0:
+    while i < |bits| && bits[i] == true:
        //
        bits[i] = false
        i = i + 1
     //
     if i < |bits|:
         bits[i] = true
-        return bits
+        return (bits,false)
     else:
-        return array::append(bits,true)
+        return (bits,true)
 
-/**
- * Print out a sequence of bits in the usual 
- * right-to-left format.
- */
-function toString(bool[] bits, int n) -> ascii::string:
-    int i = 0
-    ascii::string r = ""
-    //
-    while i < n where i >= 0:
-       if i < |bits| && bits[i]:
-           r = array::append((ascii::char) '1',r)
-       else:
-           r = array::append((ascii::char) '0',r)
-       i = i + 1
-    //
-    return r
+// ============================================================
+// Tests (value)
+// ============================================================
 
-/**
- * Print and enumerate first 15 bit patterns
- */
-method main(ascii::string[] args):
-    bool[] bits = [ false ]
-    int i = 0
-    //
-    while i < 16:
-        io::print(toString(bits,4))
-        io::print(" = ")
-        io::println(value(bits))
-        bits = increment(bits)
-        i = i + 1
-    //
+public export method test_01():
+    assume value([false]) == 0
+
+public export method test_02():
+    assume value([true]) == 1
+
+public export method test_03():
+    assume value([false,false]) == 0
+
+public export method test_04():
+    assume value([true,false]) == 1
+
+public export method test_05():
+    assume value([false,true]) == 2
+
+public export method test_06():
+    assume value([true,true]) == 3
+
+// ============================================================
+// Tests (increment)
+// ============================================================
+
+public export method test_07():
+    assume increment([false]) == ([true],false)
+
+public export method test_08():
+    assume increment([true]) == ([false],true)
+
+public export method test_09():
+    assume increment([false,true]) == ([true,true],false)
+
+public export method test_10():
+    assume increment([true,true]) == ([false,false],true)
