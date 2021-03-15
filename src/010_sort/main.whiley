@@ -4,10 +4,10 @@ import std::array
 import uint from std::integer
 
 public property sorted(int[] xs, int start, int end) 
-where start >= end || all { i in start .. (end-1) | xs[i] <= xs[i+1] }
+where all { i in start .. end, j in start..end | (i < j) ==> (xs[i] <= xs[j])}
 
-public property below(int[] xs, int start, int end, int item)
-where all { i in start .. end | xs[i] <= item }
+public property below(int[] src, int s_start, int s_end, int[] dst, int d_start, int d_end)
+where all { i in s_start .. s_end, j in d_start .. d_end | src[i] <= dst[j] }
 
 // ===================================================================
 // Merge sort
@@ -114,10 +114,13 @@ ensures array::equals(items,nitems,0,start) && array::equals(items,nitems,end,|i
     where l <= pivot && r <= end
     // Parts outside parition unchanged
     where array::equals(items,rs,0,start) && array::equals(items,rs,end,|items|)
+    // Untouched parts of internal partition unchanged
+    where array::equals(items,rs,i,end)
     // Balancing between variables
     where (end - i) == (pivot - l) + (end - r)
     // Sorting is happening!
-    where below(rs,start,i,items[l]) //&& below(rs,start,i,items[r])
+    where below(rs,start,i,items,l,pivot) && below(rs,start,i,items,r,end)
+    //
     where sorted(rs,start,i):
         if items[l] <= items[r]:
             rs[i] = items[l] 
@@ -126,10 +129,25 @@ ensures array::equals(items,nitems,0,start) && array::equals(items,nitems,end,|i
             rs[i] = items[r] 
             r = r + 1
         i = i + 1
-    // Finish off left partition
-    rs = array::copy(items,l,rs,i,pivot - l)
-    // Finish off right partition    
-    rs = array::copy(items,r,rs,i,end - r)
+    // Finish it whatever is left.  Observe no need to copy from right
+    // partition since that is already in place.    
+    if l < pivot:
+        // NOTE: its frustrating that we cannot just call
+        // rs = copy(items,l,rs,i,pivot - l)
+        while l < pivot
+        //
+        where |rs| == |items| && start <= l && l <= pivot
+        // Parts outside parition unchanged
+        where array::equals(items,rs,0,start) && array::equals(items,rs,end,|items|)
+        // Balancing between variables        
+        where (end - i) == (pivot - l)
+        // Sorting is happening!
+        where below(rs,start,i,items,l,pivot)
+        //
+        where sorted(rs,start,i):
+            rs[i] = items[l]
+            i = i + 1
+            l = l + 1
     // Done 
     return rs
 
