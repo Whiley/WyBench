@@ -1,5 +1,3 @@
-import std::ascii
-import std::io
 import std::array
 
 // An "array based" link-list implementation
@@ -31,7 +29,9 @@ where all { i in 0 .. l.size | valid(l,l.links[i],i) }
 // Construct a linked list with a maximum number of nodes
 function LinkedList(nat max) -> (LinkedList e)
 // Ensure have exactly the given number of links
-ensures |e.links| == max:
+ensures |e.links| == max
+// Initial size always zero
+ensures e.size == 0:
   // 
   final Link DUMMY = { data: 0, next: 0 }
   // Create the empty list
@@ -59,31 +59,16 @@ requires (i < list.size) || (i == |list.links|):
     ls[list.size] = Link(data,i)
     return { links: ls, size: list.size+1 }
 
-// Convert a link into a string representation
-function to_string(Link l) -> (ascii::string s):
-    ascii::string r = "{"
-    r = array::append(r,ascii::to_string(l.data))
-    r = array::append(r,";")        
-    r = array::append(r,ascii::to_string(l.next))    
-    return array::append(r,"}")
 
-// Convert a linked list into a string representation
-function to_string(LinkedList l) -> (ascii::string s):
-    int i = 0
-    ascii::string r = "["
-    while i < l.size:
-        r = array::append(r,to_string(l.links[i]))
-        i = i + 1
-    //
-    return array::append(r,"]")
+// =======================================================
+// Tests
+// =======================================================
 
-public export method main():
+public method test_01():
     LinkedList l1 = LinkedList(5)
-    LinkedList l2 = insert(l1,|l1.links|,0)
-    LinkedList l3 = insert(l2,0,1)
-    io::println(to_string(l1))
-    io::println(to_string(l2))
-    io::println(to_string(l3))    
-    assume length(l3,0) == 1
-    assume length(l3,1) == 2
-    
+    assert l1.size == 0
+
+public method test_02():
+    LinkedList l1 = LinkedList(5)
+    LinkedList l2 = insert(l1,5,0)
+    assert l1.size == 1
