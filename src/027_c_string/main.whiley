@@ -1,7 +1,6 @@
 import std::ascii
-import std::io
 import std::array
-import nat from std::integer
+import uint from std::integer
 
 //
 // This little example is showing off an almost complete encoding
@@ -14,55 +13,67 @@ import nat from std::integer
 //
 type ASCII_char is (int n) where 0 <= n && n <= 255
 
+// Definte null terminator
 ASCII_char NULL = 0
 
-type C_string is (ASCII_char[] str) 
+type C_string_data is (ASCII_char[] chars)
 // Must have at least one character (i.e. null terminator)
-where |str| > 0 && some { i in 0 .. |str| | str[i] == NULL }
+where |chars| > 0 && some { i in 0 .. |chars| | chars[i] == NULL }
+
+type C_string is &{C_string_data chars}
 
 // Determine the length of a C string.
-function strlen(C_string str) -> (int r)
-ensures r >= 0:
+method strlen(C_string str) -> (uint r)
+// Length defined by NULL terminator
+ensures str->chars[r] == NULL
+// No other NULL terminators
+ensures all { k in 0..r | str->chars[k] != NULL }:
     //
-    nat i = 0
+    uint i = 0
     //
-    while str[i] != 0 
-        where i < |str|
-        where all { k in 0 .. i | str[k] != NULL}:
+    while str->chars[i] != NULL
+    where i < |str->chars|
+    where all { k in 0 .. i | str->chars[k] != NULL}:
         //
         i = i + 1
     //
     return i
 
 // Copy string from src location into destination
-method strcpy(&(ASCII_char[]) dest, C_string src)
-requires |src| <= |(*dest)|:
+method strcpy(C_string dest, C_string src)
+requires |src->chars| <= |dest->chars|:
     //
-    nat i=0
-    while src[i] != NULL
-    where i < |src|
-    where all { k in 0 .. i | src[k] != NULL}:
-        (*dest)[i] = src[i]
+    uint i = 0
+    while src->chars[i] != NULL
+    where i < |src->chars|
+    where all { k in 0 .. i | src->chars[k] != NULL}:
+        dest->chars[i] = src->chars[i]
         i = i + 1
     // Terminate new string
-    (*dest)[i] = NULL
+    dest->chars[i] = NULL
     // Done
     return
-    
-// Print out hello world!
-public method main(ascii::string[] args):
-    // ==============================================================
-    // TEST: strlen
-    // ==============================================================
-    C_string src = ['H','e','l','l','o','W','o','r','l','d',NULL]
-    io::println(strlen(src))
-    
-    // ==============================================================
-    // TEST: strcpy
-    // ==============================================================
-    &C_string dest = new [1,2,3,4,5,6,7,8,9,10,11,12,13,14]
-    strcpy(dest,src)
-    // Check copy was correct
-    assert array::equals(src,*dest,0,11)
-    //
-    io::println(src)
+
+// =======================================================
+// Tests
+// =======================================================
+
+public method test_01():
+    C_string src = new {chars: [NULL]}
+    int n = strlen(src)
+    assert n == 0
+
+public method test_02():
+    C_string src = new {chars: [NULL,NULL]}
+    int n = strlen(src)
+    assert n == 0
+
+public method test_03():
+    C_string src = new {chars: [NULL,0]}
+    int n = strlen(src)
+    assert n == 0
+
+public method test_04():
+    C_string src = new {chars: ['H','e','l','l','o','W','o','r','l','d',NULL]}
+    int n = strlen(src)
+    assert n == 10
