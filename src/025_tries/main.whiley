@@ -35,14 +35,14 @@ import std::math
 // didn't actually put it in.
 
 // Represents a transition from one state to another for a given character.
-type Transition is ({
+type Transition is {
     nat from,
     nat to,
     ascii::char character
-} tr) where tr.from < tr.to
+} where from < to
 
 // Define the Empty Transition
-Transition EmptyTransition = { from: 0, to: 1, character: 'a' }
+Transition EMPTY_TRANSITION = { from: 0, to: 1, character: 'a' }
 
 property valid(Transition t, nat size)
 where t.from < size && t.to < size
@@ -56,7 +56,7 @@ type Trie is {
 where all { k in 0..|transitions| | valid(transitions[k],size) }
 
 // Define the Empty Trie, which always has root state 0
-Trie EmptyTrie = { size: 1, transitions: [EmptyTransition; 0] }
+Trie EMPTY_TRIE = { size: 1, transitions: [EMPTY_TRANSITION; 0] }
 
 // Add a complete string into a Trie starting from the root node.
 function add(Trie trie, ascii::string str) -> Trie:
@@ -139,28 +139,32 @@ requires state >= 0:
             i = i + 1
         //
         return false
-    
-method main(ascii::string[] args):
-    Trie t = EmptyTrie
-    ascii::string[] inputs = ["hello","world","help"]
-    // First, initialise trie    
-    nat i = 0
-    while i < |inputs|:
-        io::print("ADDING: ")
-        io::println(inputs[i])
-        t = add(t,inputs[i])   
-        i = i + 1
-    // Second, check containment
-    ascii::string[] checks = ["hello","blah","hel","dave"]
-    i = 0 
-    while i < |checks|:
-        bool r = contains(t,checks[i])
-        io::print("CONTAINS: ")
-        io::print(checks[i])
-        io::print(" = ")
-        if r:
-            io::println("true")
-        else:
-            io::println("false")
-        i = i + 1
-    
+
+// =======================================================
+// Tests
+// =======================================================
+
+public method test_01():
+    Trie t = EMPTY_TRIE
+    assume !contains(t,"hello")
+
+public method test_02():
+    Trie t = EMPTY_TRIE
+    // add something
+    t = add(t,"hello")
+    // check its there
+    assume contains(t,"hello")
+    // check something else not there
+    assume !contains(t,"world")
+
+public method test_03():
+    Trie t = EMPTY_TRIE
+    // add something
+    t = add(t,"hello")
+    // check its there
+    assume contains(t,"hello")
+    // add something else
+    t = add(t,"world")
+    // check both there
+    assume contains(t,"hello")
+    assume contains(t,"world")

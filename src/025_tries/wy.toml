@@ -3,7 +3,7 @@ name="025_tries"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley","boogie"]
+platforms=["whiley","check"]
 
 [build.whiley]
 source="/"
@@ -13,8 +13,7 @@ min=-2
 max=2
 length=2
 depth=2
-ignores=["main"]
 
 [dependencies]
-wybenchparser="1.0.0"
+std="0.3.1"
 
