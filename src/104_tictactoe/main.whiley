@@ -13,110 +13,95 @@ import get from board
 import play from game
 import isWinner from board
 
-type Pos is { Index x, Index y }
+// ========================================================================
+// Tests
+// ========================================================================
 
-Pos[] GAME = [
-	{x:0, y:0}, // circle
-	{x:1, y:1}, // cross
-	{x:0, y:1}, // circle
-	{x:2, y:2}, // cross
-	{x:0, y:2}, // circle
-	{x:2, y:2}  // should be impossible
-]
-
-public method main(ascii::string[] args):
+public method test_01():
     Game game = Game()
-    nat i = 0
-    while i < |GAME|:
-        Pos pos = GAME[i]
-        // FIXME: this should be unnecessary
-        assume get(game.board,pos.y,pos.x) == BLANK
-        game = play(game,pos.y,pos.x)	
-        printBoard(game.board)
-        io::println(" ")
-        Piece piece = isWinner(game.board)
-        if piece != BLANK:
-            io::println("we have a winner!")
-            break
-        i = i + 1
-
-public method printBoard(Board board):
-    nat row = 0
-    while row < 3:
-        if row != 0:
-            io::println("---- | ---- | ----")
-        printRowTop(board,row)
-        printRowUpperMiddle(board,row)
-        printRowLowerMiddle(board,row)
-        printRowBottom(board,row)
-        row = row + 1
-    // done
-    io::println(" ")
-
-public method printRowTop(Board brd, nat row)
-requires row < 3:
-    nat col = 0
-    while col < 3:
-        Piece p = get(brd,row,col)
-        if col != 0:
-            io::print(" | ")
-        switch p:
-            case BLANK:
-                io::print("    ")
-            case CROSS:
-                io::print("\\  /")
-            case CIRCLE:
-                io::print(" -- ")
-        col = col + 1
+    // Circle move
+    game = play(game,0,0)
     //
-    io::println(" ")
+    assume game.board == [CIRCLE,BLANK,BLANK,
+                          BLANK,BLANK,BLANK,
+                          BLANK,BLANK,BLANK]
 
-public method printRowBottom(Board brd, int row):
-    int col = 0
-    while col < 3:
-        Piece p = get(brd,row,col)
-        if col != 0:
-            io::print(" | ")
-        switch p:
-            case BLANK:
-                io::print("    ")
-            case CROSS:
-                io::print("/  \\")
-            case CIRCLE:
-                io::print(" -- ")
-        col = col + 1
-    //
-    io::println(" ")
+public method test_02():
+    Game game = Game()
+    // Circle move
+    game = play(game,0,0)
+    // Cross move
+    game = play(game,1,0)
+    //    
+    assume game.board == [CIRCLE,CROSS,BLANK,
+                          BLANK,BLANK,BLANK,
+                          BLANK,BLANK,BLANK]
 
-public method printRowUpperMiddle(Board brd, int row):
-    int col = 0
-    while col < 3:
-        Piece p = get(brd,row,col)
-        if col != 0:
-            io::print(" | ")
-        switch p:
-            case BLANK:
-                io::print("    ")
-            case CROSS:
-                io::print(" \\/ ")
-            case CIRCLE:
-                io::print("|  |")
-        col = col + 1
-    io::println(" ")
+public method test_03():
+    Game game = Game()
+    // Circle move
+    game = play(game,0,0)
+    // Cross move
+    game = play(game,1,0)
+    // Circle move
+    game = play(game,2,0)    
+    //    
+    assume game.board == [CIRCLE,BLANK,CIRCLE,
+                          BLANK,BLANK,BLANK,
+                          BLANK,BLANK,BLANK]
 
-public method printRowLowerMiddle(Board brd, int row):
-    int col = 0
-    while col < 3:
-        Piece p = get(brd,row,col)
-        if col != 0:
-            io::print(" | ")
-        switch p:
-            case BLANK:
-                io::print("    ")
-            case CROSS:
-                io::print(" /\\")
-            case CIRCLE:
-                io::print("|  |")
-        col = col + 1
-    //
-    io::println(" ")
+public method test_04():
+    Game game = Game()
+    // Circle move
+    game = play(game,0,0)
+    // Cross move
+    game = play(game,1,1)
+    //    
+    assume game.board == [CIRCLE,BLANK,BLANK,
+                          BLANK,CROSS,BLANK,
+                          BLANK,BLANK,BLANK]
+
+public method test_05():
+    Game game = Game()
+    // Circle move
+    game = play(game,0,0)
+    // Cross move
+    game = play(game,1,1)
+    // Circle move
+    game = play(game,2,2)
+    //    
+    assume game.board == [CIRCLE,BLANK,BLANK,
+                          BLANK,BLANK,BLANK,
+                          BLANK,BLANK,CIRCLE]
+
+public method test_06():
+    Game game = Game()
+    // Circle move
+    game = play(game,0,0)
+    // Cross move
+    game = play(game,1,0)
+    // Circle move
+    game = play(game,1,1)
+    //    
+    assume game.board == [CIRCLE,CROSS,BLANK,
+                          BLANK,CIRCLE,BLANK,
+                          BLANK,BLANK,BLANK]
+
+public method test_07():
+    Game game = Game()
+    // Circle move
+    game = play(game,0,0)
+    // Cross move
+    game = play(game,1,0)
+    // Circle move
+    game = play(game,1,1)
+    // Cross move
+    game = play(game,2,0)
+    // Circle move
+    game = play(game,2,2)    
+    //    
+    assume game.board == [CIRCLE,CROSS,CROSS,
+                          BLANK,CIRCLE,BLANK,
+                          BLANK,BLANK,CIRCLE]
+    // Check winner
+    assume isWinner(game.board) == CIRCLE
