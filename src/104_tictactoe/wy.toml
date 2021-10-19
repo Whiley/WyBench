@@ -17,4 +17,3 @@ ignores=["main"]
 
 [dependencies]
 std="0.3.1"
-
