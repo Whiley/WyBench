@@ -26,7 +26,7 @@ function Board(uint height, uint width) -> Board:
 function set(Board b, uint x, uint y) -> Board
 // Ensure cell within bounds!
 requires x < b.width && y < b.height:
-    b[y][x] = true
+    b.cells[y][x] = true
     return b
 
 // Take the current board and determine the next state based on the
@@ -97,6 +97,9 @@ function isAlive(Board board, int row, int col) -> int:
 // Tests
 // ============================================
 
+final bool X = true
+final bool _ = false
+
 public method test_01():
     Board b = Board(5,5)
     // Initialise board
@@ -106,8 +109,40 @@ public method test_01():
     // Run one step
     b = update(b)
     // Check
-    assume b.board == [[0,0,0,0,0],
-                       [0,0,0,0,0],
-                       [0,1,1,1,0],
-                       [0,0,0,0,0],
-                       [0,0,0,0,0]]
+    assume b.cells == [[_,_,_,_,_],
+                       [_,_,_,_,_],
+                       [_,X,X,X,_],
+                       [_,_,_,_,_],
+                       [_,_,_,_,_]]
+
+public method test_02():
+    Board b = Board(5,5)
+    // Initialise board
+    b = set(b,1,2)
+    b = set(b,2,2)
+    b = set(b,3,2)
+    // Run one step
+    b = update(b)
+    // Check
+    assume b.cells == [[_,_,_,_,_],
+                       [_,_,X,_,_],
+                       [_,_,X,_,_],
+                       [_,_,X,_,_],
+                       [_,_,_,_,_]]
+
+public method test_03():
+    Board b = Board(5,5)
+    // Initialise board
+    b = set(b,1,0)
+    b = set(b,2,1)
+    b = set(b,0,2)
+    b = set(b,1,2)
+    b = set(b,2,2)    
+    // Run one step
+    b = update(b)
+    // Check
+    assume b.cells == [[_,X,_,_,_],
+                       [_,_,X,_,_],
+                       [X,X,X,_,_],
+                       [_,_,_,_,_],
+                       [_,_,_,_,_]]
