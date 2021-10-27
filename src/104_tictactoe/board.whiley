@@ -1,11 +1,11 @@
-public int BLANK = 0
-public int CROSS = 1
-public int CIRCLE = 2
+public Piece BLANK = 0
+public Piece CROSS = 1
+public Piece CIRCLE = 2
 
 /**
  * A piece is either a blank, a cross or a circle.
  */
-public type Piece is (int x) where BLANK <= x && x <= CIRCLE
+public type Piece is (int x) where 0 <= x && x <= 2
 
 /**
  * A Board is a 3x3 grid of pieces
@@ -66,14 +66,14 @@ public function isFull(Board board) -> bool:
  */
 public function isWinner(Board board) -> Piece:
     // First, check rows
-    int row = 0
+    Index row = 0
     while row < 3:
         Piece p = isWinnerRow(board,row)
         if p != BLANK:
             return p
         row = row + 1
 	// Second, check columns
-    int col = 0
+    Index col = 0
     while col < 3:
         Piece p = isWinnerCol(board,col)
         if p != BLANK:
@@ -87,7 +87,7 @@ public function isWinner(Board board) -> Piece:
  * Check whether a given row is all the same piece and, if
  * so, which piece it is.
  */
-public function isWinnerRow(Board board, int row) -> Piece:
+public function isWinnerRow(Board board, Index row) -> Piece:
 	Piece p1 = get(board,row,0)
 	Piece p2 = get(board,row,1)
 	Piece p3 = get(board,row,2)
@@ -100,7 +100,7 @@ public function isWinnerRow(Board board, int row) -> Piece:
  * Check whether a given row is all the same piece and, if
  * so, which piece it is.
  */
-public function isWinnerCol(Board board, int col) -> Piece:
+public function isWinnerCol(Board board, Index col) -> Piece:
 	Piece p1 = get(board,0,col)
 	Piece p2 = get(board,1,col)
 	Piece p3 = get(board,2,col)

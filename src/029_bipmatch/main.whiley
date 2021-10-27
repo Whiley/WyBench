@@ -25,6 +25,10 @@ int UNMATCHED = -1
 // Every edge in our bipartite graph is from one side to the other.
 type edge is { int from, int to }
 
+// Edge constructor
+function edge(int f, int t) -> edge:
+    return {from: f, to: t} 
+
 type Graph is {
     int N1,      // size of first partition
     int N2,      // size of second partition
@@ -63,26 +67,6 @@ ensures all { i in 0..g.N1+g.N2 | m.matching[i] == UNMATCHED }:
         matching: [UNMATCHED; g.N1+g.N2]
     }
 
-
-// Generate a human-readable string for a given matching.
-// 
-function to_string(null|Matching m) -> (ascii::string s):
-   if m is null:
-      return "(no match)"
-   else:
-      ascii::string r = ""
-      int i=0
-      while i < m.graph.N1:
-         if(i != 0):
-            r = array::append(r,",")      
-         ascii::string f = ascii::to_string(i)
-         ascii::string t = ascii::to_string(m.matching[i])
-         r = array::append(r,f)
-         r = array::append(r,"--")
-         r = array::append(r,t)
-         i = i + 1
-      //
-      return r
 
 // Given a bipartite graph, can we find a matching of every vertex in
 // one partiaion to a vertex in the second partition?  Each vertex in
@@ -199,20 +183,66 @@ requires m.matching[e.to] == UNMATCHED:
     //
     return { graph: m.graph, matching: m_matching }
 
+// Generate a human-readable string for a given matching.
+// 
+unsafe function to_string(null|Matching m) -> (ascii::string s):
+   if m is null:
+      return "(no match)"
+   else:
+      ascii::string r = ""
+      int i=0
+      while i < m.graph.N1:
+         if(i != 0):
+            r = array::append(r,",")      
+         ascii::string f = ascii::to_string(i)
+         ascii::string t = ascii::to_string(m.matching[i])
+         r = array::append(r,f)
+         r = array::append(r,"--")
+         r = array::append(r,t)
+         i = i + 1
+      //
+      return r
 
-public export method main():
-    final int A = 0
-    final int B = 1
-    final int C = 2
-    final int D = 3
-    final int E = 4
-    final int F = 5
-    //
-    edge[] es = [ {from:A, to: D}, {from: B, to: D}, {from: B, to: E}, {from: C, to: F}, {from: C, to: E} ]
-    //edge[] es = [ {from:A, to: B} ]
-    Graph g = {N1:3, N2: 3, edges: es}
-    // Try it out!
+// ============================================
+// Tests
+// ============================================
+
+final int A = 0
+final int B = 1
+final int C = 2
+final int D = 3
+final int E = 4
+final int F = 5
+
+
+public method test_01():
+    // Determine edges
+    edge[] es = [ edge(A,B) ]
+    // Construct graph
+    Graph g = { N1: 1, N2: 1, edges: es }
+    // Compute matching
     null|Matching r = findMaximalMatching(g)
-    // Done
-    debug to_string(r)
-    debug "\n"
+    //
+    assume r is Matching
+    assume r.matching == [ 1, 0 ]
+
+public method test_02():
+    // Determine edges
+    edge[] es = [ edge(A,C), edge(B,C) ]
+    // Construct graph
+    Graph g = { N1: 2, N2: 1, edges: es }
+    // Compute matching
+    null|Matching r = findMaximalMatching(g)
+    //
+    assume r is null
+
+public method test_03():
+    // Determine edges
+    edge[] es = [ edge(A,C), edge(B,C), edge(B,D) ]
+    // Construct graph
+    Graph g = { N1: 2, N2: 2, edges: es }
+    // Compute matching
+    null|Matching r = findMaximalMatching(g)
+    //
+    assume r is Matching
+    assume r.matching == [ 2, 3, 0, 1 ]

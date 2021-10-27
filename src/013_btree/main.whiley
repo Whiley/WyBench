@@ -1,6 +1,5 @@
 import std::ascii
 import std::array
-import std::io
 
 // A Binary Search Tree where elements are stored in sorted order.
 // That is, given a node n then we have the following invariant:
@@ -148,25 +147,9 @@ function to_string(Tree tree) -> ascii::string:
         return array::append(r,")")
 
 // =================================================
-// Test Harness
+// Tests
 // =================================================
 
-int[] ITEMS = [54,7,201,52,3,1,0,54,12,90,9,8,8,7,34,32,35,34]
-
-method main(ascii::string[] args):
-    Tree bt = null
-    Tree tmp
-    //
-    io::println(to_string(bt))
-    //
-    int i = 0
-    while i < |ITEMS|:
-        bt = insert(bt,ITEMS[i])
-        io::println(to_string(bt))
-        tmp = rotateClockwise(bt)
-        io::println(to_string(tmp))
-        tmp = rotateCounterClockwise(bt)
-        io::println(to_string(tmp))
-        i = i + 1
-        
-    
+public method test_01():
+    Tree bt = insert(null,1)
+    assume bt == { data: 1, left:null, right: null }

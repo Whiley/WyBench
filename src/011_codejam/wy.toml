@@ -3,7 +3,7 @@ name="011_codejam"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley","boogie"]
+platforms=["whiley"]
 
 [build.whiley]
 source="/"
@@ -16,5 +16,5 @@ depth=3
 ignores=["main"]
 
 [dependencies]
-wybenchparser="1.0.0"
+std="0.3.2"
 

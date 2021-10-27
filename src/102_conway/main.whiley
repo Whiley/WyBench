@@ -1,9 +1,5 @@
 import std::ascii
-import std::filesystem
-import std::io
-import wybench::parser
-
-type nat is (int x) where x >= 0
+import uint from std::integer
 
 // ============================================
 // Game Logic
@@ -11,13 +7,13 @@ type nat is (int x) where x >= 0
 
 type Board is ({
     bool[][] cells,
-    nat width,
-    nat height
+    uint width,
+    uint height
 } b) where |b.cells| == b.height && all { i in 0..|b.cells| | |b.cells[i]| == b.width }
 
 // Create an empty board of size width x height.  That is, where each
 // square is "off".
-function Board(nat height, nat width) -> Board:
+function Board(uint height, uint width) -> Board:
     bool[] row = [false; width]
     bool[][] cells = [row; height]
     return { 
@@ -26,15 +22,22 @@ function Board(nat height, nat width) -> Board:
         width: width
     }
 
+// Set a given cell on the board
+function set(Board b, uint x, uint y) -> Board
+// Ensure cell within bounds!
+requires x < b.width && y < b.height:
+    b.cells[y][x] = true
+    return b
+
 // Take the current board and determine the next state based on the
 // current state of all cells.
 function update(Board board) -> Board:
     bool[][] ncells = board.cells
-    nat height = board.height
-    nat width = board.width
-    nat i = 0
+    uint height = board.height
+    uint width = board.width
+    uint i = 0
     while i < height where |ncells| == height && all { k in 0..|ncells| | |ncells[k]| == width }:
-        nat j = 0
+        uint j = 0
         while j < width
         where |ncells| == height
         where all { k in 0..|ncells| | |ncells[k]| == width }:
@@ -88,81 +91,58 @@ function isAlive(Board board, int row, int col) -> int:
     if board.cells[row][col]:
         return 1
     else:
-        return 0
-       
+        return 0      
 
 // ============================================
-// Parser
+// Tests
 // ============================================
 
-function parseConfig(nat[] data) -> (Board board, int nIterations)
-requires |data| >= 3:
-    //
-    int niters = data[0]
-    nat cols = data[1]
-    nat rows = data[2]
-    Board brd = Board(cols,rows)
-    nat i = 3
-    while (i+1) < |data|:
-        int col = data[i]
-        int row = data[i+1]
-        //if col < cols && row < rows:
-        brd.cells[row][col] = true
-        i = i + 2
-    //
-    return brd,niters
+final bool X = true
+final bool _ = false
 
-// ============================================
-// Main
-// ============================================
+public method test_01():
+    Board b = Board(5,5)
+    // Initialise board
+    b = set(b,2,1)
+    b = set(b,2,2)
+    b = set(b,2,3)
+    // Run one step
+    b = update(b)
+    // Check
+    assume b.cells == [[_,_,_,_,_],
+                       [_,_,_,_,_],
+                       [_,X,X,X,_],
+                       [_,_,_,_,_],
+                       [_,_,_,_,_]]
 
-method main(ascii::string[] args):
-    Board board
-    int niters
-    if |args| == 0:
-        io::println("usage: conway <file>")
-    else:
-        // First, parse input file
-        filesystem::File file = filesystem::open(args[0],filesystem::READONLY)
-        ascii::string input = ascii::from_bytes(file.read_all())
-        int[]|null data = parser::parseInts(input)
-        // Second, construct and iterate board
-        if data is int[] && |data| >= 3:
-            board,niters = parseConfig(data)
-            int i = 0
-            while i < niters:
-                printBoard(board)
-                board = update(board)
-                i = i + 1
-            //
-        else:
-            io::println("error parsing file")
+public method test_02():
+    Board b = Board(5,5)
+    // Initialise board
+    b = set(b,1,2)
+    b = set(b,2,2)
+    b = set(b,3,2)
+    // Run one step
+    b = update(b)
+    // Check
+    assume b.cells == [[_,_,_,_,_],
+                       [_,_,X,_,_],
+                       [_,_,X,_,_],
+                       [_,_,X,_,_],
+                       [_,_,_,_,_]]
 
-method printBoard(Board board):
-    int ncols = board.width
-    io::print("+")
-    int i = 0
-    while i < ncols:
-        io::print("-")
-        i = i + 1
-    io::println("+")
-    i = 0
-    while i < |board.cells|:
-        bool[] row = board.cells[i]
-        io::print("|")
-        int j = 0
-        while j < |row|:
-            if row[j]:
-                io::print("#")
-            else:
-                io::print(" ")
-            j = j + 1        
-        io::println("|")
-        i = i + 1
-    //
-    io::print("+")
-    i = 0
-    while i < ncols:
-        io::print("-")
-        i = i + 1
-    io::println("+")
+public method test_03():
+    Board b = Board(5,5)
+    // Initialise board
+    b = set(b,1,0)
+    b = set(b,2,1)
+    b = set(b,0,2)
+    b = set(b,1,2)
+    b = set(b,2,2)    
+    // Run one step
+    b = update(b)
+    // Check
+    assume b.cells == [[_,X,_,_,_],
+                       [_,_,X,_,_],
+                       [X,X,X,_,_],
+                       [_,_,_,_,_],
+                       [_,_,_,_,_]]

@@ -70,7 +70,6 @@ public class JavaMain {
 	    BufferedReader reader = new BufferedReader(new FileReader(args[0]));
 	    
 	    int total = 0;
-	    int nmatches = 0;
 	    
 	    while(true) {
 		String input = null;
@@ -83,13 +82,14 @@ public class JavaMain {
 		}				
 		regex = reader.readLine();
 		total = total + 1;
-
-		if(match(regex, input)) {
-		    nmatches = nmatches + 1;
+		System.out.println("putlic method test_" + total + "():");
+		System.out.print("    assume ");
+		if(!match(regex, input)) {
+		    System.out.print("!");
 		}
+		System.out.println("match(\"" + regex + "\",\"" + input + "\")");
+		System.out.println();
 	    }
-	    
-	    System.out.println("Matches " + nmatches + " / " + total + " inputs.");
 	    
 	} catch(Throwable e) {				
 	    e.printStackTrace();

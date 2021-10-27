@@ -1,6 +1,5 @@
 import std::array
 import std::ascii
-import std::io
 
 // Sum over the elements of a list
 function sum(int[] xs, int index) -> (int r)
@@ -18,7 +17,7 @@ ensures index < |xs| ==> r == xs[index] + sum(xs,index+1):
 // Reverse the elements of a list
 function reverse(int[] xs) -> (int[] rs)
 // Ensure that the sum of the list is preserved
-ensures |xs| > 0 ==> sum(xs,0) == sum(rs,0):
+ensures (|xs| > 0) ==> (sum(xs,0) == sum(rs,0)):
     //
     int i = 0
     int j = |xs|
@@ -36,23 +35,20 @@ ensures |xs| > 0 ==> sum(xs,0) == sum(rs,0):
         i = i + 1        
     //
     return ys
-    
-function to_string(int[] items) -> ascii::string:
-    ascii::string r = ""
-    int i = 0
-    while i < |items|:
-        if i != 0:
-            r = array::append(r,",")
-        ascii::string str = ascii::to_string(items[0])
-        r = array::append(r,str)
-        i = i + 1
-    //
-    return r
-    
-method main(ascii::string[] args):
-    int[] l1 = [1,2,3,4]
-    int[] l2 = reverse(l1)
-    io::println(array::append("L1 = ",to_string(l1)))
-    io::println(array::append("L2 = ", to_string(l2)))
-    io::println(array::append("SUM(L1) = ", ascii::to_string(sum(l1,0))))
-    io::println(array::append("SUM(L2) = ", ascii::to_string(sum(l2,0))))
+
+// =======================================================
+// Tests
+// =======================================================
+
+public method test_01():
+    assert reverse([]) == []
+
+public method test_02():
+    assert reverse([1]) == [1]
+
+public method test_03():
+    assert reverse([1,2]) == [2,1]
+
+public method test_04():
+    assert reverse([1,2,3]) == [3,2,1]
+

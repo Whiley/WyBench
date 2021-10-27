@@ -1,11 +1,7 @@
 import std::array
 import std::ascii
-import std::io
 import std::math
 import Vector,push,pop,top,size from std::collections::vector
-import std::filesystem with rwMode
-
-import wybench::parser
 
 type nat is (int x) where x >= 0
 
@@ -15,6 +11,8 @@ type nat is (int x) where x >= 0
 
 type Digraph is (nat[][] edges)
     where all { i in 0..|edges|, j in 0..|edges[i]| | edges[i][j] < |edges| }
+
+type Edge is { nat from, nat to }
 
 Digraph EMPTY_DIGRAPH = [[0;0];0]
 
@@ -44,31 +42,20 @@ ensures |r| > size || (size >= |g| && |r| == size):
         return g
 
 // ============================================
-// Parser
+// Constructors
 // ============================================
 
-function buildDigraphs(nat[][] input) -> Digraph[]:
-    //
-    Digraph[] graphs = [EMPTY_DIGRAPH; |input|]
-    int i = 0
-    while i < |input|:
-        graphs[i] = parseDigraph(input[i])
-        i = i + 1
-    //
-    return graphs
-
-function parseDigraph(nat[] input) -> Digraph:
+function Digraph(Edge[] input) -> Digraph:
     //
     Digraph graph = EMPTY_DIGRAPH
-    int i = 0
-    //
-    while (i+1) < |input|:
-        nat from = input[i]
-        nat to = input[i + 1]
-        graph = addEdge(graph,from,to)
-        i = i + 2
+    for i in 0..|input|:
+        Edge e = input[i]
+        graph = addEdge(graph,e.from,e.to)
     //        
     return graph
+
+function Edge(nat from, nat to) -> Edge:
+    return {from:from,to:to}
 
 // ============================================
 // PEA_FIND_SCC1
@@ -124,8 +111,9 @@ function find_components(Digraph g) -> int[][]:
     //
     return components
 
-function visit(nat v, State s) -> State
-requires v < |s.graph|:
+function visit(nat v, State s) -> (State ns)
+requires v < |s.graph|
+ensures ns.graph == s.graph:
     bool root = true
     s.visited[v] = true
     s.rindex[v] = s.index
@@ -157,41 +145,54 @@ requires v < |s.graph|:
     // all done
     return s
 
-method main(ascii::string[] args):
-    if |args| == 0:
-        io::println("usage: average <file>")
-    else:
-        filesystem::File file = filesystem::open(args[0], (rwMode) filesystem::READONLY)
-        ascii::string input = ascii::from_bytes(file.read_all())
-        int[][]|null data = parser::parseIntLines(input)
-        if data is nat[][]:
-            Digraph[] graphs = buildDigraphs(data)
-            // third, print output
-            int count = 0
-            int i = 0 
-            while i < |graphs|:
-                Digraph graph = graphs[i]
-                io::print("=== Graph #")
-                io::print(ascii::to_string(i))
-                io::println(" ===")
-                i = i + 1
-                int[][] sccs = find_components(graph)
-                int j = 0 
-                while j < |sccs|:
-                    io::print("{")
-                    bool firstTime=true
-                    int[] scc = sccs[j]
-                    int k = 0
-                    while k < |scc|:
-                        if !firstTime:
-                            io::print(",")
-                        firstTime=false
-                        io::print(scc[k])
-                        k = k + 1
-                    io::print("}")
-                    j = j + 1
-                //        
-                io::println("")
-        else:
-            io::println("error parsing input")
+// ============================================
+// Tests
+// ============================================
 
+public method test_01():
+    Digraph g = Digraph([Edge(0,1)])
+    assume find_components(g) == [[1],[0]]
+
+public method test_02():
+    Digraph g = Digraph([Edge(0,1),Edge(1,0)])
+    assume find_components(g) == [[0,1]]
+
+public method test_03():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,3)])
+    assume find_components(g) == [[3],[2],[1],[0]]
+
+public method test_04():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,1)])
+    assume find_components(g) == [[1,2],[0]]
+
+public method test_05():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,0)])
+    assume find_components(g) == [[0,1,2]]
+
+public method test_06():
+    Digraph g = Digraph([Edge(0,1),Edge(0,2),Edge(1,0)])
+    assume find_components(g) == [[2],[0,1]]
+
+public method test_07():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,3),Edge(3,4)])
+    assume find_components(g) == [[4],[3],[2],[1],[0]]
+
+public method test_08():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,3),Edge(3,2)])
+    assume find_components(g) == [[2,3],[1],[0]]
+
+public method test_09():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,3),Edge(3,1)])
+    assume find_components(g) == [[1,2,3],[0]]
+
+public method test_10():
+    Digraph g = Digraph([Edge(0,1),Edge(1,2),Edge(2,3),Edge(3,0)])
+    assume find_components(g) == [[0,1,2,3]]
+
+public method test_11():
+    Digraph g = Digraph([Edge(0,1),Edge(0,2),Edge(1,3),Edge(3,0)])
+    assume find_components(g) == [[2],[0,1,3]]
+
+public method test_12():
+    Digraph g = Digraph([Edge(0,1),Edge(0,2),Edge(1,0),Edge(2,0)])
+    assume find_components(g) == [[0,1,2]]

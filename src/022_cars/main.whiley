@@ -46,9 +46,11 @@ requires !toIsland || st.carsOnMl > 0
 // be at least one free space available.
 requires !toIsland || (st.carsOnBr + st.carsOnIl + 1) < maxCarsOnIsland: 
 	//
-	st.carsOnBr = st.carsOnBr + 1
-	if toIsland:
-		st.carsOnMl = st.carsOnMl - 1
-	else:
-		st.carsOnIl = st.carsOnIl - 1
-	return st
+        if toIsland:
+            st.carsOnMl = st.carsOnMl - 1
+        else:
+            st.carsOnIl = st.carsOnIl - 1            
+        //
+        st.carsOnBr = st.carsOnBr + 1
+        //
+        return st

@@ -1,9 +1,3 @@
-import std::ascii
-import std::filesystem with rwMode
-import std::io
-
-import wybench::parser
-
 // Author: David J. Pearce
 
 // ========================================================
@@ -80,60 +74,30 @@ ensures C.width == B.width && C.height == A.height:
     //
     return Matrix(B.width,A.height,C_data)
 
-function buildMatrix(nat width, nat height, int[] data, nat pos) -> Matrix
-requires |data| > pos + (width * height):
-    //
-    int[][] rows = [[0; width]; height]
-    //
-    nat i = 0
-    while i < height where sized(height,width,rows):
-        nat j = 0
-        while j < width where sized(height,width,rows):
-            assume (pos+j) < |data| // FIXME
-            rows[i][j] = data[pos+j]
-            j = j + 1   
-        i = i + 1
-        pos = pos + width
-    //
-    return Matrix(width,height,rows)
-
 // ========================================================
-// Main
+// Tests
 // ========================================================
 
-method printMat(Matrix A):
-    nat i = 0 
-    while i < A.height:
-        nat j = 0
-        while j < A.width:
-            io::print(A.data[i][j])
-            io::print(" ")
-            j = j + 1
-        i = i + 1
-        io::println(" ")
+public method test_01():
+    Matrix A = Matrix(1,1,[[2]])
+    Matrix B = Matrix(1,1,[[3]])
+    Matrix C = Matrix(1,1,[[6]])
+    assume multiply(A,B) == C
 
-method main(ascii::string[] args):
-    if |args| == 0:
-        io::println("usage: matrix <input-file>")
-    else:
-        filesystem::File file = filesystem::open(args[0],(rwMode) filesystem::READONLY)
-        // first, read data
-        ascii::string input = ascii::from_bytes(file.read_all())
-        int[]|null data = parser::parseInts(input)
-        if data is null || |data| < 2 || !(data is nat[]):
-            io::println("error reading file")
-        else:
-            nat width = data[0]
-            nat height = data[1]
-            int size = width*height
-            if(|data| != 2+(size * 2)): 
-                io::println("file geometry incorrect")           
-            else:
-                // second, build the matrices
-                Matrix A = buildMatrix(width,height,data,2)
-                Matrix B = buildMatrix(width,height,data,2+(width*height))
-                // third, run the benchmark
-                Matrix C = multiply(A,B)
-                // finally, print the result!
-                printMat(C)
-          
+public method test_02():
+    Matrix A = Matrix(1,2,[[3],[2]])
+    Matrix B = Matrix(2,1,[[2,5]])    
+    Matrix C = Matrix(2,2,[[6,15],[4,10]])
+    assume multiply(A,B) == C
+
+public method test_03():
+    Matrix A = Matrix(2,2,[[2,5],[4,3]])
+    Matrix B = Matrix(2,2,[[3,2],[5,6]])
+    Matrix C = Matrix(2,2,[[31,34],[27,26]])
+    assume multiply(A,B) == C
+
+public method test_04():
+    Matrix A = Matrix(2,3,[[2,2],[3,3],[4,4]])
+    Matrix B = Matrix(2,2,[[5,6],[7,8]])
+    Matrix C = Matrix(2,3,[[24,28],[36,42],[48,56]])
+    assume multiply(A,B) == C

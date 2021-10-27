@@ -3,18 +3,20 @@ name="018_heap"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley","boogie"]
+platforms=["whiley"]
 
 [build.whiley]
 source="/"
 
+[build.boogie]
+timeout=240
+
 [check]
 min=-1
 max=2
-length=4
+length=5
 depth=1
-ignores=["main"]
 
 [dependencies]
-wybenchparser="1.0.0"
+std="0.3.2"
 

@@ -88,9 +88,25 @@ ensures all { k in 1..|ncols| | ncols[k-1] <= ncols[k] }:
     //
     return ncols
 
-public method test():
-    Color[] colors = [WHITE,RED,BLUE,WHITE]
-    //
-    colors = partition(colors)
-    //
-    assert colors == [RED,WHITE,WHITE,BLUE]
+// =======================================================
+// Tests
+// =======================================================
+
+public method test_01():
+    assume partition([WHITE]) == [WHITE]
+
+public method test_02():
+    assume partition([WHITE,RED]) == [RED,WHITE]
+
+public method test_03():
+    assume partition([WHITE,BLUE,RED]) == [RED,WHITE,BLUE]
+
+public method test_04():
+    assume partition([WHITE,BLUE,BLUE,RED]) == [RED,WHITE,BLUE,BLUE]
+
+public method test_05():
+    assume partition([WHITE,WHITE,BLUE,RED]) == [RED,WHITE,WHITE,BLUE]
+
+public method test_06():
+    assume partition([WHITE,BLUE,BLUE,WHITE,WHITE,BLUE,RED,RED,BLUE]) == [RED,RED,WHITE,WHITE,WHITE,BLUE,BLUE,BLUE,BLUE]
+

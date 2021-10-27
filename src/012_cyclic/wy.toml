@@ -3,18 +3,20 @@ name="012_cyclic"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley","boogie"]
+platforms=["whiley"]
 
 [build.whiley]
 source="/"
+
+[build.boogie]
+timeout=60
 
 [check]
 min=-2
 max=2
 length=2
 depth=2
-ignores=["main"]
 
 [dependencies]
-wybenchparser="1.0.0"
+std="0.3.2"
 

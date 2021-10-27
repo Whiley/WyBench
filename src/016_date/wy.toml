@@ -3,17 +3,19 @@ name="016_date"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley","boogie"]
+platforms=["whiley"]
 
 [build.whiley]
 source="/"
+
+[build.boogie]
+timeout=120
 
 [check]
 min=-5
 max=5
 length=3
 depth=2
-ignores=["main"]
 
 [dependencies]
-wybenchparser="1.0.0"
+std="0.3.2"

@@ -13,8 +13,7 @@ min=-2
 max=2
 length=3
 depth=3
-ignores=["main"]
 
 [dependencies]
-wybenchparser="1.0.0"
+std="0.3.2"
 

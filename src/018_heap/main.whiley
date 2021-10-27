@@ -1,6 +1,6 @@
 import std::array
 import std::ascii
-import std::integer
+import uint from std::integer
 
 // Binary heap implementation.  For each node n, the key value is
 // greater-or-equal than either of its children.  Furthermore, each child
@@ -22,8 +22,8 @@ import std::integer
 //
 // Here, the children of the root node 0 are located at 1 and 2
 // respectively, whilst the children of node 1 are located at 3 and 4.
-type Heap is ({ int[] data, int length} h)
-where 0 <= h.length && h.length <= |h.data|
+public type Heap is ({ int[] data, uint length} h)
+where h.length <= |h.data|
 // Items on left branch are below their parent's item
 where all { i in 0..h.length | (2*i)+1 < h.length ==> h.data[i] >= h.data[(2*i)+1] }
 // Items on right branch are below their parent's item
@@ -33,6 +33,7 @@ final Heap EMPTY_HEAP = { data:[0;0], length: 0 }
 
 // Determines whether an item is contained within the heap.
 property contains(Heap h, int item)
+// Some matching item exists in the heap
 where some { k in 0..h.length | h.data[k] == item }
 
 // Insert an element into the heap.  This is done by assigning the
@@ -55,33 +56,38 @@ where some { k in 0..h.length | h.data[k] == item }
 //     +-+-+-+-+-+-+-+-+-+
 //      0 1 2 3 4 5 6 7 8 
 //
-function push(Heap heap, int item) -> (Heap r)
+function push(Heap h, int item) -> (Heap r)
 // Heap increased in size by one
-ensures r.length == heap.length + 1
-// Resulting heap contains item
-ensures contains(r,item)
-// Resulting heap retains items from original
-ensures all { k in 0..heap.length | contains(r,heap.data[k]) }:
-    //
-    int[] data = heap.data
+ensures r.length == h.length + 1:
+// Resulting heap contains everything from original
     // Ensure sufficient capacity
-    if |data| == heap.length:
+    if |h.data| == h.length:
         // Double size whilst accounting for empty array
-        data= array::resize(heap.data,(2*heap.length)+1,0)
-    //
-    int i = heap.length
-    int parent = (i-1)/2
-    // Swap parents down to make space
-    while i > 0 && data[parent] < item:
-        // perform a swap
-        data[i] = data[parent]
-        // update indices
-        i = parent
-        parent = (i-1)/2
+        h.data = array::resize(h.data,(2*h.length)+1,0)
+    // Save original data for preservation guarantee
+    int[] data = h.data // ghost        
+    // Store child position
+    uint j = h.length
+    // store parent position
+    uint i = (j - 1) / 2    
+    // Swap down to make space
+    while j > 0 && data[i] < item
+    // Always below length
+    where i <= (h.length / 2) && i == ((j-1) / 2)
+    // size of data preserved
+    where |data| == |h.data|:
+        // perform shift
+        h.data[j] = h.data[i]
+        // move child index down
+        j = i
+        // move parent index down
+        i = (j-1) / 2        
     // Assign item into space
-    data[i] = item
+    h.data[j] = item
+    // Increase size
+    h.length = h.length + 1
     // Done
-    return { length: heap.length + 1, data: data }
+    return h
 
 function peek(Heap heap) -> (int r)
 // Heap cannot be empty
@@ -120,7 +126,7 @@ ensures (heap.length - 1) == r.length
 ensures all { k in 1..heap.length | contains(r,heap.data[k]) }:
     //
     int[] data = heap.data
-    int length = heap.length - 1
+    uint length = heap.length - 1
     // Move last element to root
     data[0] = data[length]
     // Percolate last element down to restore invariant    
@@ -148,21 +154,25 @@ ensures all { k in 1..heap.length | contains(r,heap.data[k]) }:
     //
     return { length: length, data: data }
 
-method main(ascii::string[] args):
-    // Start with empty heap
+/**
+ * Useful for debugging.
+ */
+public function to_string(Heap h) -> (ascii::string s):
+    ascii::string r = "["
+    for i in 0..h.length:
+        if i > 0:
+            r = array::append(r,",")
+        r = array::append(r,ascii::to_string(i))
+    return array::append(r,"]")
+
+// ===================================================
+// Tests
+// ===================================================
+
+public method test_01():
     Heap h = EMPTY_HEAP
-    //
     h = push(h,5)
-    h = push(h,10)
-    h = push(h,0)
-    h = push(h,1)
-    //
-    assume peek(h) == 10
-    h = pop(h)
     assume peek(h) == 5
-    h = pop(h)
-    assume peek(h) == 1
-    h = pop(h)
-    assume peek(h) == 0
-    //
     assume h.length == 1
+    h = pop(h)
+    assume h.length == 0
