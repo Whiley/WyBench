@@ -18,5 +18,5 @@ length=5
 depth=1
 
 [dependencies]
-std="0.3.1"
+std="0.3.2"
 

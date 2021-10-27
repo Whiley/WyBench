@@ -17,4 +17,4 @@ max=1
 length=3
 
 [dependencies]
-wybenchparser="1.0.0"
+std="0.3.2"

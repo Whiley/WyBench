@@ -16,5 +16,5 @@ depth=2
 ignores=["main"]
 
 [dependencies]
-std="0.3.1"
+std="0.3.2"
 

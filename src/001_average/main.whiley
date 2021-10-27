@@ -2,8 +2,6 @@ import std::ascii
 import std::filesystem with rwMode
 import std::io
 
-import wybench::parser
-
 type nat is (int x) where x >= 0
 
 // ========================================================
