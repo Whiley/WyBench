@@ -3,7 +3,7 @@ name="009_lz77"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley","boogie"]
+platforms=["whiley"]
 
 [build.whiley]
 source="/"
