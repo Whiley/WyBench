@@ -1,13 +1,10 @@
 [package]
-name="minesweeper"
+name="019_findcuts"
 authors=["David J. Pearce"]
 version="0.1.0"
 
 [build]
 platforms=["whiley","boogie"]
 
-[build.boogie]
-debug=false
-
-[dependencies]
-std="0.3.2"
+[build.whiley]
+source="/"

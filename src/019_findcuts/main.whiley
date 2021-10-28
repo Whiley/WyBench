@@ -10,7 +10,7 @@
 //
 // This challenge focuses on maximal cut points.  That is, we cannot
 // extend any segment further.
-import uint from std::integer
+type uint is (int x) where x >= 0
 
 property non_empty(int[] seq)
 where |seq| > 0
@@ -21,13 +21,34 @@ where seq[0] == b && seq[|seq|-1] == e
 property within_bounds(int[] seq, int n)
 where all { k in 0..|seq| | 0 <= seq[k] && seq[k] <= n }
 
+// Sequence [start..end) is monotonically increasing.
+property increasing(int[] seq, int start, int end)
+where all { i in start .. end, j in start .. end | i < j ==> seq[i] < seq[j] }
+
+// Sequence [start..end) is monotonically decreasing.
+property decreasing(int[] seq, int start, int end)
+where all { i in start .. end, j in start .. end | i < j ==> seq[i] >= seq[j] }
+
+// Monotonic property of a single segment
+property monotonic(int[] seq, int start, int end)
+where increasing(seq,start,end) || decreasing(seq,start,end)
+
+// Monotonic property for a set of cutpoints
+property monotonic(int[] seq, int[] cut)
+// Cut sequence itself be increasing
+where increasing(cut,0,|cut|)
+//
+where all { k in 1 .. |cut| | monotonic(seq,cut[k-1],cut[k]) }
+
 // =================================================================
 // find cut points
 // =================================================================
 
 function findCutPoints(int[] s) -> (int[] c)
 // Verification task 1
-ensures non_empty(c) && begin_to_end(c,0,|s|) && within_bounds(c,|s|):
+ensures non_empty(c) && begin_to_end(c,0,|s|) && within_bounds(c,|s|)
+// Verification task 2
+ensures monotonic(s,c):
     final uint n = |s|
     int[] cut = [0]
     uint x = 0
@@ -35,7 +56,10 @@ ensures non_empty(c) && begin_to_end(c,0,|s|) && within_bounds(c,|s|):
     //
     while y < n
     where x < y && x <= n
-    where non_empty(cut) && begin_to_end(cut,0,x) && within_bounds(cut,x):
+    // Verification task 1
+    where non_empty(cut) && begin_to_end(cut,0,x) && within_bounds(cut,x)
+    // Verification task 2
+    where monotonic(s,cut):
         bool increasing = (s[x] < s[y])
         //
         while y < n && (s[y-1] < s[y] <==> increasing)
@@ -74,7 +98,6 @@ ensures |r| == |items|+1:
         nitems[i] = items[i]
     //
     return nitems
-
 
 // =================================================================
 // Tests
