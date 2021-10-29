@@ -55,49 +55,57 @@ ensures monotonic(s,c):
     uint y = 1
     //
     while y < n
-    where x < y && x <= n
+    where y == (x + 1) && x <= n
     // Verification task 1
     where non_empty(cut) && begin_to_end(cut,0,x) && within_bounds(cut,x)
     // Verification task 2
     where monotonic(s,cut):
-        bool increasing = (s[x] < s[y])
+        //bool inc = (s[x] < s[y])
+        int p = y // ghost
         //
-        while y < n && (s[y-1] < s[y] <==> increasing)
-        where x < y && y <= n:
+        while y < n && (s[y-1] < s[y]) //&& (s[y-1] < s[y] <==> inc)
+        where x < y && y <= n
+        // Verification task 2
+        where increasing(s,p,y):
             y = y + 1
-        //
-        cut = append(cut, y)
+        // Extend the cut
+        cut = extend(s,cut,p,y)
         x = y
         y = x + 1
     //
     if x < n:
-        cut = append(cut, n)
+        cut = extend(s, cut, x+1, n)
     //
     return cut
 
 // =================================================================
-// append
+// Extend
 // =================================================================
 
-// NOTE: its frustrating we cannot use array::append here.
-
-public function append(int[] items, int item) -> (int[] r)
+unsafe function extend(int[] seq, int[] cut, int start, int end) -> (int[] ncut)
+// New segment must follow from last
+requires begin_to_end(cut,0,start-1)
+// Incoming cut must be monotonic
+requires monotonic(seq,cut)
+// Segment being added must be monotonic
+requires monotonic(seq,start,end)
 // Every item from original array is retained
-ensures all { k in 0..|items| | r[k] == items[k] }
-// Last item in result matches item appended
-ensures r[|items|] == item
-// Size of array is one larger than original
-ensures |r| == |items|+1:
+ensures all { k in 0..|cut| | ncut[k] == cut[k] }
+// Ensure property
+ensures begin_to_end(ncut,0,end)
+// Ensure respond is monotonic
+ensures monotonic(seq,ncut):
     //
-    int[] nitems = [item; |items| + 1]
+    int[] nc = [end; |cut| + 1]
     //
-    for i in 0..|items|
-    where |nitems| == |items|+1
-    where nitems[|items|] == item
-    where all { k in 0..i | nitems[k] == items[k] }:
-        nitems[i] = items[i]
+    for i in 0..|cut|
+    where |nc| == |cut|+1
+    where nc[|cut|] == end
+    where all { k in 0..i | nc[k] == cut[k] }:
+        nc[i] = cut[i]
     //
-    return nitems
+    return nc
+
 
 // =================================================================
 // Tests
