@@ -71,7 +71,7 @@ where increasing(seq,start,end) || decreasing(seq,start,end)
 // Then, [0..2) is monotonically increasing but it is not maximal
 // because [0..3) is also monotonically increasing.
 property maximal(int[] seq, int start, int end)
-where (end >= |seq|) || !monotonic(seq,start,end)
+where (end >= |seq|) || !monotonic(seq,start,end+1)
 
 // Monotonic property for a set of cutpoints in a given sequence,
 // where each cut point identifies the least element in a segment.
@@ -106,32 +106,44 @@ function findCutPoints(int[] s) -> (int[] c)
 ensures non_empty(c) && begin_to_end(c,0,|s|) && within_bounds(c,|s|)
 // Verification task 2
 ensures monotonic(s,c):
+// Verification task 3
+//ensures maximal(s,c):
     final uint n = |s|
     int[] cut = [0]
     uint x = 0
-    uint y = 1
+    uint y = 1   
     //
     while y < n
+    // x always starts segment, and y advances to its end
     where y == (x + 1) && x <= n
     // Verification task 1
     where non_empty(cut) && begin_to_end(cut,0,x) && within_bounds(cut,x)
     // Verification task 2
     where monotonic(s,cut):
-        //bool inc = (s[x] < s[y])
-        int p = y // ghost
+    // Verification task 3
+    //where maximal(s,cut):
         //
-        while y < n && (s[y-1] < s[y]) //&& (s[y-1] < s[y] <==> inc)
-        where x < y && y <= n
-        // Verification task 2
-        where increasing(s,p,y):
-            y = y + 1
+        if s[x] < s[y]:
+            while y < n && (s[y-1] < s[y])
+            where x < y && y <= n
+            // Verification task 2
+            where increasing(s,x,y):
+                y = y + 1
+        else:
+            while y < n && (s[y-1] >= s[y])
+            where x < y && y <= n
+            // Verification task 2
+            where decreasing(s,x,y):
+                y = y + 1
+        //
+        assert maximal(s,x,y)
         // Extend the cut
-        cut = extend(s,cut,p,y)
+        cut = extend(s,cut,x,y)
         x = y
         y = x + 1
     //
     if x < n:
-        cut = extend(s, cut, x+1, n)
+        cut = extend(s, cut, x, n)
     //
     return cut
 
@@ -139,19 +151,35 @@ ensures monotonic(s,c):
 // Extend
 // =================================================================
 
+// Extend a given (maximally monotonic) cut with a new cut. For
+// example, consider this sequence:
+//
+// +-+-+-+-+-+
+// |0|1|2|1|0|
+// +-+-+-+-+-+
+//  0 1 2 3 4 
+//
+// And support cut = [0,3], then we could extend it with [3,5) to
+// give [0,3,5].
 unsafe function extend(int[] seq, int[] cut, int start, int end) -> (int[] ncut)
 // New segment must follow from last
-requires begin_to_end(cut,0,start-1)
+requires begin_to_end(cut,0,start)
 // Incoming cut must be monotonic
 requires monotonic(seq,cut)
+// Incoming cut must be maximal
+requires maximal(seq,cut)
 // Segment being added must be monotonic
 requires monotonic(seq,start,end)
+// Segment being added must be maximal
+requires maximal(seq,start,end)
 // Every item from original array is retained
 ensures all { k in 0..|cut| | ncut[k] == cut[k] }
 // Ensure property
 ensures begin_to_end(ncut,0,end)
-// Ensure respond is monotonic
-ensures monotonic(seq,ncut):
+// Ensure updated cut is monotonic
+ensures monotonic(seq,ncut)
+// Ensure updated cut is maximal
+ensures maximal(seq,ncut):
     //
     int[] nc = [end; |cut| + 1]
     //
@@ -162,7 +190,6 @@ ensures monotonic(seq,ncut):
         nc[i] = cut[i]
     //
     return nc
-
 
 // =================================================================
 // Tests
