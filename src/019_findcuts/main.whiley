@@ -119,9 +119,9 @@ ensures monotonic(s,c):
     // Verification task 1
     where non_empty(cut) && begin_to_end(cut,0,x) && within_bounds(cut,x)
     // Verification task 2
-    where monotonic(s,cut):
+    where monotonic(s,cut)
     // Verification task 3
-    //where maximal(s,cut):
+    where maximal(s,cut):
         //
         if s[x] < s[y]:
             while y < n && (s[y-1] < s[y])
