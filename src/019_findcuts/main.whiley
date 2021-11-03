@@ -105,9 +105,9 @@ function findCutPoints(int[] s) -> (int[] c)
 // Verification task 1
 ensures non_empty(c) && begin_to_end(c,0,|s|) && within_bounds(c,|s|)
 // Verification task 2
-ensures monotonic(s,c):
+ensures monotonic(s,c)
 // Verification task 3
-//ensures maximal(s,c):
+ensures maximal(s,c):
     final uint n = |s|
     int[] cut = [0]
     uint x = 0
@@ -135,8 +135,6 @@ ensures monotonic(s,c):
             // Verification task 2
             where decreasing(s,x,y):
                 y = y + 1
-        //
-        assert maximal(s,x,y)
         // Extend the cut
         cut = extend(s,cut,x,y)
         x = y
@@ -172,9 +170,11 @@ requires maximal(seq,cut)
 requires monotonic(seq,start,end)
 // Segment being added must be maximal
 requires maximal(seq,start,end)
+// Exactly one item added to cut
+ensures |ncut| == |cut| + 1
 // Every item from original array is retained
 ensures all { k in 0..|cut| | ncut[k] == cut[k] }
-// Ensure property
+// Ensure basic properties
 ensures begin_to_end(ncut,0,end)
 // Ensure updated cut is monotonic
 ensures monotonic(seq,ncut)
