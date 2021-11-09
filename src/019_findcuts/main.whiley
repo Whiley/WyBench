@@ -136,12 +136,12 @@ ensures maximal(s,c):
             where decreasing(s,x,y):
                 y = y + 1
         // Extend the cut
-        cut = extend(s,cut,x,y)
+        cut = extend(cut,y)
         x = y
         y = x + 1
     //
     if x < n:
-        cut = extend(s, cut, x, n)
+        cut = extend(cut,n)
     //
     return cut
 
@@ -159,37 +159,26 @@ ensures maximal(s,c):
 //
 // And support cut = [0,3], then we could extend it with [3,5) to
 // give [0,3,5].
-unsafe function extend(int[] seq, int[] cut, int start, int end) -> (int[] ncut)
-// New segment must follow from last
-requires begin_to_end(cut,0,start)
-// Incoming cut must be monotonic
-requires monotonic(seq,cut)
-// Incoming cut must be maximal
-requires maximal(seq,cut)
-// Segment being added must be monotonic
-requires monotonic(seq,start,end)
-// Segment being added must be maximal
-requires maximal(seq,start,end)
-// Exactly one item added to cut
+function extend(int[] cut, int end) -> (int[] ncut)
+// Exactly one item appended
 ensures |ncut| == |cut| + 1
+// Item was appended
+ensures ncut[|cut|] == end
 // Every item from original array is retained
-ensures all { k in 0..|cut| | ncut[k] == cut[k] }
-// Ensure basic properties
-ensures begin_to_end(ncut,0,end)
-// Ensure updated cut is monotonic
-ensures monotonic(seq,ncut)
-// Ensure updated cut is maximal
-ensures maximal(seq,ncut):
+ensures all { k in 0..|cut| | ncut[k] == cut[k] }:
     //
-    int[] nc = [end; |cut| + 1]
+    ncut = [end; |cut| + 1]
     //
     for i in 0..|cut|
-    where |nc| == |cut|+1
-    where nc[|cut|] == end
-    where all { k in 0..i | nc[k] == cut[k] }:
-        nc[i] = cut[i]
+    // Array size unchanged
+    where |ncut| == |cut| + 1
+    // Last item preserved
+    where ncut[|cut|] == end
+    // Everything copied over so far
+    where all { k in 0..i | ncut[k] == cut[k] }:
+        ncut[i] = cut[i]
     //
-    return nc
+    return ncut
 
 // =================================================================
 // Tests
@@ -197,12 +186,12 @@ ensures maximal(seq,ncut):
 
 public method test_01():
     int[] s = [1,2,3,4,5,7]
-    assume findCutPoints(s) == [0,6]
+    assert findCutPoints(s) == [0,6]
 
 public method test_02():
     int[] s = [1,4,7,3,3,5,9]
-    assume findCutPoints(s) == [0,3,5,7]
+    assert findCutPoints(s) == [0,3,5,7]
 
 public method test_03():
     int[] s = [6,3,4,2,5,3,7]
-    assume findCutPoints(s) == [0,2,4,6,7]
+    assert findCutPoints(s) == [0,2,4,6,7]
