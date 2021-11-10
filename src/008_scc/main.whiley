@@ -26,14 +26,14 @@ function addEdge(Digraph g, nat from, nat to) -> Digraph:
     return g
 
 // Ensure graph has sufficient capacity
-unsafe function resize(Digraph g, int size) -> (Digraph r)
+function resize(Digraph g, int size) -> (Digraph r)
 ensures |r| > size || (size >= |g| && |r| == size):
     //
     if size >= |g|:
         // Graph smaller than required
         Digraph ng = [[0;0]; size]
         nat i = 0
-        while i < |g|:
+        while i < |g| where |ng| == size:
             ng[i] = g[i]
             i = i + 1
         return ng
