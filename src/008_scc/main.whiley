@@ -1,22 +1,21 @@
 import std::array
 import std::ascii
 import std::math
+import uint from std::integer
 import Vector,push,pop,top,size from std::collections::vector
-
-type nat is (int x) where x >= 0
 
 // ============================================
 // Adjacency List directed graph structure
 // ============================================
 
-type Digraph is (nat[][] edges)
+type Digraph is (uint[][] edges)
     where all { i in 0..|edges|, j in 0..|edges[i]| | edges[i][j] < |edges| }
 
-type Edge is { nat from, nat to }
+type Edge is { uint from, uint to }
 
 Digraph EMPTY_DIGRAPH = [[0;0];0]
 
-function addEdge(Digraph g, nat from, nat to) -> Digraph:
+function addEdge(Digraph g, uint from, uint to) -> Digraph:
     // First, ensure enough capacity
     int max = math::max(from,to)
     g = resize(g,max+1)
@@ -32,7 +31,7 @@ ensures |r| > size || (size >= |g| && |r| == size):
     if size >= |g|:
         // Graph smaller than required
         Digraph ng = [[0;0]; size]
-        nat i = 0
+        uint i = 0
         while i < |g| where |ng| == size:
             ng[i] = g[i]
             i = i + 1
@@ -54,7 +53,7 @@ function Digraph(Edge[] input) -> Digraph:
     //        
     return graph
 
-function Edge(nat from, nat to) -> Edge:
+function Edge(uint from, uint to) -> Edge:
     return {from:from,to:to}
 
 // ============================================
@@ -70,15 +69,17 @@ type State is {
     bool[] visited,
     bool[] inComponent,
     int[] rindex,
-    Vector<nat> stack,
+    Vector<uint> stack,
     int index,
-    int cindex
+    uint cindex
 }
 where |visited| == |graph|
 where |inComponent| == |graph|
 where |rindex| == |graph|
 // Every vertex on stack must be valid
 where all { k in 0..stack.length | stack.items[k] < |graph| }
+// Cannot have more components that vertices
+where cindex <= |graph|
 
 function State(Digraph g) -> State:
     return {
@@ -86,32 +87,31 @@ function State(Digraph g) -> State:
         visited: [false; |g|],
         inComponent: [false; |g|],
         rindex: [0; |g|],    
-        stack: Vector<nat>(),
+        stack: Vector<uint>(),
         index: 0,
         cindex: 0
     }
 
-unsafe function find_components(Digraph g) -> int[][]:
+function find_components(Digraph g) -> int[][]:
     State state = State(g)
     
-    nat i = 0
-    while i < |g|:
+    uint i = 0
+    while i < |g| where state.graph == g:
         if !state.visited[i]:
-            state = visit(i,state)
-        i = i + 1
-    
+             state = visit(i,state)
+        i = i + 1    
     // build componnent list
     int[][] components = [[0;0]; state.cindex]
-    i = 0 
+    i = 0
     //
-    while i < |g|:
+    while i < |g| where |components| == state.cindex:
         int cindex = state.rindex[i]
         components[cindex] = array::append(components[cindex],i)
         i = i + 1
     //
     return components
 
-unsafe function visit(nat v, State s) -> (State ns)
+unsafe function visit(uint v, State s) -> (State ns)
 requires v < |s.graph|
 ensures ns.graph == s.graph:
     bool root = true
@@ -122,7 +122,7 @@ ensures ns.graph == s.graph:
     // process edges
     int i = 0
     while i < |s.graph[v]|:
-        nat w = s.graph[v][i]
+        uint w = s.graph[v][i]
         if !s.visited[w]:
             s = visit(w,s)
         if !s.inComponent[w] && s.rindex[w] < s.rindex[v]:
