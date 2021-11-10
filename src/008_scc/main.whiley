@@ -26,7 +26,7 @@ function addEdge(Digraph g, nat from, nat to) -> Digraph:
     return g
 
 // Ensure graph has sufficient capacity
-function resize(Digraph g, int size) -> (Digraph r)
+unsafe function resize(Digraph g, int size) -> (Digraph r)
 ensures |r| > size || (size >= |g| && |r| == size):
     //
     if size >= |g|:
@@ -91,7 +91,7 @@ function State(Digraph g) -> State:
         cindex: 0
     }
 
-function find_components(Digraph g) -> int[][]:
+unsafe function find_components(Digraph g) -> int[][]:
     State state = State(g)
     
     nat i = 0
@@ -111,7 +111,7 @@ function find_components(Digraph g) -> int[][]:
     //
     return components
 
-function visit(nat v, State s) -> (State ns)
+unsafe function visit(nat v, State s) -> (State ns)
 requires v < |s.graph|
 ensures ns.graph == s.graph:
     bool root = true
@@ -196,3 +196,4 @@ public method test_11():
 public method test_12():
     Digraph g = Digraph([Edge(0,1),Edge(0,2),Edge(1,0),Edge(2,0)])
     assume find_components(g) == [[0,1,2]]
+    

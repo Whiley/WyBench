@@ -3,13 +3,14 @@ name="008_scc"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley"]
+platforms=["whiley","boogie"]
 
 [build.whiley]
 source="/"
 
 [build.boogie]
-timeout=120
+timeout=60
+verify=true
 
 [check]
 min=0
