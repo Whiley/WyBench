@@ -7,7 +7,7 @@ import std::ascii
 import std::array
 import std::integer
 import std::math
-import nat from std::integer
+import uint from std::integer
 import u8 from std::integer
 
 // Compress a given byte stream to produce a potentially shorter
@@ -35,11 +35,11 @@ import u8 from std::integer
 // Here, we see the second occurrence "is " is matched against the
 // previous occurrence, and likewise for "his ".
 function compress(byte[] data) -> byte[]:
-    nat pos = 0
+    uint pos = 0
     byte[] output = [0b; 0]
     //
     // keep going until all data matched
-    while pos < |data| where pos >= 0:
+    while pos < |data|:
         (u8 offset, u8 len) = findLongestMatch(data,pos)
         output = write_u8(output,offset)
         if offset == 0:
@@ -73,12 +73,12 @@ function compress(byte[] data) -> byte[]:
 // Finally, observe that we won't find matches at every position.  For
 // example, at position 7 we won't find a match for 'v' in the window.
 // In such cases, we just return (0,0) to signal no match.
-function findLongestMatch(byte[] data, nat pos) -> (u8 offset, u8 length):
+function findLongestMatch(byte[] data, uint pos) -> (u8 offset, u8 length):
     //
     u8 bestOffset = 0
     u8 bestLen = 0
     // Initialise index to start of sliding window, or start of stream.
-    nat index = (nat) math::max(pos - 255,0)
+    uint index = (uint) math::max(pos - 255,0)
     //
     while index < pos where (pos - index) <= 255:
         //
@@ -101,11 +101,11 @@ function findLongestMatch(byte[] data, nat pos) -> (u8 offset, u8 length):
 // The algorithm moves each forward until it finds the first non-match
 // character (or we reach the end).  It then returns the length of the
 // match (which in this would be three).
-function match(byte[] data, nat offset, nat end) -> (u8 length)
+function match(byte[] data, uint offset, uint end) -> (u8 length)
 // Position to search from within sliding window
 requires (end - offset) <= 255:
     //
-    nat pos = end
+    uint pos = end
     u8 len = 0
     //
     while offset < pos && pos < |data| && data[offset] == data[pos] && len < 255:
@@ -122,7 +122,7 @@ requires (end - offset) <= 255:
 // memory.
 function decompress(byte[] data) -> byte[]:
     byte[] output = [0b;0]
-    nat pos = 0
+    uint pos = 0
     //
     while (pos+1) < |data| where pos >= 0:
         byte header = data[pos]
