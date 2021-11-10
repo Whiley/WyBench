@@ -1,45 +1,45 @@
 import std::ascii
-import nat from std::integer
+import uint from std::integer
 import std::math
 
 // ===============================================
 // Definitions
 // ===============================================
 
-type Job is { nat button, bool orange }
+type Job is { uint button, bool orange }
 
 
-function O(nat b) -> Job:
+function O(uint b) -> Job:
     return { button: b, orange:true }
     
-function B(nat b) -> Job:
+function B(uint b) -> Job:
     return { button: b, orange:false }
 
 // ===============================================
 // Main Computation
 // ===============================================
 
-function process(Job[] jobs) -> nat:
+function process(Job[] jobs) -> uint:
     //
     int Opos = 1    // current orange position
     int Bpos = 1    // current blue position 
     int Osaved = 0  // spare time orange has saved
     int Bsaved = 0  // spare time blue has saved
-    nat time = 0    // total time accumulated thus far
+    uint time = 0    // total time accumulated thus far
     // now, do the work!
-    nat i = 0
-    while i < |jobs| where time >= 0:
+    uint i = 0
+    while i < |jobs|:
         Job job = jobs[i]
         if job.orange:
-            nat diff = (nat) math::abs(job.button - Opos)
-            nat timediff = (nat) math::max(0, diff - Osaved) + 1
+            uint diff = (uint) math::abs(job.button - Opos)
+            uint timediff = (uint) math::max(0, diff - Osaved) + 1
             time = time + timediff
             Bsaved = Bsaved + timediff
             Osaved = 0
             Opos = job.button
         else:
-            nat diff = (nat) math::abs(job.button - Bpos)
-            nat timediff = (nat) math::max(0, diff - Bsaved) + 1
+            uint diff = (uint) math::abs(job.button - Bpos)
+            uint timediff = (uint) math::max(0, diff - Bsaved) + 1
             time = time + timediff
             Osaved = Osaved + timediff
             Bsaved = 0

@@ -100,7 +100,7 @@ function isAlive(Board board, int row, int col) -> int:
 final bool X = true
 final bool _ = false
 
-public method test_01():
+unsafe public method test_01():
     Board b = Board(5,5)
     // Initialise board
     b = set(b,2,1)
@@ -115,7 +115,7 @@ public method test_01():
                        [_,_,_,_,_],
                        [_,_,_,_,_]]
 
-public method test_02():
+unsafe public method test_02():
     Board b = Board(5,5)
     // Initialise board
     b = set(b,1,2)
@@ -130,7 +130,7 @@ public method test_02():
                        [_,_,X,_,_],
                        [_,_,_,_,_]]
 
-public method test_03():
+unsafe public method test_03():
     Board b = Board(5,5)
     // Initialise board
     b = set(b,1,0)

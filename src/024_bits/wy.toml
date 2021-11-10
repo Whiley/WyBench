@@ -3,7 +3,7 @@ name="024_bits"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley"]
+platforms=["whiley","boogie"]
 
 [build.whiley]
 source="/"

@@ -71,4 +71,4 @@ public method test_01():
 public method test_02():
     LinkedList l1 = LinkedList(5)
     LinkedList l2 = insert(l1,5,0)
-    assert l1.size == 1
+    assume l1.size == 1

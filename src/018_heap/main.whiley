@@ -56,7 +56,7 @@ where some { k in 0..h.length | h.data[k] == item }
 //     +-+-+-+-+-+-+-+-+-+
 //      0 1 2 3 4 5 6 7 8 
 //
-function push(Heap h, int item) -> (Heap r)
+unsafe function push(Heap h, int item) -> (Heap r)
 // Heap increased in size by one
 ensures r.length == h.length + 1:
 // Resulting heap contains everything from original
@@ -117,7 +117,7 @@ ensures r == heap.data[0]:
 //
 // Since P > B, we swapped them around.  At this point, we've stopped
 // since B is now greater than its child (A).
-function pop(Heap heap) -> (Heap r)
+unsafe function pop(Heap heap) -> (Heap r)
 // Heap cannot be empty
 requires heap.length > 0
 // Size of heap decreased by one
@@ -173,6 +173,6 @@ public method test_01():
     Heap h = EMPTY_HEAP
     h = push(h,5)
     assume peek(h) == 5
-    assume h.length == 1
+    assert h.length == 1
     h = pop(h)
-    assume h.length == 0
+    assert h.length == 0

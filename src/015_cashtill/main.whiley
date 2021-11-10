@@ -74,7 +74,7 @@ function contained(Cash first, Cash second) -> bool:
  * ENSURES: the total returned equals total of first plus
  *          the total of the second.
  */
-function add(Cash first, Cash second) -> (Cash r)
+unsafe function add(Cash first, Cash second) -> (Cash r)
 // Result total must be sum of argument totals
 ensures total(r) == total(first) + total(second):
     //
@@ -91,7 +91,7 @@ ensures total(r) == total(first) + total(second):
  * ENSURES: the total returned equals total of first less
  *          the total of the second.
  */
-function subtract(Cash first, Cash second) -> (Cash r)
+unsafe function subtract(Cash first, Cash second) -> (Cash r)
 // First argument must contain second; for example, if we have 1
 // dollar coin and a 1 cent coin, we cannot subtract a 5 dollar note!
 requires contained(first,second)
@@ -116,7 +116,7 @@ ensures total(r) == total(first) - total(second):
  * ENSURES:  if change returned, then it must be contained in till, and 
  *           the amount returned must equal the amount requested.
  */
-function calculateChange(Cash till, uint change) -> (null|Cash r)
+unsafe function calculateChange(Cash till, uint change) -> (null|Cash r)
 // If change is given, then it must have been in the till, and must
 // equal that requested.
 ensures r is Cash ==> (contained(till,r) && total(r) == change):

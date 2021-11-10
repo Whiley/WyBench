@@ -1,6 +1,6 @@
 import std::ascii
 import std::array
-import nat from std::integer
+import uint from std::integer
 import std::io
 import std::math
 
@@ -36,20 +36,20 @@ import std::math
 
 // Represents a transition from one state to another for a given character.
 type Transition is {
-    nat from,
-    nat to,
+    uint from,
+    uint to,
     ascii::char character
 } where from < to
 
 // Define the Empty Transition
 Transition EMPTY_TRANSITION = { from: 0, to: 1, character: 'a' }
 
-property valid(Transition t, nat size)
+property valid(Transition t, uint size)
 where t.from < size && t.to < size
 
 // A Finite State Machine representation of a Trie
 type Trie is {
-    nat size, // maximum number of states
+    uint size, // maximum number of states
     Transition[] transitions
 } where size > 0
 // Ensures each transition to/from state within trie
@@ -64,7 +64,7 @@ function add(Trie trie, ascii::string str) -> Trie:
 
 // Add a string into a Trie from a given state, producing an 
 // updated Trie.
-function add(Trie trie, nat state, ascii::string str, nat index) -> Trie
+function add(Trie trie, uint state, ascii::string str, uint index) -> Trie
 // Require valid state within trie and valid index within string
 requires state < trie.size && index <= |str|:
     //
@@ -84,7 +84,7 @@ requires state < trie.size && index <= |str|:
                 return add(trie,t.to,str,index+1)
             i = i + 1
         // No existing transition, so make a new one.
-        nat target = trie.size
+        uint target = trie.size
         Transition t = { from: state, to: target, character: c }
         trie = add(trie,t)
         //
@@ -107,8 +107,8 @@ ensures r.size >= trie.size:
     // append new transition
     Transition[] rs = array::append(trie.transitions,transition)
     // compute updated size
-    nat max = (nat) math::max(trie.size,transition.from+1)
-    max = (nat) math::max(max,transition.to+1)
+    uint max = (uint) math::max(trie.size,transition.from+1)
+    max = (uint) math::max(max,transition.to+1)
     // done
     return { size: max, transitions: rs }
 
@@ -119,7 +119,7 @@ function contains(Trie trie, ascii::string str) -> bool:
 
 // Check whether a given string is contained in the trie, 
 // starting from a given state.
-function contains(Trie trie, int state, ascii::string str, nat index) -> bool
+function contains(Trie trie, int state, ascii::string str, uint index) -> bool
 requires index <= |str|
 requires state >= 0:
     //

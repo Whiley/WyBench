@@ -53,7 +53,7 @@ function pow(uint n, uint k) -> (uint r):
  *
  * (writing most significant bit first)
  */
-function increment(bool[] bits) -> (bool[] result, bool carry)
+unsafe function increment(bool[] bits) -> (bool[] result, bool carry)
 // Result has same dimension
 ensures |result| == |bits|
 // If no carry, result incremented in place

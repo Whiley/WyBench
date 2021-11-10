@@ -3,7 +3,7 @@ name="027_c_string"
 authors=["David J. Pearce"]
 
 [build]
-platforms=["whiley"]
+platforms=["whiley","boogie"]
 
 [build.whiley]
 source="/"

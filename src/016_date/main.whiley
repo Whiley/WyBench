@@ -52,7 +52,7 @@ requires month != FEB || year % 4 != 0 || (year % 100 == 0 && year % 400 != 0) |
 // =================================================
 
 // Compute the date of the next day.
-function next(Date date) -> Date:
+unsafe function next(Date date) -> Date:
     // first, calculate last day of the month
     int last
     switch date.month:

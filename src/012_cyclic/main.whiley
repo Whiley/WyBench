@@ -104,7 +104,7 @@ function toString(Buffer b) -> ascii::string:
 // Tests
 // ===============================================
 
-public method test_01():
+unsafe public method test_01():
     int v
     Buffer b = Buffer(5)
     // Write an element
