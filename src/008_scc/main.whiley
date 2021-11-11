@@ -4,6 +4,12 @@ import std::math
 import uint from std::integer
 import Vector,push,pop,top,size from std::collections::vector
 
+// Should be in standard library
+public property equals_except(int[] lhs, int[] rhs, int i)
+where |lhs| == |rhs|
+// All items in subrange match
+where all { k in 0..|lhs| | (k == i) || (lhs[k] == rhs[k]) }
+
 // ============================================
 // Adjacency List directed graph structure
 // ============================================
@@ -68,9 +74,9 @@ type State is {
     Digraph graph,
     bool[] visited,
     bool[] inComponent,
-    int[] rindex,
+    uint[] rindex,
     Vector<uint> stack,
-    int index,
+    uint index,
     uint cindex
 }
 where |visited| == |graph|
@@ -80,8 +86,13 @@ where |rindex| == |graph|
 where all { k in 0..stack.length | stack.items[k] < |graph| }
 // Cannot have more components that vertices
 where cindex <= |graph|
+// Necessary invariant
+where all { k in 0..|graph| | visited[k] ==> rindex[k] < cindex }
 
-function State(Digraph g) -> State:
+function State(Digraph g) -> (State s)
+ensures s.graph == g
+ensures s.cindex == 0
+ensures all { k in 0..|g| | s.visited[k] == false }:
     return {
         graph: g,
         visited: [false; |g|],
@@ -93,27 +104,34 @@ function State(Digraph g) -> State:
     }
 
 function find_components(Digraph g) -> int[][]:
-    State state = State(g)
-    
+    State state = State(g)    
     uint i = 0
-    while i < |g| where state.graph == g:
+    while i < |g|
+    // Graph doesn't change
+    where state.graph == g
+    // Slowly visiting everything
+    where all { k in 0..i | state.visited[k] == true }:
         if !state.visited[i]:
              state = visit(i,state)
-        i = i + 1    
+        i = i + 1
     // build componnent list
     int[][] components = [[0;0]; state.cindex]
     i = 0
     //
     while i < |g| where |components| == state.cindex:
-        int cindex = state.rindex[i]
-        components[cindex] = array::append(components[cindex],i)
+        uint cindex = state.rindex[i]
+        components[cindex] = array::append<int>(components[cindex],i)
         i = i + 1
     //
     return components
 
 unsafe function visit(uint v, State s) -> (State ns)
 requires v < |s.graph|
-ensures ns.graph == s.graph:
+ensures ns.graph == s.graph
+// Always monotonic
+ensures all { k in 0..|s.visited| | s.visited[k] ==> ns.visited[k] }
+// Node visited after this
+ensures ns.visited[v] == true:
     bool root = true
     s.visited[v] = true
     s.rindex[v] = s.index
