@@ -161,6 +161,8 @@ ensures maximal(s,c):
 // give [0,3,5].
 native function extend(int[] seq, int[] cut, int start, int end) -> (int[] ncut)
 //
+requires start < end
+//
 requires non_empty(cut) && begin_to_end(cut,0,start) && within_bounds(cut,start)
 // Segment being added must be monotonic
 requires monotonic(seq,start,end)
@@ -191,6 +193,12 @@ ensures maximal(seq,ncut)
     // // Everything copied over so far
     // where all { k in 0..i | ncut[k] == cut[k] }:
     //     ncut[i] = cut[i]
+    // //
+    // assert non_empty(ncut)    
+    // assert begin_to_end(ncut,0,end)
+    // assert within_bounds(ncut,end)
+    // assert monotonic(seq,ncut)
+    // //assert maximal(seq,ncut)
     // //
     // return ncut
 
