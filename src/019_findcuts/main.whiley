@@ -101,13 +101,13 @@ where all { k in 1 .. |cut| | maximal(seq,cut[k-1],cut[k]) }
 // find cut points
 // =================================================================
 
-function findCutPoints(int[] s) -> (int[] c)
+function find_cut_points(int[] s) -> (int[] c)
 // Verification task 1
 ensures non_empty(c) && begin_to_end(c,0,|s|) && within_bounds(c,|s|)
 // Verification task 2
-ensures monotonic(s,c)
+ensures monotonic(s,c):
 // Verification task 3
-ensures maximal(s,c):
+//ensures maximal(s,c):
     final uint n = |s|
     int[] cut = [0]
     uint x = 0
@@ -119,9 +119,9 @@ ensures maximal(s,c):
     // Verification task 1
     where non_empty(cut) && begin_to_end(cut,0,x) && within_bounds(cut,x)
     // Verification task 2
-    where monotonic(s,cut)
+    where monotonic(s,cut):
     // Verification task 3
-    where maximal(s,cut):
+    //where maximal(s,cut):
         //
         if s[x] < s[y]:
             while y < n && (s[y-1] < s[y])
@@ -136,12 +136,12 @@ ensures maximal(s,c):
             where decreasing(s,x,y):
                 y = y + 1
         // Extend the cut
-        cut = extend(cut,y)
+        cut = extend(s,cut,y)
         x = y
         y = x + 1
     //
     if x < n:
-        cut = extend(cut,n)
+        cut = extend(s,cut,n)
     //
     return cut
 
@@ -159,13 +159,21 @@ ensures maximal(s,c):
 //
 // And support cut = [0,3], then we could extend it with [3,5) to
 // give [0,3,5].
-function extend(int[] cut, int end) -> (int[] ncut)
+unsafe function extend(int[] seq, int[] cut, int end) -> (int[] ncut)
+// Cut is monotonic
+requires monotonic(seq,cut)
+// Cut is maximal
+//requires maximal(seq,cut)
 // Exactly one item appended
 ensures |ncut| == |cut| + 1
 // Item was appended
 ensures ncut[|cut|] == end
 // Every item from original array is retained
-ensures all { k in 0..|cut| | ncut[k] == cut[k] }:
+ensures all { k in 0..|cut| | ncut[k] == cut[k] }
+// Monotonicity preserved
+ensures monotonic(seq,ncut):
+// Maximality preserverd
+//ensures maximal(seq,ncut):
     //
     ncut = [end; |cut| + 1]
     //
@@ -184,14 +192,14 @@ ensures all { k in 0..|cut| | ncut[k] == cut[k] }:
 // Tests
 // =================================================================
 
-public method test_01():
-    int[] s = [1,2,3,4,5,7]
-    assert findCutPoints(s) == [0,6]
+// public method test_01():
+//     int[] s = [1,2,3,4,5,7]
+//     assert find_cut_points(s) == [0,6]
 
-public method test_02():
-    int[] s = [1,4,7,3,3,5,9]
-    assert findCutPoints(s) == [0,3,5,7]
+// public method test_02():
+//     int[] s = [1,4,7,3,3,5,9]
+//     assert find_cut_points(s) == [0,3,5,7]
 
-public method test_03():
-    int[] s = [6,3,4,2,5,3,7]
-    assert findCutPoints(s) == [0,2,4,6,7]
+// public method test_03():
+//     int[] s = [6,3,4,2,5,3,7]
+//     assert find_cut_points(s) == [0,2,4,6,7]

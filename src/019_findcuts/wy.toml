@@ -10,4 +10,4 @@ platforms=["whiley","boogie"]
 source="/"
 
 [build.boogie]
-timeout=600
+timeout=800
