@@ -160,47 +160,48 @@ ensures maximal(s,c):
 // And support cut = [0,3], then we could extend it with [3,5) to
 // give [0,3,5].
 native function extend(int[] seq, int[] cut, int start, int end) -> (int[] ncut)
-//
+// Cannot add an empty cut
 requires start < end
-//
+// Cut meets basic properties
 requires non_empty(cut) && begin_to_end(cut,0,start) && within_bounds(cut,start)
-// Segment being added must be monotonic
-requires monotonic(seq,start,end)
 // Cut is monotonic
 requires monotonic(seq,cut)
+// New segment also monotonic
+requires monotonic(seq,start,end)
 // Cut is maximal
 requires maximal(seq,cut)
-// Exactly one item appended
-ensures |ncut| == |cut| + 1
-// Item was appended
-ensures ncut[|cut|] == end
-// Ensure property
+// New cut also maximal
+requires maximal(seq,start,end)
+// Basic properties preserved
 ensures non_empty(ncut) && begin_to_end(ncut,0,end) && within_bounds(ncut,end)
-// Every item from original array is retained
-ensures all { k in 0..|cut| | ncut[k] == cut[k] }
 // Monotonicity preserved
 ensures monotonic(seq,ncut)
-// // Maximality preserverd
+// Maximality preserverd
 ensures maximal(seq,ncut)
-    // //
-    // ncut = [end; |cut| + 1]
-    // //
-    // for i in 0..|cut|
-    // // Array size unchanged
-    // where |ncut| == |cut| + 1
-    // // Last item preserved
-    // where ncut[|cut|] == end
-    // // Everything copied over so far
-    // where all { k in 0..i | ncut[k] == cut[k] }:
-    //     ncut[i] = cut[i]
-    // //
-    // assert non_empty(ncut)    
-    // assert begin_to_end(ncut,0,end)
-    // assert within_bounds(ncut,end)
-    // assert monotonic(seq,ncut)
-    // //assert maximal(seq,ncut)
-    // //
-    // return ncut
+    // // Just use append :)
+    // return append(cut,end)    
+
+// // Simple append function which should be in the standard library.
+// function append(int[] cut, int end) -> (int[] ncut)
+// // Cutuence extended by one
+// ensures |ncut| == |cut| + 1
+// // Every end from original array is retained
+// ensures all { k in 0..|cut| | ncut[k] == cut[k] }
+// // End appended
+// ensures ncut[|cut|] == end:
+//     //
+//     ncut = [end; |cut| + 1]
+//     //
+//     for i in 0..|cut|
+//     // Array size unchanged
+//     where |ncut| == |cut| + 1
+//     // Last end preserved
+//     where ncut[|cut|] == end
+//     // Everything copied over so far
+//     where all { k in 0..i | ncut[k] == cut[k] }:
+//         ncut[i] = cut[i]
+//     //
+//     return ncut
 
 // =================================================================
 // Tests
