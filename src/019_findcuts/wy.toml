@@ -10,4 +10,8 @@ platforms=["whiley","boogie"]
 source="/"
 
 [build.boogie]
-timeout=800
+timeout=60
+useArrayTheory=false
+
+[dependencies]
+std="0.3.2"

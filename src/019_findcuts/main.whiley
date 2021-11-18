@@ -10,7 +10,8 @@
 //
 // This challenge focuses on maximal cut points.  That is, we cannot
 // extend any segment further.
-type uint is (int x) where x >= 0
+import std::array
+import uint from std::integer
 
 property non_empty(int[] seq)
 where |seq| > 0
@@ -18,8 +19,8 @@ where |seq| > 0
 property begin_to_end(int[] seq, int b, int e)
 where seq[0] == b && seq[|seq|-1] == e
 
-property within_bounds(int[] seq, int n)
-where all { k in 0..|seq| | 0 <= seq[k] && seq[k] <= n }
+property within_bounds(int[] cut, int n)
+where all { k in 0..|cut| | 0 <= cut[k] && cut[k] <= n }
 
 // Sequence [start..end) is monotonically increasing.  For example,
 // consider this sequence
@@ -101,7 +102,7 @@ where all { k in 1 .. |cut| | maximal(seq,cut[k-1],cut[k]) }
 // find cut points
 // =================================================================
 
-function find_cut_points(int[] s) -> (int[] c)
+function find_cut_points(int[] s) -> (uint[] c)
 // Verification task 1
 ensures non_empty(c) && begin_to_end(c,0,|s|) && within_bounds(c,|s|)
 // Verification task 2
@@ -109,7 +110,7 @@ ensures monotonic(s,c)
 // Verification task 3
 ensures maximal(s,c):
     final uint n = |s|
-    int[] cut = [0]
+    uint[] cut = [0]
     uint x = 0
     uint y = 1   
     //
@@ -122,99 +123,35 @@ ensures maximal(s,c):
     where monotonic(s,cut)
     // Verification task 3
     where maximal(s,cut):
-        //
-        if s[x] < s[y]:
-            while y < n && (s[y-1] < s[y])
-            where x < y && y <= n
-            // Verification task 2
-            where increasing(s,x,y):
-                y = y + 1
-        else:
-            while y < n && (s[y-1] >= s[y])
-            where x < y && y <= n
-            // Verification task 2
-            where decreasing(s,x,y):
-                y = y + 1
+        bool inc = s[x] < s[y]
+        while y < n && (s[y-1] < s[y] <==> inc)
+        where x < y && y <= n
+        // Verification task 2
+        where inc ==> increasing(s,x,y)
+        where !inc ==> decreasing(s,x,y):
+            y = y + 1
         // Extend the cut
-        cut = extend(s,cut,x,y)
+        cut = array::append(cut,y)
         x = y
         y = x + 1
     //
     if x < n:
-        cut = extend(s,cut,x,n)
+        cut = array::append(cut,n)
     //
     return cut
-
-// =================================================================
-// Extend
-// =================================================================
-
-// Extend a given (maximally monotonic) cut with a new cut. For
-// example, consider this sequence:
-//
-// +-+-+-+-+-+
-// |0|1|2|1|0|
-// +-+-+-+-+-+
-//  0 1 2 3 4 
-//
-// And support cut = [0,3], then we could extend it with [3,5) to
-// give [0,3,5].
-native function extend(int[] seq, int[] cut, int start, int end) -> (int[] ncut)
-// Cannot add an empty cut
-requires start < end
-// Cut meets basic properties
-requires non_empty(cut) && begin_to_end(cut,0,start) && within_bounds(cut,start)
-// Cut is monotonic
-requires monotonic(seq,cut)
-// New segment also monotonic
-requires monotonic(seq,start,end)
-// Cut is maximal
-requires maximal(seq,cut)
-// New cut also maximal
-requires maximal(seq,start,end)
-// Basic properties preserved
-ensures non_empty(ncut) && begin_to_end(ncut,0,end) && within_bounds(ncut,end)
-// Monotonicity preserved
-ensures monotonic(seq,ncut)
-// Maximality preserverd
-ensures maximal(seq,ncut)
-    // // Just use append :)
-    // return append(cut,end)    
-
-// // Simple append function which should be in the standard library.
-// function append(int[] cut, int end) -> (int[] ncut)
-// // Cutuence extended by one
-// ensures |ncut| == |cut| + 1
-// // Every end from original array is retained
-// ensures all { k in 0..|cut| | ncut[k] == cut[k] }
-// // End appended
-// ensures ncut[|cut|] == end:
-//     //
-//     ncut = [end; |cut| + 1]
-//     //
-//     for i in 0..|cut|
-//     // Array size unchanged
-//     where |ncut| == |cut| + 1
-//     // Last end preserved
-//     where ncut[|cut|] == end
-//     // Everything copied over so far
-//     where all { k in 0..i | ncut[k] == cut[k] }:
-//         ncut[i] = cut[i]
-//     //
-//     return ncut
 
 // =================================================================
 // Tests
 // =================================================================
 
-// public method test_01():
-//     int[] s = [1,2,3,4,5,7]
-//     assert find_cut_points(s) == [0,6]
+public method test_01():
+    int[] s = [1,2,3,4,5,7]
+    assume find_cut_points(s) == [0,6]
 
-// public method test_02():
-//     int[] s = [1,4,7,3,3,5,9]
-//     assert find_cut_points(s) == [0,3,5,7]
+public method test_02():
+    int[] s = [1,4,7,3,3,5,9]
+    assume find_cut_points(s) == [0,3,5,7]
 
-// public method test_03():
-//     int[] s = [6,3,4,2,5,3,7]
-//     assert find_cut_points(s) == [0,2,4,6,7]
+public method test_03():
+    int[] s = [6,3,4,2,5,3,7]
+    assume find_cut_points(s) == [0,2,4,6,7]
